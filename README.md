@@ -11,5 +11,4 @@
 - 🧰 [工具集合](tools/)
 - 🤗 [emojixd.com](https://emojixd.com/)
 
-[GitHub](https://github.com/jianzhnie/machine-learning-wiki)
 [Getting Started](https://jianzhnie.github.io/machine-learning-wiki/)
