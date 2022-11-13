@@ -1,6 +1,6 @@
 # Deep Learning
 
-- Dseeplearning4j
+- Deeplearning4j
   - [Deeplearning4J](deeplearning/deeplearning4j/Deeplearning4J.md)
   - [Arbiter](deeplearning/deeplearning4j/Arbiter.md)
 - 分布式训练
