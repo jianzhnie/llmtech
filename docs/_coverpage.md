@@ -2,7 +2,14 @@
 
 # Machine Learning Wiki
 
-> 专注于机器学习相关领域的知识汇总，技术收集，笔记记录.
+> 欢迎来到 Machine Learning Wiki，这是由 Robin 所维护的 blog site ，
+> 
+> 博客主要记录一些机器学习、深度学习，编程以及各种技术的相关内容。
+
+> 你可以通过顶部和侧边的导航栏找到自己感兴趣的内容，也可以进行搜索。
+> 
+> 博客基于 GithubPages 创建，如果你发现有任何错误，欢迎在 Github 上进行编辑纠正。
+
 
 
 - 🔥 [机器学习](machine-learning/)
