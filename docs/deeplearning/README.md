@@ -28,7 +28,7 @@
 
 - 目标检测
   - [FocalLoss](deeplearning/object-detection/FocalLoss.md)
-  
+
 - 自然语言处理
   - [Transformer 模型](deeplearning/nlp/Transformer.md)
   - [Bag-of-words](deeplearning/nlp/Bag-of-words.md)

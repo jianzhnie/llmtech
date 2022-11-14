@@ -15,4 +15,3 @@ Below is an incomplete list of git repository and projects I have worked on.
 - [AutoTimm](https://github.com/jianzhnie/AutoTimm): An auto image-classification toolbox based timm.
 - [AutoTabular](https://github.com/jianzhnie/AutoTabular): An automl  toolbox for tabular data.
 - [nlptoolkit](https://github.com/jianzhnie/nlp-toolkit): A natural language processing toolbox.
-

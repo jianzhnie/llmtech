@@ -39,4 +39,3 @@
 |            [第十一章 模仿学习](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter11/chapter11)            | [第十一章 习题](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter11/chapter11_questions&keywords) |                                                                                                       |
 | [第十二章 深度确定性策略梯度 (DDPG) 算法](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter12/chapter12) | [第十二章 习题](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter12/chapter12_questions&keywords) |   [DDPG算法实战](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter12/project3)    |
 |       [第十三章 AlphaStar 论文解读](https://jianzhnie.github.io/machine-learning-wiki/#/deep-rl/chapter13/chapter13)       |                                                                                                                       |
-                                          

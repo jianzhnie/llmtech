@@ -51,4 +51,3 @@ file [filename]
 ```shell
 find . -name "*.jpg" -type 'f' -size -10k -delete
 ```
-

@@ -27,7 +27,7 @@
 以下是强化学习算法的基本接口，也就是一个完整的上层训练模式，首先是初始化环境和智能体，然后每个episode中，首先agent选择action给到环境，然后环境反馈出下一个状态和reward，然后agent开始更新或者学习，如此多个episode之后agent开始收敛并保存模型。其中可以通过可视化reward随每个episode的变化来查看训练的效果。另外由于强化学习的不稳定性，在收敛的状态下也可能会有起伏的情况，此时可以使用滑动平均的reward让曲线更加平滑便于分析。
 
 ```python
-  '''初始化环境'''  
+  '''初始化环境'''
 env = gym.make("CliffWalking-v0")  # 0 up, 1 right, 2 down, 3 left
 env = CliffWalkingWapper(env)
 agent = QLearning(
@@ -35,7 +35,7 @@ agent = QLearning(
     action_dim=env.action_space.n,
     learning_rate=cfg.policy_lr,
     gamma=cfg.gamma,
-rewards = []  
+rewards = []
 ma_rewards = [] # moving average reward
 for i_ep in range(cfg.train_eps): # train_eps: 训练的最大episodes数
     ep_reward = 0  # 记录每个episode的reward

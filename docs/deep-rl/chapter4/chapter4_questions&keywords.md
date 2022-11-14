@@ -24,7 +24,7 @@
 **4-2** 在一个过程中，一个具体的轨迹{$s_1 , a_1 , s_2 , a_2$}出现的概率取决于什么？
 
 （1）一部分是环境的行为，即环境的函数内部的参数或内部的规则是什么形式的。 $p(s_{t+1}|s_t,a_t)$ 这一项代表的是环境，环境这一项通常是无法控制的，因为它是已经客观存在的，或者其形式是提前制定好的。
-  
+
 （2）另一部分是智能体的行为，我们能控制的是 $p_\theta(a_t|s_t)$ ，即给定一个状态 $s_t$，演员要采取什么样的动作 $a_t$ 取决于演员的参数 $\theta$，所以这部分是我们可以控制的。随着演员动作的不同，每个同样的轨迹，它会因为不同的概率从而表现出不同的行为。
 
 **4-3** 当我们最大化期望奖励时，应该使用什么方法？
@@ -121,10 +121,10 @@ $$
 
 $$
 \begin{aligned}
-    \nabla_{\theta}J(\theta) 
+    \nabla_{\theta}J(\theta)
     &= E_{\tau \sim p_{\theta}(\tau)}[{\nabla}_{\theta}\mathrm{log}p_{\theta}(\tau)r(\tau)] \\
     &= E_{\tau \sim p_{\theta}}[(\nabla_{\theta}\mathrm{log}\pi_{\theta}(a_t|s_t))(\sum_{t=1}^Tr(s_t,a_t))] \\
-    &= \frac{1}{N}\sum_{i=1}^N[(\sum_{t=1}^T\nabla_{\theta}\mathrm{log} \pi_{\theta}(a_{i,t}|s_{i,t}))(\sum_{t=1}^Nr(s_{i,t},a_{i,t}))]    
+    &= \frac{1}{N}\sum_{i=1}^N[(\sum_{t=1}^T\nabla_{\theta}\mathrm{log} \pi_{\theta}(a_{i,t}|s_{i,t}))(\sum_{t=1}^Nr(s_{i,t},a_{i,t}))]
 \end{aligned}
 $$
 

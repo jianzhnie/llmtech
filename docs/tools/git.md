@@ -9,7 +9,7 @@ git 是一个分布式版本控制软件，最初由林纳斯·托瓦兹创作�
 - 速度快、灵活。
 - 任意两个开发者之间可以很容易的解决冲突。
 
-## cheatsheet 
+## cheatsheet
 ![](tools/img/git-cheatsheet-cn.9c8eed56.jpeg)
 
 <div align=center>
@@ -99,11 +99,11 @@ git clone https://github.com/user/test.git
 
 ```shell
 # 强制push 一般会丢失远程代码
-git push -u https://gitee.com/user/test.git master -f 
+git push -u https://gitee.com/user/test.git master -f
 # 提交本地代码
-git push origin master 
+git push origin master
 # 删除远程仓库分支
-git push origin --delete dev 
+git push origin --delete dev
 ```
 
 - git remote 操作
@@ -112,15 +112,15 @@ git push origin --delete dev
 # 查看关联的远程仓库的名称
 git remote
 # 查看关联的远程仓库的详细信息
-git remote -v 
+git remote -v
 # 删除远程仓库的关联
-git remote remove <name> 
+git remote remove <name>
 # 修改远程仓库的关联地址
-git remote set-url origin <newurl> 
+git remote set-url origin <newurl>
 # 刷新获取远程分支
-git remote update origin --prune 
+git remote update origin --prune
 # 添加关联的远程仓库
-git remote add go git@https://gitee.com/user/GO.git 
+git remote add go git@https://gitee.com/user/GO.git
 ```
 
 - git pull 操作
@@ -133,22 +133,22 @@ git pull origin master 拉取本地代码
 
 ```shell
 # 将当前路径下修改文件添加至暂存区
-git add . 
+git add .
 # 查看状态
-git status  
+git status
 git Untracked  未被追踪
 # 修改未提交
-git Modified  
+git Modified
 # 提交到代码区
-git commit -m '修改代码' 
+git commit -m '修改代码'
 # 撤销最近一次commit
 git reset HEAD~
 # 撤销版本
-git reset --hard xxxx 
+git reset --hard xxxx
 # 比较当前文件和暂存区文件差异 git diff
-git diff <file> 
+git diff <file>
 # 工作区和暂存区的比较
-git diff HEAD -- <文件> 
+git diff HEAD -- <文件>
 ```
 
 >  注意 --hard 参数会抛弃当前工作区的修改
@@ -161,29 +161,29 @@ git diff HEAD -- <文件>
 # 查看本地分支
 git branch
 # 查看本地和远程分支 remotes开头的代表是远程分支
-git branch -a  
+git branch -a
 # 查看远程分支
-git branch -r 
+git branch -r
 # 创建dev分支
 git branch dev
 # 新建一个分支，并切换到该分支
 git checkout -b [branch]
 # 删除本地分支
-git branch -d dev  
+git branch -d dev
 # 新建一个分支，指向指定commit
 git branch [branch] [commit]
 # 分支重命名
-git branch -m oldname newname 
+git branch -m oldname newname
 # 新建一个分支，与指定的远程分支建立追踪关系
 git branch --track [branch] [remote-branch]
 # 建立追踪关系，在现有分支与指定的远程分支之间
 git branch --set-upstream [branch] [remote-branch]
 # 删除远程分支
-git push origin --delete dev 
+git push origin --delete dev
 # 删除没有合并的分支
-git branch -D test 
+git branch -D test
 # 修改分支名称
-git branch –m dev fix 
+git branch –m dev fix
 # 查看已经合并的分支
 git branch --merged
 # 查看已经合并的分支
@@ -194,31 +194,31 @@ git branch --no-merged
 
 ```shell
 # 恢复stage中的文件的工作区
-git checkout . 
+git checkout .
 # 取消本次修改，在工作区内
-git checkout -- 
+git checkout --
 # 切换分支 dev
-git checkout dev 
+git checkout dev
 # 创建并切换分支 dev
-git checkout -b dev 
+git checkout -b dev
 # 恢复上次版本
-git checkout a.tex. 
+git checkout a.tex.
 # 拉取远程分支到本地 <本地分支名称> <远程分支名称>
-git checkout -b D_1.3.0 origin/D_1.3.0 
+git checkout -b D_1.3.0 origin/D_1.3.0
 # 在本地创建和远程分支对应的分支
-git checkout -b origin/ 
+git checkout -b origin/
 # (test 分支 向后移)
-git rebase master 
+git rebase master
 # 合并分支
-git merge test 
+git merge test
 # 分支的某些 commit-hash
-git cherry-pick dev-3.0 
+git cherry-pick dev-3.0
 # merge 前的版本号
-git reset --hard 
+git reset --hard
 # 撤销合并当前 merge
 git revert -m merge
 # 撤销指定的提交
-git revert <commitd> 
+git revert <commitd>
 ```
 
 ### git submodules
@@ -241,7 +241,7 @@ git pull --recurse-submodules
 ssh-keygen -t rsa -C "your_email@example.com"
 ```
 
-默认会在相应路径下（~/.ssh 文件夹）生成`id_rsa`和`id_rsa.pub`两个文件. 
+默认会在相应路径下（~/.ssh 文件夹）生成`id_rsa`和`id_rsa.pub`两个文件.
 
 将ssh key添加到GitHub中, 文本编辑器打开`id_rsa.pub`文件，里面的信息即为SSH key，将这些信息复制到GitHub的`Add SSH key`页面即可.
 
@@ -255,19 +255,19 @@ ssh -T git@gitee.com
 
 ```shell
 # 查看log信息
-git log –oneline 
+git log –oneline
 # 查看每次详细修改内容的diff
-git log -p <file> 
+git log -p <file>
 # 查看最近两次详细修改内容的diff
-git log -p -2 
+git log -p -2
 # 查看log信息列表
-git log --pretty=oneline 
+git log --pretty=oneline
 # 行内变化
 git log -p --online
 # 查看变化的文件
 git log --name-only
 # 查看文件变化
-git log --name-status 
+git log --name-status
 # 显示每次提交的信息
 git log --stat
 # 显示某次提交的内容
@@ -275,24 +275,24 @@ git show <commitid>
 # 查看文件的什么人修改的每行的变化信息
 git blame style.less
 # 显示所有提交记录，每条记录只显示一行
-git log --pretty=oneline 
+git log --pretty=oneline
 # 显示某个文件的每个版本提交信息：提交日期，提交人员，版本号，提交备注（没有修改细节）
-git whatchanged file 
+git whatchanged file
 # 修改上次提交描述 本次提交并存到上次
 git commit --amend
 # 提交时显示所有的diff
-git commit  -v 
+git commit  -v
 # //使用新的commit 提交替换上次commit
-git commit --amend -m 'meggahe' 
+git commit --amend -m 'meggahe'
 ```
 
 ### 回退&撤销
 
 ```shell
 # 撤销工作区操作
-git checkout : 
+git checkout :
 # 撤销工作区操作
-git restore: 
+git restore:
 # 缓存区回到工作区
 git reset  changefile
 git restore --staged changefile
@@ -315,23 +315,23 @@ git reset --hard @{u}
 
 ```shell
 # 创建一个标签，默认为HEAD当前分支添加标签
-git tag v1.0  
+git tag v1.0
 # 为版本号为e8b8ef6添加v2.0标签
-git tag v2.0 e8b8ef6 
+git tag v2.0 e8b8ef6
 # 6cb5a9e 为版本号， 为6cb5a9e添加带有说明的标签，-a指定标签名,-m指定说明文字
-git tag -a v3.0 -m "version 0.2 released" 
+git tag -a v3.0 -m "version 0.2 released"
 # 根据标签查看指定分支
-git show v0.2 
+git show v0.2
 # 查看所有标签
 git tag
 # 删除v1.0标签
-git tag -d v1.0 
+git tag -d v1.0
 # 把v0.9标签推送到远程
 git push origin v0.9
 # 推送所有尚未推送到远程的本地标签
-git push origin --tags 
+git push origin --tags
 # 删除远程标签, 先删除本地标签，再删除远程标签
-git tag -d v0.9 
+git tag -d v0.9
 git push origin :refs/tags/v0.9
 ```
 
@@ -342,20 +342,20 @@ git push origin :refs/tags/v0.9
 git stash
 git stash list
 # 恢复暂存
-git stash apply 
+git stash apply
 # 回复第一个
-git stash apply stash{0} 
+git stash apply stash{0}
 # 恢复并且删除暂存区
 git stash pop
 # 删除暂存区
-git stash drop stash{0} 
+git stash drop stash{0}
 ```
 
 ### git cherry-pick
 
 ```shell
 # 调减需合并的代码
-git cherry-pick 
+git cherry-pick
 ```
 
 ## Git Sync
@@ -537,6 +537,3 @@ pre-commit 能够防止不规范代码被 commit，没有 husky 这么全面，�
 
 1.  [gogs](https://gogs.io/)
 2.  [gitlab](https://about.gitlab.com/install/)
-
-
-

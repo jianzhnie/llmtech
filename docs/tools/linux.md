@@ -6,23 +6,23 @@ Linux：是一种自由和开放源码的类 UNIX 操作系统。该操作系统
 
 ```shell
 # 查看用户列表
-cat /etc/passwd 
+cat /etc/passwd
 # 强制杀死进程
-kill -9 pid 
+kill -9 pid
 # 杀死 nginx 所有的进程
-killall nginx 
-# ssh 启动 
+killall nginx
+# ssh 启动
 sudo service ssh start
 # 修改私钥权限
 Chmod 600 ubuntu02_key
 # 查看 nginx 的进程
 ps -ef | grep nginx
 # 设置 root 用户密码
-sudo passwd 
+sudo passwd
 # 切换用户
-su root 
+su root
 # 环境变量配置文件
-/etc/profile 
+/etc/profile
 # 远程登录
 ssh roottest@192.168.50.141
 ssh root@192.168.50.14 -P 8090
@@ -35,21 +35,21 @@ curl 127.0.0.1
 # 退出
 Exit
 # 更改主机用户名
-hostname hp 
+hostname hp
 # 查找文件位置
-where is nginx 
+where is nginx
 # (别名)查找文件位置
-which nginx 
+which nginx
 # 查看帮助
-main ls 
+main ls
 # 查看历史记录
-history 
+history
 # 产看系统信息
 top
 # 查看内存
-free 
+free
 # ip 地址
-ip a 
+ip a
 # 查看端口
 telnet www.baidu.com 80
 ```
