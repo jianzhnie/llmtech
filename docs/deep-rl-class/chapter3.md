@@ -8,7 +8,7 @@
 
 所以今天，**我们将研究我们的第一个Deep强化学习智能体**：Deep Q-Learning。Deep Q-Learning不使用 Q Table，而是使用神经网络，该神经网络输入状态并根据该状态为每个动作近似 Q 值。
 
-**我们将使用 RL-Zoo 训练它玩 Space Invaders 和其他 Atari 环境，RL[-Zoo](https://github.com/DLR-RM/rl-baselines3-zoo)是一种基于 Stable-Baselines 的 RL 训练框架，它提供用于训练、评估智能体、调整超参数、绘制结果和录制视频的脚本。
+我们将使用 RL-Zoo 训练它玩 Space Invaders 和其他 Atari 环境，RL[-Zoo](https://github.com/DLR-RM/rl-baselines3-zoo)是一种基于 Stable-Baselines 的 RL 训练框架，它提供用于训练、评估智能体、调整超参数、绘制结果和录制视频的脚本。
 
 ![环境](https://huggingface.co/blog/assets/78_deep_rl_dqn/atari-envs.gif)
 
