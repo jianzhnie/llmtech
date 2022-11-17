@@ -1,5 +1,3 @@
-
-
 # Deep Q Learning
 
 [在上一单元](https://huggingface.co/blog/deep-rl-q-part2)中，我们学习了第一个强化学习算法：Q-Learning， **从头开始实现它**，并在 FrozenLake-v1 ☃️ 和 Taxi-v3 🚕 两个环境中对其进行训练。
