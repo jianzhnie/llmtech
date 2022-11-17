@@ -14,7 +14,7 @@
 
 - 🔥 [机器学习](machine-learning/)
 - 🚀 [深度学习](deeplearning/)
-- 👑 [强化学习](deep-rl/)
+- 👑 [强化学习](deep-rl-class/)
 - 🦖 [计算机视觉](deeplearning/)
 - 💎 [自然语言处理](deeplearning/)
 - 🐍 [Python编程](python-handbook/)

@@ -3,7 +3,7 @@
 欢迎来到人工智能中最引人入胜的话题：深度强化学习。 深度强化学习是一种机器学习方法，其中智能体通过和环境交互来学习如何执行动作。
 
 
-自 2013 年 [Deep Q-Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf) 论文以来，已经看到了很多突破。从[击败世界上最优秀的 Dota2 玩家的OpenAI  5](https://www.twitch.tv/videos/293517383) 到 [Dexterity 项目 ](https://openai.com/blog/learning-dexterity/),  我们处在深度强化学习研究的激动人心的时刻。
+自 2013 年 [Deep Q-Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf) 论文以来，已经看到了很多突破。从[击败世界上最优秀的 Dota2 玩家的OpenAI  5](https://www.twitch.tv/videos/293517383) 到 [Dexterity 项目 ](https://openai.com/blog/learning-dexterity/),  我们处在深度强化学习研究的激动人心的时刻。
 
 <div align=center>
 <img width="600" src="https://huggingface.co/blog/assets/63_deep_rl_intro/OpenAIFive.jpg"/>
