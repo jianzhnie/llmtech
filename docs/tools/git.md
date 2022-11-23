@@ -248,7 +248,7 @@ ssh-keygen -t rsa -C "your_email@example.com"
 添加后，在终端（Terminal）中输入, 验证是否添加成功。
 
 ```
-ssh -T git@gitee.com
+ssh -T git@github.com
 ```
 
 ### 查看 log
