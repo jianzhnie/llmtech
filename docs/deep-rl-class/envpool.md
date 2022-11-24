@@ -2,10 +2,6 @@
 
 > 对于强化学习标准环境 Atari 与 Mujoco，如果希望在短时间内完成训练，需要采用数百个 CPU 核心的大规模分布式解决方案；而使用 EnvPool，只需要一台游戏本就能完成相同体量的训练任务，并且用时不到 5 分钟，极大地降低了训练成本。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIyCQWrJBTPTpicsncrhNWQO6lpknu6W9QysOIWHLV0NNzugL83mBIVvBQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-
-
 目前，**EnvPool** 项目已在 GitHub 开源，收获超过 500 Stars，并且受到众多强化学习研究者的关注。
 
 - 项目地址：https://github.com/sail-sg/envpool
@@ -93,44 +89,3 @@ while True:
 在 EnvPool 的论文中，作者们给出了如下 rl_games 的惊艳结果：只用一台游戏本，在其他条件都完全相同的情况下，把基于 ray 的 vectorized env 实现直接换成 EnvPool，能够直接获得免费的加速。
 
 Atari Pong 使用了 EnvPool，可以在大约 5 分钟的时候训练完成，相比而言 ray 的方案需要在大约 15 分钟的时候训练完成（达到接近 20 的 reward）；Mujoco Ant 更为明显，使用原始 PPO 算法在不到 5 分钟的时间内达到了超过 5000 的 reward，而基于 ray 的解决方案运行了半小时还没达到 5000。
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIyncSHfiauPLu365iafiacNvFg21S6zFEuWNLdAypaDhv3xyv8QKNfficphA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIyNDW5SCKP2MeaJicTjktKDpzwKeGJsGL40AyI7ib4HNZLcqwpCmPvskWA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-为了验证上述结果的真实性，我们尝试着运行了一下在 EnvPool README 提供的 colab 示例：
-
-- Pong：https://colab.research.google.com/drive/1iWFv0g67mWqJONoFKNWUmu3hdxn_qUf8?usp=sharing
-- Ant：https://colab.research.google.com/drive/1C9yULxU_ahQ_i6NUHCvOLoeSwJovQjdz?usp=sharing
-
-
-
-我们找了台和论文 appendix 中与 rl_games 的实验类似配置的机子：
-
-- OS: Debian GNU/Linux 11 (bullseye) x86_64
-- Kernel: 5.16.0-0.bpo.4-amd64
-- CPU: AMD Ryzen 9 5950X (32) @ 3.400GHz
-- GPU: NVIDIA GeForce RTX 3080 Ti
-- Memory: 128800MiB
-
-
-
-从 colab 的结果来看，Pong 跑到 200 个 epoch 结果已经收敛了，于是设置 200 个 epoch 跑测试，发现在这台测试机上运行代码，居然只需要要 2 分 17 秒就能跑完，并且 reward 能超过 19：
-
-
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIydOzRHEzRq1ibKxzuyic0ElgXauCW7LbUcVL3GHDHm3Fy62rsicftpGbpA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-Ant 跑到 1000 个 epoch 结果差不多收敛了。设置 max_epochs 为 1000 之后运行，在 2 分 36 秒之后运行完毕，并且 reward 超过了 5300：
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIyvribHkTwytj63RG98Aibibrgibwd21YeFrYA7n4g8H2O2c8TOovXgqoqlg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-
-
-![图片](https://mmbiz.qpic.cn/mmbiz_png/KmXPKA19gWicibR1SYqgGgRvZI9icRH1XIy1TBcmYWy5JqyyjicgTUqqX3EFkbRiaLlyMLnbJzqVwnnkN8oJOmts20g/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
-
-
-
-相比 RLLib 和 SeedRL 等工作，使用几百个 CPU 核心的分布式计算，EnvPool + rl_games 只用了单机做到了同样的效果（甚至更好），确实不错。
