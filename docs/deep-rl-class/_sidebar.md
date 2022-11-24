@@ -7,5 +7,5 @@
 
 
 - 强化学习工具篇
-
-  [EnvPool: 并行环境模拟器](deep-rl-class/envpool.md)
+- [Awesome RL Envs](deep-rl-class/awesomeRLtools.md)
+- [EnvPool: 并行环境模拟器](deep-rl-class/envpool.md)
