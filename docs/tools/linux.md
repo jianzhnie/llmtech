@@ -54,6 +54,14 @@ ip a
 telnet www.baidu.com 80
 ```
 
+## 杀死所有python 进程
+
+```python
+ps -ef | grep python| grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
+
+
 ## 权限问题
 
 ```shell
