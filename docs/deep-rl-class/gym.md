@@ -199,26 +199,47 @@ play(env, callback=plotter.callback)
 
 ### 核心 api
 
+#### step()
 
+```python
+gym.Env.step(self, action: ActType) → Tuple[ObsType, float, bool, bool, dict]
+```
+
+> gym.Env.**step****(***self***,** *action: ActType***)** **→ Tuple[ObsType, float, bool, bool, dict]**
+
+运行环境动力学的一个时间步骤。
+当 episode 结束时，需要调用 reset（）来重置此环境的状态。接受 action 并返回元组（observation, reward, terminated, truncated, info）。
+
+#### reset()
+
+>gym.Env.**reset****(***self***,** *****,** *seed: Optional[int] = None***,** *options: Optional[dict] = None***)** **→ Tuple[ObsType, dict]**
+
+#### render()
+
+> gym.Env.render(*self*) → Optional[Union[RenderFrame, List[RenderFrame]]][#](https://www.gymlibrary.dev/api/core/#gym.Env.render)
+
+#### Close()
+
+> gym.Env.close(*self*)
 
 ### Space
 
 Space主要定义了环境的观察和行动空间的有效格式。包含了Seed函数、Sample等各种各样的函数接口：
 
-1.discrete类
+#### 1.discrete类
 
 - Discrete类对应于一维离散空间
 - 定义一个Discrete类的空间只需要一个参数n就可以了
 - discrete space允许固定范围的非负数
 - 每个时间步agent只采取离散空间中的一个动作，如离散空间中actions=\[上、下、左、右\]，一个时间步可能采取“上”这一个动作。
 
-2.box类
+#### 2.box类
 
 - box类对应于多维连续空间
 - Box空间可以定义多维空间，每一个维度可以用一个最低值和最大值来约束
 - 定义一个多维的Box空间需要知道每一个维度的最小最大值，当然也要知道维数。
 
-3.multidiscrete类
+#### 3.multidiscrete类
 
 - 用于多维离散空间
 
@@ -316,8 +337,6 @@ array([False, False, False])
 >>> infos
 ({}, {}, {})
 ```
-
-
 
 ## Environment
 
