@@ -7,5 +7,6 @@
 
 
 - 强化学习工具篇
+- [openai Gym ](deep-rl-class/gym.md)
 - [Awesome RL Envs](deep-rl-class/awesomeRLtools.md)
 - [EnvPool: 并行环境模拟器](deep-rl-class/envpool.md)
