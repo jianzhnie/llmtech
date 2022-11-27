@@ -1,7 +1,3 @@
-
-
-
-
 ## OpenSpiel
 
 GitHub：https://github.com/deepmind/open_spiel
