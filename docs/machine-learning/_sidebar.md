@@ -23,3 +23,9 @@
   - [Spark生态](machine-learning/Spark/Spark生态.md)
   - [SparkSQL](machine-learning/Spark/SparkSQL.md)
   - [SparkStreming](machine-learning/Spark/SparkStreming.md)
+
+
+- Python HandBook
+  - [Python Hook](machine-learning/python/How-to-use-hook-in-python.md)
+  - [Python 迭代器](machine-learning/python/itertools.md)
+  - [行为树](machine-learning/python/behavior_tree.md)
