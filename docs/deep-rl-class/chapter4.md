@@ -82,33 +82,35 @@ Reinforce，也称为 Monte-Carlo Policy Gradient，**使用整个 episode 的�
 
 其中，$\pi_\theta(a_t|s_t)$ 是根据我们的策略，智能体从状态 $s_t$ 选择动作的概率。
 
-**但是我们怎么知道我们的Policy是否好呢？** 我们需要有一种方法来衡量它。要知道我们定义了一个得分/目标函数，称为 $J(θ)$.
+**我们怎么知道我们的Policy是否好呢？** 需要有一种方法来衡量它。我们定义一个得分/目标函数，称为 $J(θ)$.
 
-得分函数 J 是回报的期望：
+得分函数 J 是折扣回报的期望：
 
 ![返回](https://huggingface.co/blog/assets/85_policy_gradient/objective.jpg)
 
 记住，策略梯度可以看作是一个优化问题。所以我们必须找到最佳参数 (θ) 来最大化得分函数 $J(θ)$。
 
-为此，我们将使用[策略梯度定理](https://www.youtube.com/watch?v=AKbX1Zvo7r8)。我不打算深入探讨数学细节，但如果您有兴趣，请[观看此视频](https://www.youtube.com/watch?v=AKbX1Zvo7r8)
+为此，我们将使用[策略梯度定理](https://www.youtube.com/watch?v=AKbX1Zvo7r8)。这里不打算深入探讨数学细节，但如果您有兴趣，请[观看此视频](https://www.youtube.com/watch?v=AKbX1Zvo7r8)
 
-Reinforce 算法的工作原理如下： 循环：
+Reinforce 算法的工作原理如下： 
 
-- 使用 Policy $\pi_\theta$的 收集智能体的轨迹 episode， $\tau$
-- 使用 episode 来估计梯度 $\hat{g} = \nabla_\theta J(\theta)$
+循环：
+
+- 使用 Policy $\pi_\theta$ 收集智能体的轨迹 episode， $\tau$
+- 使用 episode 的数据来估计梯度 $\hat{g} = \nabla_\theta J(\theta)$
 
 ![策略梯度](https://huggingface.co/blog/assets/85_policy_gradient/pg.jpg)
 
 - 更新策略的权重：$\theta \leftarrow \theta + \alpha \hat{g}$
 
 
-我们可以做出的解释是：
+可以做出的解释是：
 
-- $\nabla_\theta logπθ(at∣st)$是从状态 $ s_t$ 选择动作**的（对数）概率最陡增**的方向。=> 这告诉用户如果我们想增加/减少在状态 st 选择动作的对数概率，**我们应该如何改变策略的权重。**
+- $\nabla_\theta logπ_θ(a_t∣s_t)$是从状态 $ s_t$ 选择动作**的（对数）概率最陡增**的方向。=> 这告诉用户如果我们想增加/减少在状态 st 选择动作的对数概率，**我们应该如何改变策略的权重。**
 
 - $R(\tau)$: 是评分函数：
 
   - 如果回报很高，它会推高（状态，动作）组合的概率。
   - 否则，如果回报很低，它会降低（状态，动作）组合的概率。
 
-现在我们研究了 Reinforce 背后的理论，接下来，我们将使用 PyTorch 编程实现 Reinforce 智能体。
+我们研究了 Reinforce 背后的理论，接下来，我们将使用 PyTorch 编程实现 Reinforce 智能体。
