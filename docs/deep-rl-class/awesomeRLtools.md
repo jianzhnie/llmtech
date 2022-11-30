@@ -93,7 +93,17 @@ PettingZoo 用于进行多智能体强化学习研究环境，类似于Gym的多
 - https://pettingzoo.farama.org/
 - https://github.com/Farama-Foundation/PettingZoo
 
+## Mava
 
+https://github.com/instadeepai/Mava
+
+Mava 是一个用于构建多智能体强化学习 (MARL) 系统的库。Mava 为 MARL 提供了有用的组件、抽象、实用程序和工具，并允许对多进程系统训练和执行进行简单的扩展，同时提供高度的灵活性和可组合性。
+
+### Systems and the Executor-Trainer Paradigm
+
+Mava 框架的核心是系统的概念。系统是指完整的多智能体强化学习算法，由以下特定组件组成：执行器、训练器和数据集。
+
+“执行器(Executor)”是系统的一部分，它与环境交互，为每个智能体采取行动并观察下一个状态作为观察集合，系统中的每个代理一个。本质上，执行器是 Acme 中 Actor 类的多智能体版本，它们本身是通过向执行器提供策略网络字典来构建的。Trainer 负责从最初从 executor 收集的 Dataset 中采样数据，并更新系统中每个 agent 的参数。因此，Trainers 是 Acme 中 Learner 类的多智能体版本。数据集以字典集合的形式存储了执行者收集的所有信息，用于操作、观察和奖励，并带有与各个智能体 ID 对应的键。基本系统设计如上图左侧所示。可以查看系统实现的几个示例
 
 ## algorithms
 
