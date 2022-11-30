@@ -27,9 +27,7 @@
   - [SparkStreming](machine-learning/Spark/SparkStreming.md)
   - [基于NVIDIAGPU和RAPIDS加速Spark3.0](machine-learning/Spark/基于NVIDIAGPU和RAPIDS加速Spark3.0.md)
 
-# Python HandBook
-
-Python HandBook
+- Python HandBook
   - [Python Hook](machine-learning/python/How-to-use-hook-in-python.md)
   - [Python 迭代器](machine-learning/python/itertools.md)
   - [行为树](machine-learning/python/behavior_tree.md)
