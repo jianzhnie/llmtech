@@ -5,5 +5,6 @@
 - [机器学习](machine-learning/)
 - [工具集合](tools/)
 - [Python](python-handbook/)
+- [其他](other/)
 - [关于](https://jianzhnie.github.io/)
 - [友链 🔗](links.md)
