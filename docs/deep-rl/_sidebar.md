@@ -1,29 +1,14 @@
-- 深度强化学习
-- [第一章 强化学习基础](deep-rl/chapter1/chapter1.md)
-- [第一章 习题](deep-rl/chapter1/chapter1_questions&keywords)
-- [第二章 马尔可夫决策过程 (MDP)](deep-rl/chapter2/chapter2)
-- [第二章 习题](deep-rl/chapter2/chapter2_questions&keywords)
-- [第三章 表格型方法](deep-rl/chapter3/chapter3)
-- [第三章 习题](deep-rl/chapter3/chapter3_questions&keywords)
-- [项目一 使用 Q-learning 解决悬崖寻路问题](deep-rl/chapter3/project1)
-- [第四章 策略梯度](deep-rl/chapter4/chapter4)
-- [第四章 习题](deep-rl/chapter4/chapter4_questions&keywords)
-- [第五章 近端策略优化 (PPO) 算法](deep-rl/chapter5/chapter5)
-- [第五章 习题](deep-rl/chapter5/chapter5_questions&keywords)
-- [第六章 DQN (基本概念)](deep-rl/chapter6/chapter6)
-- [第六章 习题](deep-rl/chapter6/chapter6_questions&keywords)
-- [第七章 DQN (进阶技巧)](deep-rl/chapter7/chapter7)
-- [第七章 习题](deep-rl/chapter7/chapter7_questions&keywords)
-<!-- - [项目二 使用 DQN 实现 CartPole-v0](chapter7/project2)
-- [第八章 DQN (连续动作)](chapter8/chapter8)
-- [第八章 习题](chapter8/chapter8_questions&keywords)
-- [第九章 演员-评论员算法](chapter9/chapter9)
-- [第九章 习题](chapter9/chapter9_questions&keywords)
-- [第十章 稀疏奖励](chapter10/chapter10)
-- [第十章 习题](chapter10/chapter10_questions&keywords)
-- [第十一章 模仿学习](chapter11/chapter11)
-- [第十一章 习题](chapter11/chapter11_questions&keywords)
-- [第十二章 深度确定性策略梯度 (DDPG) 算法](chapter12/chapter12)
-- [第十二章 习题](chapter12/chapter12_questions&keywords)
-- [项目三 使用 Policy-Based 方法实现 Pendulum-v0](chapter12/project3)
-- [第十三章 AlphaStar 论文解读](chapter13/chapter13) -->
+
+- 深度强化学习课程
+  - [第一章：深度强化学习简介](deep-rl/deep-rl-class/chapter1.md)
+  - [第二章：Q-Learning ](deep-rl/deep-rl-class/chapter2.md)
+  - [第三章：Deep Q-Learning ](deep-rl/deep-rl-class/chapter3.md)
+  - [第四章：Policy Gradient  ](deep-rl/deep-rl-class/chapter4.md)
+
+- 强化学习工具篇
+  - [openai Gym ](deep-rl-class/gym.md)
+  - [Awesome RL Envs](deep-rl-class/awesomeRLtools.md)
+  - [EnvPool: 并行环境模拟器](deep-rl-class/envpool.md)
+
+- 相关论文算法
+  - [qmix](deep-rl/papers/qmix.md)
