@@ -1,2 +1,2 @@
-- 七杂八
-- 📚 [Kindle电子书下载](other/kindle.md)
+- 杂七杂八
+  - [Kindle电子书下载](other/kindle.md)
