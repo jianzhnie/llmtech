@@ -34,10 +34,10 @@
 
 然而，增加Batch_size会显着**降低采样效率**。所以我们需要找到额外的机制来减少方差。
 
-如果你想更深入地研究深度强化学习中的方差和偏差权衡问题，可以查看这两篇文章：
+如果你想更深入地研究深度强化学习中的方差和偏差平衡问题，可以查看这两篇文章：
 
-- [理解（深度）强化学习中的偏差/方差权衡](https://blog.mlreview.com/making-sense-of-the-bias-variance-trade-off-in-deep-reinforcement-learning-79cf1e83d565)
-- [强化学习中的偏差方差权衡](https://www.endtoend.ai/blog/bias-variance-tradeoff-in-reinforcement-learning/)
+- [理解（深度）强化学习中的偏差/方差平衡](https://blog.mlreview.com/making-sense-of-the-bias-variance-trade-off-in-deep-reinforcement-learning-79cf1e83d565)
+- [强化学习中的偏差方差平衡](https://www.endtoend.ai/blog/bias-variance-tradeoff-in-reinforcement-learning/)
 
 ------
 
@@ -57,19 +57,19 @@
 
 另一方面，您的朋友（Critic）也会更新他们提供反馈的方式，以便下次可以做得更好。
 
-这就是 Actor-Critic 背后的想法。我们学习两个函数逼近：
+这就是 Actor-Critic 背后的想法。我们学习了两个函数逼近：
 
 - **控制我们的智能体人行为方式**的*策略*：$\pi_{\theta}(s,a)$
 - 通过衡量所采取的动作好坏的来协助策略更新的*价值函数：*$\hat{q}_{w}(s,a)$
 
 ### Actor-Critic过程
 
-现在我们已经看到了 Actor Critic 的大局观，让我们更深入地了解 Actor 和 Critic 在训练过程中是如何一起改进的。
+现在我们已经从宏观层面理解了Actor Critic，接下来让我们更深入地了解 Actor 和 Critic 在训练过程中是如何进行改进和优化的。
 
 正如我们所见，Actor-Critic 方法有两个函数近似（两个神经网络）：
 
 - *Actor*，由 theta 参数化的**策略函数：**$\pi_{\theta}(s,a)$
-- *Critic*，由 w 参数化的**值函数：**$\hat{q}_{w}(s,a)$
+- *Critic*，由 w 参数化的**价值函数：**$\hat{q}_{w}(s,a)$
 
 让我们看看训练过程，了解 Actor 和 Critic 是如何被优化的：
 
@@ -82,7 +82,7 @@
 
 ![Step 2 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step2.jpg)
 
-- 环境接受动作 $A_t$ 并输出一个新的状态 $S_{t+1}$ 的和奖励 $R_{t+1}$.
+- 环境执行动作 $A_t$ 并输出一个新的状态 $S_{t+1}$ 和奖励 $R_{t+1}$.
 
 ![步骤 3 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step3.jpg)
 
@@ -90,8 +90,8 @@
 
 ![步骤 4 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step4.jpg)
 
-- 在给定新状态 $S_{t+1}$下， Actor 产生了下一步要采取的动作 $A_{t+1}$ 。
-- 然后 Critic 更新它的值参数。
+- 更新完参数的 Actor，在给定新状态 $S_{t+1}$下产生了下一步要采取的动作 $A_{t+1}$ 。
+- 然后 Critic 更新它的价值函数的参数。
 
 ![步骤 5 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step5.jpg)
 
@@ -99,16 +99,16 @@
 
 我们可以通过**使用 Advantage function 作为 Critic 而不是 Action value function 来**进一步稳定学习。
 
-这个想法是 Advantage 函数计算**在一个状态下采取该动作与该状态的平均值的相对优势**。它是从状态动作对中减去状态的平均值：
+这个想法是 Advantage 函数计算**在一个状态下采取该动作与该状态的平均值的相对优势**。它通过从状态动作对中减去状态的平均值：
 
 ![优势功能](https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage1.jpg)
 
-换句话说，这个函数计算**的是如果我们在那个状态下采取这个动作，我们得到的额外奖励与我们在那个状态下得到的平均奖励相比**。
+换句话说，这个函数计算**的是如果我们在那个状态下采取这个动作，我们得到的额外奖励与我们在那个状态下得到的平均奖励相比**的优势。
 
-额外的奖励是超出该状态预期值的。
+而额外的奖励则是超出该状态预期值的。
 
 - 如果 A(s,a) > 0：我们的梯度被**推向那个方向**。
-- 如果 A(s,a) < 0（我们的动作比那个状态的平均值差），**我们的梯度被推向相反的方向**。
+- 如果 A(s,a) < 0（我们的动作价值比那个状态的平均值要差），**我们的梯度被推向相反的方向**。
 
 实现这个优势函数的问题在于它需要两个价值函数—$Q(s,a)$ 和 $V(s)$. 幸运的是， **我们可以使用 TD 误差作为优势函数的良好估计量。**
 
