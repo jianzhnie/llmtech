@@ -1,6 +1,6 @@
 # QMIX
 
-## 多智能体强化学习的单调值函数因子分解
+### 多智能体强化学习的单调值函数因子分解
 
 - *QMIX 论文链接： https://arxiv.org/pdf/1803.11485.pdf*
 - *QMIX 实现代码：https://github.com/oxwhirl/pymarl*
@@ -262,6 +262,10 @@ class QMixer(nn.Module):
 
 ## Reference
 
+- *QMIX 论文链接： https://arxiv.org/pdf/1803.11485.pdf*
+- *QMIX 实现代码：https://github.com/oxwhirl/pymarl*
+
 - https://liushunyu.github.io/2020/06/18/
 - https://blog.csdn.net/qq_38638132/article/details/114177729
 - https://www.zhihu.com/search?type=content&q=QMIX
+
