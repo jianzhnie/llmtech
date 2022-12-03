@@ -13,4 +13,4 @@
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
 
 - 相关论文算法
-  - [qmix](deep-rl/papers/qmix.md)
+  - [QMIX](deep-rl/papers/qmix.md)
