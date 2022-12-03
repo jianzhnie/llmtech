@@ -12,5 +12,9 @@
   - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
 
-- 相关论文算法
+
+- 强化学习[论文/算法]
+- 多智能体强化学习
   - [QMIX](deep-rl/papers/qmix.md)
+  - [MADDPG](deep-rl/papers/MADDPG.md)
+  - [DRQN](deep-rl//papers/DRQN.md)
