@@ -33,11 +33,16 @@ QMIX 具有如下特点：
 - 一个为中心式训练网络（Critic），该网络只在训练阶段存在，获取全局信息作为输入并指导 Agent 行为控制网络（Actor）进行更新；
 - 另一个为行为控制网络（Actor），该网络也是最终被应用的网络，在训练和应用阶段都保持着相同的数据输入。
 
-在多智能体强化学习中一个关键的问题就是如何学习联合动作值函数，因为该函数的参数会随着智能体数量的增多而成指数增长，如果动作值函数的输入空间过大，则很难拟合出一个合适函数来表示真实的联合动作值函数。另一个问题就是学得了联合动作值函数后，如何通过联合值函数提取出一个优秀的分布式的策略。这其实是单智能体]强化学习拓展到MARL的**核心问题**。
+在多智能体强化学习中一个关键的问题就是如何学习联合动作值函数，因为该函数的参数会随着智能体数量的增多而成指数增长，如果动作值函数的输入空间过大，则很难拟合出一个合适函数来表示真实的联合动作值函数。另一个问题就是学得了联合动作值函数后，如何通过联合值函数提取出一个优秀的分布式的策略。这其实是单智能体强化学习拓展到MARL的**核心问题**。
 
 ### Dec-POMDP
 
-Dec-POMDP是将POMDP拓展到多智能体系统。每个智能体的局部观测信息 $o_{i,t}$ ，动作 $a_{i,t}$ ，系统状态为 $s_t$ 。其主要新定义了几个概念，简要介绍几个主要的。每个智能体的动作-观测历史可表示为  $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$，表示从初始状态开始，该智能体的时序动作-观测记录，联合动作-观测历史 $\tau=(\tau_1,\cdots,\tau_n)$ 表示从初始状态开始，所有智能体的时序动作-观测记录。则每个智能体的分布式策略为 $\pi_i(\tau_i)$ ，其值函数为 $Q_i(\tau_i,a_i;\theta_i)$ 都是跟动作-观测历史 $\tau_i$ 有关，而不是跟状态有关了。
+多智能体部分可观测马尔科夫过程
+
+Dec-POMDP是将POMDP拓展到多智能体系统。每个智能体的局部观测信息 $o_{i,t}$ ，动作 $a_{i,t}$ ，系统状态为 $s_t$ 。其主要新定义了几个概念，简要介绍几个主要的：
+
+- 每个智能体的动作-观测历史可表示为  $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$，表示从初始状态开始，该智能体的时序动作-观测记录，
+- 联合动作-观测历史 $\tau=(\tau_1,\cdots,\tau_n)$ 表示从初始状态开始，所有智能体的时序动作-观测记录。则每个智能体的分布式策略为 $\pi_i(\tau_i)$ ，其值函数为 $Q_i(\tau_i,a_i;\theta_i)$ 都是跟动作-观测历史 $\tau_i$ 有关，而不是跟状态有关。
 
 ### DRQN (Deep Recurrent Q-Learning)
 
@@ -87,7 +92,7 @@ $${\rm argmax}_uQ_{tot}(\tau,u)=\left( \begin{aligned} {\rm argmax}_{u_1}&Q_1(\t
 
 QMIX 通过提出单调性假设放松了 VDN 中对单智能体的价值函数直接求和等于联合价值函数的约束限制，
 
-因此分布式策略就是贪心的通过局部 $Q_i $获取最优动作。QMIX将(1)转化为一种单调性约束，如下所示
+因此分布式策略就是贪心的通过局部 $Q_i $获取最优动作。QMIX将(1)转化为一种单调性约束，如下所示：
 
 $$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $$    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
 
@@ -97,13 +102,13 @@ $$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $$ 
 
 其主要结构与 VDN 类似，重点修改在于引入将额外状态信息加入到单智能体的价值函数到联合价值函数的映射过程，并将其称为 mixing network。
 
-图(c) 表示每个智能体采用一个DRQN来拟合自身的Q值函数 $Q_i(\tau_i,a_i;\theta_i)$ ，DRQN循环输入当前的观测 $o_{i,t}$ 以及上一时刻的动作 $a_{i,t-1}$ 来得到Q值。
+图(b)表示整体的 qmix 网络结构, 由 agent 网络 和 mixing 网络组成。
 
-图(b)表示混合网络的结构。其输入为每个DRQN网络的输出。为了满足上述的单调性约束，混合网络的所有权值都是非负数，对偏移量不做限制，这样就可以确保满足单调性约束。
+图(a)表示混合网络的结构。其输入为每个DRQN网络的输出。为了满足上述的单调性约束，混合网络的所有权值都是非负数，对偏移量不做限制，这样就可以确保满足单调性约束。
 
-混合网络最后一层的偏移量通过两层网络以及ReLU激活函数得到[非线性映射]网络。由于状态信息 $s_t$ 是通过超网络混合到 $Q_{tot}$ 中的，而不是仅仅作为混合网络的输入项，这样带来的一个好处是，如果作为输入项则 $s_t$ 的系数均为正，这样则无法充分利用状态信息来提高系统性能，相当于舍弃了一半的信息量。
+图(c) 表示Agent 网络结构，每个智能体采用一个DRQN来拟合自身的Q值函数 $Q_i(\tau_i,a_i;\theta_i)$ ，DRQN循环输入当前的观测 $o_{i,t}$ 以及上一时刻的动作 $a_{i,t-1}$ 来得到Q值。
 
-mixing network 的权重和 bias 来自于 hypernetwork 的输出。
+混合网络最后一层的偏移量通过两层网络以及ReLU激活函数得到非线性映射网络。由于状态信息 $s_t$ 是通过超网络混合到 $Q_{tot}$ 中的，而不是仅仅作为混合网络的输入项，这样带来的一个好处是，如果作为输入项则 $s_t$ 的系数均为正，这样则无法充分利用状态信息来提高系统性能，相当于舍弃了一半的信息量。
 
 为了能够更多的利用到系统的状态信息 $s_t$ ，采用一种超网络（hypernetwork）。
 
@@ -121,8 +126,6 @@ $$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $$Q
 
 由于满足上文的单调性约束，对 $Q_{tot} $ 进行 $argmax$ 操作的计算量就不在是随智能体数量呈指数增长了，而是随智能体数量线性增长，极大的提高了算法效率。
 
-
-
 ## 代码实现
 
 ### Agent RNN Network
@@ -132,12 +135,98 @@ QMIX 中每一个 Agent 都由 RNN 网络控制，在训练时你可以为每一
 RNN 网络一共包含 3 层，输入层（MLP）→ 中间层（GRU）→ 输出层（MLP），实现代码如下：
 
 ```python
+import torch.nn as nn
+import torch.nn.functional as F
 
+class RNNAgent(nn.Module):
+    def __init__(self, input_shape, args):
+        super(RNNAgent, self).__init__()
+        self.args = args
+
+        self.fc1 = nn.Linear(input_shape, args.rnn_hidden_dim)
+        self.rnn = nn.GRUCell(args.rnn_hidden_dim, args.rnn_hidden_dim)
+        self.fc2 = nn.Linear(args.rnn_hidden_dim, args.n_actions)
+
+    def init_hidden(self):
+        # make hidden states on same device as model
+        return self.fc1.weight.new(1, self.args.rnn_hidden_dim).zero_()
+
+    def forward(self, inputs, hidden_state):
+        x = F.relu(self.fc1(inputs))
+        h_in = hidden_state.reshape(-1, self.args.rnn_hidden_dim)
+        h = self.rnn(x, h_in)
+        q = self.fc2(h)
+        return q, h
 ```
 
 ### Mixing Network
 
-Mixing 网络相当于 Critic 网络，同时接收 Agent RNN Network 的 Q 值和当前全局状态 $s_t$ ，输出在当前状态下所有 Agent 联合行为 u 的行为效用值 $Q_{tot}$
+Mixing 网络相当于 Critic 网络，同时接收 Agent RNN Network 的 Q 值和当前全局状态 $s_t$ ，输出在当前状态下所有 Agent 联合行为的行为效用值 $Q_{tot}$
+
+```python
+import torch as th
+import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+
+
+class QMixer(nn.Module):
+    def __init__(self, args):
+        super(QMixer, self).__init__()
+
+        self.args = args
+        self.n_agents = args.n_agents
+        self.state_dim = int(np.prod(args.state_shape))
+
+        self.embed_dim = args.mixing_embed_dim
+
+        if getattr(args, "hypernet_layers", 1) == 1:
+            self.hyper_w_1 = nn.Linear(self.state_dim, self.embed_dim * self.n_agents)
+            self.hyper_w_final = nn.Linear(self.state_dim, self.embed_dim)
+        elif getattr(args, "hypernet_layers", 1) == 2:
+            hypernet_embed = self.args.hypernet_embed
+            self.hyper_w_1 = nn.Sequential(nn.Linear(self.state_dim, hypernet_embed),
+                                           nn.ReLU(),
+                                           nn.Linear(hypernet_embed, self.embed_dim * self.n_agents))
+            self.hyper_w_final = nn.Sequential(nn.Linear(self.state_dim, hypernet_embed),
+                                           nn.ReLU(),
+                                           nn.Linear(hypernet_embed, self.embed_dim))
+        elif getattr(args, "hypernet_layers", 1) > 2:
+            raise Exception("Sorry >2 hypernet layers is not implemented!")
+        else:
+            raise Exception("Error setting number of hypernet layers.")
+
+        # State dependent bias for hidden layer
+        self.hyper_b_1 = nn.Linear(self.state_dim, self.embed_dim)
+
+        # V(s) instead of a bias for the last layers
+        self.V = nn.Sequential(nn.Linear(self.state_dim, self.embed_dim),
+                               nn.ReLU(),
+                               nn.Linear(self.embed_dim, 1))
+
+    def forward(self, agent_qs, states):
+        bs = agent_qs.size(0)
+        states = states.reshape(-1, self.state_dim)
+        agent_qs = agent_qs.view(-1, 1, self.n_agents)
+        # First layer
+        w1 = th.abs(self.hyper_w_1(states))
+        b1 = self.hyper_b_1(states)
+        w1 = w1.view(-1, self.n_agents, self.embed_dim)
+        b1 = b1.view(-1, 1, self.embed_dim)
+        hidden = F.elu(th.bmm(agent_qs, w1) + b1)
+        # Second layer
+        w_final = th.abs(self.hyper_w_final(states))
+        w_final = w_final.view(-1, self.embed_dim, 1)
+        # State-dependent bias
+        v = self.V(states).view(-1, 1, 1)
+        # Compute final output
+        y = th.bmm(hidden, w_final) + v
+        # Reshape and return
+        q_tot = y.view(bs, -1, 1)
+        return q_tot
+```
+
+
 
 ## 示例
 
@@ -173,7 +262,6 @@ Mixing 网络相当于 Critic 网络，同时接收 Agent RNN Network 的 Q 值�
 
 ## Reference
 
-
-
-
-
+- https://liushunyu.github.io/2020/06/18/
+- https://blog.csdn.net/qq_38638132/article/details/114177729
+- https://www.zhihu.com/search?type=content&q=QMIX
