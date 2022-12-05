@@ -15,6 +15,10 @@
 
 - 强化学习[论文/算法]
 - 多智能体强化学习
+  - [DRQN](deep-rl/papers/DRQN.md)
+  - [IQL](deep-rl/papers/iql.md)
+  - [COMA](deep-rl/papers/COMA.md)
+  - [VDN](deep-rl/papers/vdn.md)
+  - [QTRAN](deep-rl/papers/QTRAN.md)
   - [QMIX](deep-rl/papers/qmix.md)
   - [MADDPG](deep-rl/papers/MADDPG.md)
-  - [DRQN](deep-rl//papers/DRQN.md)
