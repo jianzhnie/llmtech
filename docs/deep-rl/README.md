@@ -22,4 +22,6 @@
 
 ### 强化学习论文
 
-- [qmix](deep-rl/papers/qmix.md)
+- [QMIX](deep-rl/papers/qmix.md)
+- [MADDPG](deep-rl/papers/MADDPG.md)
+- [DRQN](deep-rl//papers/DRQN.md)
