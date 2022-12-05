@@ -58,11 +58,27 @@ DPG可以是使用AC的方法来估计一个Q函数，DDPG就是借用了DQN经�
 
 ## MADDPG
 
-下面我们一次介绍MADDPG技巧。
+下面我们介绍MADDPG技巧。
 
-### 多智能体AC设计
+环境的设置有较强的通用性：
+
+(1)每个智能体在实际执行时只使用local observation；
+
+ (2)不对环境建模；
+
+(3)不对智能体间的通信做显式建模。
+
+然而，既然在实际中不知道其他agent的信息，但是其他的agent的信息能够很好的帮助学习，很自然就会想：我们就在训练的时候使用这些信息，实际运用的时候的不用这些信息，那很自然就可以学习出一个更好的agent了。
+
+更进一步，我们想要在offline的时候利用更多的信息学习出一个拥有比较好policy的agent，但是为了能够在实际的设置中使用，这个agent的policy的输入与输出在训练与实际使用的时候应该一样，所以无法直接把额外的信息直接结合在policy的输入中。那么有一种想法就是这些额外的信息既然无法直接用，那么就拿来做更准确的梯度的估计，那么很直观的想法就是用Actor Critic结构。
+
+### 多智能体Actor Critic 
 
 MADDPG集中式的学习，分布式的应用。因此我们允许使用一些额外的信息（全局信息）进行学习，只要在应用的时候使用局部信息进行决策就行。这点就是Q-learning的一个不足之处，Q-learning在学习与应用时必须采用相同的信息。所以这里MADDPG对传统的AC算法进行了一个改进，Critic扩展为可以利用其他智能体的策略进行学习，这点的进一步改进就是每个智能体对其他智能体的策略进行一个函数逼近。
+
+每一个智能体使用自己独立的actor，通过自己观测状态o，输出确定的动作a，同时训练数据也只使用自己产生的训练数据，每一个agent同时也对应一个critic，但是该critic同时接收所有actor产生的数据，本文将其当做中心化的critic。这种中心化critic和普通的中心化critic不同的是，本文的critic存在N个（每个agent一个）。
+
+![dSfaDJ.png](https://s1.ax1x.com/2020/08/13/dSfaDJ.png)
 
 我们用 $\theta=[\theta_1,\cdots,\theta_n] $表示n个智能体策略的参数， $\pi=[\pi_1,\cdot,\pi_n]$ 表示n个智能体的策略。针对第i个智能体的累积期望奖励 $J(\theta_i)=E_{s\sim \rho^{\pi},a_i\sim \pi_{\theta_i}}[\sum_{t=0}^{\infty}\gamma^t r_{i,t}] $，针对随机策略，求策略梯度为：
 
@@ -72,9 +88,9 @@ $$\nabla_{\theta_i}J(\theta_i)=E_{s\sim \rho^\pi,a_i\sim \pi_i}[\nabla_{\theta_i
 
 上述为随机策略梯度算法，下面我们拓展到确定性策略 $\mu_{\theta_i} $，梯度公式为
 
-$$[\nabla_{\theta_i}\mu_i(a_i|o_i)\nabla_{a_i}Q_i^\mu(x,a_1,\cdots,a_n)|_{a_i=\mu_i(o_i)}] $$
+$$\nabla_{\theta_{i}} J\left(\boldsymbol{\mu}_{i}\right) = \mathbb{E}_{\mathbf{x}, a \sim \mathcal{D}}\left[\left.\nabla_{\theta_{i}} \boldsymbol{\mu}_{i}\left(a_{i} | o_{i}\right) \nabla_{a_{i}} Q_{i}^{\boldsymbol{\mu}}\left(\mathbf{x}, a_{1}, \ldots, a_{N}\right)\right|_{a_{i}=\boldsymbol{\mu}_{i}}\left(o_{i}\right)\right]$$
 
-由以上两个梯度公式可以看出该算法与SPG与DPG十分类似，就像是将单体直接扩展到多体。但其实 $Q_i^\mu$是一个非常厉害的技巧，针对每个智能体建立值函数，极大的解决了传统RL算法在Multi-agent领域的不足。D是一个经验存储（experience replay buffer），元素组成为 $(x,x',a_1,\cdots,a_n,r_1,\cdots,r_n)$ 。集中式的critic的更新方法借鉴了DQN中TD与目标网络思想
+由以上两个梯度公式可以看出该算法与SPG与DPG十分类似，就像是将单体直接扩展到多智能体。但其实 $Q_i^\mu$是一个非常厉害的技巧，针对每个智能体建立值函数，极大的解决了传统RL算法在Multi-agent领域的不足。D是一个经验存储（experience replay buffer），元素组成为 $(x,x',a_1,\cdots,a_n,r_1,\cdots,r_n)$ 。集中式的critic的更新方法借鉴了DQN中TD与目标网络思想
 
 $$L(\theta_i)=E_{x,a,r,x'}[(Q_i^\mu(x,a_1,\cdots,a_n)-y)^2],\qquad \rm{where}\ y=r_i+\gamma \overline Q_i^{\mu'}(x',a_1',\cdots,a_n')|_{a_j'=\mu_j'(o_j)}\qquad (1) $$
 
@@ -84,17 +100,21 @@ $Q_i^{\mu'}$ 表示目标网络，$\mu'=[\mu_1',\cdots,\mu_n']$ 为目标策略�
 
 ### 估计其他智能体策略
 
-在(1)式中，我们用到了其他智能体的策略，这需要不断的通信来获取，但是也可以放宽这个条件，通过对其他智能体的策略进行估计来实现。每个智能体维护n-1个策略逼近函数 $\mu_{\phi_i^j}$ 表示第i个智能体对第j个智能体策略 $\mu_j$ 的函数逼近。其逼近代价为对数代价函数，并且加上策略的熵，其代价函数可以写为
+在(1)式中，我们用到了其他智能体的策略，知道其他agent的策略这个假设过于强，所以这里提出弱化该假设的方法：知道对手的action，不知道对手的policy。然后通过别人的observation和action来估计出别人的policy。所以可以采用极大似然估计来估计policy，另外加上一个entropy增加policy的不确定性：
+
+每个智能体维护n-1个策略逼近函数 $\mu_{\phi_i^j}$ 表示第i个智能体对第j个智能体策略 $\mu_j$ 的函数逼近。其逼近代价为对数代价函数，并且加上策略的熵，其代价函数可以写为
 
 $$L(\phi_i^j)=-E_{o_j,a_j}[\log \hat \mu_{\phi_i^j}(a_j|o_j)+\lambda H(\hat \mu_{ \phi_i^j})]$$
 
-只要最小化上述代价函数，就能得到其他智能体策略的逼近。因此可以替换(1)式中的y。
+只要最小化上述代价函数，就能得到其他智能体策略的逼近。因此可以替换(1)式中的y，进而更新Critic：
 
 $$y=r_i+\gamma \overline Q_i^{\mu'}(x',\hat \mu_{\phi_i^j}'^1(o_1),\cdots,\hat \mu_{\phi_i^j}'^n(o_n)) $$
 
 在更新 $Q_i^\mu$ 之前，利用经验回放的一个采样batch更新 $\hat \mu_{\phi_i^j} $。
 
 ### 策略集合优化（policies ensemble）
+
+很多时候agent使用的策略只对当前的其他agent使用的策略有效，一旦其他agent稍微变化效果就变差，所以在这里我们对每个agent都训练k个不同的策略，然后在每次训练的时候就在这个策略集中随机挑选一个，那么这样就有可能能够学出k个不同的策略，但是在实际运用中，我们只使用一个policy，所以我们可以利用这k个策略来做权衡，学习出一个总的策略。对于每个sub policy单独采用MADDPG学习：
 
 这个技巧也是本文的一个亮点。多智能体强化学习一个顽固的问题是由于每个智能体的策略都在更新迭代导致环境针对一个特定的智能体是动态不稳定的。这种情况在竞争任务下尤其严重，经常会出现一个智能体针对其竞争对手过拟合出一个强策略。但是这个强策略是非常脆弱的，也是我们希望得到的，因为随着竞争对手策略的更新改变，这个强策略很难去适应新的对手策略。
 
@@ -103,3 +123,24 @@ $$y=r_i+\gamma \overline Q_i^{\mu'}(x',\hat \mu_{\phi_i^j}'^1(o_1),\cdots,\hat \
 $$\nabla_{\theta_i^{(k)}}J_e(\mu_i)=\frac{1}{K}E_{x,a\sim D_i^{(k)}}[\nabla_{\theta_i^{(k)}}\mu_i^{(k)}(a_i|o_i)\nabla_{a_i}Q^{\mu_i}(x,a_1,\cdots,a_n)|_{a_i=\mu_i^{(k)}(o_i)}] $$
 
 以上就是MADDPG所有的内容，仿真效果也很好的证明了MADDPG在多智能体系统中的有效性。 
+
+### MADDPG算法流程如图：
+
+![dSfBU1.png](https://s1.ax1x.com/2020/08/13/dSfBU1.png)
+
+##  实验内容
+
+在多个环境上打败了DDPG、DQN等Independent learning方法。
+
+![dSfdb9.png](https://s1.ax1x.com/2020/08/13/dSfdb9.png)
+
+## 缺点
+
+- 每一个Critic需要观测到所有的agent的状态和动作，对于大量不确定agent的场景，不是特别实用
+- 当agent数量特别多的时候，状态空间太过于巨大
+- 每一个agent都对应了一个actor和一个critic，数量多的时候，存在大量的模型。
+
+## 优点
+
+- 对于集中训练分步执行的方法是一种完善
+- 是多智能体环境下的开创性工作。
