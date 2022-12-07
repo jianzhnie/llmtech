@@ -31,7 +31,7 @@
 
 - 自然语言处理
   
-  - [chatGPT](deeplearning/nlp/chaptGPT.md)
+  - [chatGPT](deeplearning/nlp/chatGPT.md)
   
   - [Transformer 模型](deeplearning/nlp/Transformer.md)
   - [Bag-of-words](deeplearning/nlp/Bag-of-words.md)
