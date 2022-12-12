@@ -3,7 +3,7 @@
 # 概述
 
 SMAC
-是一个用于在暴雪星际争霸2上进行多智能体协同强化学习（MARL）的环境。SMAC
+是一个用于在暴雪星际争霸2上进行多智能体协同强化学习（MARL）的环境。官方`GitHub`链接为：https://github.com/oxwhirl/smac。SMAC
 用了暴雪星际争霸2 的机器学习 API 和 DeepMind 的PySC2
 为智能体与星际争霸2的交互提供了友好的接口，方便开发者观察和执行行动。 与
 PySC2 相比，SMAC
@@ -13,17 +13,23 @@ PySC2 相比，SMAC
 
 # 安装
 
-## 安装方法
-
 需要安装星际争霸2 游戏和 PySC2
 库.
 
+## 安装StarCraft II
+
 安装主要包括两部分：
 
-1.下载星际争霸2 游戏 对于 Linux
+- 下载星际争霸2 游戏 
+
+因为SMAC是基于星际争霸游戏引擎的，所以我们还需要安装StarCraft II，官方指定的版本为SC2.4.10，并且不同版本之间的算法性能测试不一样。对于 Linux
 系统使用者，安装路径为<https://github.com/Blizzard/s2client-proto#downloads>，之后使用
-`export SC2PATH=<sc2/installation/path>` 命令将安装路径添加到环境变量中
-对于 Windows 系统使用者，安装请参考<https://starcraft2.com>
+`export SC2PATH=<sc2/installation/path>` 命令将安装路径添加到环境变量中.
+对于 Windows 系统使用者，安装请参考<https://starcraft2.com>.
+
+- 下载SMAC地图
+
+我们需要下载地图，也就是游戏的地图并将其放在之前解压的StarCraft II文件下面的Maps目录下面。下载链接为：https://github.com/oxwhirl/smac/releases/download/v0.1-beta1/SMAC_Maps.zip。
 
 ```shell
 #!/bin/bash
@@ -69,13 +75,13 @@ rm -rf SMAC_Maps.zip
 echo 'StarCraft II and SMAC are installed.'
 ```
 
-2.安装PySC2
+## 安装PySC2
 
 ``` shell
 pip install pysc2
 ```
 
-3.安装smac
+## 安装smac
 
 ```
 pip install git+https://github.com/oxwhirl/smac.git
@@ -83,7 +89,142 @@ pip install git+https://github.com/oxwhirl/smac.git
 
 ## 验证安装
 
-安装完成后，可以通过安装成功后 `echo $SC2PATH` 确认环境变量设置成功
+安装完成后，可以通过安装成功后 `echo $SC2PATH` 确认环境变量设置成功.
+
+### 测试`Map`是否放置成功：
+
+```bash
+python -m smac.bin.map_list
+```
+
+得到下面的输出：
+
+```shell
+Name            Agents  Enemies Limit  
+3m              3       3       60     
+8m              8       8       120    
+25m             25      25      150    
+5m_vs_6m        5       6       70     
+8m_vs_9m        8       9       120    
+10m_vs_11m      10      11      150    
+27m_vs_30m      27      30      180    
+MMM             10      10      150    
+MMM2            10      12      180    
+2s3z            5       5       120    
+3s5z            8       8       150    
+3s5z_vs_3s6z    8       9       170    
+3s_vs_3z        3       3       150    
+3s_vs_4z        3       4       200    
+3s_vs_5z        3       5       250    
+1c3s5z          9       9       180    
+2m_vs_1z        2       1       150    
+corridor        6       24      400    
+6h_vs_8z        6       8       150    
+2s_vs_1sc       2       1       300    
+so_many_baneling 7       32      100    
+bane_vs_bane    24      24      200    
+2c_vs_64zg      2       64      400 
+```
+
+### 测试`smac`和它的`Map`是否配置成功：
+
+```python
+python -m smac.examples.random_agents
+```
+
+得到下面的输出：
+
+```shell
+Version: B75689 (SC2.4.10)
+Build: Aug 12 2019 17:16:57
+Command Line: '"/home/robin/StarCraftII/Versions/Base75689/SC2_x64" -listen 127.0.0.1 -port 35069 -dataDir /home/robin/StarCraftII/ -tempDir /tmp/sc-bdv0wmyd/'
+Starting up...
+Startup Phase 1 complete
+Startup Phase 2 complete
+Creating stub renderer...
+Listening on: 127.0.0.1:35069
+Startup Phase 3 complete. Ready for commands.
+ConnectHandler: Request from 127.0.0.1:39862 accepted
+ReadyHandler: 127.0.0.1:39862 ready
+Requesting to join a single player game
+Configuring interface options
+Configure: raw interface enabled
+Configure: feature layer interface disabled
+Configure: score interface disabled
+Configure: render interface disabled
+Launching next game.
+Next launch phase started: 2
+Next launch phase started: 3
+Next launch phase started: 4
+Next launch phase started: 5
+Next launch phase started: 6
+Next launch phase started: 7
+Next launch phase started: 8
+Game has started.
+Using default stable ids, none found at: /home/robin/StarCraftII/stableid.json
+Successfully loaded stable ids: GameData\stableid.json
+Sending ResponseJoinGame
+Total reward in episode 0 = 2.8125
+Total reward in episode 1 = 2.0625
+Total reward in episode 2 = 2.0625
+Total reward in episode 3 = 2.0625
+Total reward in episode 4 = 2.0625
+Total reward in episode 5 = 2.4375
+Total reward in episode 6 = 1.875
+Total reward in episode 7 = 1.6875
+Total reward in episode 8 = 1.5
+Total reward in episode 9 = 1.3125
+DataHandler: unable to parse websocket frame.
+RequestQuit command received.
+CloseHandler: 127.0.0.1:39862 disconnected
+Closing Application...
+ResponseThread: No connection, dropping the response.
+```
+
+### Py文件中进行测试
+
+如果想要`Debug`初步了解这个环境的话，可以采用如下代码：
+
+```python
+from smac.env import StarCraft2Env
+import numpy as np
+
+# 独立的智能体在接收到观察和全局状态后会执行随机策略。
+def main():
+    env = StarCraft2Env(map_name="8m")
+    env_info = env.get_env_info()
+
+    n_actions = env_info["n_actions"]  # 获取动作维度 14
+    n_agents = env_info["n_agents"]  # 存在多少个智能体 8
+    print("n_agents: %d, n_actions: %d" % (n_agents, n_actions))
+    n_episodes = 10
+    for e in range(n_episodes):
+        env.reset()
+        terminated = False
+        episode_reward = 0
+        while not terminated:
+            # obs: list, length = 8, for 8 agents
+            obs = env.get_obs()
+            # state: shape (168, )
+            state = env.get_state()
+            actions = []
+            for agent_id in range(n_agents):  # 对于每个智能体遍历循环
+                avail_actions = env.get_avail_agent_actions(agent_id)
+                avail_actions_ind = np.nonzero(avail_actions)[0]
+                action = np.random.choice(avail_actions_ind)
+                actions.append(action)
+
+            reward, terminated, _ = env.step(actions)
+            episode_reward += reward
+
+        print("Total reward in episode {} = {}".format(e, episode_reward))
+
+    env.close()
+
+
+if __name__ == "__main__":
+    main()
+```
 
 # 变换前的空间（原始环境）
 
