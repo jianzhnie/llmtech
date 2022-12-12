@@ -115,7 +115,7 @@ MAAC作者写的代码，挺简洁的。包括MADDPG、MAAC。
 
 - https://github.com/marlbenchmark/off-policy
 
-7. marllib（70星）
+7. marllib（70星）å
 
 一个涵盖了大多主流MARL算法的代码库，基于ray的rllib，属于那种模块化做得特别好，但上手需要花些时间的代码，包含independence learning (IQL, A2C, DDPG, TRPO, PPO), centralized critic learning (COMA, MADDPG, MAPPO, HATRPO), and value decomposition (QMIX, VDN, FACMAC, VDA2C)。
 
