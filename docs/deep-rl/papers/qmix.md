@@ -54,7 +54,7 @@ Dec-POMDP是将POMDP拓展到多智能体系统。每个智能体的局部观测
 
 ### VDN (Value decomposition network)
 
-VDN（value decomposition networks）采用对每个智能体的值函数进行整合，得到一个联合动作值函数。令 $\tau=(\tau_1,\cdots,\tau_n)$表示联合动作-观测历史，其中 $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$ 为动作-观测历史，$a=(a_1,\cdots,a_n)$ 表示联合动作。 $Q_{tot}$ 为联合动作值函数， $Q_i(\tau_i,a_i;\theta_i)$  为智能体i的局部动作值函数，局部值函数只依赖于每个智能体的局部观测。VDN采用的方法就是直接相加求和的方式. $$Q_{tot}=\sum_{i=1}^{n}Q_i(\tau_i,a_i,;\theta_i) $$,  分布式的策略可以通过对每个 $Q_i(\tau_i,a_i;\theta_i)$取max得到。
+VDN（value decomposition networks）采用对每个智能体的值函数进行整合，得到一个联合动作值函数。令 $\tau=(\tau_1,\cdots,\tau_n)$表示联合动作-观测历史，其中 $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$ 为动作-观测历史，$a=(a_1,\cdots,a_n)$ 表示联合动作。 $Q_{tot}$ 为联合动作值函数， $Q_i(\tau_i,a_i;\theta_i)$  为智能体i的局部动作值函数，局部值函数只依赖于每个智能体的局部观测。VDN采用的方法就是直接相加求和的方式. $Q_{tot}=\sum_{i=1}^{n}Q_i(\tau_i,a_i,;\theta_i) $,  分布式的策略可以通过对每个 $Q_i(\tau_i,a_i;\theta_i)$取max得到。
 
 VDN中联合函数的求和形式表现力有限，并不能涵盖更加复杂的组合情况，比如非线性组合。
 
@@ -86,13 +86,13 @@ QMIX采用一个混合网络对单智能体局部值函数进行合并，并在�
 
 为了能够沿用VDN的优势，利用集中式的学习，得到分布式的策略。主要是因为对联合动作值函数取 argmax 等价于对每个局部动作值函数取 argmax ，其单调性相同，如下所示
 
-$${\rm argmax}_uQ_{tot}(\tau,u)=\left( \begin{aligned} {\rm argmax}_{u_1}&Q_1(\tau_1,u_1) \\ &\vdots\\ {\rm argmax}_{u_n}&Q_n(\tau_n,u_n) \\ \end{aligned} \right)\qquad $$ (1) 
+$${\rm argmax}_uQ_{tot}(\tau,u)=\left( \begin{aligned} {\rm argmax}_{u_1}&Q_1(\tau_1,u_1) \\ &\vdots\\ {\rm argmax}_{u_n}&Q_n(\tau_n,u_n) \\ \end{aligned} \right)\qquad  (1)  $$
 
 QMIX 通过提出单调性假设放松了 VDN 中对单智能体的价值函数直接求和等于联合价值函数的约束限制，
 
 因此分布式策略就是贪心的通过局部 $Q_i $获取最优动作。QMIX将(1)转化为一种单调性约束，如下所示：
 
-$$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $$    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
+$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
 
 可以看出，VDN中的求和形式是该条件的一个特例 $（\frac{\partial Q_{t o t}}{\partial Q_{a}} = 1, \forall a \in A）$。QMIX 模型的核心思想就是在Q和Qi之间构造一个单调映射。若满足以上单调性，则(1)成立，为了实现上述约束，QMIX采用混合网络（mixing network）来实现，其具体结构如下所示.
 
@@ -121,13 +121,13 @@ $$L(\theta)=\sum_{i=1}^b[(y_i^{tot}-Q_{tot}(\tau,a,s;\theta))^2] $$
 
 更新用到了传统的DQN的思想，其中b表示从经验记忆中采样的样本数量， 
 
-$$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $$Q(\tau',a',s';\overline \theta)$$ 表示目标网络。
+$$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $Q(\tau',a',s';\overline \theta)$ 表示目标网络。
 
 由于满足上文的单调性约束，对 $Q_{tot} $ 进行 $argmax$ 操作的计算量就不在是随智能体数量呈指数增长了，而是随智能体数量线性增长，极大的提高了算法效率。
 
 上述算法中，单纯地去考虑前向传播的话，智能体之间其实是没有配合的。仅仅是取每个智能体能够获得的最大的值函数。因为对于单个智能体来说，它的最优动作是基于队友智能体的动作下得到的，但是由于整个网络是端到端进行训练的，所以问题不大。
 
-还有就是在基于单个智能体的动作值函数下得到联合动作值函数的过程中，也就是在Mixing网络中有考虑状态s $s_{t}$ ，所以相当于是有考虑全局的信息下去得到一个联合动作值函数。
+还有就是在基于单个智能体的动作值函数下得到联合动作值函数的过程中，也就是在Mixing网络中有考虑状态$s_{t}$ ，所以相当于是有考虑全局的信息下去得到一个联合动作值函数。
 
 ## 代码实现
 
