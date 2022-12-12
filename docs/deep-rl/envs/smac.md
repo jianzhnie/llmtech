@@ -227,6 +227,132 @@ if __name__ == "__main__":
     main()
 ```
 
+# SMAC 简介
+
+## StarCraft II
+
+SMAC 基于流行的即时战略 (RTS) 游戏[StarCraft II](http://us.battle.net/sc2/en/game/guide/whats-sc2)， 由[Blizzard 暴雪公司](http://blizzard.com/)编写。在星际争霸 II 的常规完整游戏中，一个或多个人相互竞争或与内置游戏 AI 竞争，通过收集资源、建造建筑物和组建军队以击败对手。
+
+与大多数 RTS 类似，星际争霸有两个主要的游戏组件：宏观管理和微观管理。
+
+- 宏观管理（macro）是指高层次的战略考虑，例如经济和资源管理。
+- 微观管理（micro）是指对个体单位进行细粒度的控制。
+
+### Micromanagement
+
+星际争霸已被用作 AI 的研究平台，最近还被用作 RL。通常，该游戏被设计为一个竞争性问题：agent 扮演人类玩家的角色，做出宏观管理决策并作为木偶操纵者执行微观管理，从中央控制器向各个单元发出命令。
+
+为了构建一个丰富的multi-agent测试平台，我们反而只关注微观管理。Micro 是 StarCraft 游戏玩法的一个重要方面，具有很高的技能上限，业余和职业玩家都在孤立地练习。对于 SMAC，我们通过提出专为分散控制设计的问题的修改版本来利用微观管理的自然multi-agent结构。特别是，我们要求每个单元都由一个独立的agent控制，该agent仅以局限于以该单元为中心的有限视野的局部观察为条件。这些agent必须接受训练以解决具有挑战性的战斗场景，在游戏内置脚本 AI 的集中控制下与敌军作战。
+
+战斗中适当的微型单位将最大化对敌方单位造成的伤害，同时最小化受到的伤害，并且需要一系列技能。例如，一个重要的技术是集中火力，即命令单位联合攻击并逐个击杀敌方单位。集中火力时，重要的是要避免过度杀伤：对单位造成的伤害超过杀死他们所需的伤害。
+
+其他常见的微观管理技术包括：根据装甲类型将单位编成队形，让敌方单位在保持足够距离的情况下进行追击，从而造成很少或不造成伤害（风筝），协调单位的位置以从不同方向攻击或利用的地形来击败敌人。
+
+在部分可观察性下学习这些丰富的合作行为是一项具有挑战性的任务，可用于评估multi-agent强化学习 (MARL) 算法的有效性。
+
+## SMAC
+
+SMAC 使用[StarCraft II Learning Environment](https://github.com/deepmind/pysc2)引入合作 MARL 环境。
+
+### 场景
+
+SMAC 由一组星际争霸 II 微场景组成，旨在评估独立agent学习协调以解决复杂任务的能力。这些场景经过精心设计，需要学习一种或多种微观管理技术来击败敌人。每个场景都是两支军队之间的对抗。每支军队的初始位置、数量和单位类型因场景而异，是否存在高地或无法通行的地形也是如此。
+
+第一军由博学的盟军agent控制。第二支军队由内置游戏 AI 控制的敌方单位组成，该 AI 使用精心设计的非学习启发式算法。在每一集的开始，游戏 AI 会指示其单位使用其脚本策略攻击盟军agent。当任一军队的所有单位都死亡或达到预先指定的时间限制时，一集结束（在这种情况下，游戏被视为盟军agent的失败）。每个场景的目标是最大化学习策略的获胜率，即获胜游戏与玩游戏的预期比率。为了加快学习速度，敌方 AI 单位被命令在每一集开始时攻击agent的产卵点。
+
+也许最简单的场景是对称的战斗场景。这些场景中最直接的是同质的，即每支军队只由一种单位类型（例如，海军陆战队）组成。在这种情况下，一个获胜的策略是集中火力，最好不要过度杀伤。 异构对称场景，其中每一方都有不止一种单位类型（例如，Stalkers and Zealots），更难解决。当一些单位对其他单位非常有效时，这些挑战特别有趣（这被称为反击)，例如，通过对特定装甲类型造成额外伤害。在这种情况下，盟军agent必须推断出游戏的这一属性，并设计一种智能策略来保护易受某些敌人攻击的队友。
+
+SMAC 还包括更具挑战性的场景，例如，敌军在数量上超过盟军一个或多个单位。在这种不对称的情况下，必须考虑敌方单位的健康状况，以便有效地瞄准所需的对手。
+
+最后，SMAC 提供了一组有趣的微技巧挑战，需要更高层次的合作和特定的微操作技巧才能击败敌人。挑战场景的一个例子是2m_vs_1z（又名 Marine Double Team），其中两名 Terran Marines 需要击败敌方 Zealot。在这种情况下，海军陆战队必须设计一种策略，不允许狂热者接近他们，否则他们几乎会立即死亡。另一个例子是so_many_banelings, 7 个 allied Zealots 面对 32 个敌方爆虫单位。爆虫通过跑向目标进行攻击，并在到达目标时爆炸，对目标周围的特定区域造成伤害。因此，如果大量的爆虫攻击距离很近的一小撮狂热者，狂热者就会被瞬间击败。因此，最佳策略是合作地围绕地图分散开来，彼此远离，以便 Banelings 的伤害分布尽可能薄。corridor 场景中，6 个友方 Zealots 面对 24 个敌方 Zerglings，需要agent有效利用地形特征。具体来说，agent们应该集体隔离阻塞点（地图的狭窄区域）以阻止来自不同方向的敌人攻击。一些微技巧挑战的灵感来自暴雪发布的[星际争霸大师挑战任务。](http://us.battle.net/sc2/en/blog/4544189/new-blizzard-custom-game-starcraft-master-3-1-2012)
+
+完整的挑战列表如下所示。游戏AI的难度设置为非常困难（7）。然而，我们的实验表明，此设置确实会显着影响内置启发式的单元微观管理。
+
+|       Name        |             Ally Units             |            Enemy Units             |             Type              |
+| :---------------: | :--------------------------------: | :--------------------------------: | :---------------------------: |
+|        3m         |             3 Marines              |             3 Marines              |    homogeneous & symmetric    |
+|        8m         |             8 Marines              |             8 Marines              |    homogeneous & symmetric    |
+|        25m        |             25 Marines             |             25 Marines             |    homogeneous & symmetric    |
+|       2s3z        |       2 Stalkers & 3 Zealots       |       2 Stalkers & 3 Zealots       |   heterogeneous & symmetric   |
+|       3s5z        |      3 Stalkers &  5 Zealots       |      3 Stalkers &  5 Zealots       |   heterogeneous & symmetric   |
+|        MMM        | 1 Medivac, 2 Marauders & 7 Marines | 1 Medivac, 2 Marauders & 7 Marines |   heterogeneous & symmetric   |
+|     5m_vs_6m      |             5 Marines              |             6 Marines              |   homogeneous & asymmetric    |
+|     8m_vs_9m      |             8 Marines              |             9 Marines              |   homogeneous & asymmetric    |
+|    10m_vs_11m     |             10 Marines             |             11 Marines             |   homogeneous & asymmetric    |
+|    27m_vs_30m     |             27 Marines             |             30 Marines             |   homogeneous & asymmetric    |
+|   3s5z_vs_3s6z    |       3 Stalkers & 5 Zealots       |       3 Stalkers & 6 Zealots       |  heterogeneous & asymmetric   |
+|       MMM2        | 1 Medivac, 2 Marauders & 7 Marines | 1 Medivac, 3 Marauders & 8 Marines |  heterogeneous & asymmetric   |
+|     2m_vs_1z      |             2 Marines              |              1 Zealot              | micro-trick: alternating fire |
+|     2s_vs_1sc     |             2 Stalkers             |          1 Spine Crawler           | micro-trick: alternating fire |
+|     3s_vs_3z      |             3 Stalkers             |             3 Zealots              |      micro-trick: kiting      |
+|     3s_vs_4z      |             3 Stalkers             |             4 Zealots              |      micro-trick: kiting      |
+|     3s_vs_5z      |             3 Stalkers             |             5 Zealots              |      micro-trick: kiting      |
+|     6h_vs_8z      |            6 Hydralisks            |             8 Zealots              |    micro-trick: focus fire    |
+|     corridor      |             6 Zealots              |            24 Zerglings            |     micro-trick: wall off     |
+|   bane_vs_bane    |     20 Zerglings & 4 Banelings     |     20 Zerglings & 4 Banelings     |   micro-trick: positioning    |
+| so_many_banelings |             7 Zealots              |            32 Banelings            |   micro-trick: positioning    |
+|    2c_vs_64zg     |             2 Colossi              |            64 Zerglings            |   micro-trick: positioning    |
+|      1c3s5z       | 1 Colossi & 3 Stalkers & 5 Zealots | 1 Colossi & 3 Stalkers & 5 Zealots |   heterogeneous & symmetric   |
+
+### 状态和观察
+
+在每个时间步，agent都会收到在其视野内绘制的局部观察结果。这包含有关每个单元周围的圆形区域内的地图信息，其半径等于视线范围。从每个agent的角度来看，视线范围使环境可以部分观察到。agent只能观察其他agent，如果他们都活着并且位于视线范围内。因此，agent无法确定他们的队友是在远处还是已经死亡。
+
+每个agent观察到的特征向量包含视线范围内的友军和敌军单位的以下属性：_distance_, _relative x_, _relative y_, _health_, _shield_, and _unit\_type_ <sup>[1](#myfootnote1)</sup>. 护盾是额外的保护源，需要在对单位的健康造成任何损害之前将其移除。所有 Protos 单位都有护盾，如果没有造成新的伤害，护盾可以再生（其他两个种族的单位没有这个属性）。此外，agent可以访问视野中盟军单位的最后行动。最后，智能体可以观察周围的地形特征；特别是，固定半径处的八个点的值表示高度和步行能力。
+
+全局状态仅在集中训练期间对agent可用，包含地图上所有单元的信息。具体来说，状态向量包括所有agent相对于地图中心的坐标，以及观察中存在的单元特征。此外，状态存储Medivacs 的能量和其余盟军单位的冷却时间，这代表攻击之间的最小延迟。最后，所有agent的最后一个动作都附加到中央状态。
+
+所有特征，无论是在状态中还是在个体agent的观察中，都由它们的最大值归一化。所有agent的视线范围都设置为 9。
+
+1：agent控制的单位的健康、护盾和单位类型也包括在观察中
+
+### 动作空间
+
+允许agent采取的离散动作集包括 move[direction]（四个方向：北、南、东或西）、attack[enemy_id]、stop和no-op。死去的agent只能采取空操作，而活agent不能。作为治疗单位，Medivacs 必须使用heal[agent_id]动作而不是attack[enemy_id]。agent可以执行的最大动作数量在 7 到 70 之间，具体取决于场景。
+
+为确保任务的分散化，agent只能对射击范围内的敌人使用attack[enemy_id]动作。这限制了该单位对远处敌人使用内置攻击移动宏动作的能力。我们将射击范围设置为 6。拥有比射击范围更大的视野迫使agent在开始射击之前使用移动命令。
+
+### 奖励
+
+总体目标是在每个战斗场景中获得最高的胜率。我们为sparse rewards提供了相应的选项，这将导致环境仅返回 +1 的奖励（获胜）和 -1（失败）。然而，我们还提供了一个默认设置，用于根据agent人造成和收到的生命值伤害计算的形状奖励信号，在杀死敌方（盟军）单位后的一些正（负）奖励和/或正（负）奖励赢得（失败）战斗。可以使用一系列标志配置这种形状奖励的确切值和比例，但我们强烈反对奖励函数的虚伪工程（例如，针对不同场景调整不同的奖励函数）。
+
+### 环境设置
+
+SMAC 使用[星际争霸 II 学习环境](https://arxiv.org/abs/1708.04782)(SC2LE) 与星际争霸 II 引擎进行通信。SC2LE 通过允许发送命令和接收来自游戏的观察来提供对游戏的完全控制。然而，SMAC 在概念上不同于 SC2LE 的 RL 环境。SC2LE 的目标是学习玩星际争霸 II 的完整游戏。这是一项竞争性任务，其中集中式 RL agent接收 RGB 像素作为输入，并通过类似于人类玩家的玩家级控制来执行宏观和微观。另一方面，SMAC 代表一组协作的多agent微挑战，其中每个学习agent控制一个军事单位。
+
+SMAC 使用SC2LE 的原始 API。原始 API 观察没有任何图形组件，包括地图上有关单位的信息，例如健康状况、位置坐标等。原始 API 还允许使用单位 ID 向各个单位发送操作命令。这种设置不同于人类玩实际游戏的方式，但便于设计分散的多智能体学习任务。
+
+由于我们的微场景比实际的星际争霸 II 游戏短，因此在每集之后重新启动游戏会出现计算瓶颈。为了解决这个问题，我们使用 API 的调试命令。具体来说，当任一军队的所有单位都被杀死时，我们通过发送调试操作杀死所有剩余的单位。没有剩余的单位会启动一个由星际争霸 II 编辑器编程的触发器，该触发器会在其原始位置重新生成所有单位并保持完整的生命值，从而快速有效地重新启动场景。
+
+此外，为了鼓励agent自己探索有趣的微观策略，我们限制了星际争霸 AI 对我们agent的影响。具体来说，我们禁用了针对攻击特工或位于附近的敌人的自动单位攻击。为此，我们使用了用星际争霸 II 编辑器创建的新单位，它们是现有单位的精确副本，并修改了两个属性：战斗：默认获取级别设置为被动（默认为进攻）和行为：响应设置为无响应（默认获取）。这些字段仅针对盟军单位进行修改；敌方单位不变。
+
+瞄准镜和射程值可能与某些星际争霸 II 装置的内置瞄准镜或射程属性不同。我们的目标不是掌握原始的完整星际争霸游戏，而是对分散控制的 MARL 方法进行基准测试。
+
+#### 环境设置
+
+- difficulty  难度等级,官方默认是7
+
+```shell
+difficulties = {
+    "1": sc_pb.VeryEasy,
+    "2": sc_pb.Easy,
+    "3": sc_pb.Medium,
+    "4": sc_pb.MediumHard,
+    "5": sc_pb.Hard,
+    "6": sc_pb.Harder,
+    "7": sc_pb.VeryHard,
+    "8": sc_pb.CheatVision,
+    "9": sc_pb.CheatMoney,
+    "A": sc_pb.CheatInsane,
+}
+```
+
+- map (按难度分成三个等级)
+
+- -  Easy scenarios（2s_vs_1sc/2s3z/3s5z/1c3s5z/10m_vs_11m）
+  - Hard scenarios (2c_vs_64zg/bane_vs_bane/5m_vs_6m/3s5z)
+  - Super hard(3s5z_vs_3s6z/6h_vs_8z/27m_vs_30m/MMM2/corridor) 
+
 # 变换前的空间（原始环境）
 
 ## 观察空间
