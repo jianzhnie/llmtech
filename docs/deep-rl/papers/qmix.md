@@ -7,7 +7,7 @@
 
 ### 摘要
 
-QMIX 是一种基于 Value-Based 的多智能体强化学习算法（MARL），其基本思想来源于 Actor-Critic 与 DQN 的结合。使用中心式学习（Centralized Learning）分布式执行（Distributed Execution）的方法，利用中心式 Critic 网络接受全局状态用于指导 Actor 进行更新。QMIX 中 Critic 网络的更新方式和 DQN 相似，使用 TD-Error 进行网络自更新。除此之外，QMIX 中为 Critic 网络设立了 evaluate net 和 target net， 这和 DQN 中的设计思想完全相符。
+QMIX 是一种基于 Value-Based 的多智能体强化学习算法（MARL），其基本思想来源于 Actor-Critic 与 DQN 的结合。使用中心式学习（Centralized Learning）分布式执行（Distributed Execution）的方法，利用中心式 Critic 网络接受全局状态用于指导 Actor 进行更新。QMIX 中 Critic 网络的更新方式和 DQN 相似，使用 TD-Error 进行网络自更新。
 
 QMIX 具有如下特点： 
 
@@ -26,7 +26,7 @@ QMIX 具有如下特点：
 
 ### 多智能体强化学习核心问题
 
-多智能体强化学习（MARL）训练中面临的最大问题是：**训练阶段和执行阶段获取的信息可能存在不对等问题。** 即，在训练的时候我们可以获得大量的全局信息（事实证明，只有获取足够的信息模型才能被有效训练）。
+多智能体强化学习（MARL）训练中面临的最大问题是：**训练阶段和执行阶段获取的信息可能存在不对等问题。** 即，在训练的时候我们可以获得大量的全局信息（事实证明，只有获取足够的信息模型才能被有效训练）。
 
 但在最终应用模型的时候，我们是无法获取到训练时那么多的全局信息的，因此，人们提出两个训练网络：
 
@@ -42,7 +42,7 @@ QMIX 具有如下特点：
 Dec-POMDP是将POMDP拓展到多智能体系统。每个智能体的局部观测信息 $o_{i,t}$ ，动作 $a_{i,t}$ ，系统状态为 $s_t$ 。其主要新定义了几个概念，简要介绍几个主要的：
 
 - 每个智能体的动作-观测历史可表示为  $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$，表示从初始状态开始，该智能体的时序动作-观测记录，
-- 联合动作-观测历史 $\tau=(\tau_1,\cdots,\tau_n)$ 表示从初始状态开始，所有智能体的时序动作-观测记录。则每个智能体的分布式策略为 $\pi_i(\tau_i)$ ，其值函数为 $Q_i(\tau_i,a_i;\theta_i)$ 都是跟动作-观测历史 $\tau_i$ 有关，而不是跟状态有关。
+- 联合动作-观测历史 $\tau=(\tau_1,\cdots,\tau_n)$ 表示从初始状态开始，所有智能体的时序动作-观测记录。则每个智能体的分布式策略为 $\pi_i(\tau_i)$ ，其值函数为 $Q_i(\tau_i,a_i;\theta_i)$ 都是跟动作-观测历史 $\tau_i$ 有关，而不是跟状态有关。
 
 ### DRQN (Deep Recurrent Q-Learning)
 
@@ -54,11 +54,9 @@ Dec-POMDP是将POMDP拓展到多智能体系统。每个智能体的局部观测
 
 ### VDN (Value decomposition network)
 
-VDN（value decomposition networks）也是采用对每个智能体的值函数进行整合，得到一个联合动作值函数。令 $\tau=(\tau_1,\cdots,\tau_n)$表示联合动作-观测历史，其中 $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$ 为动作-观测历史，$a=(a_1,\cdots,a_n)$ 表示联合动作。 $Q_{tot}$ 为联合动作值函数， $Q_i(\tau_i,a_i;\theta_i)$  为智能体i的局部动作值函数，局部值函数只依赖于每个智能体的局部观测。VDN采用的方法就是直接相加求和的方式.
+VDN（value decomposition networks）采用对每个智能体的值函数进行整合，得到一个联合动作值函数。令 $\tau=(\tau_1,\cdots,\tau_n)$表示联合动作-观测历史，其中 $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$ 为动作-观测历史，$a=(a_1,\cdots,a_n)$ 表示联合动作。 $Q_{tot}$ 为联合动作值函数， $Q_i(\tau_i,a_i;\theta_i)$  为智能体i的局部动作值函数，局部值函数只依赖于每个智能体的局部观测。VDN采用的方法就是直接相加求和的方式. $$Q_{tot}=\sum_{i=1}^{n}Q_i(\tau_i,a_i,;\theta_i) $$,  分布式的策略可以通过对每个 $Q_i(\tau_i,a_i;\theta_i)$取max得到。
 
-$$Q_{tot}=\sum_{i=1}^{n}Q_i(\tau_i,a_i,;\theta_i) $$
-
-虽然 $Q_i(\tau_i,a_i;\theta_i)$ 不是用来估计累积期望回报的，但是这里依然叫它为值函数。分布式的策略可以通过对每个 $Q_i(\tau_i,a_i;\theta_i)$取max得到。
+VDN中联合函数的求和形式表现力有限，并不能涵盖更加复杂的组合情况，比如非线性组合。
 
 ## QMIX
 
@@ -94,9 +92,9 @@ QMIX 通过提出单调性假设放松了 VDN 中对单智能体的价值函数�
 
 因此分布式策略就是贪心的通过局部 $Q_i $获取最优动作。QMIX将(1)转化为一种单调性约束，如下所示：
 
-$$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $$    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
+$$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $$    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
 
-若满足以上单调性，则(1)成立，为了实现上述约束，QMIX采用混合网络（mixing network）来实现，其具体结构如下所示.
+可以看出，VDN中的求和形式是该条件的一个特例 $（\frac{\partial Q_{t o t}}{\partial Q_{a}} = 1, \forall a \in A）$。QMIX 模型的核心思想就是在Q和Qi之间构造一个单调映射。若满足以上单调性，则(1)成立，为了实现上述约束，QMIX采用混合网络（mixing network）来实现，其具体结构如下所示.
 
 ![img](https://liushunyu.github.io/img/in-post/2020-06-18-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%AE%BA%E6%96%87%EF%BC%889%EF%BC%89QMIX.assets/image-20200618104937306.png)
 
@@ -123,11 +121,11 @@ $$L(\theta)=\sum_{i=1}^b[(y_i^{tot}-Q_{tot}(\tau,a,s;\theta))^2] $$
 
 更新用到了传统的DQN的思想，其中b表示从经验记忆中采样的样本数量， 
 
-$$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $$Q(\tau',a',s';\overline \theta)$$ 表示目标网络。
+$$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $$Q(\tau',a',s';\overline \theta)$$ 表示目标网络。
 
 由于满足上文的单调性约束，对 $Q_{tot} $ 进行 $argmax$ 操作的计算量就不在是随智能体数量呈指数增长了，而是随智能体数量线性增长，极大的提高了算法效率。
 
-上述算法中，单纯地去考虑前向传播的话，智能体之间其实是没有配合的。仅仅是取每个智能体能够获得的最大的值函数。因为对于单个智能体来说，它的最优动作是基于队友智能体的动作下得到的，但是由于整个网络是端到端进行训练的，所以感觉问题也不大。
+上述算法中，单纯地去考虑前向传播的话，智能体之间其实是没有配合的。仅仅是取每个智能体能够获得的最大的值函数。因为对于单个智能体来说，它的最优动作是基于队友智能体的动作下得到的，但是由于整个网络是端到端进行训练的，所以问题不大。
 
 还有就是在基于单个智能体的动作值函数下得到联合动作值函数的过程中，也就是在Mixing网络中有考虑状态s $s_{t}$ ，所以相当于是有考虑全局的信息下去得到一个联合动作值函数。
 
@@ -241,7 +239,7 @@ class QMixer(nn.Module):
 
 ![img](https://pic1.zhimg.com/v2-0782a8562fbdb13278703090bd69f714_b.jpg)
 
-在第一阶段，只有智能体 1  的动作能决定第二阶段的状态。在第一阶段，如果智能体 1 采用动作 AAA 则跳转到上图 ${State 2A}$ 状态，如果智能体 1 采用动作 B 则跳转到上图State 2B 状态，第二阶段的每个状态的价值矩阵如上两图所示。
+在第一阶段，只有智能体 1  的动作能决定第二阶段的状态。在第一阶段，如果智能体 1 采用动作 A 则跳转到上图 ${State 2A}$ 状态，如果智能体 1 采用动作 B 则跳转到上图State 2B 状态，第二阶段的每个状态的价值矩阵如上两图所示。
 
 现在分别用VDN与QMIX学习上述矩阵博弈各个状态的值函数矩阵，得到结果如下图所示
 
