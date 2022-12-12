@@ -81,7 +81,7 @@ Here we provide a table for the comparison of MARLlib and existing work.
 
 2. pymarl
 
-牛津大学whiteson组的代码库，我稍微看了两眼，非常模块化的代码，我猜应该是那种很好用但也很难上手的类型。包括QMIX、COMA、VDN、IQL、QTRAN。
+牛津大学whiteson组的代码库，非常模块化的代码，是那种很好用但也很难上手的类型。包括QMIX、COMA、VDN、IQL、QTRAN。
 
 - https://github.com/oxwhirl/pymarl
 
