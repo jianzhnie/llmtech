@@ -3,8 +3,9 @@
 # 概述
 
 SMAC
-是一个用于在暴雪星际争霸2上进行多智能体协同强化学习（MARL）的环境。官方`GitHub`链接为：https://github.com/oxwhirl/smac。SMAC
-用了暴雪星际争霸2 的机器学习 API 和 DeepMind 的PySC2
+官方`GitHub`链接为：https://github.com/oxwhirl/smac。
+SMAC 是一个用于在暴雪星际争霸2上进行多智能体协同强化学习（MARL）的环境。
+SMAC用了暴雪星际争霸2 的机器学习 API 和 DeepMind 的PySC2
 为智能体与星际争霸2的交互提供了友好的接口，方便开发者观察和执行行动。 与
 PySC2 相比，SMAC
 专注于分散的微观操作方案，其中游戏的每个智能体均由单独的 RL agent控制。
