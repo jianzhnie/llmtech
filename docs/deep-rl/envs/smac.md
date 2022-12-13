@@ -1,4 +1,4 @@
- # SMAC
+# SMAC
 
 # 概述
 
@@ -31,6 +31,8 @@ PySC2 相比，SMAC
 - 下载SMAC地图
 
 我们需要下载地图，也就是游戏的地图并将其放在之前解压的StarCraft II文件下面的Maps目录下面。下载链接为：https://github.com/oxwhirl/smac/releases/download/v0.1-beta1/SMAC_Maps.zip。
+
+下面的shell脚本包含了完整安装过程。
 
 ```shell
 #!/bin/bash
@@ -88,7 +90,7 @@ pip install pysc2
 pip install git+https://github.com/oxwhirl/smac.git
 ```
 
-## 验证安装
+# 验证安装
 
 安装完成后，可以通过安装成功后 `echo $SC2PATH` 确认环境变量设置成功.
 
