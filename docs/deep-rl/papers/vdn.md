@@ -1,6 +1,4 @@
-## VDN
-
-## 合作模式下多智能体学习的价值分解网络
+# VDN （合作模式下多智能体学习的价值分解网络）
 
 - *论文链接： https://arxiv.org/pdf/1706.05296.pdf*
 - *实现代码：https://github.com/oxwhirl/pymarl*
