@@ -21,7 +21,7 @@
 
 如果想要使用基于价值的强化学习模型（value-based），就需要对系统的联合动作-价值函数（joint action-value function，联合Q函数）建模。假设系统中有d个智能体，则联合Q函数可以表示为 $Q((h1,h2,…,hd),(a1,a2,…,ad))$，其中hi表示智能体的局部信息，ai表示动作。可以看出，如果使用一般的方法建模，Q函数的输出维度是dn，n是动作空间的维度。
 
-Value-Decomposition Networks（VDN）的基本假设是，系统的联合QQ函数可以近似为多个单智能体的Q函数的和：$Q\left(\left(h^{1}, h^{2}, \ldots, h^{d}\right),\left(a^{1}, a^{2}, \ldots, a^{d}\right)\right) \approx \sum_{i=1}^{d} \tilde{Q}_{i}\left(h^{i}, a^{i}\right)$
+Value-Decomposition Networks（VDN）的基本假设是，系统的联合Q函数可以近似为多个单智能体的Q函数的和：$Q\left(\left(h^{1}, h^{2}, \ldots, h^{d}\right),\left(a^{1}, a^{2}, \ldots, a^{d}\right)\right) \approx \sum_{i=1}^{d} \tilde{Q}_{i}\left(h^{i}, a^{i}\right)$
 
 其中Qi之间是独立的，只取决于局部观策和动作hi,ai。这样可以保证，最大化每个单智能体的 $Q̃_i$函数得到动作，与通过最大化联合Q函数得到的结果是一样的，即
 
@@ -45,7 +45,7 @@ $$\begin{array}{c}{\max_{a} Q=\max_{a} \sum_{i=1}^{d} \tilde{Q}_{i}=\sum_{i=1}^{
 
   总结来说：值分解网络旨在学习一个联合动作值函数 $$Q_{t o t}(\tau, \mathbf{u})$$，其中 $ \tau \in \mathbf{T} \equiv \mathcal{T}$ 是一个联合动作-观测的历史轨迹，u是一个联合动作。它是由每个智能体a 独立计算其值函数 $Q_{a}\left(\tau^{a}, u^{a} ; \theta^{a}\right)$，之后累加求和得到的。其关系如下所示：$$Q_{t o t}(\tau, \mathbf{u})=\sum_{i=1}^{n} Q_{i}\left(\tau^{i}, u^{i} ; \theta^{i}\right)$$
 
-  严格意义上说 $$Q_{a}$$称作值函数可能不太准确，因为它并没有严格估计期望回报。
+  严格意义上说 $Q_{a}$称作值函数可能不太准确，因为它并没有严格估计期望回报。
 
 ## 实验
 
@@ -78,7 +78,7 @@ $$\begin{array}{c}{\max_{a} Q=\max_{a} \sum_{i=1}^{d} \tilde{Q}_{i}=\sum_{i=1}^{
 
 ## 优点
 
-对于value-based方法，设计了中心化计算系统的QQ函数，单智能体的Qi函数去中心化。这种结构使得策略在训练的时候可以利用全局信息，同时每个智能体仍然只接受局部信息作为输入。
+对于value-based方法，设计了中心化计算系统的Q函数，单智能体的Qi函数去中心化。这种结构使得策略在训练的时候可以利用全局信息，同时每个智能体仍然只接受局部信息作为输入。
 
 ## Reference
 
