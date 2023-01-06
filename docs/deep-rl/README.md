@@ -7,7 +7,7 @@
 |    [Deep Q-Learning](deep-rl/deep-rl-class/chapter3.md)    | [DQN](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson3/DQN/train.py) , [N-step-DQN](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson3/N-step-DQN/train.py), [Noisy-DQN](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson3/Noisy-DQN/train.py) |
 |   [策略梯度算法](deep-rl/deep-rl-class/chapter4.md)    | [Reinforce](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson4/pg/train.py) , [Reinforce with baseline](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson4/pg/train.py) |
 |               [演员评论家算法（AC）](deep-rl/deep-rl-class/chapter5.md)                | [Actor-Critic](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c),  [A2C](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c) |
-|                [近端策略优化 (PPO)]()                 |       |
+| [近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6.md) |       |
 |                [Decision Transfomer]()                |       |
 
 
