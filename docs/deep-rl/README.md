@@ -9,9 +9,10 @@
 |               [演员评论家算法（AC）](deep-rl/deep-rl-class/chapter5.md)                | [Actor-Critic](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c),  [A2C](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c) |
 | [近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6.md) |       |
 |                [Decision Transfomer](deep-rl/deep-rl-class/chapter7.md)                |       |
-
+| [Reinforcement Learning from Human Feedback](deep-rl/papers/RLHF.md) | |
 
 ### 强化学习环境
+
 - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
 - [openai Gym ](deep-rl/envs/gym.md)
 - [SMAC](deep-rl/envs/smac.md)
