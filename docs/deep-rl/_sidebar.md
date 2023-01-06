@@ -7,6 +7,7 @@
   - [第五章：Actor-Critic](deep-rl/deep-rl-class/chapter5.md)
   - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6.md)
   - [第七章：Decision Transfomer](deep-rl/deep-rl-class/chapter7.md)
+  - [第八章：RLHF](deep-rl/papers/RLHF.md)
 
 
 - 强化学习环境
@@ -27,3 +28,4 @@
   - [QTRAN](deep-rl/papers/QTRAN.md)
   - [QMIX](deep-rl/papers/qmix.md)
   - [MADDPG](deep-rl/papers/MADDPG.md)
+
