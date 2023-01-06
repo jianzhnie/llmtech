@@ -8,7 +8,7 @@
 |   [策略梯度算法](deep-rl/deep-rl-class/chapter4.md)    | [Reinforce](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson4/pg/train.py) , [Reinforce with baseline](https://github.com/jianzhnie/deep-rl-toolkit/blob/main/examples/tutorials/lesson4/pg/train.py) |
 |               [演员评论家算法（AC）](deep-rl/deep-rl-class/chapter5.md)                | [Actor-Critic](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c),  [A2C](https://github.com/jianzhnie/deep-rl-toolkit/tree/main/examples/tutorials/lesson4/ac%26a2c) |
 | [近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6.md) |       |
-|                [Decision Transfomer]()                |       |
+|                [Decision Transfomer](deep-rl/deep-rl-class/chapter7.md)                |       |
 
 
 ### 强化学习环境
