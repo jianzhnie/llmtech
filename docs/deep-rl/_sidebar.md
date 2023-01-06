@@ -6,6 +6,7 @@
   - [第四章：Policy Gradient  ](deep-rl/deep-rl-class/chapter4.md)
   - [第五章：Actor-Critic](deep-rl/deep-rl-class/chapter5.md)
   - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6.md)
+  - [第七章：Decision Transfomer](deep-rl/deep-rl-class/chapter7.md)
 
 
 - 强化学习环境
