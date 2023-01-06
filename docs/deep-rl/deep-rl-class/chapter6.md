@@ -16,9 +16,10 @@
 - 根据经验，我们知道训练期间较小的策略更新 **更有可能收敛到最佳解决方案。**
 - 策略更新步子太大可能会导致“跌落悬崖”（得到一个糟糕的策略） **并且恢复时间很长，甚至没有恢复的可能。**
 
-![策略更新悬崖](https://huggingface.co/blog/assets/93_deep_rl_ppo/cliff.jpg)
-
-​                                                          进行较小的策略更新可以提高训练的稳定性
+<div align=center>
+<img width="400" src="https://huggingface.co/blog/assets/93_deep_rl_ppo/cliff.jpg"/>
+</div>
+<div align=center>进行较小的策略更新可以提高训练的稳定性</div>
 
 RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：https://jonathan-hui.medium.com/rl-proximal-policy-optimization-ppo-explained-77f014ec3f12
 
