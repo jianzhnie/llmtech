@@ -1,11 +1,11 @@
   一个完全合作式的多智能体任务(我们有n个智能体，这n个智能体需要相互配合以获取最大奖励)可以描述为去中心化的部分可观测马尔可夫决策模型(Dec-POMDP)，通常用一个元组G 来表示：$$
 G=⟨S,U,P,r,Z,O,n,γ⟩$$
 
-  其中$s∈S$表示环境的真实状态信息。在每一个时间步，对于每个智能体$$a∈A≡{1,…,n}$$都需要去选择一个动作$u^{a} \in U$去组成一个联合动作$u∈U≡U^n$  ，再将这个联合动作给到环境中去进行状态转移：$$P(s 
+  其中$s∈S$表示环境的真实状态信息。在每一个时间步，对于每个智能体$$a∈A≡{1,…,n}$$都需要去选择一个动作$u^{a} \in U$去组成一个联合动作$u∈U≡U^n$  ，再将这个联合动作给到环境中去进行状态转移：$$P(s
 ′
  ∣s,u):S×U×S→[0,1]$$。之后，所有的智能体都会收到一个相同的奖励：$r(s,u):S×U→R$。与单智能体一样$$γ$$表示折扣因子。
 
-  对于每个单智能体a 来说，它接收的是一个独立的部分可观测的状态 $z∈Z$，不同的智能体 a 具备不同的观测，但是所有的观测都来自环境的真实状态信息，所以可以用函数表示为：$$O(s,a):S×A→Z$$。对于每个智能体 a 它都有一个动作观测历史$τ 
+  对于每个单智能体a 来说，它接收的是一个独立的部分可观测的状态 $z∈Z$，不同的智能体 a 具备不同的观测，但是所有的观测都来自环境的真实状态信息，所以可以用函数表示为：$$O(s,a):S×A→Z$$。对于每个智能体 a 它都有一个动作观测历史$τ
 a
  ∈T≡(Z×U)^* $
  ，基于这个动作-观测的历史来构建随机策略函数 $π^a ( u^a ∣ τ^a ) : T × U → [ 0 , 1 ] $。联合动作策略 $π$是基于状态信息 $s_t$构建的联合动作值函数$Q^{\pi}\left(s_{t}, \mathbf{u}_{t}\right)=\mathbb{E}_{s_{t+1: \infty}, \mathbf{u}_{t+1: \infty}}\left[R_{t} \mid s_{t}, \mathbf{u}_{t}\right]$, 其中 $R_{t}=\sum_{i=0}^{\infty} \gamma^{i} r_{t+i}$ 是折扣回报。
@@ -75,4 +75,3 @@ VDN论文全称为：Value-Decomposition Networks For Cooperative Multi-Agent Le
   如果是集中式的结构的话，可以表示为如下形式：
 
 ![img](https://img-blog.csdnimg.cn/20210527103513555.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTA1OTAzMQ==,size_1,color_FFFFFF,t_70#pic_center)
-

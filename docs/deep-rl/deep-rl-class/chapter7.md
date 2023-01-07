@@ -91,22 +91,22 @@ act_dim = env.action_space.shape[0] # action size
 该模型执行[自回归预测](https://en.wikipedia.org/wiki/Autoregressive_model)；也就是说，在当前时间步**t**做出的预测顺序地取决于先前时间步长的输出。这个功能很丰富，所以我们的目标是在评论中解释它。
 
 ```python
-# Function that gets an action from the model using autoregressive prediction 
+# Function that gets an action from the model using autoregressive prediction
 # with a window of the previous 20 timesteps.
 def get_action(model, states, actions, rewards, returns_to_go, timesteps):
     # This implementation does not condition on past rewards
-    
+
     states = states.reshape(1, -1, model.config.state_dim)
     actions = actions.reshape(1, -1, model.config.act_dim)
     returns_to_go = returns_to_go.reshape(1, -1, 1)
     timesteps = timesteps.reshape(1, -1)
-    
+
     # The prediction is conditioned on up to 20 previous time-steps
     states = states[:, -model.config.max_length :]
     actions = actions[:, -model.config.max_length :]
     returns_to_go = returns_to_go[:, -model.config.max_length :]
     timesteps = timesteps[:, -model.config.max_length :]
-    
+
     # pad all tokens to sequence length, this is required if we process batches
     padding = model.config.max_length - states.shape[1]
     attention_mask = torch.cat([torch.zeros(padding), torch.ones(states.shape[1])])
@@ -115,7 +115,7 @@ def get_action(model, states, actions, rewards, returns_to_go, timesteps):
     actions = torch.cat([torch.zeros((1, padding, act_dim)), actions], dim=1).float()
     returns_to_go = torch.cat([torch.zeros((1, padding, 1)), returns_to_go], dim=1).float()
     timesteps = torch.cat([torch.zeros((1, padding), dtype=torch.long), timesteps], dim=1)
-    
+
     # perform the prediction
     state_preds, action_preds, return_preds = model(
             states=states,
@@ -138,7 +138,7 @@ def get_action(model, states, actions, rewards, returns_to_go, timesteps):
 
 ```python
 TARGET_RETURN = 3.6 # This was normalized during training
-MAX_EPISODE_LENGTH = 1000 
+MAX_EPISODE_LENGTH = 1000
 
 state_mean = np.array(
     [1.3490015,  -0.11208222, -0.5506444,  -0.13188992, -0.00378754,  2.6071432,
@@ -176,15 +176,15 @@ for t in range(max_ep_len):
 
     # interact with the environment based on this action
     state, reward, done, _ = env.step(action)
-    
+
     cur_state = torch.from_numpy(state).reshape(1, state_dim)
     states = torch.cat([states, cur_state], dim=0)
     rewards[-1] = reward
-    
+
     pred_return = target_return[0, -1] - (reward / scale)
     target_return = torch.cat([target_return, pred_return.reshape(1, 1)], dim=1)
     timesteps = torch.cat([timesteps, torch.ones((1, 1)).long() * (t + 1)], dim=1)
-    
+
     if done:
         break
 ```
@@ -252,7 +252,7 @@ class DecisionTransformerGymDataCollator:
         self.n_traj = len(traj_lens)
         states = np.vstack(states)
         self.state_mean, self.state_std = np.mean(states, axis=0), np.std(states, axis=0) + 1e-6
-        
+
         traj_lens = np.array(traj_lens)
         self.p_sample = traj_lens / sum(traj_lens)
 
@@ -274,7 +274,7 @@ class DecisionTransformerGymDataCollator:
         )
         # a batch of dataset features
         s, a, r, d, rtg, timesteps, mask = [], [], [], [], [], [], []
-        
+
         for ind in batch_inds:
             # for feature in features:
             feature = self.dataset[int(ind)]
@@ -349,7 +349,7 @@ class TrainableDT(DecisionTransformerModel):
         act_dim = action_preds.shape[2]
         action_preds = action_preds.reshape(-1, act_dim)[attention_mask.reshape(-1) > 0]
         action_targets = action_targets.reshape(-1, act_dim)[attention_mask.reshape(-1) > 0]
-        
+
         loss = torch.mean((action_preds - action_targets) ** 2)
 
         return {"loss": loss}

@@ -21,7 +21,7 @@ PySC2 相比，SMAC
 
 安装主要包括两部分：
 
-- 下载星际争霸2 游戏 
+- 下载星际争霸2 游戏
 
 因为SMAC是基于星际争霸游戏引擎的，所以我们还需要安装StarCraft II，官方指定的版本为SC2.4.10，并且不同版本之间的算法性能测试不一样。对于 Linux
 系统使用者，安装路径为<https://github.com/Blizzard/s2client-proto#downloads>，之后使用
@@ -103,30 +103,30 @@ python -m smac.bin.map_list
 得到下面的输出：
 
 ```shell
-Name            Agents  Enemies Limit  
-3m              3       3       60     
-8m              8       8       120    
-25m             25      25      150    
-5m_vs_6m        5       6       70     
-8m_vs_9m        8       9       120    
-10m_vs_11m      10      11      150    
-27m_vs_30m      27      30      180    
-MMM             10      10      150    
-MMM2            10      12      180    
-2s3z            5       5       120    
-3s5z            8       8       150    
-3s5z_vs_3s6z    8       9       170    
-3s_vs_3z        3       3       150    
-3s_vs_4z        3       4       200    
-3s_vs_5z        3       5       250    
-1c3s5z          9       9       180    
-2m_vs_1z        2       1       150    
-corridor        6       24      400    
-6h_vs_8z        6       8       150    
-2s_vs_1sc       2       1       300    
-so_many_baneling 7       32      100    
-bane_vs_bane    24      24      200    
-2c_vs_64zg      2       64      400 
+Name            Agents  Enemies Limit
+3m              3       3       60
+8m              8       8       120
+25m             25      25      150
+5m_vs_6m        5       6       70
+8m_vs_9m        8       9       120
+10m_vs_11m      10      11      150
+27m_vs_30m      27      30      180
+MMM             10      10      150
+MMM2            10      12      180
+2s3z            5       5       120
+3s5z            8       8       150
+3s5z_vs_3s6z    8       9       170
+3s_vs_3z        3       3       150
+3s_vs_4z        3       4       200
+3s_vs_5z        3       5       250
+1c3s5z          9       9       180
+2m_vs_1z        2       1       150
+corridor        6       24      400
+6h_vs_8z        6       8       150
+2s_vs_1sc       2       1       300
+so_many_baneling 7       32      100
+bane_vs_bane    24      24      200
+2c_vs_64zg      2       64      400
 ```
 
 ### 测试`smac`和它的`Map`是否配置成功：
@@ -353,7 +353,7 @@ difficulties = {
 
 - -  Easy scenarios（2s_vs_1sc/2s3z/3s5z/1c3s5z/10m_vs_11m）
   - Hard scenarios (2c_vs_64zg/bane_vs_bane/5m_vs_6m/3s5z)
-  - Super hard(3s5z_vs_3s6z/6h_vs_8z/27m_vs_30m/MMM2/corridor) 
+  - Super hard(3s5z_vs_3s6z/6h_vs_8z/27m_vs_30m/MMM2/corridor)
 
 # 变换前的空间（原始环境）
 

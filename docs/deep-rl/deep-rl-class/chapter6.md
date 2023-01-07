@@ -71,7 +71,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 这个比率**可以代替我们在策略目标函数中使用的对数概率**。这为我们提供了新目标函数的左侧部分：将比率乘以优势。
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped2.jpg)               
+![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped2.jpg)
 
                                                                     [近端策略优化算法](https://arxiv.org/pdf/1707.06347.pdf)
 
