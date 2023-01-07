@@ -93,4 +93,3 @@ $$\begin{array}{c}{\max_{a} Q=\max_{a} \sum_{i=1}^{d} \tilde{Q}_{i}=\sum_{i=1}^{
 ## Reference
 
 - [Value-Decomposition Networks For Cooperative Multi-Agent Learning Based On Team Reward, AAMAS 2018](https://arxiv.org/pdf/1706.05296.pdf)
-

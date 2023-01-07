@@ -4,7 +4,7 @@
 
 We provide three types of MARL algorithms as our baselines including:
 
-**Independent Learning:** 
+**Independent Learning:**
 IQL
 DDPG
 PG
@@ -13,9 +13,9 @@ TRPO
 PPO
 
 **Centralized Critic:**
-COMA 
-MADDPG 
-MAAC 
+COMA
+MADDPG
+MAAC
 MAPPO
 MATRPO
 HATRPO

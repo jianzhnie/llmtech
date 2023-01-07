@@ -9,17 +9,17 @@
 
 QMIX 是一种基于 Value-Based 的多智能体强化学习算法（MARL），其基本思想来源于 Actor-Critic 与 DQN 的结合。使用中心式学习（Centralized Learning）分布式执行（Distributed Execution）的方法，利用中心式 Critic 网络接受全局状态用于指导 Actor 进行更新。QMIX 中 Critic 网络的更新方式和 DQN 相似，使用 TD-Error 进行网络自更新。
 
-QMIX 具有如下特点： 
+QMIX 具有如下特点：
 
-- 学习得到分布式策略。 
-- 本质是一个值函数逼近算法。 
+- 学习得到分布式策略。
+- 本质是一个值函数逼近算法。
 - 由于对一个联合动作-状态只有一个总奖励值，而不是每个智能体都有一个自己的奖励值，因此只能用于合作环境，而不能用于竞争对抗环境。
 -  QMIX算法采用中心式训练，分布式执行的框架。通过集中式的学习，得到每个智能体的分布式策略。
 
 - 训练时借用全局状态信息来提高算法效果。是对VDN方法的改进。
-- QMIX设计一个神经网络来整合每个智能体的局部值函数而得到联合动作值函数，VDN是直接求和。 
+- QMIX设计一个神经网络来整合每个智能体的局部值函数而得到联合动作值函数，VDN是直接求和。
 - 每个智能体的局部值函数只需要自己的局部观测，因此整个系统在执行时是一个分布式的，通过局部值函数，选出累积期望奖励最大的动作执行。
-- 算法使联合动作值函数与每个局部值函数的单调性相同，因此对局部值函数取最大动作也就是使联合动作值函数最大。 
+- 算法使联合动作值函数与每个局部值函数的单调性相同，因此对局部值函数取最大动作也就是使联合动作值函数最大。
 - 算法针对的模型是一个分布式多智能体部分可观马尔可夫决策过程。
 
 ##  相关研究
@@ -70,7 +70,7 @@ VDN（value decomposition networks）采用对每个智能体的值函数进行�
 
 令 $\tau=(\tau_1,\cdots,\tau_n)$表示联合动作-观测历史，其中 $\tau_i=(a_{i,0},o_{i,1},\cdots,a_{i,t-1},o_{i,t})$ 为动作-观测历史，$a=(a_1,\cdots,a_n)$ 表示联合动作。 $Q_{tot}$ 为联合动作值函数， $Q_i(\tau_i,a_i;\theta_i)$  为智能体i的局部动作值函数，局部值函数只依赖于每个智能体的局部观测。
 
-VDN采用的方法就是直接相加求和的方式. 
+VDN采用的方法就是直接相加求和的方式.
 
 $Q_{tot}=\sum_{i=1}^{n}Q_i(\tau_i,a_i,;\theta_i) $
 
@@ -100,7 +100,7 @@ QMIX 通过提出单调性假设放松了 VDN 中对单智能体的价值函数�
 
 因此分布式策略就是贪心的通过局部 $Q_i $获取最优动作。QMIX将(1)转化为一种单调性约束，如下所示：
 
-$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。 
+$\frac{\partial Q_{tot}}{\partial Q_i}\ge 0, \forall i\in \{1,2,\cdots,n\} $    其中 $Q_i$ 为单智能体的价值函数，$Q_{tot}$ 为联合价值函数。
 
 可以看出，VDN中的求和形式是该条件的一个特例 $（\frac{\partial Q_{t o t}}{\partial Q_{a}} = 1, \forall a \in A）$。QMIX 模型的核心思想就是在Q和Qi之间构造一个单调映射。若满足以上单调性，则(1)成立，为了实现上述约束，QMIX采用混合网络（mixing network）来实现，其具体结构如下所示.
 
@@ -124,7 +124,7 @@ QMIX最终的代价函数为:
 
 $$L(\theta)=\sum_{i=1}^b[(y_i^{tot}-Q_{tot}(\tau,a,s;\theta))^2] $$
 
-更新用到了传统的DQN的思想，其中b表示从经验记忆中采样的样本数量， 
+更新用到了传统的DQN的思想，其中b表示从经验记忆中采样的样本数量，
 
 $$y^{tot}=r+\gamma \max_{a'} \overline Q(\tau',a',s';\overline \theta) $$， $Q(\tau',a',s';\overline \theta)$ 表示目标网络。
 
@@ -287,4 +287,3 @@ class QMixer(nn.Module):
 - https://liushunyu.github.io/2020/06/18/
 - https://blog.csdn.net/qq_38638132/article/details/114177729
 - https://www.zhihu.com/search?type=content&q=QMIX
-

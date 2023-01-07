@@ -14,7 +14,7 @@
   - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
   - [openai Gym ](deep-rl/envs/gym.md)
   - [SMAC](deep-rl/envs/smac.md)
-  
+
 - 强化学习工具篇
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
   - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
@@ -28,4 +28,3 @@
   - [QTRAN](deep-rl/papers/QTRAN.md)
   - [QMIX](deep-rl/papers/qmix.md)
   - [MADDPG](deep-rl/papers/MADDPG.md)
-

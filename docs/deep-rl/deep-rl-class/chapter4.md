@@ -92,7 +92,7 @@ Reinforce，也称为 Monte-Carlo Policy Gradient，**使用整个 episode 的�
 
 为此，我们将使用[策略梯度定理](https://www.youtube.com/watch?v=AKbX1Zvo7r8)。这里不打算深入探讨数学细节，但如果您有兴趣，请[观看此视频](https://www.youtube.com/watch?v=AKbX1Zvo7r8)
 
-Reinforce 算法的工作原理如下： 
+Reinforce 算法的工作原理如下：
 
 循环：
 

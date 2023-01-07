@@ -115,4 +115,3 @@ Hub 上有一个由 Anthropic 创建的大型[数据集。](https://huggingface.
 - [Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned](https://arxiv.org/abs/2209.07858)（Ganguli 等人，2022 年）：详细记录了“发现、衡量和尝试减少 [语言模型] 潜在有害输出”的努力。
 - [Dynamic Planning in Open-Ended Dialogue using Reinforcement Learning](https://arxiv.org/abs/2208.02294)（Cohen 等人，2022 年）：使用 RL 来增强开放式对话代理的会话技能。
 - [Is Reinforcement Learning (Not) for Natural Language Processing?: Benchmarks, Baselines, and Building Blocks for Natural Language Policy Optimization](https://arxiv.org/abs/2210.01241)（Ramamurthy 和 Ammanabrolu 等人，2022 年）：讨论 RLHF 中开源工具的设计空间并提出新算法NLPO（自然语言策略优化）作为 PPO 的替代方案。
-

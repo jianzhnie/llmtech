@@ -146,7 +146,7 @@ $$L_{\mathrm{nopt}-\min }\left(\tau, u, r, \tau^{\prime} ; \theta\right)=\frac{1
 
 其中$D\left(\tau, u_{i}, u_{-i}\right)=Q_{\mathrm{jt}}^{\prime}\left(\tau, u_{i}, u_{-i}\right)-\hat{Q}\_{\mathrm{jt}}\left(\tau, u_{i}, u_{-i}\right)+V_{\mathrm{jt}}(\tau)$
 
-## 实验内容 
+## 实验内容
 
 在下图的单状态马尔科夫博弈中，QTRAN是唯一获得最优解的：
 
