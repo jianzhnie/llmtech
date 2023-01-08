@@ -30,3 +30,4 @@
 - [QTRAN](deep-rl/papers/QTRAN.md)
 - [QMIX](deep-rl/papers/qmix.md)
 - [MADDPG](deep-rl/papers/MADDPG.md)
+- [MAT](deep-rl/papers/MAT.md)
