@@ -8,4 +8,3 @@
 - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6_ppo.md)
 - [第七章：Decision Transfomer](deep-rl/deep-rl-class/chapter7_decision-transformr.md)
 - [第八章：RLHF](deep-rl/papers/RLHF.md)
-

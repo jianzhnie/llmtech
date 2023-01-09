@@ -40,14 +40,14 @@ Sequence Model（如Transformer）已经在NLP和CV等领域取得了非常好�
 
 ### 3.1 问题定义
 
-合作 MARL 问题通常由马尔可夫游戏建模 $\langle\mathcal{N}, \mathcal{O}, \mathcal{A}, R, P, \gamma\rangle[19] . \mathcal{N}=$ $\{1, \ldots, n\}$ 是智能体集合 , 
+合作 MARL 问题通常由马尔可夫游戏建模 $\langle\mathcal{N}, \mathcal{O}, \mathcal{A}, R, P, \gamma\rangle[19] . \mathcal{N}=$ $\{1, \ldots, n\}$ 是智能体集合 ,
 
 - $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$   是局部观测空间的乘积，即联合观测空间，
 - $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ 是 Agent 动作的乘积空间，即联合动作空间，
-- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ 是联合奖励函数， 
+- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ 是联合奖励函数，
 - $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
-- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$是一个“联合”观测) 并采取动作 $a_{t}^{i}$ 根据其策略 $\pi^{i}$, 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分. 
-- 在每个时间步，所有智能体根据他们的观测同时采取动作没有顺序依赖性。转移Kernel $P$ 和联合策略导致（不适当的）边际观测分布  $\rho_{\boldsymbol{\pi}}(\cdot) \triangleq \sum_{t=0}^{\infty} \gamma^{t} \operatorname{Pr}\left(\mathbf{o}_{t}=\boldsymbol{o} \mid \boldsymbol{\pi}\right)$. 
+- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$是一个“联合”观测) 并采取动作 $a_{t}^{i}$ 根据其策略 $\pi^{i}$, 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
+- 在每个时间步，所有智能体根据他们的观测同时采取动作没有顺序依赖性。转移Kernel $P$ 和联合策略导致（不适当的）边际观测分布  $\rho_{\boldsymbol{\pi}}(\cdot) \triangleq \sum_{t=0}^{\infty} \gamma^{t} \operatorname{Pr}\left(\mathbf{o}_{t}=\boldsymbol{o} \mid \boldsymbol{\pi}\right)$.
 - 在每个时间步结束时，整个团队获得共同奖励 $R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$ 并观测 $\mathbf{o}_{t+1}$, 其概率分布为 $P\left(\cdot \mid \mathbf{o}_{t}, \mathbf{a}_{t}\right)$.   遵循这个过程，Agents 获得累积折扣回报  $R^{\gamma} \triangleq \sum_{t=0}^{\infty} \gamma^{t} R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$
 
 ### 3. 2.多智能体优势分解定理
@@ -82,13 +82,13 @@ $$
 A_{\boldsymbol{\pi}}^{i_{1: n}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: n}}\right)=\sum_{m=1}^{n} A_{\boldsymbol{\pi}}^{i_{m}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m-1}}, a^{i_{m}}\right)
 $$
 
-重要的是，这个定理提供了一种直觉来指导选择渐进式改进的动作。假设智能体 $i_{1}$选择一个动作$a^{i_{1}}$ 具有积极的优势 $A_{\boldsymbol{\pi}}^{i_{1}}\left(\boldsymbol{o}, a^{i_{1}}\right)>0$. 然后，想象一下对于所有的$j=2, \ldots, n$, 智能体  $i_{j}$ 知道联合动作 $\boldsymbol{a}^{i_{1: j-1}}$ 是它前一个动作. 在这种情况下，它可以选择一个动作 $a^{i_{j}}$ 从而得到的优势 $A_{\boldsymbol{\pi}}^{i_{j}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: j-1}}, a^{i_{j}}\right)$ 是积极的.  总而言之，定理确保联合动作 $\boldsymbol{a}^{i_{1: n}}$ 有积极的优势。此外，请注意联合已选择动作 $n$ 步, 每个步骤搜索一个个体智能体的动作空间。 
+重要的是，这个定理提供了一种直觉来指导选择渐进式改进的动作。假设智能体 $i_{1}$选择一个动作$a^{i_{1}}$ 具有积极的优势 $A_{\boldsymbol{\pi}}^{i_{1}}\left(\boldsymbol{o}, a^{i_{1}}\right)>0$. 然后，想象一下对于所有的$j=2, \ldots, n$, 智能体  $i_{j}$ 知道联合动作 $\boldsymbol{a}^{i_{1: j-1}}$ 是它前一个动作. 在这种情况下，它可以选择一个动作 $a^{i_{j}}$ 从而得到的优势 $A_{\boldsymbol{\pi}}^{i_{j}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: j-1}}, a^{i_{j}}\right)$ 是积极的.  总而言之，定理确保联合动作 $\boldsymbol{a}^{i_{1: n}}$ 有积极的优势。此外，请注意联合已选择动作 $n$ 步, 每个步骤搜索一个个体智能体的动作空间。
 
 因此，在动作空间中， 此搜索的复杂性是累加的, $\sum_{i=1}^{n}\left|\mathcal{A}^{i}\right|$.  如果我们要直接在联合动作空间中执行搜索，我们将浏览一组乘法大小 $|\mathcal{A}|=\prod_{i=1}^{n}\left|\mathcal{A}^{i}\right|$ 的动作。 稍后，我们将基于这种见解来设计一个 SM 模型来优化联合策略，逐个智能体，无需立即考虑联合行动空间。
 
 ### 3. 3. MARL 中的现有方法
 
-我们现在简要总结两种最先进的 MARL 算法。它们都建立在 近端策略优化 (PPO) 之上—一种以其简单性和性能稳定性而闻名的 RL 方法。MAPPO [46] 是第一个也是最直接的在 MARL 中应用 PPO 的方法。它等同地将所有智能体共享一套参数，并将智能体的聚合轨迹用于共享策略的更新; 在迭代 $k+1$步,  它通过最大化裁剪目标优化了策略参数 $\theta_{k+1}$ 
+我们现在简要总结两种最先进的 MARL 算法。它们都建立在 近端策略优化 (PPO) 之上—一种以其简单性和性能稳定性而闻名的 RL 方法。MAPPO [46] 是第一个也是最直接的在 MARL 中应用 PPO 的方法。它等同地将所有智能体共享一套参数，并将智能体的聚合轨迹用于共享策略的更新; 在迭代 $k+1$步,  它通过最大化裁剪目标优化了策略参数 $\theta_{k+1}$
 $$
 \sum_{i=1}^{n} \mathbb{E}_{\mathbf{o} \sim \rho_{\boldsymbol{\pi}_{\theta_{k}}}, \mathbf{a} \sim \boldsymbol{\pi}_{\theta_{k}}}\left[\min \left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)} A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a}), \operatorname{clip}\left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}, 1 \pm \epsilon\right) A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a})\right)\right]
 $$
@@ -100,7 +100,7 @@ $$
 \mathbb{E}_{\mathbf{o} \sim \rho_{\boldsymbol{\pi}_{\text {old }}}, \mathbf{a}^{i_{1: m-1} \sim \pi_{\text {new }}} i_{1: m-1}, \mathrm{a}^{i} m \sim \pi_{\text {old }}^{i m}}^{i_{\text {of }}}\left[\min \left(\mathrm{r}\left(\pi^{i_{m}}\right) A_{\boldsymbol{\pi}_{\text {old }}}^{i_{1: m}}\left(\boldsymbol{o}, \mathbf{a}^{i_{1: m}}\right), \operatorname{clip}\left(\mathrm{r}\left(\pi^{i_{m}}\right), 1 \pm \epsilon\right) A_{\pi_{\text {old }}}^{i_{1: m}}\left(\mathbf{o}, \mathbf{a}^{i_{1: m}}\right)\right)\right],
 $$
 
-其中$\mathrm{r}\left(\pi^{i_{m}}\right)=\pi^{i_{m}}\left(\mathrm{a}^{i_{m}} \mid \mathbf{o}\right) / \pi_{\text {old }}^{i_{m}}\left(\mathrm{a}^{i_{m}} \mid \mathbf{o}\right)$. 请注意，期望是计算的新更新的以前智能体的策略, 即 $\boldsymbol{\pi}_{\mathrm{new}}^{i_{1: m-1}}$; 这反映了一种直觉，即根据定理 (1)，智能体 $i_{m}$ 对其先前的智能体作出反应 $i_{1: m-1}$. 
+其中$\mathrm{r}\left(\pi^{i_{m}}\right)=\pi^{i_{m}}\left(\mathrm{a}^{i_{m}} \mid \mathbf{o}\right) / \pi_{\text {old }}^{i_{m}}\left(\mathrm{a}^{i_{m}} \mid \mathbf{o}\right)$. 请注意，期望是计算的新更新的以前智能体的策略, 即 $\boldsymbol{\pi}_{\mathrm{new}}^{i_{1: m-1}}$; 这反映了一种直觉，即根据定理 (1)，智能体 $i_{m}$ 对其先前的智能体作出反应 $i_{1: m-1}$.
 
 ### 3. 4 Transformer 模型
 
