@@ -216,6 +216,7 @@
 <img width="600" src="https://huggingface.co/blog/assets/63_deep_rl_intro/mario.jpg"/>
 </div>
 <div align=center>图 1. 18 新一集的开始</div>
+
 #### Continuing 任务
 
 有些任务是永远持续的任务（没有终止状态）。在这种情况下，智能体必须学习如何选择最佳动作并同时与环境交互。例如，进行自动股票交易的智能体。对于这个任务，没有起点和终点。 智能体会一直运行，直到决定停止它们。
