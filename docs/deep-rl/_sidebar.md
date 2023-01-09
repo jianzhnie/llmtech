@@ -1,5 +1,5 @@
 
-- [深度强化学习入门教程](deep-rl/deep-rl-class/README.md)
+- [入门教程](deep-rl/deep-rl-class/README.md)
   - [第一章：深度强化学习简介](deep-rl/deep-rl-class/chapter1_introduction.md)
   - [第二章：Q-Learning ](deep-rl/deep-rl-class/chapter2_q-learning.md)
   - [第三章：Deep Q-Learning ](deep-rl/deep-rl-class/chapter3_dqn.md)
@@ -10,7 +10,7 @@
   - [第八章：RLHF](deep-rl/papers/RLHF.md)
 
 
-- [深度强化学习进阶教程](deep-rl/algorithms/README.md)
+- [进阶教程](deep-rl/algorithms/README.md)
   - [Policy gradient theorem的证明](deep-rl/algorithms/chapter1_supp_pg.md)
   - [为什么A2C中减去 baseline 函数可以减小方差](deep-rl/algorithms/chapter1_supp_a2c.md)
   - [步步深入TRPO](deep-rl/algorithms/chapter1_supp_trpo.md)

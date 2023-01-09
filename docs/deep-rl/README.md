@@ -1,4 +1,8 @@
-### [深度强化学习入门教程](deep-rl/deep-rl-class/README.md)
+## 深度强化学习系列
+
+
+
+### [入门教程](deep-rl/deep-rl-class/README.md)
 
 - [第一章：深度强化学习简介](deep-rl/deep-rl-class/chapter1_introduction.md)
 - [第二章：Q-Learning ](deep-rl/deep-rl-class/chapter2_q-learning.md)
@@ -9,7 +13,7 @@
 - [第七章：Decision Transfomer](deep-rl/deep-rl-class/chapter7_decision-transformr.md)
 - [第八章：RLHF](deep-rl/papers/RLHF.md)
 
-### [深度强化学习进阶教程](deep-rl/algorithms/README.md)
+### [进阶教程](deep-rl/algorithms/README.md)
 
 - [Policy gradient theorem的证明](deep-rl/algorithms/chapter1_supp_pg.md)
 - [为什么A2C中减去 baseline 函数可以减小方差](deep-rl/algorithms/chapter1_supp_a2c.md)
@@ -29,7 +33,8 @@
 - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
 - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
-### 强化学习论文
+### 多智能体强化学习
+
 - [DRQN](deep-rl/papers/DRQN.md)
 - [IQL](deep-rl/papers/iql.md)
 - [COMA](deep-rl/papers/COMA.md)
@@ -38,3 +43,4 @@
 - [QMIX](deep-rl/papers/qmix.md)
 - [MADDPG](deep-rl/papers/MADDPG.md)
 - [MAT](deep-rl/papers/MAT.md)
+
