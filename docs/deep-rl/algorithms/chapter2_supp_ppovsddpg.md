@@ -28,7 +28,7 @@ $$
 
 注: 此处目标函数定义为 $E_{s \sim \rho_{\beta}} V^{\mu}(s)$ 而不是 $E_{s \sim \rho_{\beta}} \frac{\rho_{\mu}}{\rho_{\beta}} V^{\mu}(s)$, 其原因可以参考2012年提出的首个 off-policy Actor Critic算法: The Off-Policy Actor-Critic algorithm (Degris et al., 2012b)。
 
-有了目标函数后, 我们对策略 $\mu$ 的参数 $\theta$ 求梯度便可得到 off-policy 版的确定性策略梯度定理, 具体 如下所示： 
+有了目标函数后, 我们对策略 $\mu$ 的参数 $\theta$ 求梯度便可得到 off-policy 版的确定性策略梯度定理, 具体 如下所示：
 
 $$
 \begin{aligned}
@@ -47,4 +47,3 @@ Analogous to the stochastic case, we have dropped a term that depends on $\nabla
 ## 总结
 
 所以对于本小节提出的问题, 一句话总结就是：DDPG 目标函数梯度计算公式中不存在对动作的积 分, 所以即使作为 off-policy 算法, 也不需要使用重要性采样。
-

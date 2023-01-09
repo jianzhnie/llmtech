@@ -96,7 +96,7 @@ $$
 
 当然, 我们可以根据数据分布和需要, 对概率分布进行多种形式的分解, 比如 Gamma 分布, Beta 分 布, 以及 Student 分布等等。这样我们可以把概率分布簇的参数与概率分布自身的随机性拆分和剥 离, 从而有益于计算和求导。
 
-具体的实用例子, 比如在 VAE 中, 假设算法中的隐变量服从高斯分布 $\mathbf{z} \sim q_{\phi}(\mathbf{z} \mid \mathbf{x})$, 那么这个隐变量 可以被重参数化表达为 $\mathbf{z}=\mu_{\phi}(\mathbf{x})+\epsilon \odot \sigma_{\phi}(\mathbf{x})$, 从而使目标函数从原来的 $\mathbb{E}_{q_{\phi}(\mathbf{z} \mid \mathbf{x})}(f(\mathbf{z}))$ 变为 $\mathbb{E}_{q(\epsilon)}(f(z))$ 。 
+具体的实用例子, 比如在 VAE 中, 假设算法中的隐变量服从高斯分布 $\mathbf{z} \sim q_{\phi}(\mathbf{z} \mid \mathbf{x})$, 那么这个隐变量 可以被重参数化表达为 $\mathbf{z}=\mu_{\phi}(\mathbf{x})+\epsilon \odot \sigma_{\phi}(\mathbf{x})$, 从而使目标函数从原来的 $\mathbb{E}_{q_{\phi}(\mathbf{z} \mid \mathbf{x})}(f(\mathbf{z}))$ 变为 $\mathbb{E}_{q(\epsilon)}(f(z))$ 。
 
 ## 使用条件
 
@@ -134,7 +134,7 @@ $$
 
 我们可以把概率分布重参数化后的参数, 理解为概率分布的 “坐标”，因而我们就可以把目标函数对 于概率分布的梯度, 转移到目标函数对这些坐标分量的梯度计算上去。对这些自然参数的求导有着很 明确的数学含义, 比如 $\frac{\partial}{\partial \mu}$ 是指概率分布的均值变化单位数值所带来的目标函数的变化量。
 
-通过这种方法, 我们可以近似认为：计算某个函数对该分布的导数, 等价于计算该函数对该概率分布 自然参数的导数（如下图所示）。而在很多机器学习算法的实际使用中, 假如最终的目标函数与某个 概率分布有关, 那么对目标函数的梯度就可以一直向后传递至对该概率分布的自然参数中, 而不受随 机性带来的影响, 即该这种计算导数的方式在关于这种随机性的统计意义上成立。由此, 我们可以便 捷地构建基于梯度下降优化的各种机器学习模型（例如 VAE）, 从而解决一系列实用性问题。 
+通过这种方法, 我们可以近似认为：计算某个函数对该分布的导数, 等价于计算该函数对该概率分布 自然参数的导数（如下图所示）。而在很多机器学习算法的实际使用中, 假如最终的目标函数与某个 概率分布有关, 那么对目标函数的梯度就可以一直向后传递至对该概率分布的自然参数中, 而不受随 机性带来的影响, 即该这种计算导数的方式在关于这种随机性的统计意义上成立。由此, 我们可以便 捷地构建基于梯度下降优化的各种机器学习模型（例如 VAE）, 从而解决一系列实用性问题。
 
 ![](https://cdn.mathpix.com/cropped/2023_01_09_f8ee616baa87282a8759g-4.jpg?height=869&width=1697&top_left_y=170&top_left_x=178)
 
@@ -227,7 +227,7 @@ $$
 $$
 \begin{aligned}
 & \theta^{*}=\arg \max J(\theta) \\
-& =\arg \max \underset{\substack{s \\ \epsilon \sim \tilde{\mathcal{N}}(0, l)}}{\mathbb{E}}\left(\min _{j=1,2} Q_{\phi_{j}}\left(s, a_{\theta}(s, \epsilon)\right)-\alpha \log \left(\pi_{\theta}\left(a_{\theta}(s, \epsilon) \mid s\right)\right)\right) 
+& =\arg \max \underset{\substack{s \\ \epsilon \sim \tilde{\mathcal{N}}(0, l)}}{\mathbb{E}}\left(\min _{j=1,2} Q_{\phi_{j}}\left(s, a_{\theta}(s, \epsilon)\right)-\alpha \log \left(\pi_{\theta}\left(a_{\theta}(s, \epsilon) \mid s\right)\right)\right)
 \end{aligned}
 $$
 
@@ -256,7 +256,7 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2023_01_09_f8ee616baa87282a8759g-6.jpg?height=732&width=1652&top_left_y=1536&top_left_x=249)
 
-(图2：PPO 策略部分优化计算图, 只有蓝色部分回传梯度, 紫色部分只是参与计算) 
+(图2：PPO 策略部分优化计算图, 只有蓝色部分回传梯度, 紫色部分只是参与计算)
 
 ## 参考文献
 

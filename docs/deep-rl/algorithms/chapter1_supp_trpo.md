@@ -20,7 +20,7 @@ $V\left(s_{t}\right)=E_{a_{t}, s_{t+1}, a_{t+1}, \ldots .}\left[\sum_{l=0}^{\inf
 
 $A\left(s_{t}, a_{t}\right)=Q\left(s_{t}, a_{t}\right)-V\left(s_{t}\right)$, 表示在状态 $s_{t}$ 下, 直接采用动作 $a_{t}$ 相比于按照 $a_{t} \sim \pi\left(a_{t} \mid s_{t}\right)$ 采 样动作的优势。
 
-如何提升 $\eta(\pi)$ 呢, 或者换个问题, 如何找到一个新的策略 $\tilde{\pi}$ 使得 $\eta(\tilde{\pi})$ 高于 $\eta(\pi)$ 呢? 这就需要分析 $\eta(\tilde{\pi})$ 和 $\eta(\pi)$ 的定量关系了。这里作者引用了一个 $\mathrm{RL}$ 领域的经典结论 [2]: 
+如何提升 $\eta(\pi)$ 呢, 或者换个问题, 如何找到一个新的策略 $\tilde{\pi}$ 使得 $\eta(\tilde{\pi})$ 高于 $\eta(\pi)$ 呢? 这就需要分析 $\eta(\tilde{\pi})$ 和 $\eta(\pi)$ 的定量关系了。这里作者引用了一个 $\mathrm{RL}$ 领域的经典结论 [2]:
 
 $$
 \eta(\tilde{\pi})=\eta(\pi)+E_{s_{0}, a_{0}, \cdots \sim \tilde{\pi}} \sum_{t=0}^{\infty} \gamma^{t} A_{\pi}\left(s_{t}, a_{t}\right), \text { Eq.1 }
@@ -99,7 +99,7 @@ $$
 L_{\pi}(\pi)=\eta(\pi) \text {, 且 }\left.\nabla_{\tilde{\pi}} L_{\pi}(\tilde{\pi})\right|_{\tilde{\pi}=\pi}=\left.\nabla_{\tilde{\pi}} \eta(\tilde{\pi})\right|_{\tilde{\pi}=\pi}
 $$
 
-第一个等式 (值相等) 一眼就可以看出来, 第二个需要稍微证明一下, 具体如下: 
+第一个等式 (值相等) 一眼就可以看出来, 第二个需要稍微证明一下, 具体如下:
 
 $$
 \begin{aligned}
