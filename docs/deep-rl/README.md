@@ -1,7 +1,5 @@
 ## 深度强化学习系列
 
-
-
 ### [入门教程](deep-rl/deep-rl-class/README.md)
 
 - [第一章：深度强化学习简介](deep-rl/deep-rl-class/chapter1_introduction.md)
