@@ -1,5 +1,5 @@
 
-- 深度强化学习课程
+- [深度强化学习入门教程](deep-rl/deep-rl-class/README.md)
   - [第一章：深度强化学习简介](deep-rl/deep-rl-class/chapter1_introduction.md)
   - [第二章：Q-Learning ](deep-rl/deep-rl-class/chapter2_q-learning.md)
   - [第三章：Deep Q-Learning ](deep-rl/deep-rl-class/chapter3_dqn.md)
@@ -8,6 +8,15 @@
   - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/chapter6_ppo.md)
   - [第七章：Decision Transfomer](deep-rl/deep-rl-class/chapter7_decision-transformr.md)
   - [第八章：RLHF](deep-rl/papers/RLHF.md)
+
+
+- [深度强化学习进阶教程](deep-rl/algorithms/README.md)
+  - [Policy gradient theorem的证明](deep-rl/algorithms/chapter1_supp_pg.md)
+  - [为什么A2C中减去 baseline 函数可以减小方差](deep-rl/algorithms/chapter1_supp_a2c.md)
+  - [步步深入TRPO](deep-rl/algorithms/chapter1_supp_trpo.md)
+  - [混合动作空间表征学习方法介绍（HyAR）](deep-rl/algorithms/chapter2_supp_hyar.md)
+  - [为什么 PPO 需要重要性采样, 而 DDPG 这个 off-policy 算法不需要](deep-rl/algorithms/chapter2_supp_ppovsddpg.md)
+  - [重参数化与强化学习](deep-rl/algorithms/chapter2_supp_reparameterization.md)
 
 
 - 强化学习环境
