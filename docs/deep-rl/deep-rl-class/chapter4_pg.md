@@ -96,7 +96,7 @@ Reinforce 算法的工作原理如下：
 
 循环：
 
-- 使用 Policy $\pi_\theta$ 收集智能体的轨迹 episode， $\tau$
+- 使用 Policy $\pi_\theta$ 收集智能体的轨迹 episode， $\tau$
 - 使用 episode 的数据来估计梯度 $\hat{g} = \nabla_\theta J(\theta)$
 
 ![策略梯度](https://huggingface.co/blog/assets/85_policy_gradient/pg.jpg)

@@ -73,16 +73,16 @@
 
 让我们看看训练过程，了解 Actor 和 Critic 是如何被优化的：
 
-- 在每个时间步 t，我们得到当前的来自环境状态 $S_t$ ，并将**其作为输入传递给我们的 Actor 和 Critic**。
-- 我们的策略获取状态 $S_t$ 并**输出一个动作**  $A_t$.
+- 在每个时间步 t，我们得到当前的来自环境状态 $S_t$ ，并将**其作为输入传递给我们的 Actor 和 Critic**。
+- 我们的策略获取状态 $S_t$ 并**输出一个动作**  $A_t$.
 
 ![Step 1 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step1.jpg)
 
-- Critic 也将该动作作为输入，并使用$S_t$  和 $A_t$，**计算在该状态下采取该动作的值：Q 值**。
+- Critic 也将该动作作为输入，并使用$S_t$  和 $A_t$，**计算在该状态下采取该动作的值：Q 值**。
 
 ![Step 2 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step2.jpg)
 
-- 环境执行动作 $A_t$ 并输出一个新的状态 $S_{t+1}$ 和奖励 $R_{t+1}$.
+- 环境执行动作 $A_t$ 并输出一个新的状态 $S_{t+1}$ 和奖励 $R_{t+1}$.
 
 ![步骤 3 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step3.jpg)
 
@@ -90,7 +90,7 @@
 
 ![步骤 4 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step4.jpg)
 
-- 更新完参数的 Actor，在给定新状态 $S_{t+1}$下产生了下一步要采取的动作 $A_{t+1}$ 。
+- 更新完参数的 Actor，在给定新状态 $S_{t+1}$下产生了下一步要采取的动作 $A_{t+1}$ 。
 - 然后 Critic 更新它的价值函数的参数。
 
 ![步骤 5 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step5.jpg)

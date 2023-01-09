@@ -94,7 +94,7 @@ pip install git+https://github.com/oxwhirl/smac.git
 
 安装完成后，可以通过安装成功后 `echo $SC2PATH` 确认环境变量设置成功.
 
-### 测试`Map`是否放置成功：
+## 测试`Map`是否放置成功：
 
 ```bash
 python -m smac.bin.map_list
@@ -129,7 +129,7 @@ bane_vs_bane    24      24      200
 2c_vs_64zg      2       64      400
 ```
 
-### 测试`smac`和它的`Map`是否配置成功：
+## 测试`smac`和它的`Map`是否配置成功：
 
 ```python
 python -m smac.examples.random_agents
