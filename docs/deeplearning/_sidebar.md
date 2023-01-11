@@ -1,7 +1,8 @@
-- Deeplearning4j
+- [Deeplearning4j](deeplearning/deeplearning4j/README.md)
   - [Deeplearning4J](deeplearning/deeplearning4j/Deeplearning4J.md)
   - [Arbiter](deeplearning/deeplearning4j/Arbiter.md)
-- 分布式训练
+
+- [分布式训练](deeplearning/distributed-training/README.md)
   - [分布式训练基础](deeplearning/distributed-training/ch1.md)
   - [从使用者角度切入](deeplearning/distributed-training/ch2.md)
   - [Horovodrun背后做了什么](deeplearning/distributed-training/ch3.md)
@@ -19,15 +20,15 @@
   - [弹性训练之容错](deeplearning/distributed-training/ch17.md)
   - [MPI](deeplearning/distributed-training/MPI.md)
 
-- Model 转换
+- [Model转换](deeplearning/model-convert/README.md)
   - [Pb to om](deeplearning/model-convert/How-to-convert-pb-model-to-om.md)
   - [Tf to pb](deeplearning/model-convert/How-to-export-tf-model-to-pb.md)
   - [如何修改 TF 计算图](deeplearning/model-convert/Modify-tf-graph.md)
 
-- 目标检测
+- [目标检测](deeplearning/object-detection/README.md)
   - [FocalLoss](deeplearning/object-detection/FocalLoss.md)
 
-- 自然语言处理
+- [自然语言处理](deeplearning/nlp/README.md)
 
   - [chatGPT](deeplearning/nlp/chaptGPT.md)
   - [Transformer 模型](deeplearning/nlp/Transformer.md)
@@ -36,10 +37,10 @@
   - [Word2Vec 1](deeplearning/nlp/Word2Vec_1.md)
   - [Word2Vec 2](deeplearning/nlp/Word2Vec_2.md)
 
-- Vision Transformer
+- [VIT](deeplearning/transformers/README.md)
   - [SwinTransformer](deeplearning/transformers/SwinTransformer.md)
   - [Vision transformer](deeplearning/transformers/vision_transformer.md)
 
-- 推荐系统
+- [推荐系统](deeplearning/recommender/README.md)
   - [Deep Cross](deeplearning/recommender/Deep&Cross.md)
   - [Wide&Deep](deeplearning/recommender/wide&deep.md)
