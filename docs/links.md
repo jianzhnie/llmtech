@@ -4,6 +4,7 @@
 - [Yihui Xie](https://yihui.org/)
 - [Chiyuan Zhang](https://pluskid.org/)
 - [Lilian](https://lilianweng.github.io/)
+- [Yang Song](https://yang-song.net/)
 
 
 ## My projects
