@@ -287,177 +287,167 @@ $$
 2. 具有“一致性”属性，因为生成过程是确定性的，这意味着以相同潜在变量为条件的多个样本应该具有相似的高级特征。
 3. 由于一致性，DDIM 可以在潜在变量中进行语义上有意义的插值。
 
-*Latent diffusion model* ( **LDM** ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在潜在空间而不是像素空间中运行扩散过程，使训练成本更低，推理速度更快。它的动机是观察到图像的大部分 bits 都有助于感知细节，并且语义和概念组成在积极压缩后仍然存在。LDM 通过生成建模学习松散地分解感知压缩和语义压缩，方法是首先使用自动编码器去除像素级冗余，然后通过扩散过程对学习的潜在数据进行操作/生成语义概念。
+*Latent diffusion model* ( **LDM** ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在隐空间而不是像素空间中运行扩散过程，使训练成本更低，推理速度更快。它的动机是观察到图像的大部分 bits 都有助于感知细节，并且语义和概念组成在积极压缩后仍然存在。LDM 通过生成建模学习松散地分解感知压缩和语义压缩，方法是首先使用自动编码器去除像素级冗余，然后通过扩散过程对学习的潜在数据进行操作/生成语义概念。
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png)
 
 >  Fig. 8. The plot for tradeoff between compression rate and distortion, illustrating two-stage compressions - perceptural and semantic comparession. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752))
 
-感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 潜在向量$\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从潜在向量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化类型，以避免潜在空间中的任意高方差。
+感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 隐变量 $\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从隐变量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化类型，以避免隐空间中的任意高方差。
 
 - KL-reg：对学习隐变量的标准正态分布的KL 惩罚，类似于[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)。
 - VQ-reg：在解码器中使用矢量量化层，如[VQVAE](https://lilianweng.github.io/posts/2018-08-12-vae/#vq-vae-and-vq-vae-2)，但量化层被解码器吸收。
 
-扩散和去噪过程发生在潜在向量上z. 去噪模型是一个时间条件的 U-Net，增加了交叉注意机制来处理图像生成的灵活条件信息（例如类标签、语义图、图像的模糊变体）。该设计相当于将不同模态的表示融合到具有交叉注意力机制的模型中。每种类型的条件信息都与特定领域的编码器配对τθ投射调节输入是到可以映射到交叉注意力组件的中间表示，τθ(是)∈R米×dτ:
-
-注意力(问,钾,V)=软最大(问钾⊤d)⋅V其中 问=W问(一世)⋅φ一世(z一世),钾=W钾(一世)⋅τθ(是),V=WV(一世)⋅τθ(是)和 W问(一世)∈Rd×dε一世,W钾(一世),WV(一世)∈Rd×dτ,φ一世(z一世)∈R否×dε一世,τθ(是)∈R米×dτ
-
+扩散和去噪过程发生在隐变量$z$上. 去噪模型是一个时间条件的 U-Net，增加了交叉注意机制来处理图像生成的灵活条件信息（例如类标签、语义图、图像的模糊变体）。该设计相当于将不同模态的表示融合到具有交叉注意力机制的模型中。每种类型的条件信息都与特定领域的编码器$\tau_\theta$配对， 将条件输入$y$投射到交叉注意力组件的中间表示，$\tau_\theta(y) \in \mathbb{R}^{M \times d_\tau}$:
+$$
+\begin{aligned}
+&\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\Big(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d}}\Big) \cdot \mathbf{V} \\
+&\text{where }\mathbf{Q} = \mathbf{W}^{(i)}_Q \cdot \varphi_i(\mathbf{z}_i),\;
+\mathbf{K} = \mathbf{W}^{(i)}_K \cdot \tau_\theta(y),\;
+\mathbf{V} = \mathbf{W}^{(i)}_V \cdot \tau_\theta(y) \\
+&\text{and }
+\mathbf{W}^{(i)}_Q \in \mathbb{R}^{d \times d^i_\epsilon},\;
+\mathbf{W}^{(i)}_K, \mathbf{W}^{(i)}_V \in \mathbb{R}^{d \times d_\tau},\;
+\varphi_i(\mathbf{z}_i) \in \mathbb{R}^{N \times d^i_\epsilon},\;
+\tau_\theta(y) \in \mathbb{R}^{M \times d_\tau}
+\end{aligned}
+$$
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/latent-diffusion-arch.png)
 
-图 9. 潜在扩散模型的架构。（图片来源：[Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.1075)）
+> Fig. 9. The architecture of latent diffusion model. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.1075))
 
-# 有条件的一代
+# Conditioned Generation
 
-在使用 ImageNet 数据集等条件信息在图像上训练生成模型时，通常会生成以类标签或一段描述性文本为条件的样本。
+使用条件信息在图像上训练生成模型时，例如： ImageNet 数据集,  通常会生成以类标签或一段描述性文本为条件的样本。
 
-## 分类器引导扩散
+## Classifier Guided Diffusion
 
-为了明确地将类别信息纳入扩散过程，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)训练了一个分类器Fφ(是|$\mathbf{x}_t$,$t$)在嘈杂的图像上$\mathbf{x}_t$并使用渐变∇X日志⁡Fφ(是|$\mathbf{x}_t$)引导扩散采样过程朝向调节信息是（例如目标类别标签）通过改变噪声预测。 [回想](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#score)一下∇$\mathbf{x}_t$日志⁡q($\mathbf{x}_t$)=−1个1个−α¯$t$εθ($\mathbf{x}_t$,$t$)我们可以写出联合分布的得分函数q($\mathbf{x}_t$,是)如下，
-
-∇$\mathbf{x}_t$日志⁡q($\mathbf{x}_t$,是)=∇$\mathbf{x}_t$日志⁡q($\mathbf{x}_t$)+∇$\mathbf{x}_t$日志⁡q(是|$\mathbf{x}_t$)≈−1个1个−α¯$t$εθ($\mathbf{x}_t$,$t$)+∇$\mathbf{x}_t$日志⁡Fφ(是|$\mathbf{x}_t$)=−1个1个−α¯$t$(εθ($\mathbf{x}_t$,$t$)−1个−α¯$t$∇$\mathbf{x}_t$日志⁡Fφ(是|$\mathbf{x}_t$))
-
-因此，一个新的分类器引导预测器ε¯θ将采用以下形式，
-
-ε¯θ($\mathbf{x}_t$,$t$)=εθ($\mathbf{x}_t$,$t$)−1个−α¯$t$∇$\mathbf{x}_t$日志⁡Fφ(是|$\mathbf{x}_t$)
-
-为了控制分类器引导的强度，我们可以添加一个权重w到三角洲部分，
-
-ε¯θ($\mathbf{x}_t$,$t$)=εθ($\mathbf{x}_t$,$t$)−1个−α¯$t$w∇$\mathbf{x}_t$日志⁡Fφ(是|$\mathbf{x}_t$)
-
+为了明确地将类别信息纳入扩散过程，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)在噪声图像上$\mathbf{x}_t$训练了一个分类器$f_\phi(y \vert \mathbf{x}_t, t)$， 并使用梯度 $\nabla_\mathbf{x} \log f_\phi(y \vert \mathbf{x}_t) $ 通过改变噪声预测，引导扩散采样过程朝向条件信息 $y$（例如目标类别标签）。 [回想](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#score)一下 $\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t) = - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$ 我们可以写出联合分布的得分函数$q(\mathbf{x}_t, y)$ 如下:
+$$
+\begin{aligned}
+\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t, y)
+&= \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t) + \nabla_{\mathbf{x}_t} \log q(y \vert \mathbf{x}_t) \\
+&\approx - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) + \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t) \\
+&= - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} (\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t))
+\end{aligned}
+$$
+因此，一个新的分类器引导的预测器 $\bar{\boldsymbol{\epsilon}}_\theta$ 将采用以下形式，
+$$
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
+$$
+为了控制分类器引导的强度，我们可以在delta部分增加一个权重w$，
+$$
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
+$$
 由此产生的*消融扩散模型*( **ADM** ) 和带有附加分类器指导的模型 ( **ADM-G** ) 能够取得比 SOTA 生成模型（例如 BigGAN）更好的结果。
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/conditioned-DDPM.png)
 
-图 10. 该算法使用来自分类器的指导，使用 DDPM 和 DDIM 运行条件生成。（图片来源： [Dhariwal & Nichol，2021 年](https://arxiv.org/abs/2105.05233)]）
+> 图 10. 该算法使用来自分类器的指导，使用 DDPM 和 DDIM 运行条件生成。（图片来源： [Dhariwal & Nichol，2021 年](https://arxiv.org/abs/2105.05233)]）
 
-此外，通过对 U-Net 架构进行一些修改，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)的表现优于使用扩散模型的 GAN。架构修改包括更大的模型深度/宽度、更多注意力头、多分辨率注意力、用于上/下采样的 BigGAN 残差块、残差连接重新缩放1个/2个和自适应组归一化（AdaGN）。
+此外，通过对 U-Net 架构进行一些修改，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)到的性能优于使用扩散模型的 GAN。架构修改包括更大的模型深度/宽度、更多注意力头、多分辨率注意力、用于上/下采样的 BigGAN 残差块、通过$1/\sqrt{2}$ 缩放的残差连接和自适应组归一化（AdaGN）。
 
-## 无分类器指导
+## Classifier-Free Guidance
 
-没有独立的分类器Fφ，仍然可以通过合并来自条件和无条件扩散模型的分数来运行条件扩散步骤（[Ho & Salimans，2021](https://openreview.net/forum?id=qw8AKxfYbI)）。让无条件去噪扩散模型pθ(X)通过分数估计器参数化εθ($\mathbf{x}_t$,$t$)和条件模型pθ(X|是)通过参数化εθ($\mathbf{x}_t$,$t$,是). 这两个模型可以通过单个神经网络学习。准确地说，一个条件扩散模型pθ(X|是)在配对数据上训练(X,是)，其中调节信息是定期随机丢弃，这样模型也知道如何无条件地生成图像，即εθ($\mathbf{x}_t$,$t$)=εθ($\mathbf{x}_t$,$t$,是=∅).
+没有独立的分类器$f_\phi$，仍然可以通过合并来自条件和无条件扩散模型的分数来运行条件扩散步骤（[Ho & Salimans，2021](https://openreview.net/forum?id=qw8AKxfYbI)）。让无条件去噪扩散模型$p_\theta(\mathbf{x})$通过分数估计器$\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$和条件模型$p_\theta(\mathbf{x} \vert y)$通过$\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y)$ 进行参数化 . 这两个模型可以通过单个神经网络学习。准确地说，条件扩散模型$p_\theta(\mathbf{x} \vert y)$在配对数据$(\mathbf{x}, y)$上训练，其中条件信息 $y$ 定期地随机丢弃，这样模型知道怎样无条件地生成图像，即 $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y=\varnothing)$.
 
-隐式分类器的梯度可以用条件和无条件分数估计器表示。一旦插入到分类器引导的修改分数中，该分数就不会依赖于单独的分类器。
-
-∇$\mathbf{x}_t$日志⁡p(是|$\mathbf{x}_t$)=∇$\mathbf{x}_t$日志⁡p($\mathbf{x}_t$|是)−∇$\mathbf{x}_t$日志⁡p($\mathbf{x}_t$)=−1个1个−α¯$t$(εθ($\mathbf{x}_t$,$t$,是)−εθ($\mathbf{x}_t$,$t$))ε¯θ($\mathbf{x}_t$,$t$,是)=εθ($\mathbf{x}_t$,$t$,是)−1个−α¯$t$w∇$\mathbf{x}_t$日志⁡p(是|$\mathbf{x}_t$)=εθ($\mathbf{x}_t$,$t$,是)+w(εθ($\mathbf{x}_t$,$t$,是)−εθ($\mathbf{x}_t$,$t$))=(w+1个)εθ($\mathbf{x}_t$,$t$,是)−wεθ($\mathbf{x}_t$,$t$)
-
+隐式分类器的梯度可以用条件和无条件分数估计器表示。一旦插入到分类器-引导的修改分数中，该分数就不会依赖于单独的分类器。
+$$
+\begin{aligned}
+\nabla_{\mathbf{x}_t} \log p(y \vert \mathbf{x}_t)
+&= \nabla_{\mathbf{x}_t} \log p(\mathbf{x}_t \vert y) - \nabla_{\mathbf{x}_t} \log p(\mathbf{x}_t) \\
+&= - \frac{1}{\sqrt{1 - \bar{\alpha}_t}}\Big( \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \Big) \\
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t, y)
+&= \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \sqrt{1 - \bar{\alpha}_t} \; w \nabla_{\mathbf{x}_t} \log p(y \vert \mathbf{x}_t) \\
+&= \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) + w \big(\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \big) \\
+&= (w+1) \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - w \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)
+\end{aligned}
+$$
 他们的实验表明，无分类器指导可以在 FID（区分合成图像和生成图像）和 IS（质量和多样性）之间取得良好的平衡。
 
 引导扩散模型 GLIDE ( [Nichol, Dhariwal & Ramesh, et al. 2022](https://arxiv.org/abs/2112.10741) ) 探索了引导策略、CLIP 引导和无分类器引导，发现后者更受欢迎。他们假设这是因为 CLIP 指导利用具有对抗性示例的模型来对抗 CLIP 模型，而不是优化匹配更好的图像生成。
 
-# 扩大生成分辨率和质量
+# Scale up Generation Resolution and Quality
 
-为了以高分辨率生成高质量图像，[Ho 等人。(2021)](https://arxiv.org/abs/2106.15282)提议在增加的分辨率下使用多个扩散模型的管道。*管道模型之间的噪声调节增强*对最终图像质量至关重要，即对调节输入应用强数据增强z每个超分辨率模型pθ(X|z). 调节噪声有助于减少管道设置中的复合误差。*U-net*是用于高分辨率图像生成的扩散建模中模型架构的常见选择。
+为了生成高分辨率高质量图像，[Ho 等人。(2021)](https://arxiv.org/abs/2106.15282)提议在增加的分辨率下使用多个扩散模型的Pileline。*Pipeline 模型之间的噪声调节增强*对最终图像质量至关重要，即对每个超分辨率模型$p_\theta(\mathbf{x} \vert \mathbf{z})$的调节输入 $z$ 应用强大数据增强,. 条件噪声有助于减少Pipeline设置中的复合误差。*U-net*是用于高分辨率图像生成的扩散建模中模型架构的常见选择。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png)
+![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png
 
-图 11. 分辨率不断增加的多个扩散模型的级联管道。（图片来源： [Ho et al. 2021](https://arxiv.org/abs/2106.15282) ]）
+> 图 11. 分辨率不断增加的多个扩散模型的级联Pipeline。（图片来源： [Ho et al. 2021](https://arxiv.org/abs/2106.15282) ]）
 
-他们发现最有效的噪声是在低分辨率下应用高斯噪声，在高分辨率下应用高斯模糊。此外，他们还探索了两种形式的条件增强，需要对训练过程进行小幅修改。请注意，调节噪声仅适用于训练，不适用于推理。
+他们发现最有效的噪声是在低分辨率下应用高斯噪声，在高分辨率下应用高斯模糊。此外，他们还探索了两种形式的条件增强，需要对训练过程进行小幅修改。请注意，条件噪声仅适用于训练，不适用于推理。
 
-- 截断条件增强在步骤早期停止扩散过程$t$>0对于低分辨率。
-- 非截断条件增强运行完整的低分辨率反向过程，直到步骤 0，然后通过z$t$～q($\mathbf{x}_t$|$\mathbf{x}_0$)然后喂养腐败的z$t$进入超分辨率模型。
+- 对于低分辨率，截断条件增强在步骤早期 $t> 0$ 停止扩散过程。
+- 非截断条件增强运行完整的低分辨率反向过程，直到步骤 0，然后通过$\mathbf{z}_t \sim q(\mathbf{x}_t \vert \mathbf{x}_0)$将其损坏，然后将损坏的$\mathbf{z}_t$输入超分辨率模型 。 
 
-两阶段扩散模型**unCLIP** ( [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ) 大量利用 CLIP 文本编码器来生成高质量的文本引导图像。给定一个预训练的 CLIP 模型C和扩散模型的配对训练数据，(X,是)， 其中X是一个图像并且是是相应的标题，我们可以计算 CLIP 文本和图像嵌入，C$t$(是)和C一世(X)， 分别。unCLIP 并行学习两个模型：
+两阶段扩散模型**unCLIP** ( [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ) 大量利用 CLIP 文本编码器来生成高质量的文本来引导图像。给定一个预训练的 CLIP 模型$C$和来自扩散模型的配对训练数据$(\mathbf{x}, y)$， 其中$x$是一个图像，$y$ 是相应的标题，我们可以分别计算 CLIP 文本和图像嵌入，$\mathbf{c}^t(y)$和 $\mathbf{c}^i(\mathbf{x})$。unCLIP 并行学习两个模型：
 
-- 先前的模型P(C一世|是): 输出 CLIP 图像嵌入C一世给定文本是.
-- 解码器P(X|C一世,[是]): 生成图像X给定的 CLIP 图像嵌入C一世和可选的原始文本是.
+- Piror 模型$P(\mathbf{c}^i \vert y)$: 给定文本$y$, 输出 CLIP 图像嵌入$\mathbf{c}^i$.
+- 解码器$P(\mathbf{x} \vert \mathbf{c}^i, [y])$: 给定CLIP 图像嵌入$$\mathbf{c}^i$$和可选的原始文本$y$, 生成图像$x$.
 
-这两个模型启用条件生成，因为
-
-P(X|是)=P(X,C一世|是)⏟C一世 是确定性给定的 X=P(X|C一世,是)P(C一世|是)
-
+这两个模型应用条件生成，因为
+$$
+\underbrace{P(\mathbf{x} \vert y) = P(\mathbf{x}, \mathbf{c}^i \vert y)}_{\mathbf{c}^i\text{ is deterministic given }\mathbf{x}} = P(\mathbf{x} \vert \mathbf{c}^i, y)P(\mathbf{c}^i \vert y)
+$$
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png)
 
-图 12. unCLIP 的架构。（图片来源： [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ]）
+> 图 12. unCLIP 的架构。（图片来源： [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ]）
 
-unCLIP 遵循两个阶段的图像生成过程：
+unCLIP 遵循两阶段图像生成过程：
 
-1. 给定一段文字是，首先使用 CLIP 模型生成文本嵌入C$t$(是). 使用 CLIP 潜在空间可以通过文本实现零镜头图像操作。
-2. 扩散或自回归先验P(C一世|是)处理此 CLIP 文本嵌入以先构建图像，然后构建扩散解码器P(X|C一世,[是])生成图像，以先验条件为条件。该解码器还可以根据图像输入生成图像变体，同时保留其风格和语义。
+1. 给定一段文字 $y$，首先使用 CLIP 模型生成文本嵌入$\mathbf{c}^t(y)$. 使用 CLIP 隐空间可以通过文本实现 zero-shot 图像操作。
+2. 扩散或自回归 prior $P(\mathbf{c}^i \vert y)$ 处理此 CLIP 文本嵌入以先构建图像，然后以先验条件为条件，构建扩散解码器$P(\mathbf{x} \vert \mathbf{c}^i, [y])$生成图像。该解码器还可以根据图像输入生成图像变体，同时保留其风格和语义。
 
-**Imagen** ( [Saharia et al. 2022](https://arxiv.org/abs/2205.11487) ) 使用预训练的大型 LM（即冻结的 T5-XXL 文本编码器）来编码文本以生成图像，而不是 CLIP 模型。大模型尺寸可以带来更好的图像质量和文本图像对齐的普遍趋势。他们发现 T5-XXL 和 CLIP 文本编码器在 MS-COCO 上实现了相似的性能，但人类评估更喜欢 DrawBench（涵盖 11 个类别的提示集合）上的 T5-XXL。
+**Imagen** ( [Saharia et al. 2022](https://arxiv.org/abs/2205.11487) ) 使用预训练的大型语言模型 LM（即冻结的 T5-XXL 文本编码器）来编码文本以生成图像，而没有使用 CLIP 模型。大模型可以带来更好的图像质量和文本图像对齐的普遍趋势。他们发现 T5-XXL 和 CLIP 文本编码器在 MS-COCO 上实现了相似的性能，但人类评估更喜欢 DrawBench（涵盖 11 个类别的提示集合）上的 T5-XXL。
 
-当应用无分类器指导时，增加w可能会导致更好的图像文本对齐但更差的图像保真度。他们发现这是由于训练-测试不匹配，也就是说，因为训练数据X保持在范围内[−1个,1个]，测试数据也应该如此。引入了两种阈值策略：
+当应用无分类器指导时，增加$w$可能会得到更好的图像文本对齐但导致更差的图像保真度。他们发现这是由于训练-测试不匹配，也就是说，因为训练数据$x$保持在$[-1, 1]$范围内，测试数据也应该如此。引入了两种阈值策略：
 
-- 静态阈值：剪辑X预测到[−1个,1个]
-- 动态阈值：在每个采样步骤中，计算$s$作为某个百分位数的绝对像素值；如果$s$>1个, 将预测剪辑到[−$s$,$s$]并除以$s$.
+- 静态阈值：裁剪 $x$ 预测到 $[-1, 1]$
+- 动态阈值：在每个采样步骤中，计算 $s$ 作为某个百分位数的绝对像素值；如果$s> 1$, 将预测裁剪到 $[−s,s]$ 并除以$s$.
 
 Imagen 修改了 U-net 中的几个设计，使其成为*高效的 U-Net*。
 
-- 通过为较低分辨率添加更多剩余锁，将模型参数从高分辨率块转移到低分辨率；
-- 缩放跳过连接1个/2个
-- 颠倒下采样（在卷积之前移动）和上采样操作（在卷积之后移动）的顺序，以提高前向传播的速度。
+- 通过为较低分辨率添加更多 residual locks ，将模型参数从高分辨率块转移到低分辨率；
+- 缩放跳过连接$1/\sqrt{2}$
+- 颠倒下采样（移动到卷积之前）和上采样操作（移动到卷积之后）的顺序，以提高前向传播的速度。
 
 他们发现噪声调节增强、动态阈值化和高效 U-Net 对图像质量至关重要，但缩放文本编码器大小比 U-Net 大小更重要。
 
 # 快速总结
 
-- **优点**：易处理性和灵活性是生成建模中两个相互冲突的目标。易处理的模型可以进行分析评估并廉价地拟合数据（例如通过高斯或拉普拉斯），但它们不能轻易地描述丰富数据集中的结构。灵活的模型可以适应数据中的任意结构，但评估、训练或从这些模型中抽样通常是昂贵的。扩散模型既易于分析又灵活
+- **优点**：易处理性和灵活性是生成建模中两个相互冲突的目标。易处理的模型可以进行分析评估并廉价地拟合数据（例如通过高斯或拉普拉斯），但它们不能轻易地描述丰富数据集中的结构。灵活的模型可以适应数据中的任意结构，但评估、训练或从这些模型中抽样通常是昂贵的。扩散模型既易于分析又灵活。
 - **缺点**：扩散模型依赖于扩散步骤的长马尔可夫链来生成样本，因此在时间和计算方面可能非常昂贵。已经提出了新的方法来使过程更快，但采样仍然比 GAN 慢。
 
-# 引用
+# References
 
-引用为：
+[1] Jascha Sohl-Dickstein et al. [“Deep Unsupervised Learning using Nonequilibrium Thermodynamics.”](https://arxiv.org/abs/1503.03585) ICML 2015.
 
-> 翁，丽莲。（2021 年 7 月）。什么是扩散模型？小日志。https://lilianweng.github.io/posts/2021-07-11-diffusion-models/。
+[2] Max Welling & Yee Whye Teh. [“Bayesian learning via stochastic gradient langevin dynamics.”](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.226.363) ICML 2011.
 
-或者
+[3] Yang Song & Stefano Ermon. [“Generative modeling by estimating gradients of the data distribution.”](https://arxiv.org/abs/1907.05600) NeurIPS 2019.
 
-```
-@article{weng2021diffusion,
-  title   = "What are diffusion models?",
-  author  = "Weng, Lilian",
-  journal = "lilianweng.github.io",
-  year    = "2021",
-  month   = "Jul",
-  url     = "https://lilianweng.github.io/posts/2021-07-11-diffusion-models/"
-}
-```
+[4] Yang Song & Stefano Ermon. [“Improved techniques for training score-based generative models.”](https://arxiv.org/abs/2006.09011) NeuriPS 2020.
 
-# 参考
+[5] Jonathan Ho et al. [“Denoising diffusion probabilistic models.”](https://arxiv.org/abs/2006.11239) arxiv Preprint arxiv:2006.11239 (2020). [[code](https://github.com/hojonathanho/diffusion)]
 
-[1] Jascha Sohl-Dickstein 等人。[“使用非平衡热力学进行深度无监督学习。” ](https://arxiv.org/abs/1503.03585)ICML 2015。
+[6] Jiaming Song et al. [“Denoising diffusion implicit models.”](https://arxiv.org/abs/2010.02502) arxiv Preprint arxiv:2010.02502 (2020). [[code](https://github.com/ermongroup/ddim)]
 
-[2] Max Welling & Yee Whye Teh。[“通过随机梯度朗之万动力学进行贝叶斯学习。” ](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.226.363)ICML 2011。
+[7] Alex Nichol & Prafulla Dhariwal. [“Improved denoising diffusion probabilistic models”](https://arxiv.org/abs/2102.09672) arxiv Preprint arxiv:2102.09672 (2021). [[code](https://github.com/openai/improved-diffusion)]
 
-[3] 杨松 & Stefano Ermon. [“通过估计数据分布的梯度进行生成建模。” ](https://arxiv.org/abs/1907.05600)神经网络 2019。
+[8] Prafula Dhariwal & Alex Nichol. [“Diffusion Models Beat GANs on Image Synthesis."](https://arxiv.org/abs/2105.05233) arxiv Preprint arxiv:2105.05233 (2021). [[code](https://github.com/openai/guided-diffusion)]
 
-[4] 杨松 & Stefano Ermon. [“改进了训练基于分数的生成模型的技术。” ](https://arxiv.org/abs/2006.09011)NeuriPS 2020。
+[9] Jonathan Ho & Tim Salimans. [“Classifier-Free Diffusion Guidance."](https://arxiv.org/abs/2207.12598) NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications.
 
-[5] 乔纳森何等。[“去噪扩散概率模型。” ](https://arxiv.org/abs/2006.11239)arxiv 预印本 arxiv:2006.11239 (2020)。[[代码](https://github.com/hojonathanho/diffusion)]
+[10] Yang Song, et al. [“Score-Based Generative Modeling through Stochastic Differential Equations."](https://openreview.net/forum?id=PxTIG12RRHS) ICLR 2021.
 
-[6] 宋家明等．[“去噪扩散隐式模型。” ](https://arxiv.org/abs/2010.02502)arxiv 预印本 arxiv:2010.02502 (2020)。[[代码](https://github.com/ermongroup/ddim)]
+[11] Alex Nichol, Prafulla Dhariwal & Aditya Ramesh, et al. [“GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models."](https://arxiv.org/abs/2112.10741) ICML 2022.
 
-[7] Alex Nichol 和 Prafulla Dhariwal。[“改进的去噪扩散概率模型”](https://arxiv.org/abs/2102.09672) arxiv 预印本 arxiv:2102.09672 (2021)。[[代码](https://github.com/openai/improved-diffusion)]
+[12] Jonathan Ho, et al. [“Cascaded diffusion models for high fidelity image generation."](https://arxiv.org/abs/2106.15282) J. Mach. Learn. Res. 23 (2022): 47-1.
 
-[8] Prafula Dhariwal 和 Alex Nichol。[“扩散模型在图像合成方面击败了 GAN。”](https://arxiv.org/abs/2105.05233) arxiv 预印本 arxiv:2105.05233 (2021)。[[代码](https://github.com/openai/guided-diffusion)]
+[13] Aditya Ramesh et al. [“Hierarchical Text-Conditional Image Generation with CLIP Latents."](https://arxiv.org/abs/2204.06125) arxiv Preprint arxiv:2204.06125 (2022).
 
-[9] 乔纳森·何和蒂姆·萨利曼斯。[“无分类器扩散指导。”](https://arxiv.org/abs/2207.12598) NeurIPS 2021 深度生成模型和下游应用研讨会。
+[14] Chitwan Saharia & William Chan, et al. [“Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding."](https://arxiv.org/abs/2205.11487) arxiv Preprint arxiv:2205.11487 (2022).
 
-[10] 杨松，等．[“通过随机微分方程进行基于分数的生成建模。”](https://openreview.net/forum?id=PxTIG12RRHS) ICLR 2021。
+[15] Rombach & Blattmann, et al. [“High-Resolution Image Synthesis with Latent Diffusion Models."](https://arxiv.org/abs/2112.10752) CVPR 2022.[code](https://github.com/CompVis/latent-diffusion)
 
-[11] Alex Nichol、Prafulla Dhariwal 和 Aditya Ramesh 等。[“GLIDE：使用文本引导的扩散模型实现逼真的图像生成和编辑。”](https://arxiv.org/abs/2112.10741) ICML 2022。
-
-[12] 乔纳森·何等。[“用于生成高保真图像的级联扩散模型。”](https://arxiv.org/abs/2106.15282) J. Mach. Learn. Res. 23 (2022): 47-1。
-
-[13] Aditya Ramesh 等人。[“具有 CLIP 潜能的分层文本条件图像生成。”](https://arxiv.org/abs/2204.06125) arxiv 预印本 arxiv:2204.06125 (2022)。
-
-[14] Chitwan Saharia & William Chan, et al. [“具有深度语言理解的逼真文本到图像扩散模型。”](https://arxiv.org/abs/2205.11487) arxiv 预印本 arxiv:2205.11487 (2022)。
-
-[15] Rombach & Blattmann 等人。[“具有潜在扩散模型的高分辨率图像合成。”](https://arxiv.org/abs/2112.10752) CVPR 2022.[代码](https://github.com/CompVis/latent-diffusion)
-
-- [生成模型](https://lilianweng.github.io/tags/generative-model/)
--  
-
-- [重数学](https://lilianweng.github.io/tags/math-heavy/)
--  
-
-- [图像生成](https://lilianweng.github.io/tags/image-generation/)
-
-[«
-如何在多个 GPU 上训练真正的大型模型？](https://lilianweng.github.io/posts/2021-09-25-train-large/)[»
-对比表示学习](https://lilianweng.github.io/posts/2021-05-31-contrastive/)
-
-
-
-© 2023 [Lil'Log](https://lilianweng.github.io/) 由 [Hugo](https://gohugo.io/) & [PaperMod提供技术支持](https://git.io/hugopapermod)
+- 
