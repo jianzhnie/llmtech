@@ -25,7 +25,7 @@ $$
 
 >  图2. 缓慢加入（去除）噪声生成样本的正向（反向）扩散过程的马尔可夫链。（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)，带有一些附加注释）
 
-上述过程的一个很好的特性是我们用[Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick)的封闭形式在任意时间步 $t$ 都可以采样$\mathbf{x}_t$。让$\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
+上述过程的一个很好的特性是我们用[Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick)以封闭形式在任意时间步 $t$ 都可以采样$\mathbf{x}_t$。让$\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
 $$
 \begin{aligned}
 \mathbf{x}_t 
@@ -42,7 +42,7 @@ $$
 
 ### Connection with stochastic gradient Langevin dynamics
 
-Langevin dynamics 是物理学的一个概念，是为对分子系统进行统计建模而开发的。结合随机梯度下降，*随机梯度 Langevin 动力学*( [Welling & Teh 2011](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.226.363) ) 可以仅使用马尔可夫更新链中的梯度$\nabla_\mathbf{x} \log p(\mathbf{x})$从概率密度中产生样本$p(\mathbf{x})$：
+Langevin dynamics 是物理学的一个概念，是为对分子系统进行统计建模而开发的。结合随机梯度下降，*随机梯度 Langevin 动力学*( [Welling & Teh 2011](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.226.363) ) 可以仅使用马尔可夫更新链中的梯度$\nabla_\mathbf{x} \log p(\mathbf{x})$从概率密度$p(\mathbf{x})$中产生样本：
 $$
 \mathbf{x}_t = \mathbf{x}_{t-1} + \frac{\delta}{2} \nabla_\mathbf{x} \log q(\mathbf{x}_{t-1}) + \sqrt{\delta} \boldsymbol{\epsilon}_t
 ,\quad\text{where }
@@ -54,7 +54,7 @@ $$
 
 ## 反向扩散过程
 
-如果我们可以反转上述过程并从$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$中采样，我们将能够从高斯噪声$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$输入中重建真实样本. 注意，如果$\beta_t$足够小，$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 也将是高斯分布。不幸的是，我们无法轻易估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ ， 因为它需要用到整个数据集，因此我们需要学习一个模型 $p_\theta$ 近似这些条件概率以运行*反向扩散过程*。
+如果我们可以反转上述过程并从$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$中采样，我们将能够从高斯噪声输入$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$重建真实样本. 注意，如果$\beta_t$足够小，$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 也将是高斯分布。不幸的是，我们无法轻易估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ ， 因为它需要用到整个数据集，因此我们需要学习一个模型 $p_\theta$ 近似这些条件概率以运行*反向扩散过程*。
 $$
 p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) \quad
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
@@ -63,9 +63,7 @@ $$
 
 > Fig. 3. An example of training a diffusion model for modeling a 2D swiss roll data. (Image source: [Sohl-Dickstein et al., 2015](https://arxiv.org/abs/1503.03585))
 
-
-
-值得注意的是，以条件$\mathbf{x}_0$为反向条件概率是容易处理的:
+值得注意的是，以$\mathbf{x}_0$为条件的反向条件概率是容易处理的:
 $$
 q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_{t-1}; \color{blue}{\tilde{\boldsymbol{\mu}}}(\mathbf{x}_t, \mathbf{x}_0), \color{red}{\tilde{\beta}_t} \mathbf{I})
 $$
@@ -157,7 +155,7 @@ $L_\text{VLB}$ 中的每个 KL 项（除了$L_0$) 比较了两个高斯分布�
 
 ## Parameterization of  $L_t$ for Training Loss
 
-回想一下，我们需要学习一个神经网络来逼近反向扩散过程中的条件概率分布，$p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))$. 我们想训练$\boldsymbol{\mu}_\theta$预测 $\tilde{\boldsymbol{\mu}}_t = \frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_t \Big)$. 因为$\mathbf{x}_t$在训练时可用作输入，在时间步$t$，我们可以重新参数化高斯噪声项，而不是从输入$\mathbf{x}_t$来预测$\boldsymbol{\epsilon}_t$:
+回想一下，我们需要学习一个神经网络来逼近反向扩散过程中的条件概率分布，$p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))$. 我们想训练$\boldsymbol{\mu}_\theta$来预测 $\tilde{\boldsymbol{\mu}}_t = \frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_t \Big)$. 因为$\mathbf{x}_t$在训练时可用作输入，在时间步$t$，我们可以重新参数化高斯噪声项，而不是从输入$\mathbf{x}_t$来预测$\boldsymbol{\epsilon}_t$:
 $$
 \begin{aligned}
 \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) &= \color{cyan}{\frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \Big)} \\
@@ -175,8 +173,7 @@ L_t
 \end{aligned}
 $$
 
-
-### 简化
+## 简化
 
 根据经验，[Ho et al. (2020)](https://arxiv.org/abs/2006.11239) 发现在忽略权重项的简化目标下训练扩散模型效果更好：
 $$
@@ -202,7 +199,7 @@ $$
 
 ### Connection with noise-conditioned score networks (NCSN)
 
-[Song & Ermon (2019)](https://arxiv.org/abs/1907.05600)提出了一种基于分数的生成建模方法，其中使用通过分数匹配估计的数据分布梯度，通过[Langevin 动力学生成样本。](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#connection-with-stochastic-gradient-langevin-dynamics)每个样本$\mathbf{x}$密度概率分数定义为其梯度$\nabla_{\mathbf{x}} \log q(\mathbf{x})$. 评分网网络$\mathbf{s}_\theta: \mathbb{R}^D \to \mathbb{R}^D$被训练来估计： $\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_{\mathbf{x}} \log q(\mathbf{x})$.
+[Song & Ermon (2019)](https://arxiv.org/abs/1907.05600)提出了一种基于分数的生成建模方法，其中使用分数匹配估计的数据分布梯度，通过[Langevin 动力学生成样本。](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#connection-with-stochastic-gradient-langevin-dynamics)每个样本 $\mathbf{x}$ 的概率密度分数定义为其梯度 $\nabla_{\mathbf{x}} \log q(\mathbf{x})$. 评分网网络$\mathbf{s}_\theta: \mathbb{R}^D \to \mathbb{R}^D$被训练来估计它： $\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_{\mathbf{x}} \log q(\mathbf{x})$.
 
 为了使其在深度学习环境中可扩展到高维数据，他们建议使用*去噪分数匹配*( [Vincent, 2011](http://www.iro.umontreal.ca/~vincentp/Publications/smdae_techreport.pdf) ) 或*切片分数匹配*（使用随机投影；[Song 等人，2019](https://arxiv.org/abs/1905.07088)）。Denosing score matching 在数据中添加了预先指定的小的噪声并通过分数匹配的方法估计$q(\tilde{\mathbf{x}} \vert \mathbf{x})$。
 
@@ -210,7 +207,7 @@ $$
 
 然而，根据流形假设，大多数数据预计会集中在低维流形中，即使观察到的数据可能看起来是任意高维。由于数据点无法覆盖整个空间，因此会对分数估计产生负面影响。在数据密度低的区域，分数估计不太可靠。加入小的高斯噪声后，使得扰动后的数据分布覆盖全空间$\mathbb{R}^D$，分数估计网络的训练变得更加稳定。[Song & Ermon (2019)](https://arxiv.org/abs/1907.05600)通过用*不同级别*的噪声扰动数据对其进行了改进，并训练了一个噪声条件评分网络来*联合*估计所有扰动数据在不同噪声级别下的分数。
 
-增加噪音水平的时间表类似于前向扩散过程。如果我们使用扩散过程注释，分数近似$\mathbf{s}_\theta(\mathbf{x}_t, t) \approx \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)$. 给定高斯分布 $\mathbf{x} \sim \mathcal{N}(\mathbf{\mu}, \sigma^2 \mathbf{I})$，我们可以将其密度函数的对数的导数写为$\nabla_{\mathbf{x}}\log p(\mathbf{x}) = \nabla_{\mathbf{x}} \Big(-\frac{1}{2\sigma^2}(\mathbf{x} - \boldsymbol{\mu})^2 \Big) = - \frac{\mathbf{x} - \boldsymbol{\mu}}{\sigma^2} = - \frac{\boldsymbol{\epsilon}}{\sigma}$. 其中$\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \mathbf{I})$. [回想](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice)一下 $q(\mathbf{x}_t \vert \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})$ 因此，
+增加噪声水平的时间表类似于前向扩散过程。如果我们使用扩散过程注释，分数近似于 $\mathbf{s}_\theta(\mathbf{x}_t, t) \approx \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)$. 给定高斯分布 $\mathbf{x} \sim \mathcal{N}(\mathbf{\mu}, \sigma^2 \mathbf{I})$，我们可以将其密度函数对数的导数写为$\nabla_{\mathbf{x}}\log p(\mathbf{x}) = \nabla_{\mathbf{x}} \Big(-\frac{1}{2\sigma^2}(\mathbf{x} - \boldsymbol{\mu})^2 \Big) = - \frac{\mathbf{x} - \boldsymbol{\mu}}{\sigma^2} = - \frac{\boldsymbol{\epsilon}}{\sigma}$. 其中$\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \mathbf{I})$. [回想](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice)一下 $q(\mathbf{x}_t \vert \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})$ 因此，
 $$
 \mathbf{s}_\theta(\mathbf{x}_t, t) 
 \approx \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)
@@ -221,13 +218,13 @@ $$
 
 ## Parameterization of $\beta_t$
 
-[在Ho 等人(2020)](https://arxiv.org/abs/2006.11239) 的工作中， 前向方差被设置为一系列线性增加的常数, 从$\beta_1=10^{-4}$到$\beta_T=0.02$ . 与之间的归一化图像像素值在$[-1, 1]$范围相比，它们相对较小。  他们实验中的扩散模型显示了高质量的样本，但仍然无法像其他生成模型那样达到有竞争力的模型对数似然。
+[在Ho 等人(2020)](https://arxiv.org/abs/2006.11239) 的工作中， 前向方差被设置为一系列线性增加的常数, 从$\beta_1=10^{-4}$ 到 $\beta_T=0.02$ . 与归一化的图像像素值在$[-1, 1]$之间的范围相比，它们相对较小。 他们实验中的扩散模型显示了高质量的样本，但仍然无法像其他生成模型那样达到有竞争力的模型对数似然。
 
-[Nichol & Dhariwal (2021)](https://arxiv.org/abs/2102.09672)提出了几种改进技术来帮助扩散模型获得更低的 NLL。其中一项改进是使用基于余弦的方差表。调度函数的选择可以是任意的，只要它在训练过程中提供近乎线性的下降, 在$t$=0和$t$=$T$处有细微变化即可。
+[Nichol & Dhariwal (2021)](https://arxiv.org/abs/2102.09672)提出了几种改进技术来帮助扩散模型获得更低的 NLL。其中一项改进是使用基于余弦的方差表。调度函数的选择可以是任意的，只要它在训练过程中提供近乎线性下降, 在$t$=0和$t$=$T$处有细微变化即可。
 $$
 \beta_t = \text{clip}(1-\frac{\bar{\alpha}_t}{\bar{\alpha}_{t-1}}, 0.999) \quad\bar{\alpha}_t = \frac{f(t)}{f(0)}\quad\text{where }f(t)=\cos\Big(\frac{t/T+s}{1+s}\cdot\frac{\pi}{2}\Big)
 $$
-小偏移量其中$s$是为了防止当$t=0$时, $\beta_t$太小.
+其中小偏移量$s$是为了防止当$t=0$时, $\beta_t$太小.
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-beta.png)
 
@@ -235,23 +232,23 @@ $$
 
 ## Parameterization of reverse process variance $ \boldsymbol{\Sigma}_\theta$
 
-[Ho et al. (2020)](https://arxiv.org/abs/2006.11239)  选择将 $\beta_t$ 作为常量而不是让它们成为可学习的， 并设置$\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) = \sigma^2_t \mathbf{I}$，其中$\sigma_t$ 是未学习的设置为 $\beta_t$ 或者 $\tilde{\beta}_t = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t$，  因为他们发现学习对角方差$\boldsymbol{\Sigma}_\theta$会导致训练不稳定和较差的样本质量。
+[Ho et al. (2020)](https://arxiv.org/abs/2006.11239)  将 $\beta_t$ 作为常量而不是让它们成为可学习的参数， 并设置$\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) = \sigma^2_t \mathbf{I}$，其中$\sigma_t$ 是未学习的设置为 $\beta_t$ 或者 $\tilde{\beta}_t = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t$，  因为他们发现学习对角方差$\boldsymbol{\Sigma}_\theta$会导致训练不稳定和较差的样本质量。
 
 [Nichol & Dhariwal (2021)](https://arxiv.org/abs/2102.09672)建议通过模型预测混合向量$\mathbf{v}$ 来学习$\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)$， 作为 $\beta_t$和 $\tilde{\beta}_t$之间的插值:
 $$
 \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) = \exp(\mathbf{v} \log \beta_t + (1-\mathbf{v}) \log \tilde{\beta}_t)
 $$
-然而，简单的目标$L_\text{simple}$的不依赖于$\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标$L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
+然而，简单的目标$L_\text{simple}$不依赖于$\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标$L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/improved-DDPM-nll.png)
 
-图 6. 改进的 DDPM 与其他基于似然的生成模型的负对数似然比较。NLL 以 bits/dim 为单位报告。（图片来源：[Nichol & Dhariwal，2021 年](https://arxiv.org/abs/2102.09672)）
+> 图 6. 改进的 DDPM 与其他基于似然的生成模型的负对数似然比较。NLL 以 bits/dim 为单位报告。（图片来源：[Nichol & Dhariwal，2021 年](https://arxiv.org/abs/2102.09672))
 
 # Speed up Diffusion Model Sampling
 
-通过遵循反向扩散过程的马尔可夫链从 DDPM 生成样本非常慢，因为$T$可以高达几千步。[来自Song 等人,2020](https://arxiv.org/abs/2010.02502)的一个数据。“例如，从 DDPM 采样 50k 大小为 32 × 32 的图像需要大约 20 小时，但在 Nvidia 2080 Ti GPU 上从 GAN 采样不到一分钟。”
+通过遵循反向扩散过程的马尔可夫链从 DDPM 生成样本速度非常慢，因为$T$ 可以高达几千步。[来自Song 等人,2020](https://arxiv.org/abs/2010.02502) 的一个数据。“例如，从 DDPM 采样 50k 大小为 32 × 32 的图像需要大约 20 小时，但在 Nvidia 2080 Ti GPU 上从 GAN 采样不到一分钟。”
 
-一种简单的方法是运行跨步采样计划（[Nichol & Dhariwal，2021](https://arxiv.org/abs/2102.09672)），每隔$\lceil T/S \rceil$运行一次采样，流程的步骤从$T$步减少到 $S$步。新的抽样时间表是$\{\tau_1, \dots, \tau_S\}$ 其中 $\tau_1 < \tau_2 < \dots <\tau_S \in [1, T]$并且$S < T $.
+一种简单的方法是运行跨步采样计划（[Nichol & Dhariwal，2021](https://arxiv.org/abs/2102.09672)），每隔$\lceil T/S \rceil$运行一次采样，流程的步骤从$T$步减少到 $S$步。新的抽样时间表$\{\tau_1, \dots, \tau_S\}$ 其中 $\tau_1 < \tau_2 < \dots <\tau_S \in [1, T]$并且$S < T $.
 
 对于另一种方法，让我们根据[nice property](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice)所需的标准偏差$\sigma_t$，以参数化的方式重写$q_\sigma(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$：
 $$
@@ -268,32 +265,32 @@ $$
 $$
 \tilde{\beta}_t = \sigma_t^2 = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t
 $$
-让$\sigma_t^2 = \eta \cdot \tilde{\beta}_t$,  这样我们就可以调整 $\eta \in \mathbb{R}^+ $作为控制采样随机性的超参数。特例$\eta = 0$使采样过程具有*确定性*。这样的模型被命名为*去噪扩散隐式模型*（**DDIM**；[Song et al., 2020](https://arxiv.org/abs/2010.02502)）。DDIM 具有相同的边缘噪声分布，但确定性地将噪声映射回原始数据样本。
+让$\sigma_t^2 = \eta \cdot \tilde{\beta}_t$,  这样我们就可以调整 $\eta \in \mathbb{R}^+ $作为控制采样随机性的超参数。特例$\eta = 0$ 使采样过程具有*确定性*。这样的模型被命名为*去噪扩散隐式模型*（**DDIM**；[Song et al., 2020](https://arxiv.org/abs/2010.02502)）。DDIM 具有相同的边缘噪声分布，但确定性地将噪声映射回原始数据样本。
 
-在生成过程中，我们只采样了一个子集$S$扩散步骤$\{\tau_1, \dots, \tau_S\}$， 推理过程变为：
+在生成过程中，我们只采样了扩散步骤的一个子集$S$： $\{\tau_1, \dots, \tau_S\}$， 推理过程变为：
 $$
 q_{\sigma, \tau}(\mathbf{x}_{\tau_{i-1}} \vert \mathbf{x}_{\tau_t}, \mathbf{x}_0)
 = \mathcal{N}(\mathbf{x}_{\tau_{i-1}}; \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \frac{\mathbf{x}_{\tau_i} - \sqrt{\bar{\alpha}_t}\mathbf{x}_0}{\sqrt{1 - \bar{\alpha}_t}}, \sigma_t^2 \mathbf{I})
 $$
-虽然，在实验中，所有模型都经过$T=1000$ 扩散步骤的训练， 他们观察到 DDIM ($\eta=0$) 时， 当$S$很小的时候，可以生产出质量最好的样品，而 DDPM ($\eta=1$) 在small的 $S$上表现更差。当我们有能力运行完整的反向马尔可夫扩散步骤时，DDPM 确实表现更好（$S$=$T$=1000). 使用 DDIM，可以将扩散模型训练到任意数量的前向步，但只能从生成过程中的步骤子集中进行采样。
+虽然，在实验中，所有模型都经过$T=1000$ 扩散步骤的训练， 他们观察到 DDIM ($\eta=0$) 时， 当$S$ 很小的时候，可以生产出质量最好的样品，而 DDPM ($\eta=1$) 在small 的 $S$上表现更差。当我们有能力运行完整的反向马尔可夫扩散步骤时，DDPM 确实表现更好（$S$=$T$=1000). 使用 DDIM，可以将扩散模型训练到任意数量的前向步，但只能从生成过程中的步骤子集中进行采样。
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDIM-results.png)
 
-图 7. 不同设置的扩散模型在 CIFAR10 和 CelebA 数据集上的 FID 分数，包括DDIM($\eta=0$） 和DDPM($\hat{\sigma}$). （图片来源：[Song et al., 2020](https://arxiv.org/abs/2010.02502)）
+> 图 7. 不同设置的扩散模型在 CIFAR10 和 CelebA 数据集上的 FID 分数，包括DDIM($\eta=0$） 和DDPM($\hat{\sigma}$). （图片来源：[Song et al., 2020](https://arxiv.org/abs/2010.02502)）
 
 与 DDPM 相比，DDIM 能够：
 
 1. 使用更少的步骤生成更高质量的样本。
-2. 具有“一致性”属性，因为生成过程是确定性的，这意味着以相同潜在变量为条件的多个样本应该具有相似的高级特征。
+2. 具有“一致性”属性，因为生成过程是确定性的，这意味着以相同潜变量为条件的多个样本应该具有相似的高级特征。
 3. 由于一致性，DDIM 可以在潜在变量中进行语义上有意义的插值。
 
-*Latent diffusion model* ( **LDM** ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在隐空间而不是像素空间中运行扩散过程，使训练成本更低，推理速度更快。它的动机是观察到图像的大部分 bits 都有助于感知细节，并且语义和概念组成在积极压缩后仍然存在。LDM 通过生成建模学习松散地分解感知压缩和语义压缩，方法是首先使用自动编码器去除像素级冗余，然后通过扩散过程对学习的潜在数据进行操作/生成语义概念。
+*Latent diffusion model* ( **LDM** ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在隐空间而不是在像素空间中运行扩散过程，使训练成本更低，推理速度更快。它的动机是观察到图像的大部分 bits 都有助于感知细节，并且语义和概念组成在积极压缩后仍然存在。LDM 通过生成建模学习松散地分解感知压缩和语义压缩，方法是首先使用自动编码器去除像素级冗余，然后通过扩散过程对学习的潜在数据进行操作/生成语义概念。
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png)
 
 >  Fig. 8. The plot for tradeoff between compression rate and distortion, illustrating two-stage compressions - perceptural and semantic comparession. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752))
 
-感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 隐变量 $\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从隐变量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化类型，以避免隐空间中的任意高方差。
+感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 隐变量 $\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从隐变量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化，以避免隐空间中的任意高方差。
 
 - KL-reg：对学习隐变量的标准正态分布的KL 惩罚，类似于[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)。
 - VQ-reg：在解码器中使用矢量量化层，如[VQVAE](https://lilianweng.github.io/posts/2018-08-12-vae/#vq-vae-and-vq-vae-2)，但量化层被解码器吸收。
@@ -335,7 +332,7 @@ $$
 $$
 \bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
 $$
-为了控制分类器引导的强度，我们可以在delta部分增加一个权重w$，
+为了控制分类器引导的强度，我们可以在delta部分增加一个权重$w$，
 $$
 \bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
 $$
@@ -345,7 +342,7 @@ $$
 
 > 图 10. 该算法使用来自分类器的指导，使用 DDPM 和 DDIM 运行条件生成。（图片来源： [Dhariwal & Nichol，2021 年](https://arxiv.org/abs/2105.05233)]）
 
-此外，通过对 U-Net 架构进行一些修改，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)到的性能优于使用扩散模型的 GAN。架构修改包括更大的模型深度/宽度、更多注意力头、多分辨率注意力、用于上/下采样的 BigGAN 残差块、通过$1/\sqrt{2}$ 缩放的残差连接和自适应组归一化（AdaGN）。
+此外，通过对 U-Net 架构进行一些修改，[Dhariwal 和 Nichol (2021)](https://arxiv.org/abs/2105.05233)的性能优于使用扩散模型的 GAN。架构修改包括更大的模型深度/宽度、更多注意力头、多分辨率注意力、用于上/下采样的 BigGAN 残差块、通过$1/\sqrt{2}$ 缩放的残差连接和自适应组归一化（AdaGN）。
 
 ## Classifier-Free Guidance
 
@@ -371,7 +368,7 @@ $$
 
 为了生成高分辨率高质量图像，[Ho 等人。(2021)](https://arxiv.org/abs/2106.15282)提议在增加的分辨率下使用多个扩散模型的Pileline。*Pipeline 模型之间的噪声调节增强*对最终图像质量至关重要，即对每个超分辨率模型$p_\theta(\mathbf{x} \vert \mathbf{z})$的调节输入 $z$ 应用强大数据增强,. 条件噪声有助于减少Pipeline设置中的复合误差。*U-net*是用于高分辨率图像生成的扩散建模中模型架构的常见选择。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png
+![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png)
 
 > 图 11. 分辨率不断增加的多个扩散模型的级联Pipeline。（图片来源： [Ho et al. 2021](https://arxiv.org/abs/2106.15282) ]）
 
@@ -450,4 +447,3 @@ Imagen 修改了 U-net 中的几个设计，使其成为*高效的 U-Net*。
 
 [15] Rombach & Blattmann, et al. [“High-Resolution Image Synthesis with Latent Diffusion Models."](https://arxiv.org/abs/2112.10752) CVPR 2022.[code](https://github.com/CompVis/latent-diffusion)
 
-- 
