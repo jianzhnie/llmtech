@@ -8,4 +8,3 @@
   - [TFIDF](deeplearning/nlp/TFIDF.md)
   - [Word2Vec 1](deeplearning/nlp/Word2Vec_1.md)
   - [Word2Vec 2](deeplearning/nlp/Word2Vec_2.md)
-

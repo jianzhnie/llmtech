@@ -4,7 +4,7 @@
 
 扩散模型的灵感来自非平衡热力学。他们定义了一个扩散步骤的马尔可夫链，以缓慢地将随机噪声添加到数据中，然后学习反转扩散过程以从噪声中构建所需的数据样本。与 VAE 或流模型不同，扩散模型是通过固定过程学习的，并且潜在变量具有高维性（与原始数据相同）。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png) 
+![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png)
 
 > 图 1. 不同类型生成模型的概述。
 
@@ -28,7 +28,7 @@ $$
 上述过程的一个很好的特性是我们用[Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick)以封闭形式在任意时间步 $t$ 都可以采样$\mathbf{x}_t$。让$\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
 $$
 \begin{aligned}
-\mathbf{x}_t 
+\mathbf{x}_t
 &= \sqrt{\alpha_t}\mathbf{x}_{t-1} + \sqrt{1 - \alpha_t}\boldsymbol{\epsilon}_{t-1} & \text{ ;where } \boldsymbol{\epsilon}_{t-1}, \boldsymbol{\epsilon}_{t-2}, \dots \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \\
 &= \sqrt{\alpha_t \alpha_{t-1}} \mathbf{x}_{t-2} + \sqrt{1 - \alpha_t \alpha_{t-1}} \bar{\boldsymbol{\epsilon}}_{t-2} & \text{ ;where } \bar{\boldsymbol{\epsilon}}_{t-2} \text{ merges two Gaussians (*).} \\
 &= \dots \\
@@ -70,7 +70,7 @@ $$
 使用贝叶斯法则，我们有：
 $$
 \begin{aligned}
-q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0) 
+q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)
 &= q(\mathbf{x}_t \vert \mathbf{x}_{t-1}, \mathbf{x}_0) \frac{ q(\mathbf{x}_{t-1} \vert \mathbf{x}_0) }{ q(\mathbf{x}_t \vert \mathbf{x}_0) } \\
 &\propto \exp \Big(-\frac{1}{2} \big(\frac{(\mathbf{x}_t - \sqrt{\alpha_t} \mathbf{x}_{t-1})^2}{\beta_t} + \frac{(\mathbf{x}_{t-1} - \sqrt{\bar{\alpha}_{t-1}} \mathbf{x}_0)^2}{1-\bar{\alpha}_{t-1}} - \frac{(\mathbf{x}_t - \sqrt{\bar{\alpha}_t} \mathbf{x}_0)^2}{1-\bar{\alpha}_t} \big) \Big) \\
 &= \exp \Big(-\frac{1}{2} \big(\frac{\mathbf{x}_t^2 - 2\sqrt{\alpha_t} \mathbf{x}_t \color{blue}{\mathbf{x}_{t-1}} \color{black}{+ \alpha_t} \color{red}{\mathbf{x}_{t-1}^2} }{\beta_t} + \frac{ \color{red}{\mathbf{x}_{t-1}^2} \color{black}{- 2 \sqrt{\bar{\alpha}_{t-1}} \mathbf{x}_0} \color{blue}{\mathbf{x}_{t-1}} \color{black}{+ \bar{\alpha}_{t-1} \mathbf{x}_0^2}  }{1-\bar{\alpha}_{t-1}} - \frac{(\mathbf{x}_t - \sqrt{\bar{\alpha}_t} \mathbf{x}_0)^2}{1-\bar{\alpha}_t} \big) \Big) \\
@@ -80,8 +80,8 @@ $$
 其中 $ C(\mathbf{x}_t, \mathbf{x}_0)$ 是一些不涉及$\mathbf{x}_{t-1}$的函数并且省略了细节。按照标准高斯密度函数，均值和方差可以参数化如下（其中 $\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$)
 $$
 \begin{aligned}
-\tilde{\beta}_t 
-&= 1/(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}}) 
+\tilde{\beta}_t
+&= 1/(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}})
 = 1/(\frac{\alpha_t - \bar{\alpha}_t + \beta_t}{\beta_t(1 - \bar{\alpha}_{t-1})})
 = \color{green}{\frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t} \\
 \tilde{\boldsymbol{\mu}}_t (\mathbf{x}_t, \mathbf{x}_0)
@@ -93,8 +93,8 @@ $$
 多亏了 [nice property](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice), 我们可以表示 $\mathbf{x}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}}(\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}_t)$并将其代入上述等式，得到：
 $$
 \begin{aligned}
-\tilde{\beta}_t 
-&= 1/(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}}) 
+\tilde{\beta}_t
+&= 1/(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}})
 = 1/(\frac{\alpha_t - \bar{\alpha}_t + \beta_t}{\beta_t(1 - \bar{\alpha}_{t-1})})
 = \color{green}{\frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t} \\
 \tilde{\boldsymbol{\mu}}_t (\mathbf{x}_t, \mathbf{x}_0)
@@ -106,12 +106,12 @@ $$
 如图 2 所示，这种设置与[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)非常相似，因此我们可以使用变分下界来优化负对数似然。
 $$
 \begin{aligned}
-- \log p_\theta(\mathbf{x}_0) 
+- \log p_\theta(\mathbf{x}_0)
 &\leq - \log p_\theta(\mathbf{x}_0) + D_\text{KL}(q(\mathbf{x}_{1:T}\vert\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}\vert\mathbf{x}_0) ) \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{\mathbf{x}_{1:T}\sim q(\mathbf{x}_{1:T} \vert \mathbf{x}_0)} \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \Big] \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \Big] \\
 &= \mathbb{E}_q \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \\
-\text{Let }L_\text{VLB} 
+\text{Let }L_\text{VLB}
 &= \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
 \end{aligned}
 $$
@@ -130,7 +130,7 @@ $$
 为了将方程中的每一项转换为可分析计算的，目标可以进一步重写为几个 KL 散度和熵项的组合（参见[Sohl-Dickstein 等人](https://arxiv.org/abs/1503.03585)的附录 B 中详细的推导过程）
 $$
 \begin{aligned}
-L_\text{VLB} 
+L_\text{VLB}
 &= \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \\
 &= \mathbb{E}_q \Big[ \log\frac{\prod_{t=1}^T q(\mathbf{x}_t\vert\mathbf{x}_{t-1})}{ p_\theta(\mathbf{x}_T) \prod_{t=1}^T p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_t) } \Big] \\
 &= \mathbb{E}_q \Big[ -\log p_\theta(\mathbf{x}_T) + \sum_{t=1}^T \log \frac{q(\mathbf{x}_t\vert\mathbf{x}_{t-1})}{p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_t)} \Big] \\
@@ -165,11 +165,11 @@ $$
 损失项 $L_t$ 被参数化以最小化与$\tilde{\boldsymbol{\mu}}$ 的差异:
 $$
 \begin{aligned}
-L_t 
+L_t
 &= \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \Big[\frac{1}{2 \| \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) \|^2_2} \| \color{blue}{\tilde{\boldsymbol{\mu}}_t(\mathbf{x}_t, \mathbf{x}_0)} - \color{green}{\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)} \|^2 \Big] \\
 &= \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \Big[\frac{1}{2  \|\boldsymbol{\Sigma}_\theta \|^2_2} \| \color{blue}{\frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_t \Big)} - \color{green}{\frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) \Big)} \|^2 \Big] \\
 &= \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \Big[\frac{ (1 - \alpha_t)^2 }{2 \alpha_t (1 - \bar{\alpha}_t) \| \boldsymbol{\Sigma}_\theta \|^2_2} \|\boldsymbol{\epsilon}_t - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\|^2 \Big] \\
-&= \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \Big[\frac{ (1 - \alpha_t)^2 }{2 \alpha_t (1 - \bar{\alpha}_t) \| \boldsymbol{\Sigma}_\theta \|^2_2} \|\boldsymbol{\epsilon}_t - \boldsymbol{\epsilon}_\theta(\sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}_t, t)\|^2 \Big] 
+&= \mathbb{E}_{\mathbf{x}_0, \boldsymbol{\epsilon}} \Big[\frac{ (1 - \alpha_t)^2 }{2 \alpha_t (1 - \bar{\alpha}_t) \| \boldsymbol{\Sigma}_\theta \|^2_2} \|\boldsymbol{\epsilon}_t - \boldsymbol{\epsilon}_\theta(\sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}_t, t)\|^2 \Big]
 \end{aligned}
 $$
 
@@ -209,7 +209,7 @@ $$
 
 增加噪声水平的时间表类似于前向扩散过程。如果我们使用扩散过程注释，分数近似于 $\mathbf{s}_\theta(\mathbf{x}_t, t) \approx \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)$. 给定高斯分布 $\mathbf{x} \sim \mathcal{N}(\mathbf{\mu}, \sigma^2 \mathbf{I})$，我们可以将其密度函数对数的导数写为$\nabla_{\mathbf{x}}\log p(\mathbf{x}) = \nabla_{\mathbf{x}} \Big(-\frac{1}{2\sigma^2}(\mathbf{x} - \boldsymbol{\mu})^2 \Big) = - \frac{\mathbf{x} - \boldsymbol{\mu}}{\sigma^2} = - \frac{\boldsymbol{\epsilon}}{\sigma}$. 其中$\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \mathbf{I})$. [回想](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice)一下 $q(\mathbf{x}_t \vert \mathbf{x}_0) \sim \mathcal{N}(\sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})$ 因此，
 $$
-\mathbf{s}_\theta(\mathbf{x}_t, t) 
+\mathbf{s}_\theta(\mathbf{x}_t, t)
 \approx \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)
 = \mathbb{E}_{q(\mathbf{x}_0)} [\nabla_{\mathbf{x}_t} q(\mathbf{x}_t \vert \mathbf{x}_0)]
 = \mathbb{E}_{q(\mathbf{x}_0)} \Big[ - \frac{\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)}{\sqrt{1 - \bar{\alpha}_t}} \Big]
@@ -253,7 +253,7 @@ $$
 对于另一种方法，让我们根据[nice property](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#nice)所需的标准偏差$\sigma_t$，以参数化的方式重写$q_\sigma(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$：
 $$
 \begin{aligned}
-\mathbf{x}_{t-1} 
+\mathbf{x}_{t-1}
 &= \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 +  \sqrt{1 - \bar{\alpha}_{t-1}}\boldsymbol{\epsilon}_{t-1} \\
 &= \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \boldsymbol{\epsilon}_t + \sigma_t\boldsymbol{\epsilon} \\
 &= \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \frac{\mathbf{x}_t - \sqrt{\bar{\alpha}_t}\mathbf{x}_0}{\sqrt{1 - \bar{\alpha}_t}} + \sigma_t\boldsymbol{\epsilon} \\
@@ -375,7 +375,7 @@ $$
 他们发现最有效的噪声是在低分辨率下应用高斯噪声，在高分辨率下应用高斯模糊。此外，他们还探索了两种形式的条件增强，需要对训练过程进行小幅修改。请注意，条件噪声仅适用于训练，不适用于推理。
 
 - 对于低分辨率，截断条件增强在步骤早期 $t> 0$ 停止扩散过程。
-- 非截断条件增强运行完整的低分辨率反向过程，直到步骤 0，然后通过$\mathbf{z}_t \sim q(\mathbf{x}_t \vert \mathbf{x}_0)$将其损坏，然后将损坏的$\mathbf{z}_t$输入超分辨率模型 。 
+- 非截断条件增强运行完整的低分辨率反向过程，直到步骤 0，然后通过$\mathbf{z}_t \sim q(\mathbf{x}_t \vert \mathbf{x}_0)$将其损坏，然后将损坏的$\mathbf{z}_t$输入超分辨率模型 。
 
 两阶段扩散模型**unCLIP** ( [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ) 大量利用 CLIP 文本编码器来生成高质量的文本来引导图像。给定一个预训练的 CLIP 模型$C$和来自扩散模型的配对训练数据$(\mathbf{x}, y)$， 其中$x$是一个图像，$y$ 是相应的标题，我们可以分别计算 CLIP 文本和图像嵌入，$\mathbf{c}^t(y)$和 $\mathbf{c}^i(\mathbf{x})$。unCLIP 并行学习两个模型：
 
@@ -446,4 +446,3 @@ Imagen 修改了 U-net 中的几个设计，使其成为*高效的 U-Net*。
 [14] Chitwan Saharia & William Chan, et al. [“Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding."](https://arxiv.org/abs/2205.11487) arxiv Preprint arxiv:2205.11487 (2022).
 
 [15] Rombach & Blattmann, et al. [“High-Resolution Image Synthesis with Latent Diffusion Models."](https://arxiv.org/abs/2112.10752) CVPR 2022.[code](https://github.com/CompVis/latent-diffusion)
-
