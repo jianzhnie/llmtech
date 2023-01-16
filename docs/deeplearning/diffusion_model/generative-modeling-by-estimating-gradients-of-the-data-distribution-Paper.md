@@ -42,7 +42,7 @@ $$
 
 #### 2.1.1 Denoising score matching
 
-去噪分数匹配去噪分数匹配[61]是分数匹配的一种变体，它完全规避 $\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})\right)$. 它首先扰乱带有预先指定的噪音分布$q_{\sigma}(\tilde{\mathbf{x}} \mid \mathbf{x})$ 的数据点$\mathbf{x}$ ， 然后使用分数匹配来估计扰动数据的分数分布$q_{\sigma}(\tilde{\mathbf{x}}) \triangleq \int q_{\sigma}(\tilde{\mathbf{x}} \mid \mathbf{x}) p_{\text {data }}(\mathbf{x}) \mathrm{d} \mathbf{x}$. 
+去噪分数匹配去噪分数匹配[61]是分数匹配的一种变体，它完全规避 $\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})\right)$. 它首先扰乱带有预先指定的噪音分布$q_{\sigma}(\tilde{\mathbf{x}} \mid \mathbf{x})$ 的数据点$\mathbf{x}$ ， 然后使用分数匹配来估计扰动数据的分数分布$q_{\sigma}(\tilde{\mathbf{x}}) \triangleq \int q_{\sigma}(\tilde{\mathbf{x}} \mid \mathbf{x}) p_{\text {data }}(\mathbf{x}) \mathrm{d} \mathbf{x}$.
 
 目标被证明等同于以下内容：
 $$
@@ -82,11 +82,11 @@ $$
 流形假设表明在现实世界中，数据倾向于专注于以低维度嵌入在高维空间中。这个假设在经验上适用于许多数据集，并已成为流形学习的基础[3, 47]。在流形假设下，基于分数的生成模型将面临两个关键困难。首先， 得分 $\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x})$ 是在环境空间中采用的梯度，当 $\mathrm{x}$ 被限制在低维时是未定义的。
 ![](https://cdn.mathpix.com/cropped/2023_01_11_b824421116c00dc5d0fbg-3.jpg?height=250&width=696&top_left_y=1986&top_left_x=1058)
 
-Figure 1: 
+Figure 1:
 
-Left: Sliced score matching (SSM) loss w.r.t. iterations. No noise is added to data. 
+Left: Sliced score matching (SSM) loss w.r.t. iterations. No noise is added to data.
 
-Right: Same but data are perturbed with $\mathcal{N}(0,0.0001)$. manifold. 
+Right: Same but data are perturbed with $\mathcal{N}(0,0.0001)$. manifold.
 
 第二，当数据分布的支撑是整个空间时, 得分匹配目标Eq(1) 提供一致的分数估计器（参见 [24] 中的定理 2），并且当数据驻留在低维流形上时将会得到不一致的结果。
 
@@ -100,7 +100,7 @@ Right: Same but data are perturbed with $\mathcal{N}(0,0.0001)$. manifold.
 
 在低数据密度区域，分数匹配可能没有足够的证据来准确估计评分功能，由于缺乏数据样本。要看到这一点，请回忆一下 Section 2.1 得分匹配最小化了分数估计的预期平方误差，即
 
-$$\frac{1}{2} \mathbb{E}_{p_{\text {data }}}\left[\left\|\mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})-\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x})\right\|_{2}^{2}\right]$$. 
+$$\frac{1}{2} \mathbb{E}_{p_{\text {data }}}\left[\left\|\mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})-\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x})\right\|_{2}^{2}\right]$$.
 
 在实践中，对数据分布的期望总是使用独立同分布样本来估计  $\left\{\mathbf{x}_{i}\right\}_{i=1}^{N} \stackrel{\text { i.i.d. }}{\sim} p_{\text {data }}(\mathbf{x})$.  考虑任何
 
@@ -110,11 +110,11 @@ To de为了证明这一点的负面影响，我们
 
 ![](https://cdn.mathpix.com/cropped/2023_01_11_b824421116c00dc5d0fbg-4.jpg?height=352&width=677&top_left_y=930&top_left_x=1079)
 
-Figure 2:     Left: $\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x})$;      Right: $\mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})$. 
+Figure 2:     Left: $\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x})$;      Right: $\mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})$.
 
 数据密度  $p_{\text {data }}(\mathbf{x})$ 使用 orange colormap 编码  : 颜色越深意味着密度越高。
 
-红色矩形突出显示区域， 其中 $\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x}) \approx \mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})$ 是实验的结果 (details in Appendix B.11 in Fig. 2 其中其中我们使用切片分数匹配以估计高斯混合的分数 $p_{\text {data }}=\frac{1}{5} \mathcal{N}((-5,-5), I)+\frac{4}{5} \mathcal{N}((5,5), I)$. 
+红色矩形突出显示区域， 其中 $\nabla_{\mathbf{x}} \log p_{\text {data }}(\mathbf{x}) \approx \mathbf{s}_{\boldsymbol{\theta}}(\mathbf{x})$ 是实验的结果 (details in Appendix B.11 in Fig. 2 其中其中我们使用切片分数匹配以估计高斯混合的分数 $p_{\text {data }}=\frac{1}{5} \mathcal{N}((-5,-5), I)+\frac{4}{5} \mathcal{N}((5,5), I)$.
 
 如图所示，分数估计仅在 $p_{\text {data }}$ 模式附近可靠 ，这其中数据密度高。
 
@@ -194,7 +194,7 @@ In this section, we demonstrate that our NCSNs are able to produce high quality 
 
 Setup We use MNIST, CelebA [34], 和CIFAR-10 [31] datasets in our experiments. For CelebA, the images are first center-cropped to $140 \times 140$ 和then resized to $32 \times 32$. All images are rescaled so that pixel values are in $[0,1]$. We choose $L=10$ different standard deviations such that $\left\{\sigma_{i}\right\}_{i=1}^{L}$ is a geometric sequence with $\sigma_{1}=1$ 和$\sigma_{10}=0.01$. 注意 that Gaussian noise of $\sigma=0.01$ is almost indistinguishable to human eyes for image data. 当 using annealed Langevin dynamics for image generation, we choose $T=100$ 和$\epsilon=2 \times 10^{-5}$, 和use uniform noise as our initial samples. We found the results are robust w.r.t. the choice of $T$, 和$\epsilon$ between $5 \times 10^{-6}$ 和$5 \times 10^{-5}$ generally works fine. We provide additional details on model architecture 和settings in Appendix A 和B
 
-Image generation In Fig.55, we show uncurated samples from annealed Langevin dynamics for MNIST, CelebA 和CIFAR-10. As shown by the samples, our generated images have higher or comparable quality to those from modern likelihood-based models 和GANs. To intuit the procedure of annealed Langevin dynamics, we provide intermediate samples in Fig.4 其中 each row shows 
+Image generation In Fig.55, we show uncurated samples from annealed Langevin dynamics for MNIST, CelebA 和CIFAR-10. As shown by the samples, our generated images have higher or comparable quality to those from modern likelihood-based models 和GANs. To intuit the procedure of annealed Langevin dynamics, we provide intermediate samples in Fig.4 其中 each row shows
 
 ![](https://cdn.mathpix.com/cropped/2023_01_11_b824421116c00dc5d0fbg-8.jpg?height=425&width=420&top_left_y=243&top_left_x=430)
 
@@ -217,7 +217,7 @@ how samples evolve from pure random noise to high quality images. More samples f
 
 For quantitative evaluation, we report inception [48] 和FID [20] scores on CIFAR-10 in Tab. 1] As an unconditional model, we achieve the state-of-the-art inception score of 8.87, which is even better than most reported values for class-conditional generative models. Our FID score $25.32$ on CIFAR-10 is also comparable to top existing models, such as SNGAN [36]. We omit scores on MNIST 和CelebA as the scores on these two datasets are not widely reported, 和different preprocessing (such as the center crop size of CelebA) can lead to numbers not directly comparable.
 
-Image inpainting In Fig. 6, we demonstrate that our score networks learn generalizable 和semantically meaningful image representations that allow it to produce diverse image inpaintings. 注意 that some previous models such as PixelCNN can only impute images in the raster scan order. In contrast, our method can naturally handle images with occlusions of arbitrary shapes by a simple modification of the annealed Langevin dynamics procedure (details in Appendix B.3). We provide more image inpainting results in Appendix C.5 
+Image inpainting In Fig. 6, we demonstrate that our score networks learn generalizable 和semantically meaningful image representations that allow it to produce diverse image inpaintings. 注意 that some previous models such as PixelCNN can only impute images in the raster scan order. In contrast, our method can naturally handle images with occlusions of arbitrary shapes by a simple modification of the annealed Langevin dynamics procedure (details in Appendix B.3). We provide more image inpainting results in Appendix C.5
 
 ## Related work
 
