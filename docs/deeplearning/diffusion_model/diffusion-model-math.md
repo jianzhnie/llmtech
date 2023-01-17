@@ -1,5 +1,7 @@
 # 扩散模型的工作原理：从零开始的数学
 
+> 本文翻译自 AI Summer 的工作人员 Sergios Karagiannakos, Nikolas Adaloglou 等几人发布的一篇文章，原文是 [How diffusion models work: the math from scratch | AI Summer (theaisummer.com)](https://theaisummer.com/diffusion-models/)
+
 ![扩散模型的工作原理：从零开始的数学](https://theaisummer.com/static/ecb7a31540b18a8cbd18eedb446b468e/ee604/diffusion-models.png)
 
 ## 扩散模型是什么？
