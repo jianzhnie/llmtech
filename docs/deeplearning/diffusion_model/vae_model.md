@@ -107,7 +107,7 @@ $$
 
 **Variational Autoencoder** ( Kingma [& Welling, 2014](https://arxiv.org/abs/1312.6114) ) 的缩写**VAE**的思想实际上与上述所有自编码器模型不太相似，但深深植根于变分贝叶斯和图模型的方法。
 
-不是将输入映射到*固定向量，而是将其映射到分布。*我们将此参数化为$\theta$的分布标记为$p_\theta$ . 数据输入之间的关系$\mathbf{x}$ 和latent encoding向量和可以完全定义为：
+不是将输入映射到*固定向量，而是将其映射到分布。*我们将此参数化为$\theta$的分布标记为$p_\theta$ . 数据输入之间的关系$\mathbf{x}$ 和latent encoding向量和可以完全定义为：
 
 - Prior $p_\theta(\mathbf{z})$
 - Likelihood $p_\theta(\mathbf{x}\vert\mathbf{z})$
