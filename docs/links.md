@@ -3,16 +3,15 @@
 
 ### Company Or Institution
 
-- [Deepmind](https://www.deepmind.com/) | [Github]()
-- [OpenAI](https://openai.com/blog/) | [Github]()
+- [Deepmind](https://www.deepmind.com/) | [Github](https://github.com/deepmind)
+- [OpenAI](https://openai.com/blog/) | [Github](https://github.com/openai/)
 - [Google Reserach](https://ai.googleblog.com/) | [Github](https://github.com/google-research/google-research)
-- [facebookresearch](https://ai.facebook.com/blog) | [Github](https://github.com/facebookresearch)
-- [Microsoft](https://www.microsoft.com/en-us/research/) | [Github]()
+- [FaceBook Research](https://ai.facebook.com/blog) | [Github](https://github.com/facebookresearch)
 - [Huggingface](https://huggingface.co/blog) | [Github](https://github.com/huggingface)
-- [Salesforceairesearch](https://blog.salesforceairesearch.com/) | [Github](https://github.com/salesforce)
-- [Stability AI ](https://platform.stability.ai/) | [Github](https://github.com/stability-ai)
-- [berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) | [Github]()
-- [Stanford AI](https://ai.stanford.edu/blog/) | []()
+- [Salesforce AI Research](https://blog.salesforceairesearch.com/) | [Github](https://github.com/salesforce)
+- [Stability AI](https://platform.stability.ai/) | [Github](https://github.com/stability-ai)
+- [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1)
+- [Stanford AI](https://ai.stanford.edu/blog/)
 - 
 ### 国内机构
 - [统计之都](https://cosx.org/)
