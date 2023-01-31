@@ -12,19 +12,19 @@
 - [Stability AI](https://platform.stability.ai/) | [Github](https://github.com/stability-ai)
 - [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1)
 - [Stanford AI](https://ai.stanford.edu/blog/)
-- 
+
 ### 国内机构
 - [统计之都](https://cosx.org/)
 - [openmmlab]() | [Github](https://github.com/open-mmlab)
 
 ### Personal Blog
 - [科学空间](https://spaces.ac.cn/)
+- [Lilian](https://lilianweng.github.io/)
 - [Jay Alammar](https://jalammar.github.io/)
 - [Yihui Xie](https://yihui.org/)
 - [Chiyuan Zhang](https://pluskid.org/)
-- [Lilian](https://lilianweng.github.io/)
 - [Yang Song](https://yang-song.net/)
-
+- [Phil Wang](https://github.com/lucidrains)
 
 ## My projects
 
