@@ -37,6 +37,8 @@
 
 - 强化学习[论文/算法]
 - 多智能体强化学习
+
+  - [MARL](deep-rl/papers/Overview.md)
   - [DRQN](deep-rl/papers/DRQN.md)
   - [IQL](deep-rl/papers/iql.md)
   - [COMA](deep-rl/papers/COMA.md)
