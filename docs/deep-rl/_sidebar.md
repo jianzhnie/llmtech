@@ -40,10 +40,10 @@
 
   - [MARL](deep-rl/papers/Overview.md)
   - [DRQN](deep-rl/papers/DRQN.md)
-  - [IQL](deep-rl/papers/iql.md)
+  - [IQL](deep-rl/papers/IQL.md)
   - [COMA](deep-rl/papers/COMA.md)
-  - [VDN](deep-rl/papers/vdn.md)
+  - [VDN](deep-rl/papers/VDN.md)
   - [QTRAN](deep-rl/papers/QTRAN.md)
-  - [QMIX](deep-rl/papers/qmix.md)
+  - [QMIX](deep-rl/papers/QMIX.md)
   - [MADDPG](deep-rl/papers/MADDPG.md)
   - [MAT](deep-rl/papers/MAT.md)
