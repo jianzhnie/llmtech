@@ -25,21 +25,20 @@
 
   2. 智能体获取信息的局限性：在一些环境中（例如SMAC），每个智能体不一定能够获得全局的状态信息，而是仅能获取局部的观测信息，但无法得知其他智能体的观测信息、动作等信息。
 
-  3. 个体的目标一致性：各智能体的目标可能是最优的全局回报，也可能是各自局部回报的最优。s
+  3. 个体的目标一致性：各智能体的目标可能是最优的全局回报，也可能是各自局部回报的最优。
 
   4. 可拓展性：大规模的多智能体系统可能涉及到高维度的状态空间和动作空间，这对于模型表达能力，算法的学习能力和真实场景中的硬件算力有一定的挑战。
 
 
 
-研究方向
-------------------------------------
+## 研究方向
 对于 MARL cooperation 任务来说，最简单的思路就是将单智能体强化学习方法直接套用在多智能体系统中，即每个智能体把其他智能体都当做环境中的因素，仍然按照单智能体学习的方式、通过与环境的交互来更新策略；这是 independent Q-learning， independent PPO方法的思想，但是由于环境的非平稳性和智能体观测的局部性，这些方法很难取得不错的效果。
 
 目前 MARL cooperation 主要是采用 CTDE(centralized training and decentralized execute) 的方法，主要有两类解决思路， Valued-based MARL和Actor-Critic MARL。具体可以参考下图：
 
 ![../_images/MARL_cooperation_algo.png](https://di-engine-docs.readthedocs.io/zh_CN/latest/_images/MARL_cooperation_algo.png)
 
-**Valued-based MARL**
+### **Valued-based MARL**
 
 对于 Valued-based MARL， 主要的思路是将全局的 reward 值分解为可以供各个 agent 学习的局部 reward 值，从而便于智能体的训练。主要有 QMIX， WQMIX， QTRAN 等方法。
 
@@ -49,9 +48,9 @@
 
 - QTRAN: QTRAN 通过学习独立 action-value 网络,混合 action-value 网络，全局 state-value 网络来突破单调性限制。具体可以参考 QTRAN  [4]
 
-- QPLEX: QPLEX 通过分别对联合 Q 值 :$Q_tot$ 和各个 agent 的 Q 值 :$Q_i$ 使用 Dueling structure 进行分解，将 IGM 一致性转化为易于实现的优势函数取值范围约束，从而方便了具有线性分解结构的值函数的学习。具体可以参考 QPLEX [10]
+- QPLEX: QPLEX 通过分别对联合 Q 值 :$Q_{tot}$ 和各个 agent 的 Q 值 :$Q_i$ 使用 Dueling structure 进行分解，将 IGM 一致性转化为易于实现的优势函数取值范围约束，从而方便了具有线性分解结构的值函数的学习。具体可以参考 QPLEX [10]
 
-**Actor-critic MARL**
+### **Actor-critic MARL**
 
 对于 Actor-critic MARL， 主要的思路是学习一个适用于多智能体的策略网络。主要有 COMA, MAPPO 等方法。
 
