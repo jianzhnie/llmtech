@@ -211,7 +211,7 @@
 
 在这种情况下，有一个起点和一个终点 （终端状态）。将创建一个Episode：状态、动作、奖励和新状态的列表。
 
-例如，拿《超级玛丽》游戏举例：Episode从新马里奥关卡的发布开始，到被杀或通关时结束。
+例如，拿《超级玛丽》游戏举例：Episode从新马里奥关卡的启动开始，到被杀或通关时结束。
 <div align=center>
 <img width="600" src="https://huggingface.co/blog/assets/63_deep_rl_intro/mario.jpg"/>
 </div>
@@ -288,9 +288,9 @@ Policy π 是 智能体的大脑，它是告诉在给定状态下要采取什么
 </div>
 <div align=center>图 1. 24 将策略视为智能体的大脑，该功能将告诉在给定状态下要采取的动作</div>
 
-这个 Policy 是想要学习的函数，目标是找到最优策略 π，即当智能体按照它采取动作时，将获得最大化期望回报。我们通过训练找到这个策略 π 。
+这个 Policy 是想要学习的函数，目标是找到最优策略 π*，即当智能体按照它采取动作时，将获得最大化期望回报。我们通过训练找到这个策略 π* 。
 
-有两种方法可以训练智能体来找到这个最优策略 π：
+有两种方法可以训练智能体来找到这个最优策略 π*：
 
 - 直接地，通过教智能体学习在给定状态下要采取的动作：基于策略的方法。
 - 间接地，教智能体了解哪个状态更有价值，然后采取导致更有价值状态的动作：基于价值的方法。
@@ -343,7 +343,7 @@ Policy π 是 智能体的大脑，它是告诉在给定状态下要采取什么
 
 在基于价值的方法中，不是训练一个策略函数，而是训练一个将状态映射到处于该状态的期望值的价值函数。
 
-某个状态的价值是智能体从该状态开始，然后按照Policy采取动作时可以获得 的期望折扣回报。
+某个状态的价值是指： 智能体从该状态开始，然后按照Policy采取动作时可以获得的期望折扣回报。
 
 “按照策略采取动作”只是意味着策略是 “走向价值最高的状态”。
 <div align=center>
@@ -375,7 +375,7 @@ Policy π 是 智能体的大脑，它是告诉在给定状态下要采取什么
 
 深度强化学习引入了深度神经网络来解决强化学习问题 ——因此得名“深度”。
 
-例如，在下一篇文章中，将研究 Q-Learning（经典强化学习）和 Deep Q-Learning，它们都是基于值的 RL 算法。您会看到不同之处在于，在第一种方法中， 使用传统算法 创建 Q 表，帮助找到对每个状态采取的动作。在第二种方法中， 将使用神经网络 （近似 q 值）。
+例如，在下一篇文章中，将研究 Q-Learning（经典强化学习）和 Deep Q-Learning，它们都是基于值的 RL 算法。您会看到不同之处在于，在第一种方法中， 使用传统算法创建 Q 表，帮助找到对每个状态采取的动作。在第二种方法中， 将使用神经网络 （近似 q 值）。
 
 <div align=center>
 <img width="600" src="https://huggingface.co/blog/assets/63_deep_rl_intro/deep.jpg"/>
@@ -397,3 +397,18 @@ Policy π 是 智能体的大脑，它是告诉在给定状态下要采取什么
 - 最后，谈论深度强化学习，因为引入了深度神经网络来估计要采取的动作（基于策略）或估计状态的价值（基于价值），因此得名“深度”。
 
 在下一章中，[我们将学习 Q-Learning 并深入**研究基于价值的方法。**](deep-rl-class/chapter2.md)
+
+
+
+## 补充阅读
+
+### Deep Reinforcement Learning
+
+- [Reinforcement Learning: An Introduction, Richard Sutton and Andrew G. Barto Chapter 1, 2 and 3](http://incompleteideas.net/book/RLbook2020.pdf)
+- [Foundations of Deep RL Series, L1 MDPs, Exact Solution Methods, Max-ent RL by Pieter Abbeel](https://youtu.be/2GwBez0D20A)
+- [Spinning Up RL by OpenAI Part 1: Key concepts of RL](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
+
+### Gym
+
+- [Getting Started With OpenAI Gym: The Basic Building Blocks](https://blog.paperspace.com/getting-started-with-openai-gym/)
+- [Make your own Gym custom environment](https://www.gymlibrary.dev/content/environment_creation/)
