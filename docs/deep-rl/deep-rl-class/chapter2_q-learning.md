@@ -294,7 +294,7 @@ Q-Learning 是一种 **基于 off-policy 价值的方法，它使用 TD 方法�
 
 让我们回顾一下价值和奖励之间的区别：
 
-- *状态*或*状态-动作对*的值是我们的智能体从该状态（或状态-动作对）开始并根据其策略采取行动时获得的预期累积奖励。
+- 状态或状态-动作对的值是我们的智能体从该状态（或状态-动作对）开始并根据其策略采取行动时获得的预期累积奖励。
 - *奖励*是我在某种状态下执行动作后从环境中得到的**反馈。**
 
 在内部，Q 函数有 **一个 Q 表，该表中每个单元格对应一个状态-动作对值。** 将此 Q 表视为 **Q 函数的内存或备忘单。**
@@ -330,9 +330,9 @@ Q表被初始化。这就是为什么所有值都 = 0 的原因。此表 **包�
 
 现在我们了解了 Q-Learning、Q-function 和 Q-table 是什么， **让我们更深入地研究 Q-Learning 算法**。
 
-## Q学习算法
+## Q-Learning 算法
 
-这是 Q-Learning 伪代码；让我们研究每个部分，并 **在实现它之前通过一个简单的例子看看它是如何工作的。**不要被它吓倒，它比看起来更简单！我们将检查每个步骤。
+这是 Q-Learning 伪代码；让我们研究每个部分，并在实现它之前通过一个简单的例子看看它是如何工作的。
 
 ![Q学习](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/Q-learning-2.jpg)
 
@@ -348,65 +348,95 @@ Q表被初始化。这就是为什么所有值都 = 0 的原因。此表 **包�
 
 Epsilon 贪婪策略是一种处理探索/开发权衡的策略。
 
-这个想法是我们定义初始 epsilon ɛ = 1.0：
+这个想法是我们定义初始 epsilon,  $ɛ = 1.0$：
 
-- *概率为 1 - ε* ：我们进行 **开发** （也就是我们的代理选择具有最高状态-动作对值的动作）。
-- 概率为 ε： **我们进行探索** （尝试随机动作）。
+- 以*1 - ε* 的概率：我们进行 **开发** （也就是我们的智能体选择具有最高状态-动作对值的动作）。
+-  ε 的概率： **我们进行探索** （尝试随机动作）。
 
-刚开始训练 的时候**，做探索的概率会很大，因为ε很大，所以大部分时间，我们都会探索。** 但是随着训练的进行，我们的 **Q 表的估计越来越好，我们逐渐降低 epsilon 值** ，因为我们需要越来越少的探索和更多的开发。
+刚开始训练的时候**，做探索的概率会很大，因为ε很大，所以大部分时间，我们都会探索。** 但是随着训练的进行，我们的 **Q 表的估计越来越好，我们逐渐降低 epsilon 值** ，因为我们需要越来越少的探索和更多的开发。
 
 ![Q学习](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/Q-learning-5.jpg)
 
-### 第三步：执行动作At，得到奖励Rt+1和下一个状态St+1
+### 第三步：执行动作 $A_t$，得到奖励 $R_{t+1}$和下一个状态 $S_{t+1}$
 
 ![Q学习](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/Q-learning-6.jpg)
 
-### 第 4 步：更新 Q(St, At)
+### 第 4 步：更新 $Q(S_t, A_t)$
 
-**请记住，在 TD 学习中，我们会在交互的一个步骤后**更新我们的策略或价值函数（取决于我们选择的 RL 方法） 。
+**在 TD 学习中，我们会在交互的一个步骤后**更新我们的策略或价值函数（取决于我们选择的 RL 方法） 。
 
-为了产生我们的 TD 目标， **我们使用了即时奖励�吨+1个\*R\**吨\*+ 1的加上下一个状态最佳状态-动作对的折扣值** （我们称之为引导程序）。
+为了产生我们的 TD 目标， **我们使用了即时奖励 $R_{t+1}$ 加上下一个状态最佳状态-动作对的折扣值** （我们称之为bootstrap）。
 
 ![Q学习](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/Q-learning-7.jpg)
 
-因此，我们的问(小号吨,一种吨)*问*（*小号**吨*的,*一种**吨*的) **更新公式是这样的：**
+因此，我们的 $Q(S_t, A_t)$ **更新公式是这样的：**
 
 ![Q学习](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/Q-learning-8.jpg)
 
-这意味着更新我们的问(小号吨,一种吨)*问*（*小号**吨*的,*一种**吨*的):
+这意味着如要更新我们的 $Q(S_t, A_t)$ :
 
-- 我们需要小号吨,一种吨,�吨+1个,小号吨+1个*小号**吨*的,*一种**吨*的,*R**吨*+ 1的,*小号**吨*+ 1的.
-- 为了更新给定状态-动作对的 Q 值，我们使用 TD 目标。
+- 我们需要 $S_t, A_t, R_{t+1}, S_{t+1}$.
+- 为了更新给定 状态-动作对 的 Q 值，我们使用 TD 目标。
 
 我们如何形成TD目标？
 
-1. 我们在采取行动后获得奖励�吨+1个*R**吨*+ 1的.
-2. 为了获得**最佳的下一状态动作对值**，我们使用贪心策略来选择下一个最佳动作。请注意，这不是 epsilon-greedy 策略，它总是会采取具有最高状态动作值的动作。
+1. 我们在采取行动后获得奖励  $R_{t+1}$.
+2. 为了获得**最佳的下一状态动作对值**，我们使用贪心策略来选择下一个最佳动作。请注意，这不是 epsilon-greedy 策略，贪心策略总是会采取具有最高状态动作值的动作。
 
 然后当这个 Q 值的更新完成时，我们从一个新的状态开始并 **再次使用 epsilon-greedy 策略选择我们的动作。**
 
 **这就是为什么我们说 Q Learning 是一种 off-policy 算法。**
 
-## 离策略与在策略
+## Off-policy vs On-policy
 
-区别很微妙：
+- *Off-policy*：使用 **不同的策略来执行（推理）和更新（训练）。**
 
-- *离策略*：使用 **不同的策略来执行（推理）和更新（训练）。**
-
-例如，对于 Q-Learning，epsilon-greedy policy（行为策略）不同于 **用于选择最佳下一状态动作值以更新我们的 Q 值（更新策略）的贪婪策略。**
-
-![关闭政策](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/off-on-1.jpg)代理政策
-
-不同于我们在训练部分使用的策略：
-
-![关闭政策](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/off-on-2.jpg)更新政策
+例如，对于 Q-Learning，epsilon-greedy policy（行为策略）不同于 **用于选择最佳下一状态动作值以更新我们的 Q 值（更新策略）的贪婪策略。**执行动作使用的是 $ɛ - greedy$ 策略，而在训练过程中使用的是贪婪策略。
 
 - *On-policy：* 使用 **相同的策略来执行和更新。**
 
-例如，对于另一种基于值的算法 Sarsa，epsilon- **贪婪策略选择下一个状态-动作对，而不是贪婪策略。**
-
-![关闭政策](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/off-on-3.jpg)萨尔萨
+例如，对于另一种基于值的算法 Sarsa，epsilon- greedy **策略选择下一个状态-动作对，而不是贪婪策略。**
 
 ![关闭政策](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit3/off-on-4.jpg)
 
-``
+
+
+## 关键词
+
+### 寻找最优策略的策略
+
+- **基于策略的方法。**该策略通常使用神经网络进行训练，以选择在给定状态下采取的动作。在这种情况下，神经网络输出智能体应该采取的行动，而不是使用价值函数。根据环境接收到的经验，神经网络将重新调整并提供更好的动作。
+- **基于价值的方法。**在这种情况下，价值函数被训练来输出代表我们政策的状态或状态-动作对的值。但是，此值未定义智能体应采取的操作。相反，我们需要在给定值函数输出的情况下指定智能体的行为。例如，我们可以决定采用一种策略来采取总是能带来最大回报的行动（贪心策略）。总之，该策略是一个贪婪策略（或用户做出的任何决定），它使用价值函数的值来决定要采取的行动。
+
+### 在基于价值的方法中，我们可以找到两种主要策略
+
+- **状态值函数。**对于每个状态，如果智能体从该状态开始并遵循策略直到结束，则状态值函数是预期的回报。
+- **动作价值函数。**与状态值函数相反，动作值函数为每个状态和动作对计算智能体在该状态下开始并采取动作时的预期回报。然后它永远遵循该政策。
+
+### Epsilon-贪心策略：
+
+- 强化学习中使用的常见探索策略涉及平衡探索和开发。
+- 选择具有最高预期奖励的动作，概率为 1-epsilon。
+- 选择概率为 epsilon 的随机动作。
+- Epsilon 通常会随着时间的推移而减少，以将注意力转移到开发上。
+
+### 贪心策略：
+
+- 涉及始终根据当前对环境的了解，选择预期会导致最高奖励的行动。（仅开发）
+- 总是选择具有最高预期奖励的动作。
+- 不包括任何探索。
+- 在具有不确定性或未知最佳操作的环境中可能是不利的。
+
+## 补充阅读
+
+### Monte Carlo and TD Learning
+
+To dive deeper on Monte Carlo and Temporal Difference Learning:
+
+- [Why do temporal difference (TD) methods have lower variance than Monte Carlo methods?](https://stats.stackexchange.com/questions/355820/why-do-temporal-difference-td-methods-have-lower-variance-than-monte-carlo-met)
+- [When are Monte Carlo methods preferred over temporal difference ones?](https://stats.stackexchange.com/questions/336974/when-are-monte-carlo-methods-preferred-over-temporal-difference-ones)
+
+### Q-Learning
+
+- [Reinforcement Learning: An Introduction, Richard Sutton and Andrew G. Barto Chapter 5, 6 and 7](http://incompleteideas.net/book/RLbook2020.pdf)
+- [Foundations of Deep RL Series, L2 Deep Q-Learning by Pieter Abbeel](https://youtu.be/Psrhxy88zww)
