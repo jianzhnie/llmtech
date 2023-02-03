@@ -16,7 +16,7 @@
 
 ## 基于策略的方法有哪些？
 
-强化学习的主要目标是**找到最优策略 $π*$ , 这将使预期的累积奖励最大化**。因为强化学习基于*奖励假设*：**所有目标都可以描述为期望累积奖励的最大化。**
+强化学习的主要目标是**找到最优策略 $π*$ , 这将使期望的累积奖励最大化**。因为强化学习基于*奖励假设*：**所有目标都可以描述为期望累积奖励的最大化。**
 
 例如，在一场足球比赛中（您将在两个单元中训练智能体），目标是赢得比赛。我们可以将强化学习中的这个目标描述为 **最大化**对手的球门进球数（当球越过球门线时）。并**尽量减少您的足球目标中的目标数量**。
 
@@ -93,7 +93,7 @@
 
 例如，如果在训练期间，最好的动作是左边的（Q 值为 0.22），而在它之后的训练步骤是右边的（因为右边的 Q 值变为 0.23），我们极大地改变了策略，因为现在策略将大部分时间都是靠右而不是靠左。
 
-另一方面，在政策梯度方法中，随机政策行动偏好（采取行动的概率）**随时间平稳变化**。
+另一方面，在策略梯度方法中，随机策略行动偏好（采取行动的概率）**随时间平稳变化**。
 
 ### 策略梯度方法的缺点
 
@@ -111,7 +111,7 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 为什么我们直接通过使用策略梯度方法中的梯度上升估计最优策略的权重来优化策略？
 
-强化学习旨在 **找到最佳行为策略（策略）以最大化其预期累积奖励。**
+强化学习旨在 **找到最佳行为策略（策略）以最大化其期望累积奖励。**
 
 策略是**给定状态、输出、动作分布**的函数（在我们的例子中使用随机策略）。
 
@@ -119,14 +119,128 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 我们使用 Policy-Gradients 的目标是通过调整策略来控制动作的概率分布，以便**在未来更频繁地对好的动作（最大化回报）进行采样。**
 
-举一个简单的例子：
+我们以 CartPole-v1 为例：
 
-- 我们通过Policy与环境互动来收集经验。
-- 然后我们查看Eposide的奖励总和（预期回报）。如果这个总和是正的，我们 **认为在这些经验中采取的行动是好的：**因此，我们想要增加每个``状态-行动对``的 $P(a|s)$（在该状态下采取该行动的概率）。如果这个总和是负的，我们则减少每个`状态-行动`对的 $P(a|s)$
+- 作为输入，我们有一个状态。
+- 作为输出，我们有该状态下动作的概率分布。
+
+![基于策略](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_based.png)
+
+我们使用策略梯度的目标是通过调整策略来**控制动作的概率分布，以便在未来更频繁地对好的动作（最大化回报）进行采样。** 每次智能体与环境交互时，我们都会调整参数，以便将来更有可能对好的动作进行采样。
+
+但是**我们如何使用期望回报来优化权重**呢？
+
+我们的想法是**让智能体在一局中进行交互**。如果我们赢得了这一局，我们认为所采取的每项行动都是好的，并且在未来必须进行更多的采样，因为它们会导致获胜。
+
+所以对于每个状态-动作对，我们想增加 $P( a ｜s )$：在那个状态下采取那个动作的概率。如果我们输了，则减少这个值。
 
 策略梯度算法（简化）如下所示：
 
 ![策略梯度大图](https://huggingface.co/blog/assets/85_policy_gradient/pg_bigpicture.jpg)
+
+现在我们了解了全局，让我们更深入地研究策略梯度方法。
+
+### 深入研究策略梯度方法
+
+我们的策略函数$π$，它有一个参数 θ。给定一个状态，这个 $π$ **输出该状态下采取动作的概率分布**。
+
+![Policy](https://huggingface.co/blog/assets/85_policy_gradient/policy.jpg)
+
+其中，$\pi_\theta(a_t|s_t)$ 是根据我们的策略，智能体从状态 $s_t$ 选择动作的概率。
+
+**我们怎么知道我们的Policy是否好呢？** 需要有一种方法来衡量它。我们定义一个得分/目标函数，称为 $J(θ)$.
+
+### 目标函数
+
+*目标函数*为我们提供了给定轨迹**的智能体的性能**（不考虑奖励的状态动作序列（与情节相反）），并输出*期望的累积奖励*。
+
+![返回](https://huggingface.co/blog/assets/85_policy_gradient/objective.jpg)
+
+让我们详细地说明这个公式：
+
+- *期望回报*（也称为期望累积奖励）是所有$R( τ )$ 可以采取的可能值的加权平均（其中权重由 $P(τ ;θ)$ 给出）。
+
+
+![返回](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/expected_reward.png)
+
+- $R(τ)$：从任意轨迹返回。要获取这个数量并用它来计算期望回报，我们需要将它乘以每个可能轨迹的概率。
+- $P(τ ;θ)$ ：每个可能轨迹的概率τ（这个概率取决于*θ*因为它定义了它用来选择轨迹动作的策略，作为访问状态的影响）。
+
+![可能性](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png)
+
+-  $J(θ)$：期望回报，我们通过对所有轨迹求和来计算它，在给定*θ*情况下采用给定的轨迹的概率，以及这条轨迹的回报。
+
+![最大物镜](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/max_objective.png)
+
+记住，策略梯度可以看作是一个优化问题。所以我们必须找到最佳参数 (θ) 来最大化得分函数 $J(θ)$。
+
+## 梯度上升和策略梯度定理
+
+策略梯度是一个优化问题：我们想要找到�*θ*最大化我们的目标函数杰(�)*J* ( *θ* )，我们需要使用**梯度上升**。它与*梯度下降*相反，因为它给出了最陡峭增加的方向杰(�)*J* ( *θ* ).
+
+（如果您需要复习一下梯度下降和梯度上升之间的区别，[请查看这个](https://www.baeldung.com/cs/gradient-descent-vs-ascent)和[这个](https://stats.stackexchange.com/questions/258721/gradient-ascent-vs-gradient-descent-in-logistic-regression)）。
+
+我们对梯度上升的更新步骤是：
+
+�←�+�＊∇�杰(�)*θ*←*θ*+*α*＊∇*θ*的*J* ( *θ* )
+
+我们可以重复应用这个更新状态，希望�*θ*收敛到最大化的值杰(�)*J* ( *θ* ).
+
+然而，我们有两个问题来获得导数杰(�)*J* ( *θ* ):
+
+1. 我们无法计算目标函数的真实梯度，因为这意味着计算每个可能轨迹的概率，这在计算上非常昂贵。然后我们想**用基于样本的估计（收集一些轨迹）来计算梯度估计**。
+2. 我们还有另一个问题，我将在下一个可选部分中详细说明。为了区分这个目标函数，我们需要区分状态分布，称为马尔可夫决策过程动力学。这是依附于环境的。在给定当前状态和代理采取的操作的情况下，它为我们提供了环境进入下一个状态的概率。问题是我们无法区分它，因为我们可能不知道它。
+
+![可能性](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png)
+
+幸运的是，我们将使用一种称为策略梯度定理的解决方案，它将帮助我们将目标函数重新表述为一个不涉及状态分布微分的可微分函数。
+
+![政策梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_theorem.png)
+
+如果您想了解我们如何推导我们将用于近似梯度的这个公式，请查看下一个（可选）部分。
+
+## 强化算法（Monte Carlo Reinforce）
+
+Reinforce 算法，也称为 Monte-Carlo policy-gradient，是一种策略梯度算法，它**使用整个 episode 的估计回报来更新策略参数** �*θ*:
+
+在一个循环中：
+
+- 使用政策��*π**θ*的 收集一集�*τ*
+
+- 使用episode来估计梯度�^=∇�杰(�)*G*^的=∇*θ*的*J* ( *θ* )
+
+  ![政策梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_one.png)
+
+- 更新策略的权重：�←�+��^*θ*←*θ*+*α**G*^的
+
+我们可以做出的解释是：
+
+- ∇�升����(�吨∀秒吨)∇*θ*的*log* *π* *_* *_**θ*的（*一个**吨*的∀ *s**吨*的)是从状态 st 选择动作**的（对数）概率最陡增**的方向。这告诉我们如果我们想增加/减少选择动作的对数概率，**我们应该如何改变策略的权重**�吨*A**吨*的在状态秒吨*秒**吨*的.
+
+- �(�)*R* ( *τ* )
+
+  : 是评分函数：
+
+  - 如果回报很高，它会**推高**（状态，动作）组合的概率。
+  - 否则，如果回报很低，它会**降低**（状态，动作）组合的概率。
+
+我们还可以**收集多个片段（轨迹）**来估计梯度：
+
+![政策梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_multiple.png)
+
+[←策略梯度方法的优缺点](https://huggingface.co/deep-rl-course/unit4/advantages-disadvantages?fw=pt)[（可选）策略梯度定理
+](https://huggingface.co/deep-rl-course/unit4/pg-theorem?fw=pt)
+
+
+
+
+
+举一个简单的例子：
+
+- 我们通过Policy与环境互动来收集经验。
+- 然后我们查看Eposide的奖励总和（期望回报）。如果这个总和是正的，我们 **认为在这些经验中采取的行动是好的：**因此，我们想要增加每个``状态-行动对``的 $P(a|s)$（在该状态下采取该行动的概率）。如果这个总和是负的，我们则减少每个`状态-行动`对的 $P(a|s)$
+
+
 
 ## Reinforce（蒙特卡洛策略梯度）
 
@@ -136,13 +250,7 @@ Reinforce，也称为 Monte-Carlo Policy Gradient，**使用整个 episode 的�
 
 其中，$\pi_\theta(a_t|s_t)$ 是根据我们的策略，智能体从状态 $s_t$ 选择动作的概率。
 
-**我们怎么知道我们的Policy是否好呢？** 需要有一种方法来衡量它。我们定义一个得分/目标函数，称为 $J(θ)$.
 
-得分函数 J 是折扣回报的期望：
-
-![返回](https://huggingface.co/blog/assets/85_policy_gradient/objective.jpg)
-
-记住，策略梯度可以看作是一个优化问题。所以我们必须找到最佳参数 (θ) 来最大化得分函数 $J(θ)$。
 
 为此，我们将使用[策略梯度定理](https://www.youtube.com/watch?v=AKbX1Zvo7r8)。这里不打算深入探讨数学细节，但如果您有兴趣，请[观看此视频](https://www.youtube.com/watch?v=AKbX1Zvo7r8)
 
