@@ -6,11 +6,13 @@
 
 但正如我们将看到的，在非常大的状态空间环境中生成和更新 **Q Table可能变得不可能。**
 
-所以今天，**我们将研究我们的第一个Deep强化学习智能体**：Deep Q-Learning。Deep Q-Learning不使用 Q Table，而是使用神经网络，该神经网络输入状态并根据该状态为每个动作近似 Q 值。
+所以今天，**我们将研究我们的第一个深度强化学习智能体**：Deep Q-Learning。Deep Q-Learning不使用 Q Table，而是使用神经网络，该神经网络输入状态并根据该状态为每个动作近似 Q 值。
 
 我们将使用 RL-Zoo 训练它玩 Space Invaders 和其他 Atari 环境，RL[-Zoo](https://github.com/DLR-RM/rl-baselines3-zoo)是一种基于 Stable-Baselines 的 RL 训练框架，它提供用于训练、评估智能体、调整超参数、绘制结果和录制视频的脚本。
 
 ![环境](https://huggingface.co/blog/assets/78_deep_rl_dqn/atari-envs.gif)
+
+
 
 ## 从Q-Learning到Deep Q-Learning
 
@@ -29,9 +31,11 @@ Q-Learning 在小型状态空间环境中运行良好，例如：
 - FrozenLake，有 14 个状态。
 - Taxi-v3，有 500 个状态。
 
-但是想一想我们今天要做的事情：我们将训练一个智能体来学习使用图像帧作为输入来玩太空入侵者游戏。
+但是想一想我们今天要做的事情：我们将训练一个智能体来学习使用图像帧作为输入来玩Space Invaders 游戏。
 
 Atari 环境有一个形状为 (210, 160, 3) 的观察空间，每个像素包含从 0 到 255 的值，因此我们得到 256^(210x160x3) = 256^100800个状态空间（为了比较，宇宙中的原子大约有 10^80 个）。
+
+- Atari 中的单个帧由 210x160 像素的图像组成。鉴于图像是彩色的 (RGB)，有 3 个通道。这就是形状为 (210, 160, 3) 的原因。对于每个像素，该值可以从 0 到 255。
 
 ![Atari 状态空间](https://huggingface.co/blog/assets/78_deep_rl_dqn/atari.jpg)
 
@@ -41,7 +45,7 @@ Atari 环境有一个形状为 (210, 160, 3) 的观察空间，每个像素包�
 
 ![Deep Q-Learning](https://huggingface.co/blog/assets/63_deep_rl_intro/deep.jpg)
 
-现在我们学习了Deep Q -learning，下面让我们更深入地了解Deep Q Network。
+现在我们了解了Deep Q -learning，下面让我们更深入地学习 Deep Q Network。
 
 ## Deep Q Network (DQN)
 
@@ -97,7 +101,7 @@ Deep Q-Learning 训练算法有*两个阶段*：
 
 ![抽样训练](https://huggingface.co/blog/assets/78_deep_rl_dqn/sampling-training.jpg)
 
-但是，与 Q-Learning 相比，这并不是唯一的变化。Deep Q-Learning训练**可能会遇到不稳定**的问题，这主要是因为结合了非线性 Q 值函数（神经网络）和自举（当我们使用现有估计而不是实际的完整回报来更新目标时）。
+但是，与 Q-Learning 相比，这并不是唯一的变化。Deep Q-Learning训练**可能会遇到不稳定**的问题，这主要是因为结合了非线性 Q 值函数（神经网络）和BootStrap（当我们使用现有估计而不是实际的完整回报来更新目标时）。
 
 为了帮助我们稳定训练，我们实施了三种不同的解决方案：
 
@@ -144,7 +148,7 @@ Deep Q-Learning 中的 Experience Replay 有两个作用：
 
 因此，这意味着在训练的每一步， **我们的 Q 值都会发生变化，但目标值也会发生变化。** 所以，我们越来越接近我们的目标，但目标也在移动。这就像追逐一个移动的目标！导致了训练中的大幅振荡。
 
-这就好比你是一个牛仔（Q 估计）并且你想抓住牛（Q 目标），你必须更靠近（减少错误）。
+这就好比你是一个牛仔（Q 估计）并且你想抓住牛（Q 目标），你的目标是靠得更近（减少错误）。
 
 ![Q-目标](https://huggingface.co/blog/assets/78_deep_rl_dqn/qtarget-1.jpg)
 
@@ -167,9 +171,9 @@ Deep Q-Learning 中的 Experience Replay 有两个作用：
 
 ![固定 Q-target 伪代码](https://huggingface.co/blog/assets/78_deep_rl_dqn/fixed-q-target-pseudocode.jpg)
 
-### 双DQN
+### Double-DQN
 
-Double DQN，Double Q-learning， [由 Hado van Hasselt](https://papers.nips.cc/paper/3964-double-q-learning)引入。该方法 **解决了 Q 值高估的问题。**
+Double DQN 或者 Double Q-learning， [由 Hado van Hasselt](https://papers.nips.cc/paper/3964-double-q-learning)引入。该方法 **解决了 Q 值高估的问题。**
 
 要理解这个问题，请记住我们如何计算 TD Target：
 
@@ -188,4 +192,10 @@ Double DQN，Double Q-learning， [由 Hado van Hasselt](https://papers.nips.cc/
 
 自 Deep Q-Learning 的这三项改进以来，又增加了很多新的改进，例如 Prioritized Experience Replay、Dueling Deep Q-Learning。它们超出了本课程的范围，但如果您有兴趣，请查看我们放在阅读列表中的链接。👉 **https://github.com/huggingface/deep-rl-class/blob/main/unit3/README.md**
 
-https://huggingface.co/docs)
+## 补充阅读
+
+- [Foundations of Deep RL Series, L2 Deep Q-Learning by Pieter Abbeel](https://youtu.be/Psrhxy88zww)
+- [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/abs/1312.5602)
+- [Double Deep Q-Learning](https://papers.nips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html)
+- [Prioritized Experience Replay](https://arxiv.org/abs/1511.05952)
+

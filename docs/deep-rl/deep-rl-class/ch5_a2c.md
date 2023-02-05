@@ -1,10 +1,10 @@
 # A2C
 
-在第 4单元中，我们学习了第一个基于策略的算法，**Reinforce**。在基于策略的方法中，**我们的目标是直接优化策略而不使用价值函数**。
+在第 4单元中，我们学习了第一个基于策略的算法，**Reinforce**。在基于策略的方法中，**我们的目标是直接优化策略而不使用价值函数**。更准确地说，Reinforce 是*Policy-Based Methods*子类的一部分，称为*Policy-Gradient methods*。该子类通过**使用 Gradient Ascent 估计最优策略的权重**直接优化策略。
 
 我们看到 Reinforce 效果还不错。然而，因为使用蒙特卡洛抽样来估计回报（用一整个 Eposide 来计算回报），**在策略梯度估计上方差非常大**。
 
-策略梯度估计是**回报增长最快的方向**。也就是，如何更新我们的策略权重，使得导致良好回报的动作更有可能被采纳。蒙特卡洛采样带来的高方差会**导致训练速度变慢，因为我们需要大量样本来减轻这一问题**。
+策略梯度估计是**回报增长最快的方向**。也就是，如何更新我们的策略权重，使得带来良好回报的动作更有可能被采纳。然而，蒙特卡洛采样带来的高方差会**导致训练速度变慢，因为我们需要大量样本来减轻这一问题**。
 
 今天我们将研究**Actor-Critic 方法**，这是一种混合的架构，结合了基于价值和基于策略的方法，通过减少方差来帮助稳定训练：
 
@@ -13,7 +13,7 @@
 
 我们将研究其中一种称为 Advantage Actor Critic (A2C) 的混合方法，并动手从零开始实现这一算法。
 
-## Reinforce算法的方差问题
+## Reinforce 算法的方差问题
 
 在 Reinforce 中，我们希望**增加轨迹中动作的概率与回报的高低成正比**。
 
@@ -24,9 +24,9 @@
 
 回报 $R(\tau)$是使用蒙特卡洛采样计算的。我们收集智能体和环境交互的轨迹并计算折扣回报，**并使用回报分数来增加或减少在该轨迹中采取的每个动作的概率**。如果回报高，所有动作都将通过增加采取动作的可能性来“加强”。$R(\tau) = R_{t+1} + \gamma R_{t+2} + \gamma^2R_{t+3} + ... $
 
-这种方法的优点是： **这种方法的估计是无偏的。因为我们没有估计回报**，只是通过采样获得的真实回报来估计。
+这种方法的优点是： **这种方法的估计是无偏的。因为我们没有估计回报**，只是通过采样获得的真实回报来计算。
 
-但是由于环境的随机性和策略的随机性，**轨迹可能导致不同的回报**， 因此带来的方差很高。因此，相同的起始状态可能导致截然不同的回报。正因为如此，**从同一状态开始的回报在不同的Eposide中可能会有很大差异**。
+但是由于环境的随机性和策略的随机性，不同**轨迹可能导致不同的回报**， 因此带来的方差很高。因此，相同的起始状态可能导致截然不同的回报。正因为如此，**从同一状态开始的回报在不同的Eposide中可能会有很大差异**。
 
 ![方差](https://huggingface.co/blog/assets/89_deep_rl_a2c/variance.jpg)
 
@@ -59,12 +59,12 @@
 
 这就是 Actor-Critic 背后的想法。我们学习了两个函数逼近：
 
-- **控制我们的智能体人行为方式**的*策略*：$\pi_{\theta}(s,a)$
+- **控制我们的智能体人行为方式**的*策略函数*：$\pi_{\theta}(s,a)$
 - 通过衡量所采取的动作好坏的来协助策略更新的*价值函数：*$\hat{q}_{w}(s,a)$
 
 ### Actor-Critic过程
 
-现在我们已经从宏观层面理解了Actor Critic，接下来让我们更深入地了解 Actor 和 Critic 在训练过程中是如何进行改进和优化的。
+现在我们已经从大局层面理解了Actor Critic，接下来让我们更深入地了解 Actor 和 Critic 在训练过程中是如何进行改进和优化的。
 
 正如我们所见，Actor-Critic 方法有两个函数近似（两个神经网络）：
 
@@ -95,7 +95,7 @@
 
 ![步骤 5 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step5.jpg)
 
-### 优势ActorCritic (A2C)
+### 优势 ActorCritic (A2C)
 
 我们可以通过**使用 Advantage function 作为 Critic 而不是 Action value function 来**进一步稳定学习。
 
@@ -115,3 +115,24 @@
 ![优势功能](https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage2.jpg)
 
 既然您已经研究了Advantage Actor Critic（A2C）背后的理论，接下来我们将使用Pytorch 从头实现这一算法。
+
+
+
+## 补充阅读
+
+### Bias-variance tradeoff in Reinforcement Learning
+
+如果你想更深入地研究深度强化学习中的方差和偏差权衡问题，你可以查看这两篇文章：
+
+- [Making Sense of the Bias / Variance Trade-off in (Deep) Reinforcement Learning](https://blog.mlreview.com/making-sense-of-the-bias-variance-trade-off-in-deep-reinforcement-learning-79cf1e83d565)
+- [Bias-variance Tradeoff in Reinforcement Learning](https://www.endtoend.ai/blog/bias-variance-tradeoff-in-reinforcement-learning/)
+
+### Advantage Functions
+
+- [Advantage Functions, SpinningUp RL](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html?highlight=advantage functio#advantage-functions)
+
+### Actor Critic
+
+- [Foundations of Deep RL Series, L3 Policy Gradients and Advantage Estimation by Pieter Abbeel](https://www.youtube.com/watch?v=AKbX1Zvo7r8)
+- [A2C Paper: Asynchronous Methods for Deep Reinforcement Learning](https://arxiv.org/abs/1602.01783v2)
+
