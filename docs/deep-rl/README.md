@@ -24,8 +24,10 @@
 ### 强化学习环境
 
 - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
-- [openai Gym ](deep-rl/envs/gym.md)
+- [OpenAI Gym](deep-rl/envs/gym.md)
 - [SMAC](deep-rl/envs/smac.md)
+- [MARL Envs](deep-rl/envs/marl_env.md)
+
 
 ### 强化学习工具篇
 
@@ -35,12 +37,11 @@
 ### 多智能体强化学习
 
 - [MARL](deep-rl/papers/Overview.md)
-
 - [DRQN](deep-rl/papers/DRQN.md)
-- [IQL](deep-rl/papers/iql.md)
+- [IQL](deep-rl/papers/IQL.md)
 - [COMA](deep-rl/papers/COMA.md)
-- [VDN](deep-rl/papers/vdn.md)
+- [VDN](deep-rl/papers/VDN.md)
 - [QTRAN](deep-rl/papers/QTRAN.md)
-- [QMIX](deep-rl/papers/qmix.md)
+- [QMIX](deep-rl/papers/QMIX.md)
 - [MADDPG](deep-rl/papers/MADDPG.md)
 - [MAT](deep-rl/papers/MAT.md)
