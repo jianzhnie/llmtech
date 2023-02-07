@@ -4,4 +4,6 @@
 - [✨计算机视觉](deeplearning/)
 - [💎自然语言处理](deeplearning/)
 - [🧰工具](tools/)
+- [🌍其他]
 - [🤗emojixd.com](https://emojixd.com/)
+

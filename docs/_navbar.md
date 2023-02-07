@@ -4,4 +4,5 @@
 - [机器学习](machine-learning/)
 - [工具](tools/)
 - [关于](https://jianzhnie.github.io/)
+- [其他](other/)
 - [友链 🔗](links.md)
