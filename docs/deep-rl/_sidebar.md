@@ -28,6 +28,10 @@
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
   - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
+- MuZero 解读
+  - [MuZero算法介绍](deep-rl/papers/muzero_intro.md)
+  - [MuZero伪代码](deep-rl/papers/muzero_pseudocode.md)
+
 - 强化学习[论文/算法]
 - 多智能体强化学习
 
