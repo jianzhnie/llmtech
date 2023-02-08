@@ -37,7 +37,7 @@
 ### MuZero 解读
 
 - [MuZero算法介绍](deep-rl/papers/muzero_intro.md)
-- [MuZero伪代码](deep-rl/papers/muzero_pseudocode..md)
+- [MuZero伪代码](deep-rl/papers/muzero_pseudocode.md)
 
 ### 多智能体强化学习
 
