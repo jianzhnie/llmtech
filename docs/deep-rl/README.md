@@ -36,8 +36,9 @@
 
 ### MuZero 解读
 
-- [MuZero算法介绍](deep-rl/papers/muzero_intro.md)
-- [MuZero伪代码](deep-rl/papers/muzero_pseudocode.md)
+- [蒙特卡洛树搜索 (MCTS)](deep-rl/muzero/MCTS.md)
+- [MuZero算法介绍](deep-rl/muzero/muzero_intro.md)
+- [MuZero伪代码](deep-rl/muzero/muzero_pseudocode.md)
 
 ### 多智能体强化学习
 

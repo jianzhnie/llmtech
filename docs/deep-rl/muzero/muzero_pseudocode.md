@@ -473,14 +473,14 @@ class ReplayBuffer(object):
       self.window_size = config.window_size
       self.batch_size = config.batch_size
       self.buffer = []
-    
+
     def sample_batch(self, num_unroll_steps: int, td_steps: int):
       games = [self.sample_game() for _ in range(self.batch_size)]
       game_pos = [(g, self.sample_position(g)) for g in games]
       return [(g.make_image(i), g.history[i:i + num_unroll_steps],
                g.make_target(i, num_unroll_steps, td_steps, g.to_play()))
               for (g, i) in game_pos]
-    
+
     ...
 ```
 
@@ -537,7 +537,7 @@ class Game(object):
         # States past the end of games are treated as absorbing states.
         targets.append((0, 0, []))
     return targets
-  
+
   ...
 view rawpseudocode.py hosted with ❤ by GitHub
 ```
