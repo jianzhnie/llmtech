@@ -4,7 +4,21 @@
 
 [通过使用学习模型进行规划来掌握 Atari、围棋、国际象棋和将棋](https://arxiv.org/abs/1911.08265)
 
-2019 年 11 月 19 日，DeepMind 向世界发布了他们最新的基于模型的强化学习算法[——MuZero](https://arxiv.org/abs/1911.08265)。这是 DeepMind 强化学习论文系列中的第四篇，这些论文从 2016 年的 AlphaGo 开始，不断突破改进。AlphaZero 被誉为一种通用算法，可以在没有任何人类专家策略先验知识的情况下快速精通某事。MuZero 迈出了最终的下一步。MuZero 不仅否认自己可以学习人类策略。它甚至没有显示游戏规则。
+2019 年 11 月 19 日，DeepMind 向世界发布了他们最新的基于模型的强化学习算法[——MuZero](https://arxiv.org/abs/1911.08265)。
+
+## 历史
+
+MuZero 是用于棋盘游戏（国际象棋、围棋……）和 Atari 游戏的最先进的 RL 算法。它是[AlphaZero](https://arxiv.org/abs/1712.01815)的继任者，但不了解环境底层动力学。MuZero 学习环境模型并使用仅包含有用信息的内部表示来预测奖励、价值、策略和转换。MuZero 也接近[价值预测网络](https://arxiv.org/abs/1707.03497)。
+
+它是 DeepMind 研究人员设想的一长串强化学习算法中的最新算法。它始于 2014 年，随着著名的 AlphaGo 的诞生。Alpha Go 在 2015 年击败了围棋冠军李世石。
+
+**AlphaGo**使用一种称为蒙特卡洛树搜索 (MCTS) 的旧原理来将游戏的其余部分规划为决策树。但微妙之处在于添加了一个神经网络来智能地选择动作，从而减少了未来要模拟的动作数量。
+
+AlphaGo 的神经网络一开始是用人类玩过的游戏历史来训练的，2017 年 AlphaGo 被**AlphaGo Zero**取代，它不再使用这个历史。该算法首次在没有围棋策略先验知识的情况下学会单独下棋。它与自己对抗（使用 MCTS）然后从这些部分中学习（神经网络的训练）。
+
+**AlphaZero**是 AlphaGo Zero 的一个版本，我们在其中删除了与围棋游戏相关的所有小技巧，以便它可以推广到其他棋盘游戏。
+
+2019 年 11 月，DeepMind 团队发布了一个新的、更通用的 AlphaZero 版本，称为**MuZero**。它的特殊性是基于模型的，这意味着算法对游戏有自己的理解。因此，游戏规则由神经网络学习。MuZero 建立了自己对游戏的理解。他可以自己想象，如果执行这样或那样的操作，游戏会是什么样子。在 MuZero 之前，动作对游戏的影响是硬编码的。这样做的结果是允许他像发现游戏的人一样玩任何游戏。
 
 换句话说，对于国际象棋，AlphaZero 设置了以下挑战：
 
@@ -16,13 +30,27 @@
 
 因此，除了制定制胜策略外，MuZero 还必须开发自己的动态环境模型，以便了解其选择的影响并提前规划。想象一下，在一场你从未被告知规则的比赛中，你试图成为比世界冠军更好的玩家。MuZero 恰恰做到了这一点。在下一节中，我们将通过详细浏览代码库来探索 MuZero 如何实现这一惊人的壮举。
 
+## 延伸阅读
+
+要了解技术部分，我们推荐以下文章。
+
+- [Muzero](https://arxiv.org/abs/1911.08265)
+- [Alpha Zero](https://arxiv.org/abs/1712.01815)
+- [ELF Open Go](https://arxiv.org/abs/1902.04522) (Facebook implementation of AlphaZero)
+- [Alpha Go](https://www.nature.com/articles/nature16961)
+- [Value prediction networks](https://arxiv.org/abs/1707.03497)
+- [SimPLe](https://arxiv.org/abs/1903.00374)
+- [World Models](https://worldmodels.github.io/)
+
 ## MuZero 伪代码
 
 除了 MuZero [预印本外](https://arxiv.org/abs/1911.08265) DeepMind 还发布了 Python[伪代码](https://arxiv.org/src/1911.08265v1/anc/pseudocode.py)，详细说明了算法各部分之间的交互。
 
 在本节中，我们将按逻辑顺序区分每个函数和类，我将解释每个部分的作用和原因。我们假设 MuZero 正在学习下国际象棋，但任何游戏的过程都是相同的，只是参数不同。所有代码均来自开源的 DeepMind[伪代码](https://arxiv.org/src/1911.08265v1/anc/pseudocode.py)。
 
-让我们从整个过程的概述开始，从入口函数开始，`muzero`.
+### MuZero  主函数
+
+让我们从整个过程的概述开始，从入口函数`muzero` 开始。
 
 ![img](https://miro.medium.com/max/700/1*ajFyjeF-1hVbmtlAsSoT2Q.png)
 
@@ -640,3 +668,16 @@ AlphaZero 已经被认为是迄今为止 AI 最伟大的成就之一，它在一
 - MuZero 使用 MCTS 和预测网络来选择动作，World Models 使用进化过程来进化最佳动作控制器。
 
 当两个以自己的方式开创性的想法实现相似的目标时，这通常是一个好兆头。这通常意味着双方都发现了一些更深层次的潜在真相——也许这两把铲子只是击中了宝箱的不同部分。
+
+## 我们的实现
+
+这个存储库基于[MuZero 伪代码](https://arxiv.org/src/1911.08265v2/anc/pseudocode.py)。我们努力使代码井井有条，并进行了很好的注释，以便于理解 MuZero 的工作原理。该代码异步工作（并行/多线程）。我们添加了一个具有完全连接网络 (MLP) 的版本和一些工具，例如用于理解模型的可视化工具 ( [diagnostic_model](https://github.com/werner-duvaud/muzero-general/blob/master/diagnose_model.py) ) 和超参数搜索工具。其他功能请参考[readme](https://github.com/werner-duvaud/muzero-general)。
+
+## 结构
+
+有四个组件是在专用线程中同时运行的类。保存最新的`shared storage`神经网络权重，`self-play`使用这些权重生成自玩游戏并将它们存储在`replay buffer`. 最后，那些玩过的游戏被用于`train`网络并将权重存储在共享存储中。这些组件从 MuZero 类启动和管理，`muzero.py`神经网络的结在`models.py`.
+
+
+![graph](https://github.com/werner-duvaud/muzero-general/raw/master/docs/how-it-works-werner-duvaud.png)
+
+Here is the diagram of the muzero network applied to the Atari game: ![MuZero network summary](https://github.com/werner-duvaud/muzero-general/raw/master/docs/muzero-network-werner-duvaud.png)
