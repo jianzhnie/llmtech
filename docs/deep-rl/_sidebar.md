@@ -29,7 +29,7 @@
   - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
 - MuZero 解读
-
+  - [蒙特卡洛树搜索入门指南](deep-rl/muzero/mcts_guide.md)
   - [蒙特卡洛树搜索 (MCTS)](deep-rl/muzero/MCTS.md)
   - [MuZero算法介绍](deep-rl/papers/muzero_intro.md)
   - [MuZero伪代码](deep-rl/papers/muzero_pseudocode.md)

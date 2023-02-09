@@ -161,3 +161,12 @@ MuZero的命名基于AlphaZero，其中Zero表示是在没有模仿人类数据�
 - [A Simple Alpha(Go) Zero Tutorial](https://web.stanford.edu/~surag/posts/alphazero.html)
 - [MuZero General implementation](https://github.com/werner-duvaud/muzero-general)
 - [How To Build Your Own MuZero AI Using Python](https://medium.com/applied-data-science/how-to-build-your-own-muzero-in-python-f77d5718061a)
+
+
+
+## Reference
+
+1. https://charlesliuyx.github.io/2017/10/18/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E7%9C%8B%E6%87%82AlphaGo%E5%85%83/
+
+2. http://web.stanford.edu/~surag/posts/alphazero.html
+
