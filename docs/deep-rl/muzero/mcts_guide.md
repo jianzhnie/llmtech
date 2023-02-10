@@ -211,7 +211,7 @@ UCT 最大的节点就是蒙特卡洛树搜索遍历过程中选择的节点。�
 
 因此我们还要有第二个 UCT 组件 exploration。exploration 组件支持未被探索的节点，这些节点相对来说更少被访问（N(v_i) 较低）。我们来看一下 UCT 函数 exploration 组件的形状：随着节点访问量的增加而递减，给访问量少的节点提供更高的被选中几率，以指引 exploration 探索。
 
-<img src="https://int8.io/wp-content/uploads/2018/03/exploration-uct.png" alt="monte carlo tree search - exploration " style="zoom:50%;" />
+<img src="https://int8.io/wp-content/uploads/2018/03/exploration-uct.png" alt="monte carlo tree search - exploration " style="zoom:80%;" />
 
 最终，UCT 公式中的参数 c 控制蒙特卡洛树搜索中 expolitation 和 exploration 组件之间的权衡。
 
@@ -223,7 +223,7 @@ UCT 函数中的一个重要标志是：在竞争性游戏中，其 exploitaion 
 
 一旦 MCTS 过程结束，最好的一步通常是具备最高访问量 N(v_i) 的一步，因为它的奖励值评估结果最好（评估的值必须很高，因为它被探索的频率也最高）。
 
-<img src="https://int8.io/wp-content/uploads/2018/03/thebestchildpick.png" alt="best move - monte carlo tree search" style="zoom:50%;" />
+<img src="https://int8.io/wp-content/uploads/2018/03/thebestchildpick.png" alt="best move - monte carlo tree search" style="zoom:80%;" />
 
 在使用蒙特卡洛树搜索走了一步之后，你的选择节点就变成了对手下一步的起始游戏状态。一旦他走了一步，你就可以执行蒙特卡洛树搜索，从表示对手选择游戏状态的节点开始。之前的 MCTS round 数据可能仍然在你现在考虑的新分支以内。这就可以重新使用数据而不是从头构建新的树，事实上这就是 Alpha Go / Alpha Zero 创造者所做的。
 
