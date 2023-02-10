@@ -131,10 +131,10 @@ $$
 
 Alpha Go 和 Alpha Zero 中的模拟
 
-在 Alpha Go Lee 叶 $S_L$ 的评估中，它会采用以下两个分量的加权和：
+在 Alpha Go Lee 叶子 $S_L$ 的评估中，它会采用以下两个分量的加权和：
 
 - 带有自定义快速 rollout 策略的标准 rollout 评估 $z_L$，它是一个带有人工特征的浅层 softmax 神经网络。
-- 称之为价值网络的 13 层卷积网络 $v_0 $从 Alpha Go 自我对抗中抽取 30mln 不同位置进行训练，并最后预测评估位置。
+- 称之为价值网络的 13 层卷积网络 $v_0 $ 从 Alpha Go 自我对抗中抽取 30mln 不同位置进行训练，并最后预测评估位置。
 
 $$
 V(S_L) = (1- \alpha) v_0(S_L) + \alpha z_L
@@ -262,3 +262,7 @@ def best_child(node):
 ```
 
 你可以看到它缩减至非常少的函数，这些函数对任何游戏都有效，不只是围棋或象棋。你可以在这里找到蒙特卡洛树搜索用于井字棋（Tic-Tac-Toe）的实现示例：https://github.com/int8/monte-carlo-tree-search。
+
+## Reference
+
+原文链接：https://int8.io/monte-carlo-tree-search-beginners-guide/*
