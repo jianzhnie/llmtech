@@ -1,5 +1,15 @@
 # 蒙特卡洛树搜索 (MCTS)
 
+## 蒙特卡洛方法
+
+**蒙特卡罗方法**（英语：Monte Carlo method），也称**统计模拟方法**，是1940年代中期由于科学技术的发展和[电子计算机](https://zh.wikipedia.org/wiki/电子计算机)的发明，而提出的一种以概率统计理论为指导的数值计算方法。是指使用[随机数](https://zh.wikipedia.org/wiki/随机数)（或更常见的[伪随机数](https://zh.wikipedia.org/wiki/伪随机数)）来解决很多计算问题的方法。
+
+20世纪40年代，在科学家[冯·诺伊曼](https://zh.wikipedia.org/wiki/冯·诺伊曼)、[斯塔尼斯拉夫·乌拉姆](https://zh.wikipedia.org/zh-hans/斯塔尼斯拉夫·乌拉姆)和[尼古拉斯·梅特罗波利斯](https://zh.wikipedia.org/wiki/尼古拉斯·梅特罗波利斯)于[洛斯阿拉莫斯国家实验室](https://zh.wikipedia.org/wiki/洛斯阿拉莫斯国家实验室)为核武器计划工作时，发明了蒙特卡罗方法。因为乌拉姆的叔叔经常在[摩纳哥](https://zh.wikipedia.org/wiki/摩納哥)的[蒙特卡洛](https://zh.wikipedia.org/wiki/蒙特卡洛)赌场输钱得名，而蒙特卡罗方法正是以概率为基础的方法。
+
+蒙特卡罗方法可以粗略地分成两类：一类是所求解的问题本身具有内在的随机性，借助计算机的运算能力可以直接模拟这种随机的过程。例如在核物理研究中，分析中子在反应堆中的传输过程。中子与原子核作用受到量子力学规律的制约，人们只能知道它们相互作用发生的概率，却无法准确获得中子与原子核作用时的位置以及裂变产生的新中子的行进速率和方向。科学家依据其概率进行随机抽样得到裂变位置、速度和方向，这样模拟大量中子的行为后，经过统计就能获得中子传输的范围，作为反应堆设计的依据。
+
+另一种类型是所求解问题可以转化为某种随机分布的特征数，比如[随机事件](https://zh.wikipedia.org/wiki/随机事件)出现的[概率](https://zh.wikipedia.org/wiki/概率)，或者[随机变量](https://zh.wikipedia.org/wiki/随机变量)的[期望值](https://zh.wikipedia.org/wiki/期望值)。通过随机抽样的方法，以随机事件出现的[频率](https://zh.wikipedia.org/wiki/频率)估计其[概率](https://zh.wikipedia.org/wiki/概率)，或者以[抽样](https://zh.wikipedia.org/wiki/抽樣)的[数字特征](https://zh.wikipedia.org/w/index.php?title=数字特征&action=edit&redlink=1)估算[随机变量](https://zh.wikipedia.org/wiki/随机变量)的[数字特征](https://zh.wikipedia.org/w/index.php?title=数字特征&action=edit&redlink=1)，并将其作为问题的解。这种方法多用于求解复杂的多维积分问题。 
+
 ## 什么是 MCTS？
 
 蒙特卡洛树搜索 (Monte Carlo Tree Search) 是一种寻找最优决策的方法，通常是组合游戏中的移动规划。它结合了随机模拟的普遍性和树搜索的精确性。
@@ -76,6 +86,12 @@ $$
 N(v)=N(v)+1  \\
 Q(v)=Q(v)+R
 $$
+
+
+
+
+#### UCB 公式
+
 我们再回头看看**选择**步骤中的公式:
 $$
 \underset{v’\in \text{children of }v}{\mathrm{argmax}}\frac{Q\left( v’ \right)}{N\left( v’ \right)}+c\sqrt{\frac{\text{2}\ln N\left( v \right)}{N\left( v’ \right)}}
