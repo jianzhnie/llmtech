@@ -145,16 +145,253 @@ $$
 \end{gathered}
 $$
 
-
-
-
 ### 5. MCTS 和 UCT
 
 Kocsis 和 Szepervari (2006) 首先通过将 UCB 扩展到极小极大树搜索来形式化完整的 MCTS 算法，并将其命名为树的置信上限 (UCT) 方法。这是绝大多数当前 MCTS 实现中使用的算法。
 
 UCT可以描述为MCTS的一个特例，即：UCT = MCTS + UCB。
 
-------
+## 代码实现
+
+### 1. 节点类 TreeNode
+
+```python
+class TreeNode(object):
+    """A node in the MCTS tree. Each node keeps track of its own value Q,
+    prior probability P, and its visit-count-adjusted prior score u.
+    """
+
+    def __init__(self, parent, prior_p):
+        self._parent = parent
+        self._children = {}  # a map from action to TreeNode
+        self._n_visits = 0
+        self._Q = 0
+        self._u = 0
+        self._P = prior_p
+
+    def expand(self, action_priors):
+        """Expand tree by creating new children.
+        action_priors: a list of tuples of actions and their prior probability
+            according to the policy function.
+        """
+        for action, prob in action_priors:
+            if action not in self._children:
+                self._children[action] = TreeNode(self, prob)
+
+    def select(self, c_puct):
+        """Select action among children that gives maximum action value Q
+        plus bonus u(P).
+        Return: A tuple of (action, next_node)
+        """
+        return max(self._children.items(),
+                   key=lambda act_node: act_node[1].get_value(c_puct))
+
+    def update(self, leaf_value):
+        """Update node values from leaf evaluation.
+        leaf_value: the value of subtree evaluation from the current player's
+            perspective.
+        """
+        # Count visit.
+        self._n_visits += 1
+        # Update Q, a running average of values for all visits.
+        self._Q += 1.0*(leaf_value - self._Q) / self._n_visits
+
+    def update_recursive(self, leaf_value):
+        """Like a call to update(), but applied recursively for all ancestors.
+        """
+        # If it is not root, this node's parent should be updated first.
+        if self._parent:
+            self._parent.update_recursive(-leaf_value)
+        self.update(leaf_value)
+
+    def get_value(self, c_puct):
+        """Calculate and return the value for this node.
+        It is a combination of leaf evaluations Q, and this node's prior
+        adjusted for its visit count, u.
+        c_puct: a number in (0, inf) controlling the relative impact of
+            value Q, and prior probability P, on this node's score.
+        """
+        self._u = (c_puct * self._P *
+                   np.sqrt(self._parent._n_visits) / (1 + self._n_visits))
+        return self._Q + self._u
+
+    def is_leaf(self):
+        """Check if leaf node (i.e. no nodes below this have been expanded).
+        """
+        return self._children == {}
+
+    def is_root(self):
+        return self._parent is None
+```
+
+TreeNode 类里初始化了一些数值，主要是 父节点，子节点，访问节点的次数，Q值和u值，还有先验概率,还定义了一些函数:
+
+- `select()` 的功能： **选择**
+  在子节中选择具有 （Q+u）最大的节点，c_puct是需要我们定义的值.
+
+- `expand()` 的功能：**扩展**
+  输入action_priors 是一个包括的所有合法动作的列表（list），表示在当前局面我可以在哪些地方落子。此函数为当前节点扩展了子节点。
+
+- `update_recursive()` 的功能：**回溯**
+  从该节点开始，**自上而下地** 更新 **所有**的父节点。
+
+可以看到，我们定义了一个TreeNode类来描述对应的博弈树的结点，除了价值函数等计算中需要用到的信息，还定义了父结点的信息和子结点的信息，其中父结点是一个TreeNode的实例，子结点的信息是一个字典，字典的键是执行的动作，值是动作对应的结点。
+
+有了这些信息之后，我们就可以计算前面介绍的PUCT分数，这个分数的值由式（1）决定，通过score方法计算得到。
+
+在得到PUCT分数之后，算法就可以根据这个分数来选择分数最高的子结点，对应的方法是select。
+
+除了select方法，TreeNode类还定义了expand方法，这个方法输入所有的动作actions和动作对应的先验概率priors，根据这些值来对叶子结点进行扩展，另外还有backup方法，这个方法获得当前结点的价值估计，并且递归地对到达这个结点的路径上的其他结点进行访问次数和价值函数的更新。
+
+为了判断结点的性质，我们还需要有两个方法is_root和is_leaf，分别代表当前的结点是否是根结点和是否是叶子结点。
+
+以上是MCTS中的三个流程（一二四），我们发现还少了一个最重要的第三步：**模拟**，模拟的步骤写在了 `MCTS`类中。
+
+### 2. MCTS算法
+
+```python
+
+class MCTS(object):
+    """A simple implementation of Monte Carlo Tree Search."""
+
+    def __init__(self, policy_value_fn, c_puct=5, n_playout=10000):
+        """
+        policy_value_fn: a function that takes in a board state and outputs
+            a list of (action, probability) tuples and also a score in [-1, 1]
+            (i.e. the expected value of the end game score from the current
+            player's perspective) for the current player.
+        c_puct: a number in (0, inf) that controls how quickly exploration
+            converges to the maximum-value policy. A higher value means
+            relying on the prior more.
+        """
+        self._root = TreeNode(None, 1.0)
+        self._policy = policy_value_fn
+        self._c_puct = c_puct
+        self._n_playout = n_playout
+
+    def _playout(self, state):
+        """Run a single playout from the root to the leaf, getting a value at
+        the leaf and propagating it back through its parents.
+        State is modified in-place, so a copy must be provided.
+        """
+        node = self._root
+        while(1):
+            if node.is_leaf():
+
+                break
+            # Greedily select next move.
+            action, node = node.select(self._c_puct)
+            state.do_move(action)
+
+        action_probs, _ = self._policy(state)
+        # Check for end of game
+        end, winner = state.game_end()
+        if not end:
+            node.expand(action_probs)
+        # Evaluate the leaf node by random rollout
+        leaf_value = self._evaluate_rollout(state)
+        # Update value and visit count of nodes in this traversal.
+        node.update_recursive(-leaf_value)
+
+    def _evaluate_rollout(self, state, limit=1000):
+        """Use the rollout policy to play until the end of the game,
+        returning +1 if the current player wins, -1 if the opponent wins,
+        and 0 if it is a tie.
+        """
+        player = state.get_current_player()
+        for i in range(limit):
+            end, winner = state.game_end()
+            if end:
+                break
+            action_probs = rollout_policy_fn(state)
+            max_action = max(action_probs, key=itemgetter(1))[0]
+            state.do_move(max_action)
+        else:
+            # If no break from the loop, issue a warning.
+            print("WARNING: rollout reached move limit")
+        if winner == -1:  # tie
+            return 0
+        else:
+            return 1 if winner == player else -1
+
+    def get_move(self, state):
+        """Runs all playouts sequentially and returns the most visited action.
+        state: the current game state
+
+        Return: the selected action
+        """
+        for n in range(self._n_playout):
+            state_copy = copy.deepcopy(state)
+            self._playout(state_copy)
+        return max(self._root._children.items(),
+                   key=lambda act_node: act_node[1]._n_visits)[0]
+
+    def update_with_move(self, last_move):
+        """Step forward in the tree, keeping everything we already know
+        about the subtree.
+        """
+        if last_move in self._root._children:
+            self._root = self._root._children[last_move]
+            self._root._parent = None
+        else:
+            self._root = TreeNode(None, 1.0)
+
+    def __str__(self):
+        return "MCTS"
+```
+
+MCTS类的初始输入参数：
+
+- policy_value_fn：当前采用的策略函数，输入是当前棋盘的状态，输出 (action, prob)元祖和score[-1,1]。
+-  c_puct：控制探索和回报的比例，值越大表示越依赖之前的先验概率。
+- n_playout：MCTS的执行次数，值越大，消耗的时间越多，效果也越好。
+- 还定义了一个根节点 self._root = TreeNode(None, 1.0) 父节点：None，先验概率：1.0
+
+#### _playout(self, state)：
+
+此函数有一个输入参数：state, 它表示当前的状态。
+这个函数的功能就是模拟。它根据当前的状态进行游戏，用贪心算法一条路走到黑，直到叶子节点，再判断游戏结束与否。如果游戏没有结束，则扩展 节点，否则回溯更新叶子节点和所有祖先的值。
+
+#### get_move_probs(self, state, temp)：
+
+之前所有的代码都是为这个函数做铺垫。它的功能是从当前状态开始获得所有可行行动以及它们的概率。也就是说它能根据棋盘的状态，结合之前介绍的代码，告诉你它计算的结果，在棋盘的各个位置落子的胜率是多少。有了它，我们就能让计算机学会下棋。
+
+#### update_with_move(self, last_move)：
+
+自我对弈时，每走一步之后更新MCTS的子树。
+与玩家对弈时，每一个回合都要重置子树。
+
+### 3. MCTS的玩家
+
+接下来构建一个MCTS的玩家
+
+```python
+class MCTSPlayer(object):
+    """AI player based on MCTS"""
+    def __init__(self, c_puct=5, n_playout=2000):
+        self.mcts = MCTS(policy_value_fn, c_puct, n_playout)
+
+    def set_player_ind(self, p):
+        self.player = p
+
+    def reset_player(self):
+        self.mcts.update_with_move(-1)
+
+    def get_action(self, board):
+        sensible_moves = board.availables
+        if len(sensible_moves) > 0:
+            move = self.mcts.get_move(board)
+            self.mcts.update_with_move(-1)
+            return move
+        else:
+            print("WARNING: the board is full")
+
+    def __str__(self):
+        return "MCTS {}".format(self.player)
+```
+
+MCTSPlayer类的主要功能在函数get_action(self, board, temp=1e-3, return_prob=0)里实现。自我对弈的时候会有一定的探索几率，用来训练。与人类下棋是总是选择最优策略
+，用来检测训练成果。
 
 ## 优势
 
