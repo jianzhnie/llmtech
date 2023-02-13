@@ -23,7 +23,7 @@ AlphaGo 2016 版本使用 $19 \times 19 \times 48$ 的张量 (tensor) 表示一�
 
 - 张量中一共有 17 个这样的矩阵；17 是这样得来的。记录最近 8 步棋盘上黑子的位 置, 需要 8 个矩阵。同理, 还需要 8 个矩阵记录白子的位置。还另外需要一个矩 阵表示该哪一方下棋; 如果该下黑子, 那么该矩阵元素全部等于 1 ; 如果该下白子, 那么该矩阵的元素全都等于 0 。
 
-<img src="assets/image-20230212164424770.png" alt="image-20230212164424770" style="zoom:50%;" />
+<img src="https://github.com/jianzhnie/machine-learning-wiki/blob/main/docs/deep-rl/muzero/muzero_assets/image-20230212164424770.png" alt="image-20230212164424770" style="zoom:50%;" />
 
 > 图 2: 策略网络的示意图。
 
