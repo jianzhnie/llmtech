@@ -28,11 +28,12 @@
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
   - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
-- MuZero 解读
+- AlphaZero & MuZero & 蒙特卡洛树搜索
   - [蒙特卡洛树搜索入门指南](deep-rl/muzero/mcts_guide.md)
-  - [蒙特卡洛树搜索 (MCTS)](deep-rl/muzero/MCTS.md)
-  - [MuZero算法介绍](deep-rl/papers/muzero_intro.md)
-  - [MuZero伪代码](deep-rl/papers/muzero_pseudocode.md)
+  - [蒙特卡洛树搜索(MCTS)详解](deep-rl/muzero/MCTS.md)
+  - [AlphaGoZero 算法介绍](deep-rl/muzero/alphazero.md)
+  - [MuZero算法介绍](deep-rl/muzero/muzero_intro.md)
+  - [MuZero伪代码](deep-rl/muzero/muzero_pseudocode.md)
 
 - 强化学习[论文/算法]
 - 多智能体强化学习
