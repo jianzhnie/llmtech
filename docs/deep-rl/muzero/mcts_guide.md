@@ -67,9 +67,9 @@ $$
 
 如果你完全不了解对手，那么你可以使用一种非常保守的策略即极小极大算法，在假定你的对手执行最佳行动的前提下，最大化你的收益，也可以说在各种获得最小收益的策略中选择有最大收益的策略。这种方法以放弃最优策略为代价，从而最小化了风险，因此它是一种非常保守的方法。在 A 和 B 的两人有限零和序列博弈中（其中 A 尝试最大化其收益，而 B 尝试最小化 A 的收益），极小极大算法可以用以下的递归形式来描述：
 $$
-\begin{align} 
-v_A(s_i) &= \max_{a_i} v_B(\text{move}(s_i, a_i)) \qquad v_A(\hat{s}) = \text{eval}(\hat{s}) \\ 
-v_B(s_i) &= \min_{a_i} v_A(\text{move}(s_i, a_i)) \qquad v_B(\hat{s}) = -\text{eval}(\hat{s}) 
+\begin{align}
+v_A(s_i) &= \max_{a_i} v_B(\text{move}(s_i, a_i)) \qquad v_A(\hat{s}) = \text{eval}(\hat{s}) \\
+v_B(s_i) &= \min_{a_i} v_A(\text{move}(s_i, a_i)) \qquad v_B(\hat{s}) = -\text{eval}(\hat{s})
 \end{align}
 $$
 其中：
@@ -234,7 +234,7 @@ UCT 函数中的一个重要标志是：在竞争性游戏中，其 exploitaion 
 ```python
 def monte_carlo_tree_search(root):
     while resources_left(time, computational power):
-        leaf = traverse(root) # leaf = unvisited node 
+        leaf = traverse(root) # leaf = unvisited node
         simulation_result = rollout(leaf)
         backpropagate(leaf, simulation_result)
     return best_child(root)
@@ -242,19 +242,19 @@ def monte_carlo_tree_search(root):
 def traverse(node):
     while fully_expanded(node):
         node = best_uct(node)
-    return pick_univisted(node.children) or node # in case no children are present / node is terminal 
+    return pick_univisted(node.children) or node # in case no children are present / node is terminal
 
 def rollout(node):
     while non_terminal(node):
         node = rollout_policy(node)
-    return result(node) 
+    return result(node)
 
 def rollout_policy(node):
     return pick_random(node.children)
 
 def backpropagate(node, result):
-   if is_root(node) return 
-   node.stats = update_stats(node, result) 
+   if is_root(node) return
+   node.stats = update_stats(node, result)
    backpropagate(node.parent)
 
 def best_child(node):
