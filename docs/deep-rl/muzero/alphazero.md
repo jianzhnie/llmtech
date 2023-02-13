@@ -13,7 +13,8 @@ AlphaGo 依靠 MCTS 做决策, 而决策的过程中需要策略网络和价值�
 
 围棋的棋盘是 $19 \times 19$ 的网格, 可以在两条线交叉的地方放置棋子, 一共有 361 个 可以放置棋子的位置。两个玩家一方用黑色棋子, 另一方用白色棋子, 两方交替往棋盘 上放置棋子。棋盘上有 361 个可以放置棋子的位置, 因此动作空间是 $\mathcal{A}=\{1, \cdots, 361\}$ 。 比如动作 $a=123$ 的意思是在第 123 号位置上放棋子。
 
-<img src="assets/image-20230213090528323.png" alt="image-20230213090528323" style="zoom:50%;" />
+<div align=center><img src="deep-rl/muzero/muzero_assets/image-20230213090528323.png" alt="image-20230213090528323" style="zoom:80%;" />
+</div>
 
 >  图 1: 状态可以表示为 $19 \times 19 \times 17$ 的张量。
 
@@ -23,13 +24,16 @@ AlphaGo 2016 版本使用 $19 \times 19 \times 48$ 的张量 (tensor) 表示一�
 
 - 张量中一共有 17 个这样的矩阵；17 是这样得来的。记录最近 8 步棋盘上黑子的位 置, 需要 8 个矩阵。同理, 还需要 8 个矩阵记录白子的位置。还另外需要一个矩 阵表示该哪一方下棋; 如果该下黑子, 那么该矩阵元素全部等于 1 ; 如果该下白子, 那么该矩阵的元素全都等于 0 。
 
-<img src="https://github.com/jianzhnie/machine-learning-wiki/blob/main/docs/deep-rl/muzero/muzero_assets/image-20230212164424770.png" alt="image-20230212164424770" style="zoom:50%;" />
+<div align=center><img src="deep-rl/muzero/muzero_assets/image-20230212164424770.png" alt="image-2023021216442477" style="zoom:80%;" />
+</div>
+
 
 > 图 2: 策略网络的示意图。
 
 策略网络 $\pi(a \mid s ; \boldsymbol{\theta})$ 的结构如图 $2$ 所示。策略网络的输入是 $19 \times 19 \times 17$ 的状态 $s$ 。 策略网络的输出是 361 维的向量 $\boldsymbol{f}$, 它的每个元素对应一个动作（即在棋盘上一个位置放棋子)。向量 $\boldsymbol{f}$ 所有元素都是正数, 而且相加等于 1 。
 
-<img src="assets/image-20230212165001224.png" alt="image-20230212165001224" style="zoom:50%;" />
+<div align=center><img src="deep-rl/muzero/muzero_assets/image-20230212165001224.png" alt="image-20230212165001224" style="zoom:80%;" />
+</div>
 
 > 图 3: 价值网络的示意图。
 
@@ -89,7 +93,8 @@ $$
 
 MCTS 根据公式 (1) 算 出所有动作的分数 $\operatorname{score}(a), \forall a$ 。 MCTS 选择分数最高的动作。图 $4$ 的例子中有 3 个可行动作, 分 数分别为 $0.4 、 0.3 、 0.5$ 。第三个动作分数最高, 会被选中, 这一轮模拟会执行这个动作。(只是在模拟, 不是 AlphaGo 真的走一步棋)
 
-<img src="assets/image-20230212165539472.png" alt="image-20230212165539472" style="zoom:50%;" />
+<div align=center><img src="deep-rl/muzero/muzero_assets/image-20230212165539472.png" alt="image-20230212165539472" style="zoom:80%;" />
+</div>
 
 > 图 4: 假设有 3 个可行动作, 根据公式 (1) 算出它们 的分数。
 
@@ -102,11 +107,16 @@ $$
 
 此处的状态 $s^{\prime}$ 是站在对手的角度观测到的棋盘上的格局, 动作 $a_{t}^{\prime}$ 是（假想）对手选择的动作。图 $5$ 的例子中对手有四种可行动作, AlphaGo 用策略网络算出每个动作的概率值, 然后根据概率值随机抽样一个对手的动作, 记作 $a_{t}^{\prime}$ 。假设根据概率值 $0.1,0.3,0.2$, $0.4$ 做随机抽样, 选中第二种动作; 见图 6。从 AlphaGo 的角度来看, 对手的动作就是 AlphaGo 新的状态。
 
-<img src="assets/image-20230212170043703.png" alt="image-20230212170043703" style="zoom:50%;" />
+<div align=center>
+<img src="deep-rl/muzero/muzero_assets/image-20230212170043703.png" alt="image-20230212170043703" style="zoom:80%;" />
+</div>
+
 
 > **图** **5:** 假设 AlphaGo 有三种可行的动作，AlphaGo 选中第三个，并在模拟中执行。用策略网络模拟对手，策略网络输出对手可行动作的概率值：0*.*1, 0*.*3, 0*.*2, 0*.*4。
 
-<img src="assets/image-20230212170135571.png" alt="image-20230212170135571" style="zoom:50%;" />
+<div align=center>
+<img src="deep-rl/muzero/muzero_assets/image-20230212170135571.png" alt="image-20230212170135571" style="zoom:80%;" />
+</div>
 
 > **图** **6:** 假设对手有四种可行的动作，AlphaGo 根据概率值做随机抽样，替对手选中了第二种动作。对手的动作就是 AlphaGo 眼里的新的状态。
 
@@ -147,15 +157,18 @@ $$
 
 实际实现的时候, AlphaGo 还训练了一个更小的神经网络, 它做决策更快。MCTS 在第一步和第二步用大的策略网络, 第三步用小的策略网络。 读者可能好奇, 为什么在且仅在第三步用小的策略网络呢? 第三步两个策略网络交替落子, 通常要走一两百步, 导致第三步成为 MCTS 的瓶颈。用小 的策略网络代替大的策略网络, 可以 大幅加速 MCTS。
 
-<img src="assets/image-20230213094047552.png" alt="image-20230213094047552" style="zoom:50%;" />
-
+<div align=center>
+<img src="deep-rl/muzero/muzero_assets/image-20230213094047552.png" alt="image-20230213094047552" style="zoom:80%;" />
+</div>
 > 图 7: 策略网络自我博奕。
 
 #### 第四步一一回溯（Backup）
 
 第 三步一一求值一一算出了第 $t+1$ 步某 一个状态的价值，记作 $V\left(s_{t+1}\right)$ ；每一 次模拟都会得出这样一个价值, 并且 记录下来。模拟会重复很多次, 于是 第 $t+1$ 步每一种状态下面可以有多条记录; 如图 $8$ 所示。第 $t$ 步的动作 $a_{t}$ 下面有多个可能的状态（子节点）每个状态下面有若干条记录。把 $a_{t}$ 下面所有的记录取平均, 记作价值 $Q\left(a_{t}\right)$, 它可以反 映出动作 $a_{t}$ 的好坏。在图 $8$ 中, $a_{t}$ 下面一共有 12 条记录, $Q\left(a_{t}\right)$ 是 12 条记录的均值。
 
-<img src="assets/image-20230213093309680.png" alt="image-20230213093309680" style="zoom:50%;" />
+<div align=center>
+<img src="deep-rl/muzero/muzero_assets/image-20230213093309680.png" alt="image-20230213093309680" style="zoom:80%;" />
+</div>
 
 > 图 8: 每一个状态 $s_{t+1}$ 下面都有很多条记录, 每一 条记录是一个 $V\left(s_{t+1}\right)$ 。
 
