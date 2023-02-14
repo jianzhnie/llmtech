@@ -126,8 +126,8 @@ MCTS 的整个过程就是这样，那么什么时候结束呢？一般设置以
 为了增加算法的随机性，AlphaGoZero和AlphaZero的原始文献中给这个概率增加了一个服从狄利克雷分布的噪声，如式 (4) 所示，其中 $\epsilon 、 \alpha$ 是可以调节的超参数。
 $$
 \begin{gathered}
-\pi(a \mid s)=\frac{N(s, a)^{\frac{1}{T}}}{\sum_b N(s, b)^{\frac{1}{T}}} \text { 式 (4) } \\
-\pi^{\prime}(a \mid s)=(1-\epsilon) \pi(a \mid s)+\epsilon \operatorname{Dirichlet}(\alpha) \text { 式 (5) }
+\pi(a \mid s)=\frac{N(s, a)^{\frac{1}{T}}}{\sum_b N(s, b)^{\frac{1}{T}}} \\
+\pi^{\prime}(a \mid s)=(1-\epsilon) \pi(a \mid s)+\epsilon \operatorname{Dirichlet}(\alpha)
 \end{gathered}
 $$
 
