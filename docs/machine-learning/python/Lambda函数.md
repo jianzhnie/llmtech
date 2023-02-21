@@ -105,15 +105,16 @@ time.sleep(3)	# 程序不会休眠 3 秒钟，而是因为lambda输出为None，
 
 ### map() 函数：
 
-> 描述：
-> map() 会根据提供的函数对指定序列做映射。
->
-> 第一个参数 function 以参数序列中的每一个元素调用 function 函数，返回包含每次 function 函数返回值的新列表。
->
+map() 会根据提供的函数对指定序列做映射。
+
+Map函数是一个接受两个参数的函数。第一个参数 function 以参数序列中的每一个元素调用 function 函数，第二个是任何可迭代的序列数据类型。返回包含每次 function 函数返回值的新列表。
+
 > 语法：
+>
 > map(function, iterable, ...)
 >
 > 参数：
+>
 > function ----> 函数
 >
 > iterable ----> 一个或多个序列
@@ -144,12 +145,14 @@ map(lambda x, y: x + y, [1, 3, 5, 7, 9], [2, 4, 6, 8, 10])
 
 ### reduce() 函数：
 
-> 描述：
->
-> reduce() 函数会对参数序列中元素进行累积。
->
-> 函数将一个数据集合（链表，元组等）中的所有数据进行下列操作：用传给 reduce 中的函数 function（有两个参数）先对集合中的第 1、2 个元素进行操作，得到的结果再与第三个数据用 function 函数运算，最后得到一个结果。
->
+这个函数比较特别，不是 Python 的内置函数，需要通过`from functools import reduce `导入。Reduce 从序列数据结构返回单个输出值，它通过应用一个给定的函数来减少元素。
+
+将包含两个参数的函数(`function`)累计应用于序列(`sequence`)的项，从左到右，从而将序列`reduce`至单个值。
+
+如果存在`initial`，则将其放在项目之前的序列，并作为默认值时序列是空的。
+
+假设有一个整数列表，并求得所有元素的总和。且使用reduce函数而不是使用for循环来处理此问题。
+
 > 语法：
 >
 > reduce(function, iterable[, initializer])
@@ -208,22 +211,20 @@ reduce(fn, [1, 3, 5, 7, 9])
 
 ### sorted() 函数：
 
-> 描述：
-> sorted() 函数对所有可迭代的对象进行排序操作。
->
-> sort 与 sorted 区别：
-> sort 是 list 的一个方法，而 sorted 可以对所有可迭代的对象进行排序操作。
-> list 的 sort 方法返回的是对已经存在的列表进行操作，无返回值，而内建函数 sorted 方法返回的是一个新的 list，而不是在原来的基础上进行的操作。
->
+sorted() 函数是全局排序函数，对所有可迭代的对象进行排序操作，它不会修改原对象，而将排序后的结果作为函数的返回值。
+
+**sort 与 sorted 的区别：**
+
+> sort 是应用在 list 上的方法，sorted 可以对所有可迭代的对象进行排序操作。
+> list 的 sort 方法返回的是对已经存在的列表进行操作，而内建函数 sorted 方法返回的是一个新的 list，而不是在原来的基础上进行的操作。
+
 > 语法：
 >
-> sorted(iterable[, cmp[, key[, reverse]]])
+> sorted(iterable，key=None, reverse=False)
 >
 > 参数说明：
 >
 > iterable  ----> 可迭代对象。
->
-> cmp       ----> 比较的函数，这个具有两个参数，参数的值都是从可迭代对象中取出，此函数必须遵守的规则为，大于则返回1，小于则返回-1，等于则返回0。
 >
 > key        ----> 主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。
 >
@@ -265,15 +266,26 @@ sorted(students, key=lambda s: s[2])
 sorted(students, key=lambda s: s[2], reverse=True)
 # 结果：
 [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+
+# 以 age 的降序进行排序
+array = [{"age": 20, "name": "a"}, {"age": 25, "name": "b"}, {"age": 10, "name": "c"}]
+array = sorted(array, key=lambda x:x["age"], reverse=True)
+
+# 先按照成绩降序排序，相同成绩的按照名字升序排序
+d1 = [{'name': 'alice', 'score': 38}, 
+      {'name': 'bob', 'score': 18}, 
+      {'name': 'darl', 'score': 28}, 
+      {'name': 'christ', 'score': 28}]
+
+l = sorted(d1, key=lambda x:(-x['score'], x['name']))
 ```
 
 ### filter() 函数：
 
-> 描述：
-> filter() 函数用于过滤序列，过滤掉不符合条件的元素，返回由符合条件元素组成的新列表。
->
-> 该接收两个参数，第一个为函数，第二个为序列，序列的每个元素作为参数传递给函数进行判，然后返回 True 或 False，最后将返回 True 的元素放到新列表中。
->
+Filter函数根据给定的特定条件过滤掉数据。即在函数中设定过滤条件，迭代元素，保留返回值为True 的元素。Map 函数对每个元素进行操作，而 filter 函数仅输出满足特定要求的元素。
+
+该函数接收两个参数，第一个为函数，第二个为序列，序列的每个元素作为参数传递给函数进行判，然后返回 True 或 False，最后将返回 True 的元素放到新列表中。
+
 > 语法：
 >
 > filter(function, iterable)
@@ -286,7 +298,7 @@ sorted(students, key=lambda s: s[2], reverse=True)
 >
 > 返回值：
 >
-> Pyhton2.7 返回列表，Python3.x 返回迭代器对象，具体内容可以查看：Python3 filter() 函数
+> Pyhton2.7 返回列表，Python3.x 返回迭代器对象
 
 **实例：**
 
