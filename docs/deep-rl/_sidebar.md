@@ -5,7 +5,7 @@
   - [第四章：Policy Gradient](deep-rl/deep-rl-class/ch4_pg.md)
   - [第五章：Actor-Critic](deep-rl/deep-rl-class/ch5_a2c.md)
   - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/ch6_ppo.md)
-  - [第七章：Decision Transfomer](deep-rl/deep-rl-class/ch7_decision-transformer.md)
+  - [第七章：Decision Transformer](deep-rl/deep-rl-class/ch7_decision-transformer.md)
   - [第八章：Multi-Agent RL](deep-rl/deep-rl-class/ch8_marl.md)
   - [第九章：RLHF](deep-rl/papers/RLHF.md)
 
@@ -18,10 +18,10 @@
   - [重参数化与强化学习](deep-rl/algorithms/ch2_supp_reparameterization.md)
 
 - 强化学习环境
-- [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
-- [OpenAI Gym](deep-rl/envs/gym.md)
-- [SMAC](deep-rl/envs/smac.md)
-- [MARL Envs](deep-rl/envs/marl_env.md)
+  - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
+  - [OpenAI Gym](deep-rl/envs/gym.md)
+  - [SMAC](deep-rl/envs/smac.md)
+  - [MARL Envs](deep-rl/envs/marl_env.md)
 
 
 - 强化学习工具篇
