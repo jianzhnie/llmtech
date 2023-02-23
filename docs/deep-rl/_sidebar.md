@@ -35,7 +35,6 @@
   - [MuZero算法介绍](deep-rl/muzero/muzero_intro.md)
   - [MuZero伪代码](deep-rl/muzero/muzero_pseudocode.md)
 
-- 强化学习[论文/算法]
 - 多智能体强化学习
 
   - [MARL](deep-rl/papers/Overview.md)

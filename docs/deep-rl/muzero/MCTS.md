@@ -20,6 +20,9 @@
 
 基本的 MCTS 算法很简单：根据模拟播放的结果逐个节点地构建搜索树。该过程主要分为四步：**选择**(Selection)，**拓展**(Expansion)，**模拟**(Simulation)，**反向传播**(Backpropagation)。本文以**井字棋**为例对这一方法进行介绍。
 
+<div align=center><img src="https://jyopari.github.io/MCTS/mcts1.png"  style="zoom:50%;" />
+</div>
+
 ### 1. 基础知识
 
 介绍 MCTS 的具体搜索算法之前，先介绍一下 MCTS 的基础知识。
@@ -28,8 +31,9 @@
 
 在棋类问题中，MCTS 使用一个**节点**来表示一个**游戏状态**，换句话说，每一个节点都对应着井字棋中的一种情况。假设现在井字棋的棋盘上只有中间一个棋子，图中用 ○ 画出，我们用一个节点表示这个游戏状态，这个节点就是下图中的根节点。这时，下一步棋有 8 种下法，所以对应的，这个根节点就有 8 个子节点。
 
-<div align=center><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Three-game.gif/300px-Three-game.gif"  style="zoom:80%;" />
+<div align=center><img src="https://philippmuens.com/assets/blog/minimax-and-mcts/tic-tac-toe-1.png"  style="zoom:60%;" />
 </div>
+
 
 ![井字游戏规则算法_allway2的博客-CSDN博客_井字棋游戏规则](https://img-blog.csdnimg.cn/img_convert/5d72ff08a62b1d7a4efb574007582368.png)
 
@@ -64,7 +68,7 @@
 
 从根节点(就是输入)出发，根据一定的策略，向下选择一个节点进行访问，若被选择的节点未被访问过，则执行扩展；若被选择的节点已被访问，则访问该节点，并继续向下选择节点进行访问，直到遇见未被访问的节点，或遇见终止节点(游戏结束)。
 
-选择的策略由多项式置信算法公式(Polynomial  Upper Confidence Tree， UCT)确定, 这个算法具体会根据式 (1) 给每个子结点计算一个分数，我们会不断选择分 数最高的结点，直到到达一个叶结点。
+选择的策略由多项式置信算法公式(Polynomial  Upper Confidence Tree， PUCT)确定, 这个算法具体会根据式 (1) 给每个子结点计算一个分数，我们会不断选择分 数最高的结点，直到到达一个叶结点。
 $$
 U(s, a)=Q(s, a)+c_{\text {puct }} P(s, a) \frac{\sqrt{\sum_b N(s, b)}}{N(s, a)+1}
 $$
@@ -134,6 +138,20 @@ $$
 
 总结一下，蒙特卡洛树搜索算法包含了一系列的决策过程，每个决策过程都会包含多个“选择 $\rightarrow$ 扩展和求值→回溯" 循环，并且在循环结束的时候计算选择对应的动作概率进行决策，随机采样让根结点向前移动。
 在决策到达终点，也就是得到对孪的结果之后，整条决策路径会被保存下来，同时，根据最后 博变的结果会给每个结点赋予一个具体的价值 $z$ ，根据结点当前的决策玩家是不是最后的赢 家来决定 (如果是，则 $z=+1$ ，若不是，则 $z=-1$ ，平局 $z=0$ )。
+
+## 两个玩家的游戏
+
+在两个玩家的游戏中，如 井字棋，象棋，围棋等，该如何应用MCTS 算法呢? 嗯，这个问题也是很直接的，正如 [answer](https://stackoverflow.com/questions/42302142/monte-carlo-tree-search-tree-policy-for-two-player-games) 指出，我们需要将树的每一层看做是玩家1或者玩家2的走棋。入下图所示：
+
+<div align=center><img src="https://jyopari.github.io/MCTS/2player.png"  style="zoom:60%;" />
+</div>
+
+我们将根节点设置为玩家 2 的节点，它选择从那里采取的动作，无论采取什么动作都会将我们带到树的下一层，球在玩家 2 的球场上，并且不断重复。 那么当我们到达终端节点时，该如何修改我们的反向传播？ 让我们看看下面的图片来理解。
+
+<div align=center><img src="https://jyopari.github.io/MCTS/2win.png"  style="zoom:50%;" />
+</div>
+
+我们所要做的就是交替增加那些胜利的节点。 如果玩家 1 获胜，则从获胜路径中的第二个节点开始，每个其他节点的获胜得分将递增。 如果玩家 2 获胜，则相同，只是起始节点是根节点。
 
 ## 代码实现
 
