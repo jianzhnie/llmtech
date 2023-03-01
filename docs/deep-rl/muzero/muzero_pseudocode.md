@@ -4,7 +4,7 @@
 
 [通过使用学习模型进行规划来掌握 Atari、围棋、国际象棋和将棋](https://arxiv.org/abs/1911.08265)
 
-2019 年 11 月 19 日，DeepMind 向世界发布了他们最新的基于模型的强化学习算法[——MuZero](https://arxiv.org/abs/1911.08265)。
+2019 年 11 月 19 日，DeepMind 发布了他们最新的基于模型的强化学习算法——[MuZero](https://arxiv.org/abs/1911.08265)。
 
 ## 历史
 
@@ -12,9 +12,9 @@ MuZero 是用于棋盘游戏（国际象棋、围棋……）和 Atari 游戏的
 
 它是 DeepMind 研究人员设想的一长串强化学习算法中的最新算法。它始于 2014 年，随着著名的 AlphaGo 的诞生。Alpha Go 在 2015 年击败了围棋冠军李世石。
 
-**AlphaGo**使用一种称为蒙特卡洛树搜索 (MCTS) 的旧原理来将游戏的其余部分规划为决策树。但微妙之处在于添加了一个神经网络来智能地选择动作，从而减少了未来要模拟的动作数量。
+**AlphaGo**使用一种称为蒙特卡洛树搜索 (MCTS) 的算法来将游戏的其余部分规划为决策树。但微妙之处在于添加了一个神经网络来智能地选择动作，从而减少了未来要模拟的动作数量。
 
-AlphaGo 的神经网络一开始是用人类玩过的游戏历史来训练的，2017 年 AlphaGo 被**AlphaGo Zero**取代，它不再使用这个历史。该算法首次在没有围棋策略先验知识的情况下学会单独下棋。它与自己对抗（使用 MCTS）然后从这些部分中学习（神经网络的训练）。
+AlphaGo 的神经网络一开始是用人类玩家的游戏历史数据来训练的，2017 年 AlphaGo 被**AlphaGo Zero**取代，它不再使用人类玩家的经验数据。该算法首次在没有围棋策略先验知识的情况下学会单独下棋。它与自己对抗（使用 MCTS）然后从这些部分中学习（神经网络的训练）。
 
 **AlphaZero**是 AlphaGo Zero 的一个版本，我们在其中删除了与围棋游戏相关的所有小技巧，以便它可以推广到其他棋盘游戏。
 
@@ -30,17 +30,7 @@ AlphaGo 的神经网络一开始是用人类玩过的游戏历史来训练的，
 
 因此，除了制定制胜策略外，MuZero 还必须开发自己的动态环境模型，以便了解其选择的影响并提前规划。想象一下，在一场你从未被告知规则的比赛中，你试图成为比世界冠军更好的玩家。MuZero 恰恰做到了这一点。在下一节中，我们将通过详细浏览代码库来探索 MuZero 如何实现这一惊人的壮举。
 
-## 延伸阅读
 
-要了解技术部分，我们推荐以下文章。
-
-- [Muzero](https://arxiv.org/abs/1911.08265)
-- [Alpha Zero](https://arxiv.org/abs/1712.01815)
-- [ELF Open Go](https://arxiv.org/abs/1902.04522) (Facebook implementation of AlphaZero)
-- [Alpha Go](https://www.nature.com/articles/nature16961)
-- [Value prediction networks](https://arxiv.org/abs/1707.03497)
-- [SimPLe](https://arxiv.org/abs/1903.00374)
-- [World Models](https://worldmodels.github.io/)
 
 ## MuZero 伪代码
 
@@ -50,11 +40,11 @@ AlphaGo 的神经网络一开始是用人类玩过的游戏历史来训练的，
 
 ### MuZero  主函数
 
-让我们从整个过程的概述开始，从入口函数`muzero` 开始。
+让我们从整个过程的概述开始，从入口函数`muzero` 开始。
 
 ![img](https://miro.medium.com/max/700/1*ajFyjeF-1hVbmtlAsSoT2Q.png)
 
-> MuZero 自我对弈和训练过程概述.
+> MuZero 自博弈和训练过程概述.
 
 ```python
 def muzero(config: MuZeroConfig):
@@ -69,9 +59,9 @@ def muzero(config: MuZeroConfig):
   return storage.latest_network()
 ```
 
-向函数`muzero`传递一个`MuZeroConfig`对象，该对象存储有关运行参数化的重要信息，例如`action_space_size`（可能的操作数）和`num_actors`（要启动的并行游戏模拟数）。
+向函数`muzero`传递一个`MuZeroConfig`对象，该对象存储有关运行参数化的重要信息，例如`action_space_size`（可能的动作数量）和`num_actors`（要启动的并行游戏模拟数）。
 
-在高层次上，MuZero 算法有两个独立的部分——自我对弈（创建游戏数据）和训练（生成神经网络的改进版本）。`SharedStorage`和`ReplayBuffer`对象可以被算法的两部分访问并分别存储神经网络版本和游戏数据。
+在高层次上，MuZero 算法有两个独立的部分——自博弈（创建游戏数据）和训练（生成神经网络的改进版本）。`SharedStorage`和`ReplayBuffer`对象可以被算法的两部分访问并分别存储不同版的本神经网络模型参数和游戏数据。
 
 ### Shared Storage和Replay Buffer
 
@@ -94,7 +84,7 @@ class SharedStorage(object):
     self._networks[step] = network
 ```
 
-我们还需要一个`ReplayBuffer`来存储以前游戏的数据。这采用以下形式：
+我们还需要一个`ReplayBuffer`来存储玩游戏过程中产生的数据。采用以下形式：
 
 ```python
 class ReplayBuffer(object):
@@ -112,11 +102,11 @@ class ReplayBuffer(object):
   ...
 ```
 
-请注意该`window_size`参数限制缓冲区中存储的最大游戏数。在 MuZero 中，这被设置为最新的 1,000,000 场比赛。
+请注意`window_size`参数限制Replay Buffer中存储的最大游戏局数。在 MuZero 中，被设置为最新的 1,000,000 场比赛。
 
-### 自我对弈 (run_selfplay)
+### 自博弈 (run_selfplay)
 
-创建Shared Storage和replay buffer后，MuZero 启动`num_actors`独立运行的并行游戏环境。对于国际象棋，`num_actors`设置为 3000。每个都运行一个函数`run_selfplay`，从存储中获取最新版本的网络，用它玩游戏 ( `play_game`) 并将游戏数据保存到shared buffer。
+创建Shared Storage和replay buffer后，MuZero 启动`num_actors`个独立运行的并行游戏环境。对于国际象棋，`num_actors`设置为 3000。每个`actor`都运行一个函数`run_selfplay`，从存储中获取最新版本的网络，用它玩游戏 ( `play_game`) 并将游戏数据保存到shared buffer。
 
 ```python
 # Each self-play job is independent of all others; it takes the latest network
@@ -130,7 +120,7 @@ def run_selfplay(config: MuZeroConfig, storage: SharedStorage,
     replay_buffer.save_game(game)
 ```
 
-因此，总而言之，MuZero 正在与自己进行数千场比赛，将这些比赛保存到缓冲区中，然后根据这些比赛的数据进行自我训练。到目前为止，这与 AlphaZero 没有什么不同。
+因此，总而言之，MuZero 正在与自己进行数千场比赛，将这些比赛保存到Replay Buffer中，然后根据这些比赛的数据进行自我训练。到目前为止，这与 AlphaZero 没有什么不同。
 
 ### MuZero 的 3 个神经网络
 
@@ -138,7 +128,7 @@ AlphaZero 和 MuZero 都使用一种称为**蒙特卡洛树搜索 (MCTS)**的技
 
 想法是，为了选择下一个最佳动作，从当前位置“播放”可能的未来场景，使用神经网络评估它们的价值并选择最大化未来预期值的动作。这似乎是我们人类在下棋时脑子里在做的事情，而人工智能也是为了利用这种技术而设计的。
 
-但是，MuZero 有一个问题。由于它不知道游戏规则，它不知道给定的动作将如何影响游戏状态，因此它无法想象 MCTS 中的未来场景。它甚至不知道如何计算出在给定位置上哪些动作是合法的，或者一方是否获胜。
+但是，MuZero 有一个问题。由于它不知道游戏规则，它不知道给定的动作将如何影响游戏状态，因此它无法想象 MCTS 中的未来场景。它甚至不知道如何计算出在给定位置上哪些动作是合法的，或者其中一方是否获胜。
 
 > MuZero 论文中惊人的进展表明这无关紧要。MuZero 通过在自己的想象中创建环境的动态模型并在该模型中进行优化来学习如何玩游戏。
 
@@ -148,7 +138,7 @@ AlphaZero 和 MuZero 都使用一种称为**蒙特卡洛树搜索 (MCTS)**的技
 
 而 AlphaZero 只有一个神经网络（**预测**), MuZero 需要三个 (**预测**,**动力学**,**表示**)
 
-AlphaZero **预测**神经网络的工作`f`是预测给定游戏状态的策略`p`和价值`v`。该策略是所有动作的概率分布，值只是估计未来奖励的值。每次 MCTS 命中一个未探索的叶节点时都会进行此预测，以便它可以立即为新位置分配一个估计值，并为每个后续动作分配一个概率。这些值被回填到树上，返回到根节点，因此经过多次模拟后，根节点对当前状态的未来值有了很好的了解，探索了许多不同的可能未来。
+AlphaZero **预测网络** `f`的工作是预测给定游戏状态的策略`p`和价值`v`。该策略是所有动作的概率分布，值只是估计未来奖励的值。每次 MCTS 命中一个未探索的叶节点时都会进行此预测，以便它可以立即为新位置分配一个估计值，并为每个后续动作分配一个概率。这些值被回填到树上，返回到根节点，因此经过多次模拟后，根节点对当前状态的未来值有了很好的了解，探索了许多不同的可能未来。
 
 MuZero 也有一个**预测**神经网络`f`，但现在它运行的“游戏状态”是一个隐藏的表示，MuZero 通过**动态**神经网络`g`学习如何进化。动态网络采用当前隐藏状态`s`和选择的动作`a`并输出奖励`r`和新状态。注意在 AlphaZero 中，如何在 MCTS 树中的状态之间移动只是询问环境的情况。MuZero 没有这个奢侈，所以需要建立自己的动态模型！
 
@@ -156,8 +146,8 @@ MuZero 也有一个**预测**神经网络`f`，但现在它运行的“游戏状
 
 因此，MuZero 需要两个推理函数，以便通过 MCTS 树进行预测：
 
-- `initial_inference`对于当前状态。`h`其次是`f`（表示后跟预测）。
-- `recurrent_inference`用于在 MCTS 树内的状态之间移动。`g`其次是`f`（表示其次是动态）。
+- `initial_inference`对于当前状态。`h`网络后连接`f`网络（表示后跟预测）。
+- `recurrent_inference`用于在 MCTS 树内的状态之间移动。`f`网络后连接`g`（表示其次是动态）。
 
 ![img](https://miro.medium.com/max/700/1*GA72IpY7ZciGshmVvtl8kQ.png)
 
@@ -231,7 +221,7 @@ def play_game(config: MuZeroConfig, network: Network) -> Game:
 root = Node(0)
 ```
 
-每个节点存储与其被访问次数相关的关键统计信息`visit_count`，轮到它`to_play`，选择导致该节点的动作的预测先验概率，节点`prior`的回填值总和`node_sum`，其子节点`children`，隐藏状态它对应于`hidden_state`通过移动到该节点而获得的预测奖励`reward`。
+每个节点存储与其被访问次数相关的关键统计信息`visit_count`，`to_play`，选择该节点的动作的预测先验概率，价值总和`value_sum`，其子节点`children`，隐藏状态`hidden_state`, 通过移动到该节点而获得的预测奖励`reward`。
 
 ```python
 class Node(object):
@@ -256,13 +246,13 @@ class Node(object):
 
 接下来我们要求游戏返回当前观察（对应上图中`o`）......
 
-```
+```python
 current_observation = game.make_image(-1)
 ```
 
 …并使用游戏提供的已知合法行为和函数提供的关于当前观察的推断来扩展根节点`initial_inference`。
 
-```
+```python
 expand_node(root, game.to_play(), game.legal_actions(),network.initial_inference(current_observation))
 ```
 
@@ -337,11 +327,11 @@ def run_mcts(config: MuZeroConfig, root: Node, action_history: ActionHistory,
 
 由于 MuZero 不了解环境规则，因此它也不知道在整个学习过程中可能获得的奖励界限。创建该`MinMaxStats`对象是为了存储有关当前遇到的最小和最大奖励的信息，以便 MuZero 可以相应地规范化其价值输出。或者，也可以使用国际象棋 (-1, 1) 等游戏的已知边界对其进行初始化。
 
-MCTS 主循环迭代`num_simulations`，其中一个模拟是通过 MCTS 树直到到达叶节点（即未探索的节点）和随后的反向传播。现在让我们通过一个模拟。
+MCTS 主循环迭代`num_simulations`，其中一次的模拟是通过 MCTS 树直到到达叶节点（即未探索的节点）和随后的反向传播。
 
 首先，`history`使用从游戏开始至今采取的行动列表进行初始化。当前`node`是`root`节点并且`search_path`仅包含当前节点。
 
-然后模拟如下图所示进行：
+模拟如下图所示进行：
 
 ![img](https://miro.medium.com/max/700/1*Qyy9JuAoJXqPPs2ILM9mEw.png)
 
@@ -373,9 +363,9 @@ UCB 分数是根据选择动作的先验概率`P(s,a)`和已经选择动作的�
 
 >  MCTS过程（叶子扩展和反向传播）
 
-如上图所示，叶节点现在通过创建新的子节点（一个用于游戏中的每个可能的动作）并为每个节点分配其各自的先验策略来扩展。请注意，MuZero 不会检查这些动作中的哪些是合法的，或者该动作是否导致游戏结束（它不能），因此为每个动作创建一个节点，无论它是否合法。
+如上图所示，叶节点现在通过创建新的子节点（一个用于游戏中的每个可能的动作）并为每个节点分配其各自的先验策略来扩展。注意，MuZero 不会检查这些动作中的哪些是合法的，或者该动作是否导致游戏结束（它做不到），因此无论它是否合法， MuZero为每个动作都创建了一个节点。
 
-最后，网络预测的值沿着搜索路径反向传播到树上。
+最后，网络预测的值沿着搜索路径进行反向传播。
 
 ```python
 # At the end of a simulation, we propagate the evaluation all the way up the
@@ -390,13 +380,13 @@ def backpropagate(search_path: List[Node], value: float, to_play: Player,
     value = node.reward + discount * value
 ```
 
-请注意值是如何根据轮到谁来翻转的（如果叶节点对于应该玩的玩家是正数，那么对于另一个玩家来说它将是负数）。此外，由于预测网络预测*未来*值，在搜索路径上收集的奖励被收集起来并添加到折扣叶节点值中，因为它被传播回树。
+请注意 Value 值根据不同的玩家来翻转的（如果叶节点对于应该玩的玩家是正数，那么对于另一个玩家来说它将是负数）。此外，由于预测网络预测*未来*值，在搜索路径上收集的奖励被收集起来并添加到折扣叶节点值中，因为它被传播回树。
 
 请记住，由于这些是预测的奖励，而不是来自环境的实际奖励，因此即使对于像国际象棋这样的游戏来说，奖励的收集也是相关的，在这种游戏中，真正的奖励只在游戏结束时才会颁发。MuZero 正在玩自己想象的游戏，其中可能包括临时奖励，即使它所模仿的游戏没有。
 
 这样就完成了一次MCTS过程的模拟。
 
-通过树后`num_simulations`，进程停止，并根据访问根的每个子节点的次数选择一个动作。
+在经过`num_simulations`的模拟之后，进程停止，并根据访问根的每个子节点的次数选择一个动作
 
 ```python
 def select_action(config: MuZeroConfig, num_moves: int, node: Node,
@@ -439,7 +429,7 @@ def visit_softmax_temperature(num_moves, training_steps):
 
 ### 训练（train_network）
 
-原始入口函数的最后一行启动了`train_network`使用重放缓冲区中的数据持续训练神经网络的过程。
+原始入口函数的最后一行启动了`train_network`使用Replay Buffer中的数据持续训练神经网络的过程。
 
 ```python
 def train_network(config: MuZeroConfig, storage: SharedStorage,
@@ -459,13 +449,13 @@ def train_network(config: MuZeroConfig, storage: SharedStorage,
 
 它首先创建一个新`Network`对象（存储 MuZero 的三个神经网络的随机初始化实例）并根据已完成的训练步骤数将学习率设置为衰减。我们还创建了梯度下降优化器，它将计算每个训练步骤中权重更新的幅度和方向。
 
-该函数的最后一部分只是循环`training_steps`（在论文中为 1,000,000，对于国际象棋）。在每一步，它都会从重放缓冲区中采样一批位置，并使用它们来更新网络，`checkpoint_interval`（=1000）将其保存到存储中。
+该函数的最后一部分只是循环`training_steps`（在论文中为 1,000,000，对于国际象棋）。在每一步，它都会从Replay Buffer中采样一批位置，并使用它们来更新网络，`checkpoint_interval`（=1000）将其保存到存储中。
 
 因此，我们需要讨论两个最后的部分——MuZero 如何创建一批训练数据，以及它如何使用它来更新三个神经网络的权重。
 
 ### 创建训练批次 (replay_buffer.sample_batch)
 
-ReplayBuffer 类包含一个`sample_batch`从缓冲区中抽取一批观察值的方法：
+ReplayBuffer 类包含一个`sample_batch`从Replay Buffer中抽取一批观察值的方法：
 
 ```python
 class ReplayBuffer(object):
@@ -484,7 +474,7 @@ class ReplayBuffer(object):
     ...
 ```
 
-国际象棋的 MuZero默认`batch_size`为 2048。此局数是从缓冲区中选择的，并从每个局中选择一个位置。
+国际象棋的 MuZero默认`batch_size`为 2048。此局数是从Replay Buffer中选择的，并从每个局中选择一个位置。
 
 单个`batch`是元组列表，其中每个元组由三个元素组成：
 
@@ -681,3 +671,14 @@ AlphaZero 已经被认为是迄今为止 AI 最伟大的成就之一，它在一
 ![graph](https://github.com/werner-duvaud/muzero-general/raw/master/docs/how-it-works-werner-duvaud.png)
 
 Here is the diagram of the muzero network applied to the Atari game: ![MuZero network summary](https://github.com/werner-duvaud/muzero-general/raw/master/docs/muzero-network-werner-duvaud.png)
+
+## 延伸阅读
+
+要了解技术部分，我们推荐以下文章。
+
+- [Muzero](https://arxiv.org/abs/1911.08265)
+- [Alpha Zero](https://arxiv.org/abs/1712.01815)
+- [Alpha Go](https://www.nature.com/articles/nature16961)
+- [Value prediction networks](https://arxiv.org/abs/1707.03497)
+- [SimPLe](https://arxiv.org/abs/1903.00374)
+- [World Models](https://worldmodels.github.io/)
