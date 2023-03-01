@@ -2,13 +2,15 @@
 
 ## 1. 摘要
 
-大序列模型（Sequence Model），如GPT系列和BERT，在视觉、语言和最近执行的学习任务方面表现出突出的性能和泛化能力。一个自然的后续问题是如何将多智能体决策抽象为一个Sequence Model问题，并从Sequence Models的蓬勃发展中获益。在本文中，我们介绍了一种名为  Multi-Agent Transformer (MAT)  的新架构，该架构可以有效地将协作的多智能体强化学习问题（MARL）转换为Sequence Model问题，其中的任务是将智能体的观测序列映射到智能体的最佳动作序列。我们的目标是在MARL和Sequence Models之间建立桥梁，以便为MARL释放现代sequence models的建模能力。MAT的核心是编码器-解码器体系结构，该体系结构利用多智能体优势分解理论将联合策略搜索问题转化为顺序决策过程；这使得多智能体问题的时间复杂度仅为线性，最重要的是，赋予MAT单调的性能改进保证。与以前的技术（如  Decision Transformer）只适合预先收集离线数据不同，MAT以一种基于策略的方式通过在线试错从环境中进行训练。为了验证MAT，我们在StarCraftII、Multi-智能体 MuJoCo、灵巧手操作和Google Research足球基准上进行了大量实验。结果表明，与强基线（包括MAPPO和HAPPO）相比，MAT具有更好的性能和数据效率。此外，我们证明了MAT是一个优秀的 few-short 学习器，无论智能体数量的变化如何。
+大序列模型（Sequence Model），如GPT系列和BERT，在视觉、语言和最近强化学习任务方面表现出突出的性能和泛化能力。一个自然的后续问题是如何将多智能体决策抽象为一个Sequence Model问题，并从Sequence Models的蓬勃发展中获益。在本文中，我们介绍了一个名为  Multi-Agent Transformer (MAT)  的新架构，该架构可以有效地将协作的多智能体强化学习问题（MARL）转换为Sequence Model问题，其中的任务是将智能体的观测序列映射到智能体的最佳动作序列。我们的目标是在MARL和Sequence Models之间建立桥梁，以便为MARL释放现代sequence models的建模能力。MAT的核心是编码器-解码器体系结构，该体系结构利用多智能体优势分解理论将联合策略搜索问题转化为顺序决策过程；这使得多智能体问题的时间复杂度降低为线性，最重要的是，赋予MAT单调的性能改进保证。与以前的技术（如  Decision Transformer）只适合预先收集离线数据不同，MAT以一种基于策略的方式通过在线试错从环境中进行训练。
 
-本文旨在利用Transformer来解决MARL问题，通过将一般的MA决策问题通过多智能体优势分解定理转化为序列决策问题，大大降低了策略搜索的复杂度并且证明了这种序列决策下联合优势函数的单调提升特性，同时Transformer的引入提升了计算效率。实验结果表明本文提出的MA Transformer方法在多个合作式MARL Benchmark上超越了现有的SOTA方法并具备良好的泛化性。
+为了验证MAT，我们在StarCraftII、Multi-agent MuJoCo、灵巧手操作和Google Research足球基准上进行了大量实验。结果表明，与强基线（包括MAPPO和HAPPO）相比，MAT具有更好的性能和数据效率。此外，我们证明了无论智能体数量如何变化, MAT都是一个优秀的 few-short 学习器。
+
+本文旨在利用Transformer来解决MARL问题，通过将一般的MA决策问题通过多智能体优势分解定理转化为序列决策问题，大大降低了策略搜索的复杂度并且证明了这种序列决策下联合优势函数的单调提升特性，同时Transformer 的引入提升了计算效率。实验结果表明本文提出的MA Transformer方法在多个合作式MARL Benchmark上超越了现有的SOTA方法并具备良好的泛化性。
 
 ## 2. 引言
 
-多智能体强化学习（MARL）是一个具有挑战性的问题，因为它的困难不仅在于确定每个个体智能体的策略改进方向，还在于将智能体的策略更新联合起来，这对整个团队都是有益的。最近，由于引入了集中训练分散执行的架构（CTDE）[10]，多智能体学习中的这种困难得到了缓解，它允许智能体在训练阶段访问全局信息和对手的动作。该框架能够直接扩展单智能体算法的方法，例如，用COMA 替换策略梯度 (PG) 估计，多智能体 PG（MAPG），MADDPG 将确定性策略梯度扩展到具有集中式批评家的多智能体设置中。QMIX 利用深度 Qnetworks 实现去中心化智能体，并引入集中式混合Q 值分解网络。 MAPPO 赋予所有智能体同一套参数，然后通过信赖域方法进行训练 [46]。然而，这些方法不能涵盖多智能体交互的整体复杂性；事实上，其中一些被证明在最简单的合作任务上失败了[15]。
+多智能体强化学习（MARL）是一个具有挑战性的问题，因为它的困难不仅在于确定每个个体智能体的策略改进方向，还在于将智能体的策略更新联合起来，这对整个团队都是有益的。最近，由于引入了集中训练分散执行的架构（CTDE）[10]，多智能体学习中的这种困难得到了缓解，它允许智能体在训练阶段访问全局信息和对手的动作。该框架能够直接扩展单智能体算法的方法，例如，COMA 使用多智能体 PG（MAPG）替换策略梯度 (PG) 估计，MADDPG 将确定性策略梯度扩展到具有集中式Critic的多智能体设置中。QMIX 利用深度 Qnetworks 实现去中心化智能体，并引入集中式混合Q 值分解网络。 MAPPO 赋予所有智能体同一套参数，然后通过信赖域方法进行训练 [46]。然而，这些方法不能涵盖多智能体交互的整体复杂性；事实上，其中一些被证明在最简单的合作任务上失败了[15]。
 
 为了解决这个问题，提出了多智能体优势分解理论[14，定理1]，该理论捕捉了不同智能体对回报的贡献，并通过顺序决策过程提供了合作出现背后的直觉方案。在此基础上，导出了HATRPO和HAPPO算法[14]，由于分解定理和顺序更新方案，这些算法为MARL建立了最先进的新方法。然而，他们的局限性在于智能体的策略不知道开发合作的目的，仍然依赖于精心设计的最大化目标。理想情况下，一个智能体团队应该意识到其设计的训练的联合性，从而遵循一个整体有效的范式，这是一个尚未提出的理想解决方案。
 
@@ -42,11 +44,11 @@ Sequence Model（如Transformer）已经在NLP和CV等领域取得了非常好�
 
 合作 MARL 问题通常由马尔可夫游戏建模 $\langle\mathcal{N}, \mathcal{O}, \mathcal{A}, R, P, \gamma\rangle[19] . \mathcal{N}=$ $\{1, \ldots, n\}$ 是智能体集合 ,
 
-- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$   是局部观测空间的乘积，即联合观测空间，
-- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ 是 Agent 动作的乘积空间，即联合动作空间，
-- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ 是联合奖励函数，
-- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
-- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$是一个“联合”观测) 并采取动作 $a_{t}^{i}$ 根据其策略 $\pi^{i}$, 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
+- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$ : 是局部观测空间的乘积，即联合观测空间，
+- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ : 是 Agent 动作的乘积空间，即联合动作空间，
+- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ : 是联合奖励函数，
+- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  :   是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
+- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$) 是一个“联合”观测 并根据其策略 $\pi^{i}$,采取动作 $a_{t}^{i}$. 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
 - 在每个时间步，所有智能体根据他们的观测同时采取动作没有顺序依赖性。转移Kernel $P$ 和联合策略导致（不适当的）边际观测分布  $\rho_{\boldsymbol{\pi}}(\cdot) \triangleq \sum_{t=0}^{\infty} \gamma^{t} \operatorname{Pr}\left(\mathbf{o}_{t}=\boldsymbol{o} \mid \boldsymbol{\pi}\right)$.
 - 在每个时间步结束时，整个团队获得共同奖励 $R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$ 并观测 $\mathbf{o}_{t+1}$, 其概率分布为 $P\left(\cdot \mid \mathbf{o}_{t}, \mathbf{a}_{t}\right)$.   遵循这个过程，Agents 获得累积折扣回报  $R^{\gamma} \triangleq \sum_{t=0}^{\infty} \gamma^{t} R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$
 
@@ -61,7 +63,7 @@ V_{\boldsymbol{\pi}}(\boldsymbol{o}) \triangleq \mathbb{E}_{\mathbf{a}_{0} \sim 
 \end{gathered}
 $$
 
-联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 为了 $m, h \leq n$,我们定义多智能体观测值函数：
+联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 对于 $m, h \leq n$,我们定义多智能体观测值函数：
 $$
 Q_{\boldsymbol{\pi}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m}}\right) \triangleq \mathbb{E}\left[R^{\gamma} \mid \mathbf{o}_{0}^{i_{1: n}}=\boldsymbol{o}, \mathbf{a}_{0}^{i_{1: m}}=\boldsymbol{a}^{i_{1: m}}\right],
 $$
@@ -93,7 +95,7 @@ $$
 \sum_{i=1}^{n} \mathbb{E}_{\mathbf{o} \sim \rho_{\boldsymbol{\pi}_{\theta_{k}}}, \mathbf{a} \sim \boldsymbol{\pi}_{\theta_{k}}}\left[\min \left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)} A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a}), \operatorname{clip}\left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}, 1 \pm \epsilon\right) A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a})\right)\right]
 $$
 
-剪辑运算符剪辑输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
+裁剪运算符裁剪输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
 
 HAPPO[15]是目前充分利用定理（1）实现的SOTA算法之一， 具有单调改进保证的多智能体信赖域学习。在更新期间，智能体随机选择一个排列 $i_{1: n}$ at random, 然后按照排列中的顺序，每一个智能体  $i_{m}$ 挑选 $\pi_{\text {new }}^{i_{m}}=\pi^{i_{m}}$ 最大化的目标：
 $$
@@ -115,7 +117,7 @@ Transformer [40] 最初是为机器翻译任务设计的（例如，输入英文
 
 ## 4. MARL和序列模型之间惊人的联系
 
-为了建立MARL和序列模型之间的联系，定理（1）提供了从SM角度理解MARL问题的新角度。如果每个智能体都知道其前辈具有任意决策顺序动作，则智能体的局部优势之和$A_{\boldsymbol{\pi}}^{i_{j}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m-1}}, a^{i_{m}}\right)$ 将完全等于联合优势$A_{\pi: n}^{i_{1: n}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: n}}\right)$。这种跨智能体的有序决策设置简化了其联合策略的更新，其中最大化每个智能体自身的局部优势相当于最大化联合优势。因此，在策略更新期间，智能体不再需要担心来自其他智能体的干扰；局部优势函数已经捕捉到了智能体之间的关系。定理（1）揭示的这一特性启发我们为MARL问题提出一种多智能体顺序决策范式，如图（1）所示，其中我们以任意决策顺序分配智能体（每个迭代一个排列）；每个智能体都可以访问其前辈的动作，并在此基础上做出最优决策。这种顺序范式促使我们利用顺序模型，例如Transformer，来明确捕获定理（1）中描述的智能体之间的顺序关系。
+为了建立MARL和序列模型之间的联系，定理（1）提供了从SM角度理解MARL问题的新角度。如果每个智能体都知道其前辈具有任意决策顺序动作，则智能体的局部优势之和$A_{\boldsymbol{\pi}}^{i_{j}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m-1}}, a^{i_{m}}\right)$ 将完全等于联合优势$A_{\pi: n}^{i_{1: n}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: n}}\right)$。这种跨智能体的有序决策设置简化了其联合策略的更新，其中最大化每个智能体自身的局部优势相当于最大化联合优势。因此，在策略更新期间，智能体不再需要担心来自其他智能体的干扰；局部优势函数已经捕捉到了智能体之间的关系。定理（1）揭示的这一特性启发我们为MARL问题提出一种多智能体顺序决策范式，如图（1）所示，其中我们以任意决策顺序分配智能体（每个迭代一个排列）；每个智能体都可以访问其前辈的动作，并在此基础上做出最优决策。这种顺序范式促使我们利用顺序模型，例如Transformer，来明确捕获定理（1）中描述的智能体之间的顺序关系。
 
 在定理（1）的支持下，序列建模减少了MARL问题随着智能体数量从乘法增加到加法的复杂性增长，从而呈现线性复杂性。借助Transformer体系结构，我们可以用统一的网络对异构智能体的策略进行建模，但可以用不同的位置区分对待每个智能体，从而确保高采样效率，同时避免MAPPO面临的指数级恶化结果。此外，为了保证联合策略的单调改进，HAPPO必须在训练过程中更新每个策略，通过利用先前的更新结果$\pi^{i_{1}}, \ldots, \pi^{i_{m-1}}$  改善 $\pi^{i_{m}}$，这对于大型智能体的计算效率至关重要。
 
@@ -129,7 +131,7 @@ Transformer [40] 最初是为机器翻译任务设计的（例如，输入英文
 
 为了实现 MARL 的序列建模范式，我们的解决方案是 Multi-Agent Transformer。应用 Transformer 架构的想法来自于映射在智能体观测序列的输入之间$\left(o^{i_{1}}, \ldots, o^{i_{n}}\right)$ 以及智能体动作的输出顺序$\left(a^{i_{1}}, \ldots, a^{i_{n}}\right)$ 是类似于机器翻译的序列建模任务。正如定理1所描述的那样， 动作 $a^{i_{m}}$ 取决于 之前所有智能体的决定 $\boldsymbol{a}^{i_{1: m-1}}$。因此，我们的 MAT图（2）中包含一个编码器，它学习联合观测的表示，以及一个解码器以自动回归的方式为每个单独的智能体输出动作。
 
-编码器，其参数我们用$\phi$ 表示， 在任意顺序采取一系列观测 $\left(o^{i_{1}}, \ldots, o^{i_{n}}\right)$ 并通过几个计算块传递它们。每个这样的块由一个自注意机制和多层感知器（MLP），以及防止随着深度的增加梯度消失和网络退化的残差块组成。我们表示输出将观测结果编码为$\left(\hat{\boldsymbol{o}}^{i_{1}}, \ldots, \hat{\boldsymbol{o}}^{i_{n}}\right)$, 它不仅编码智能体的信息 $\left(i_{1}, \ldots, i_{n}\right)$ 还有代表智能体交互的高级相互关系。为了学习表达表示，在训练阶段，我们让编码器逼近值函数，其目标是通过以下方式最小化经验贝尔曼误差 ：
+编码器，其参数我们用$\phi$ 表示， 在任意顺序采取一系列观测 $\left(o^{i_{1}}, \ldots, o^{i_{n}}\right)$ 并通过几个计算块传递它们。每个这样的块由一个自注意机制和多层感知器（MLP），以及防止随着深度的增加梯度消失和网络退化的残差块组成。我们表示输出将观测结果编码为$\left(\hat{\boldsymbol{o}}^{i_{1}}, \ldots, \hat{\boldsymbol{o}}^{i_{n}}\right)$, 它不仅编码智能体的信息 $\left(i_{1}, \ldots, i_{n}\right)$ 还有代表智能体交互的高级相互关系。为了学习表达表示，在训练阶段，我们让编码器逼近值函数，其目标是通过以下方式最小化经验贝尔曼误差 ：
 $$
 L_{\text {Encoder }}(\phi)=\frac{1}{T n} \sum_{m=1}^{n} \sum_{t=0}^{T-1}\left[R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)+\gamma V_{\bar{\phi}}\left(\hat{\mathbf{o}}_{t+1}^{i_{m}}\right)-V_{\phi}\left(\hat{\mathbf{o}}_{t}^{i_{m}}\right)\right]^{2}
 $$

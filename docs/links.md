@@ -12,6 +12,7 @@
 - [Stability AI](https://platform.stability.ai/) | [Github](https://github.com/stability-ai)
 - [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1)
 - [Stanford AI](https://ai.stanford.edu/blog/)
+- [Notes on AI](https://notesonai.com/Notes+on+AI)
 
 ### 国内机构
 - [统计之都](https://cosx.org/)
