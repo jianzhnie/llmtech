@@ -42,11 +42,11 @@ Sequence Model（如Transformer）已经在NLP和CV等领域取得了非常好�
 
 合作 MARL 问题通常由马尔可夫游戏建模 $\langle\mathcal{N}, \mathcal{O}, \mathcal{A}, R, P, \gamma\rangle[19] . \mathcal{N}=$ $\{1, \ldots, n\}$ 是智能体集合 ,
 
-- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$   是局部观测空间的乘积，即联合观测空间，
-- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ 是 Agent 动作的乘积空间，即联合动作空间，
-- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ 是联合奖励函数，
-- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
-- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$是一个“联合”观测) 并采取动作 $a_{t}^{i}$ 根据其策略 $\pi^{i}$, 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
+- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$ : 是局部观测空间的乘积，即联合观测空间，
+- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ : 是 Agent 动作的乘积空间，即联合动作空间，
+- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ : 是联合奖励函数，
+- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  :   是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
+- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$) 是一个“联合”观测 并根据其策略 $\pi^{i}$,采取动作 $a_{t}^{i}$. 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
 - 在每个时间步，所有智能体根据他们的观测同时采取动作没有顺序依赖性。转移Kernel $P$ 和联合策略导致（不适当的）边际观测分布  $\rho_{\boldsymbol{\pi}}(\cdot) \triangleq \sum_{t=0}^{\infty} \gamma^{t} \operatorname{Pr}\left(\mathbf{o}_{t}=\boldsymbol{o} \mid \boldsymbol{\pi}\right)$.
 - 在每个时间步结束时，整个团队获得共同奖励 $R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$ 并观测 $\mathbf{o}_{t+1}$, 其概率分布为 $P\left(\cdot \mid \mathbf{o}_{t}, \mathbf{a}_{t}\right)$.   遵循这个过程，Agents 获得累积折扣回报  $R^{\gamma} \triangleq \sum_{t=0}^{\infty} \gamma^{t} R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$
 
@@ -61,7 +61,7 @@ V_{\boldsymbol{\pi}}(\boldsymbol{o}) \triangleq \mathbb{E}_{\mathbf{a}_{0} \sim 
 \end{gathered}
 $$
 
-联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 为了 $m, h \leq n$,我们定义多智能体观测值函数：
+联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 对于 $m, h \leq n$,我们定义多智能体观测值函数：
 $$
 Q_{\boldsymbol{\pi}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m}}\right) \triangleq \mathbb{E}\left[R^{\gamma} \mid \mathbf{o}_{0}^{i_{1: n}}=\boldsymbol{o}, \mathbf{a}_{0}^{i_{1: m}}=\boldsymbol{a}^{i_{1: m}}\right],
 $$
@@ -93,7 +93,7 @@ $$
 \sum_{i=1}^{n} \mathbb{E}_{\mathbf{o} \sim \rho_{\boldsymbol{\pi}_{\theta_{k}}}, \mathbf{a} \sim \boldsymbol{\pi}_{\theta_{k}}}\left[\min \left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)} A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a}), \operatorname{clip}\left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}, 1 \pm \epsilon\right) A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a})\right)\right]
 $$
 
-剪辑运算符剪辑输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
+裁剪运算符裁剪输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
 
 HAPPO[15]是目前充分利用定理（1）实现的SOTA算法之一， 具有单调改进保证的多智能体信赖域学习。在更新期间，智能体随机选择一个排列 $i_{1: n}$ at random, 然后按照排列中的顺序，每一个智能体  $i_{m}$ 挑选 $\pi_{\text {new }}^{i_{m}}=\pi^{i_{m}}$ 最大化的目标：
 $$
