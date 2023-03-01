@@ -44,11 +44,11 @@ Sequence Model（如Transformer）已经在NLP和CV等领域取得了非常好�
 
 合作 MARL 问题通常由马尔可夫游戏建模 $\langle\mathcal{N}, \mathcal{O}, \mathcal{A}, R, P, \gamma\rangle[19] . \mathcal{N}=$ $\{1, \ldots, n\}$ 是智能体集合 ,
 
-- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$   是局部观测空间的乘积，即联合观测空间，
-- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ 是 Agent 动作的乘积空间，即联合动作空间，
-- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ 是联合奖励函数，
-- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
-- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$是一个“联合”观测) 并采取动作 $a_{t}^{i}$ 根据其策略 $\pi^{i}$, 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
+- $\mathcal{O}=\prod_{i=1}^{n} \mathcal{O}^{i}$ : 是局部观测空间的乘积，即联合观测空间，
+- $\mathcal{A}=\prod_{i=1}^{n} \mathcal{A}^{i}$ : 是 Agent 动作的乘积空间，即联合动作空间，
+- $R:\mathcal{O} \times \mathcal{A} \rightarrow\left[-R_{\max }, R_{\max }\right]$ : 是联合奖励函数，
+- $P: \mathcal{O} \times \mathcal{A} \times \mathcal{O} \rightarrow \mathbb{R}$  :   是转移概率函数，并且 $\gamma \in[0,1)$ 是折扣因子。
+- 在时间步长 $t \in \mathbb{N}$,  智能体 $i \in \mathcal{N}$ 观测到一个观测$\mathrm{o}_{t}^{i} \in \mathcal{O}^{i(2)}\left(\boldsymbol{o}=\left(o^{1}, \ldots, o^{n}\right)\right.$) 是一个“联合”观测 并根据其策略 $\pi^{i}$,采取动作 $a_{t}^{i}$. 这是智能体 agents' 的联合策略 $\pi$ 的 $i^{\text {th }}$组成部分.
 - 在每个时间步，所有智能体根据他们的观测同时采取动作没有顺序依赖性。转移Kernel $P$ 和联合策略导致（不适当的）边际观测分布  $\rho_{\boldsymbol{\pi}}(\cdot) \triangleq \sum_{t=0}^{\infty} \gamma^{t} \operatorname{Pr}\left(\mathbf{o}_{t}=\boldsymbol{o} \mid \boldsymbol{\pi}\right)$.
 - 在每个时间步结束时，整个团队获得共同奖励 $R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$ 并观测 $\mathbf{o}_{t+1}$, 其概率分布为 $P\left(\cdot \mid \mathbf{o}_{t}, \mathbf{a}_{t}\right)$.   遵循这个过程，Agents 获得累积折扣回报  $R^{\gamma} \triangleq \sum_{t=0}^{\infty} \gamma^{t} R\left(\mathbf{o}_{t}, \mathbf{a}_{t}\right)$
 
@@ -63,7 +63,7 @@ V_{\boldsymbol{\pi}}(\boldsymbol{o}) \triangleq \mathbb{E}_{\mathbf{a}_{0} \sim 
 \end{gathered}
 $$
 
-联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 为了 $m, h \leq n$,我们定义多智能体观测值函数：
+联合目标导致了在收到共享奖励后与信用分配问题相关的困难，单个智能体无法推断出他们自己的贡献团队的成败[4]。事实上，应用传统的 RL 方法，简单地使用上述价值函数会导致训练障碍，例如多智能体方差的增长策略梯度 (MAPG) 估计 [17]。因此，为了解决这些问题，局部价值函数的概念 [21]和反事实基线 [11] 方法被提出。在本文中，我们使用最一般的这种概念 - 多智能体观测值函数 [15]。也就是说，对于任意不相交的智能体的有序子集 $i_{1: m}=\left\{i_{1}, \ldots, i_{m}\right\}$ 和 $j_{1: h}=\left\{j_{1}, \ldots, j_{h}\right\}$, 对于 $m, h \leq n$,我们定义多智能体观测值函数：
 $$
 Q_{\boldsymbol{\pi}}\left(\boldsymbol{o}, \boldsymbol{a}^{i_{1: m}}\right) \triangleq \mathbb{E}\left[R^{\gamma} \mid \mathbf{o}_{0}^{i_{1: n}}=\boldsymbol{o}, \mathbf{a}_{0}^{i_{1: m}}=\boldsymbol{a}^{i_{1: m}}\right],
 $$
@@ -95,7 +95,7 @@ $$
 \sum_{i=1}^{n} \mathbb{E}_{\mathbf{o} \sim \rho_{\boldsymbol{\pi}_{\theta_{k}}}, \mathbf{a} \sim \boldsymbol{\pi}_{\theta_{k}}}\left[\min \left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)} A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a}), \operatorname{clip}\left(\frac{\pi_{\theta}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}{\pi_{\theta_{k}}\left(\mathrm{a}^{i} \mid \mathbf{o}\right)}, 1 \pm \epsilon\right) A_{\boldsymbol{\pi}_{\theta_{k}}}(\mathbf{o}, \mathbf{a})\right)\right]
 $$
 
-剪辑运算符剪辑输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
+裁剪运算符裁剪输入值（如有必要），使其保持在区间$[1-\epsilon, 1+\epsilon]$内。但是，强制参数共享等同于施加约束 $\theta^{i}=\theta^{j}, \forall i, j \in \mathcal{N}$ 在联合策略空间，这可能导致指数级恶化的次优结果 [15]。这个激发了异构智能体信赖域方法的更有原则的发展，例如 HAPPO。
 
 HAPPO[15]是目前充分利用定理（1）实现的SOTA算法之一， 具有单调改进保证的多智能体信赖域学习。在更新期间，智能体随机选择一个排列 $i_{1: n}$ at random, 然后按照排列中的顺序，每一个智能体  $i_{m}$ 挑选 $\pi_{\text {new }}^{i_{m}}=\pi^{i_{m}}$ 最大化的目标：
 $$
@@ -108,7 +108,8 @@ $$
 
 Transformer [40] 最初是为机器翻译任务设计的（例如，输入英文，输出法语）。它维护一个编码器-解码器结构，其中编码器映射一个输入序列标记到潜在表示，然后解码器生成一系列所需的输出一种自回归方式，其中在推理的每个步骤中，Transformer 都采用之前的所有生成的Token作为输入。Transformer 中最重要的组件之一是缩放点积注意力，捕捉输入序列的相互关系。注意力函数写成$\operatorname{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V})=\operatorname{softmax}\left(\frac{\mathbf{Q K}}{\sqrt{d_{k}}}\right) \mathbf{V}$, 其中 $\mathbf{Q}, \mathbf{K}, \mathbf{V}$ 对应于向量可以在训练期间学习的查询、键和值的集合。以及$d_{k}$代表$\mathbf{Q}$ 和 $\mathbf{K}$ 的维度。自注意是指 $\mathbf{Q}, \mathbf{K}, \mathbf{V}$ 共享同一组参数。
 
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-5.jpg?height=556&width=1230&top_left_y=229&top_left_x=446)
+<div align=center><img src="deep-rl/papers/assets/mat1.png" style="zoom:80%;" /></div>
+
 
 图 1：传统的多智能体学习范式（左），其中所有智能体同时采取行动，多智能体顺序决策范式（右），其中智能体通过以下方式采取行动一个连续的顺序，每个智能体人都负责前面智能体人的决定，如红色箭头所示。
 
@@ -122,7 +123,7 @@ Transformer [40] 最初是为机器翻译任务设计的（例如，输入英文
 
 相比之下，Transformer架构允许并行训练序列策略，类似于机器翻译任务，这显著提高了训练速度，并使其适用于大量智能体。此外，在智能体数量和类型不同的情况下，SM可以通过其对具有灵活序列长度的序列建模的能力将它们合并到一个统一的解决方案中，而不是将不同的智能体数量视为不同的任务。为了实现上述思想，我们将在下一节介绍一种实用的体系结构，名为Multi-agent-Transformer.
 
-![](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-6.jpg?height=705&width=1394&top_left_y=236&top_left_x=360)
+<div align=center><img src="deep-rl/papers/assets/mat2.png" style="zoom:80%;" /></div>
 
 图 2：MAT 的编码器-解码器架构。在每个时间步，编码器接收一系列agents 的观测并将它们编码成一系列潜在表示，然后传递到解码器。解码器以顺序和自回归的方式生成每个智能体的最佳动作。掩码注意力块确保智能体在训练期间只能访问其前面的智能体的操作。我们在附录 A 中列出了 MAT 的完整伪代码，并在中列出了显示 MAT 动态数据流的视频 https://sites.google.com/view/multi-agent-transformer。
 
@@ -151,33 +152,6 @@ $$
 HAPPO 关于时间复杂度。最后，为了确保限制联合策略是这样的智能体被激励改变其策略（纳什均衡），MAT 需要排列每次迭代更新的顺序，这与 HAPPO [15，定理3]。
 
 
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-7.jpg?height=323&width=350&top_left_y=234&top_left_x=367)
-
-(a) 半猎豹
-
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-7.jpg?height=319&width=346&top_left_y=239&top_left_x=716)
-
-(b) CatchOver2Underarm
-
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-7.jpg?height=317&width=328&top_left_y=237&top_left_x=1061)
-
-(c) 向内开门
-
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-7.jpg?height=317&width=334&top_left_y=237&top_left_x=1405)
-
-(d) DoorCloseOutward
-
-图 3：Bi-DexHands 和 HalfCheetah 环境的演示。
-
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-7.jpg?height=272&width=1352&top_left_y=688&top_left_x=379)
-
-图 4：Multi-Agent MuJoCo 和 Bi-DexHands 基准的性能比较。
-
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-8.jpg?height=626&width=1352&top_left_y=332&top_left_x=381)
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-8.jpg?height=342&width=1306&top_left_y=997&top_left_x=386)
-
-图 5：Google Research Football 任务的性能比较，从左到右有 2-4 个智能体分别对。
-
 ## 6. 实验和结果
 
 MAT 为协作 MARL 问题提供了一种新的解决方案范例。MAT 的关键见解是受定理（1）启发的顺序更新方案，以及编码器-解码器体系结构，它为序列建模视角提供了高效的实现。重要的是，MAT继承了单调改进保证，agent的策略可以学习在训练期间并行。我们坚信 MAT 将成为 MARL 研究的游戏规则改变者。
@@ -185,7 +159,6 @@ MAT 为协作 MARL 问题提供了一种新的解决方案范例。MAT 的关键
 为了评估 MAT 是否符合我们的期望，我们在星际争霸 II 多智能体挑战赛上测试了 MAT(SMAC) 基准测试 [31]，其中具有参数共享 [46] 的 MAPPO 显示出卓越的性能，和 Multi-Agent MuJoCo 基准测试 [7]，其中 HAPPO [15] 显示了当前最先进的技术表现。SMAC 和 MuJoCo 环境是 MARL 领域的常见基准。在除此之外，我们还在双手灵巧手操作 (Bi-DexHands) [6] 上测试了 MAT其中提供了具有挑战性的双手操作任务列表（见图（3）），以及谷歌Research Football [18] 以足球比赛中的一系列合作场景为基准。
 
 我们从他们的原始论文中应用相同的基线算法的超参数，以确保他们最佳性能，并为我们的方法采用相同的超参数调整过程，并提供详细信息在附录 B 中。为了确保与 CTDE 方法的公平比较，我们还引入了 CTDE 变体MAT 称为 MAT-Dec，它基本上为每个人采用完全去中心化的参与者智能体（而不是使用 MAT 中提出的解码器），同时保持编码器固定。
-![img](https://cdn.mathpix.com/cropped/2023_01_07_36e5e66a3b4c5371550eg-9.jpg?height=684&width=1306&top_left_y=250&top_left_x=390)
 
 图 6：使用图 (3a) 所示的不同禁用关节执行 HalfCheetah 任务的性能。
 
