@@ -15,7 +15,7 @@
 
 ## AI 创业公司
 
-- [Jasper](https://www.jasper.ai/)     | 生成广告
+- [Jasper](https://www.jasper.ai/)     | 生成广告
 - [Surgehq](https://www.surgehq.ai/blog)  | 数据标注
 - 
 
@@ -29,6 +29,7 @@
 - [科学空间](https://spaces.ac.cn/)
 - [Lilian](https://lilianweng.github.io/)
 - [Jay Alammar](https://jalammar.github.io/)
+- [Nathan Lambert ](https://robotic.substack.com/)
 - [int8](https://int8.io/)
 - [Yihui Xie](https://yihui.org/)
 - [Chiyuan Zhang](https://pluskid.org/)
