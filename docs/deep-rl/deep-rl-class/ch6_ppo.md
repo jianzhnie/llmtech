@@ -23,7 +23,7 @@
 
 RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：https://jonathan-hui.medium.com/rl-proximal-policy-optimization-ppo-explained-77f014ec3f12
 
-**所以对于 PPO，我们保守地更新策略**。为此，我们需要使用当前策略与先前策略之间的比率计算来衡量当前策略与先前策略相比发生了多大变化。我们将这个比率限制在一个范围内 $[1 - \epsilon, 1 + \epsilon]$，这意味着我们 **移除了当前策略与旧策略相去甚远的策略（这即是近端策略术语的含义）。**
+**所以对于 PPO，我们保守地更新策略**。为此，我们需要使用当前策略与先前策略之间的比率计算来衡量当前策略与先前策略相比发生了多大变化。我们将这个比率限制在 $[1 - \epsilon, 1 + \epsilon]$范围内，这意味着我们 **移除了当前策略与旧策略相去甚远的策略（这即是近端策略术语的含义）。**
 
 ## 引入 Clipped 代理目标函数
 
@@ -56,7 +56,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ![比率](https://huggingface.co/blog/assets/93_deep_rl_ppo/ratio2.jpg)
 
-这是当前的策略在 $s_t$ 下采取动作$a_t$的概率除以以前的策略的概率。
+这是当前的策略在 $s_t$ 下采取动作$a_t$的概率除以以前的策略的概率。
 
 正如我们所见，$r_t(θ)$ 表示当前策略和旧策略之间的概率比：
 
@@ -73,7 +73,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped2.jpg)
 
-                                                                    [近端策略优化算法](https://arxiv.org/pdf/1707.06347.pdf)
+> 近端策略优化算法
 
 然而，在没有约束的情况下，如果在我们当前的策略中采取的动作比在我们以前的策略中更有可能采取动作， **这将导致重大的策略梯度步长** ，因此导致 **过度的策略更新。**
 
@@ -94,7 +94,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 这个裁剪部分是PPO 的一个实现版本，其中 rt(theta) 被裁剪在 $[1 - \epsilon, 1 + \epsilon]$.
 
-使用 Clipped Surrogate Objective 函数，我们有两个概率比，一个未被剪切，一个被剪切在（介于 $[1 - \epsilon, 1 + \epsilon]$ 的范围内,  $ \epsilon $ 是一个超参数，可以帮助我们定义这个裁剪范围（在论文中 $\epsilon = 0.2$ ).
+使用 Clipped Surrogate Objective 函数，我们有两个概率比，一个未被裁剪，一个被裁剪在（介于 $[1 - \epsilon, 1 + \epsilon]$ 的范围内,  $ \epsilon $ 是一个超参数，可以帮助我们定义这个裁剪范围（在论文中 $\epsilon = 0.2$ ).
 
 然后，我们采用裁剪目标和非裁剪目标中的最小值， **因此最终目标是未裁剪目标的下限（悲观边界）。**
 
@@ -112,7 +112,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 在情况 1 和 2 中，**剪裁不适用，因为比率在范围之间** $[1 - \epsilon, 1 + \epsilon]$
 
-在情况 1 中，我们有一个正的优势(A>0)：该 **动作优于** 该状态下所有动作的平均值。因此，我们应该鼓励我们当前的策略，以增加在该 $s_t$ 采取该动作的可能性。
+在情况 1 中，我们有一个正的优势(A>0)：该**动作优于**该状态下所有动作的平均值。因此，我们应该鼓励我们当前的策略，以增加在该 $s_t$ 采取该动作的可能性。
 
 由于比率介于区间之间， **我们可以增加Agent策略在该状态下采取该动作的可能性。**
 
@@ -153,10 +153,32 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 **你可能想知道，为什么当最小值是裁剪比率时，梯度为 0。**当裁剪比率时，这种情况下的导数将不是 $r_t(\theta) * A_t $但其中任何一个$(1 - \epsilon)* A_t $或 $(1 + \epsilon)* A_t $ 的导数都为 0。
 
-总而言之，由于这个被裁剪的替代目标， **我们限制了当前策略与旧策略的差异范围。** 因为我们消除了概率比移出区间的动机，因为裁剪对梯度有影响。如果比率 $>1 + ε $ 或 $<1 - \epsilon $梯度将等于 0。
+总而言之，由于这个被裁剪的替代目标， **我们限制了当前策略与旧策略的差异范围。** 因为我们消除了概率比移出区间的动机，因为裁剪对梯度有影响。如果比率 $>1 + ε $ 或 $<1 - \epsilon $ 梯度将等于 0。
 
 PPO Actor-Critic 风格的最终 Clipped Surrogate Objective Loss 看起来像这样，它是 Clipped Surrogate Objective 函数、Value Loss Function 和 Entropy bonus 的组合：
 
 ![PPO物镜](https://huggingface.co/blog/assets/93_deep_rl_ppo/ppo-objective.jpg)
 
 那是相当复杂的。花点时间通过查看表格和图表来了解这些情况。**你必须明白为什么这是有道理的。**如果您想深入了解，最好的资源是[Daniel Bick 撰写的文章 Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization，尤其是第 3.4 部分](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)。
+
+## 补充阅读
+
+如果您想深入了解，这些是**可选读物。**
+
+### PPO Explained
+
+- [Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization by Daniel Bick](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
+- [What is the way to understand Proximal Policy Optimization Algorithm in RL?](https://stackoverflow.com/questions/46422845/what-is-the-way-to-understand-proximal-policy-optimization-algorithm-in-rl)
+- [Foundations of Deep RL Series, L4 TRPO and PPO by Pieter Abbeel](https://youtu.be/KjWF8VIMGiY)
+- [OpenAI PPO Blogpost](https://openai.com/blog/openai-baselines-ppo/)
+- [Spinning Up RL PPO](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+- [Paper Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)
+
+### PPO Implementation details
+
+- [The 37 Implementation Details of Proximal Policy Optimization](https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/)
+- [Part 1 of 3 — Proximal Policy Optimization Implementation: 11 Core Implementation Details](https://www.youtube.com/watch?v=MEt6rrxH8W4)
+
+### Importance Sampling
+
+- [Importance Sampling Explained](https://youtu.be/C3p2wI4RAi8)
