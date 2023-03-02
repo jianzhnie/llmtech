@@ -1,4 +1,5 @@
 - [入门教程](deep-rl/deep-rl-class/README.md)
+  
   - [第一章：深度强化学习简介](deep-rl/deep-rl-class/ch1_introduction.md)
   - [第二章：Q-Learning](deep-rl/deep-rl-class/ch2_q-learning.md)
   - [第三章：Deep Q-Learning](deep-rl/deep-rl-class/ch3_dqn.md)
@@ -7,7 +8,9 @@
   - [第六章：近端策略优化 (PPO)](deep-rl/deep-rl-class/ch6_ppo.md)
   - [第七章：Decision Transformer](deep-rl/deep-rl-class/ch7_decision-transformer.md)
   - [第八章：Multi-Agent RL](deep-rl/deep-rl-class/ch8_marl.md)
-  - [第九章：RLHF](deep-rl/papers/RLHF.md)
+  - [第九章：强化学习前沿主题](deep-rl/deep-rl-class/ch9_advanced.md)
+  - [第十章：人类反馈的强化学习](deep-rl/papers/RLHF.md)
+
 
 - [进阶教程](deep-rl/algorithms/README.md)
   - [Policy gradient theorem的证明](deep-rl/algorithms/ch1_supp_pg.md)
@@ -22,6 +25,7 @@
   - [OpenAI Gym](deep-rl/envs/gym.md)
   - [SMAC](deep-rl/envs/smac.md)
   - [MARL Envs](deep-rl/envs/marl_env.md)
+  - [Interesting Environmrnt](deep-rl/envs/interesting_envs.md)
 
 
 - 强化学习工具篇
