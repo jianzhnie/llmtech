@@ -64,20 +64,6 @@ ChatGPT 解释的很好，但还没有完全讲透；让我们更具体一点吧
 
 作为一个可选项，RLHF 可以通过迭代 RM 和策略共同优化。随着策略模型更新，用户可以继续将输出和早期的输出进行合并排名。Anthropic 在他们的论文中讨论了迭代在线 RLHF（请参阅原始[论文](https://arxiv.org/abs/2204.05862)），其中策略的迭代包含在跨模型的 Elo 排名系统中。这样引入策略和 RM 演变的复杂动态，代表了一个复杂和开放的研究问题。
 
-# RLHF 的开源工具
-
-第一个在 LM 上执行 RLHF的[代码来自于 2019 年在 TensorFlow 中的 OpenAI。](https://github.com/openai/lm-human-preferences)
-
-今天，PyTorch 中已经有一些活跃的 RLHF 存储库由此产生。主要存储库是 Transformers Reinforcement Learning ( [TRL](https://github.com/lvwerra/trl) )、[TRLX](https://github.com/CarperAI/trlx)（起源于 TRL 的一个分支）和 Reinforcement Learning for Language models ( [RL4LMs](https://github.com/allenai/RL4LMs) )。
-
-TRL 旨在使用 PPO 微调 Hugging Face 生态系统中的预训练 LM。TRLX 是 CarperAI 构建的 TRL 扩展分支，[用于](https://carper.ai/)处理更大的在线和离线训练模型。目前，TRLX 拥有一个 API，能够在 LLM 部署所需的规模（例如 330 亿个参数）下使用 PPO 和隐式语言 Q-Learning [ILQL进行生产就绪的 RLHF。](https://sea-snell.github.io/ILQL_site/)TRLX 的未来版本将允许最多 200B 个参数的语言模型。因此，与 TRLX 的接口针对具有这种规模经验的机器学习工程师进行了优化。
-
-[RL4LMs](https://github.com/allenai/RL4LMs)提供构建块，用于使用各种 RL 算法（PPO、NLPO、A2C 和 TRPO）、奖励函数和指标来微调和评估 LLM。此外，该库易于定制，允许在任意用户指定的奖励函数上训练任何编码器-解码器或基于编码器转换器的 LM。[值得注意的是，它在最近的工作](https://arxiv.org/abs/2210.01241)中针对广泛的任务进行了良好的测试和基准测试，总计多达 2000 次实验，突出了关于数据预算比较（专家演示与奖励建模）、处理奖励黑客和训练不稳定性等方面的一些实用见解。RL4LMs目前的计划包括分布式训练更大的模型和新的 RL 算法。
-
-TRLX 和 RL4LM 都在大力进一步开发中，因此很快就会有更多的功能。
-
-Hub 上有一个由 Anthropic 创建的大型[数据集。](https://huggingface.co/datasets/Anthropic/hh-rlhf)
-
 # RLHF 的下一步是什么？
 
 虽然这些技术非常有前途和影响力，并引起了人工智能领域最大研究实验室的注意，但仍然存在明显的局限性。这些模型虽然更好，但仍然可以毫无不确定性地输出有害或实际上不准确的文本。这种不完美代表了 RLHF 的长期挑战和动力——在人类固有的问题领域中运行意味着永远不会到达一个完美的标准。
@@ -100,6 +86,12 @@ https://github.com/openai/lm-human-preferences
 - https://github.com/lvwerra/trl
 - https://github.com/CarperAI/trlx
 - https://github.com/allenai/RL4LMs
+
+TRL 旨在使用 PPO 微调 Hugging Face 生态系统中的预训练 LM。TRLX 是 CarperAI 构建的 TRL 扩展分支，[用于](https://carper.ai/)处理更大的在线和离线训练模型。目前，TRLX 拥有一个 API，能够在 LLM 部署所需的规模（例如 330 亿个参数）下使用 PPO 和隐式语言 Q-Learning [ILQL进行生产就绪的 RLHF。](https://sea-snell.github.io/ILQL_site/)TRLX 的未来版本将允许最多 200B 个参数的语言模型。因此，与 TRLX 的接口针对具有这种规模经验的机器学习工程师进行了优化。
+
+[RL4LMs](https://github.com/allenai/RL4LMs)提供构建块，用于使用各种 RL 算法（PPO、NLPO、A2C 和 TRPO）、奖励函数和指标来微调和评估 LLM。此外，该库易于定制，允许在任意用户指定的奖励函数上训练任何编码器-解码器或基于编码器转换器的 LM。[值得注意的是，它在最近的工作](https://arxiv.org/abs/2210.01241)中针对广泛的任务进行了良好的测试和基准测试，总计多达 2000 次实验，突出了关于数据预算比较（专家演示与奖励建模）、处理奖励黑客和训练不稳定性等方面的一些实用见解。RL4LMs目前的计划包括分布式训练更大的模型和新的 RL 算法。
+
+TRLX 和 RL4LM 都在大力进一步开发中，因此很快就会有更多的功能。
 
 此外，Huggingface Hub 上有一个由 Anthropic 创建的大型数据集:
 https://hf.co/datasets/Anthropic/hh-rlhf
