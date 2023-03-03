@@ -39,4 +39,3 @@ MineRL 是一个 Python 库，它提供了一个 Gym 接口，用于与视频游
 
 - [Starcraft gym](http://starcraftgym.com/)
 - [A. I. Learns to Play Starcraft 2 (Reinforcement Learning) tutorial](https://www.youtube.com/watch?v=q59wap1ELQ4)
-

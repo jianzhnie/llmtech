@@ -119,4 +119,3 @@ C 程序设计语言的作者是Brian W. Kernighan/ Dennis M. Ritchie，因此�
 ![img](https://pic4.zhimg.com/v2-021be0b39051605657eed1d9cd25492b_b.jpg)
 
 第二个阶段，也就是理论和实践阶段，推荐的是比较著名的《[TCP/IP详解](https://www.zhihu.com/search?q=TCP%2FIP详解&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"article"%2C"sourceId"%3A"36036331"})》这套书，这套书共分为三卷，分别从协议的原理、协议的实现等角度来阐述TCP/IP。
-

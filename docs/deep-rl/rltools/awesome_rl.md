@@ -32,11 +32,11 @@ Sutton还指导了许多其他优秀的学生，如Marc Bellemare、Csaba Szepes
 
 # 强化学习代表人物
 
-## Richard Sutton 
+## Richard Sutton
 
 Richard Sutton是加拿大阿尔伯塔大学的教授，也是强化学习领域的奠基人之一。他的主要研究方向包括强化学习、机器学习和人工智能。他是Temporal Difference学习算法的创始人之一，也是SARSA算法和函数逼近强化学习的奠基人之一， 这些算法已被广泛应用于强化学习中。他与Andrew Barto合作写作的《Reinforcement Learning: An Introduction》一书是该领域的经典著作，该书介绍了强化学习的基本原理和方法，被广泛认为是强化学习的标准教材之一。
 
-## Andrew Ng 
+## Andrew Ng
 
 Andrew Ng是斯坦福大学计算机科学系的教授，同时也是谷歌前副总裁和百度的首席科学家。他是机器学习和人工智能领域的知名专家，也是在线课程平台Coursera的联合创始人。他在Coursera上推出的“机器学习”课程已经有数百万人参加，成为机器学习入门的标准课程之一。他还创建了deeplearning.ai，致力于普及深度学习的知识。
 
@@ -44,13 +44,13 @@ Andrew Ng是斯坦福大学计算机科学系的教授，同时也是谷歌前�
 
 David Silver是英国伦敦大学学院的教授，他是DeepMind团队的创始成员之一，同时也是AlphaGo的核心设计者之一。在2013年，他开始研究将深度学习与强化学习相结合，这使得机器在更复杂的领域中具有了更强的表现力。他还在2016年发表的论文中介绍了著名的Deep Reinforcement Learning（DRL）算法，并在2019年获得了杰出的成就奖。他的代表作包括AlphaGo、AlphaZero、Atari Games等。
 
-## Pieter Abbeel 
+## Pieter Abbeel
 
 Pieter Abbeel是加州大学伯克利分校的教授，同时也是人工智能公司Covariant的联合创始人。他的研究方向包括机器学习、机器人学和控制论等。他在强化学习领域取得了一系列的突破，包括发明了一种新的强化学习算法，称为Trust Region Policy Optimization（TRPO），该算法已经被广泛应用于机器人控制和其他任务中。他的团队开发了一种被称为DeepMimic的算法，可以让机器人学习各种高级运动，如跳跃、滑翔和攀岩等。他还开发了一种名为CoRL（Conference on Robot Learning）的会议，该会议聚焦于机器人学习领域。
 
 代表作：Apprenticeship Learning via Inverse Reinforcement Learning，DeepMimic: Example-Guided Deep Reinforcement Learning of Physics-Based Character Skills。
 
-## Sergey Levine 
+## Sergey Levine
 
 Sergey Levine是加州大学伯克利分校的教授，也是UC Berkeley的AI实验室的主任。他在强化学习领域的主要贡献是针对机器人学习的算法研究，如怎样让机器人在现实环境中学习、移动和交互。他提出的一种基于深度学习和强化学习的“行动者-评论家”（Actor-Critic）算法已经被广泛应用于机器人控制领域。他的代表作包括在机器人控制、自主导航等领域的研究工作，以及Flow、Spinning Up等强化学习库。
 
@@ -62,7 +62,7 @@ John Schulman是OpenAI的联合创始人之一，同时也是伯克利人工智�
 
 代表作：Trust Region Policy Optimization，Proximal Policy Optimization Algorithms。
 
-## Marc Bellemare 
+## Marc Bellemare
 
 Marc Bellemare是蒙特利尔大学的助理教授，同时也是Google Brain的研究员。他的研究重点在于开发新的强化学习算法，以及提高现有算法的表现。他在2013年发表了著名的Double DQN论文，提出了一种改进DQN算法的方法，大大提高了强化学习算法的稳定性。他的代表作还包括Rainbow、QR-DQN等强化学习算法。
 
@@ -84,7 +84,7 @@ Marc Bellemare是蒙特利尔大学的助理教授，同时也是Google Brain的
 
 8. Satinder Singh：密歇根大学教授，主要研究方向是强化学习和人工智能等，他的研究成果包括多智能体强化学习、协同机器人等。
 
-   
+
 
 # 强化学习研究机构 ：学术界
 
@@ -160,4 +160,3 @@ Marc Bellemare是蒙特利尔大学的助理教授，同时也是Google Brain的
 > - 超参数科技：游戏；
 > - 启元世界
 > - 南栖仙策
-

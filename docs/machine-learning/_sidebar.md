@@ -27,10 +27,9 @@
 
 - Python HandBook
   - [Python Hook](machine-learning/python/How-to-use-hook-in-python.md)
-  
-  - [Python 迭代器](machine-learning/python/itertools.md)
-  
-  - [Lambda 函数](machine-learning/python/Lambda函数.md)
-  
-  - [行为树](machine-learning/python/behavior_tree.md)
 
+  - [Python 迭代器](machine-learning/python/itertools.md)
+
+  - [Lambda 函数](machine-learning/python/Lambda函数.md)
+
+  - [行为树](machine-learning/python/behavior_tree.md)

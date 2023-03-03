@@ -216,4 +216,3 @@
 不管选择怎样的教材或者其他辅助资料，学习分布式系统必然要求阅读论文。[这里](http://dsrg.pdos.csail.mit.edu/papers/) 有一个不错的论文清单，而且我们强烈建议你出席你当地的 [Papers We Love](http://paperswelove.org/)（仅限美国）。
 
 [![数据密集型应用系统设计](https://user-images.githubusercontent.com/20510068/82111034-94ff9600-9774-11ea-9d49-90b00f746659.png)](https://book.douban.com/subject/30329536/)
-
