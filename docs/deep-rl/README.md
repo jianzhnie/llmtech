@@ -33,6 +33,7 @@
 
 ### 强化学习工具篇
 
+- [强化学习代表人物/机构](deep-rl/rltools/awesome_rl.md)
 - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
 - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
