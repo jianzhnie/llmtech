@@ -18,7 +18,7 @@
 - 🦖 [计算机视觉](deeplearning/)
 - 💎 [自然语言处理](deeplearning/)
 - 🐍 [Python编程](python-handbook/)
-- 🧰 [工具集合](tools/)
+- 🧰 [效率工具](toolbox/)
 - 🤗 [emojixd.com](https://emojixd.com/)
 
 [GitHub](https://github.com/jianzhnie/machine-learning-wiki)
