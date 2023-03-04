@@ -4,5 +4,5 @@
 - [💎自然语言处理](deeplearning/)
 - [🔥机器学习](machine-learning/)
 - [🌍学习强国](self-control/)
-- [🧰工具](tools/)
+- [🧰效率工具](toolbox/)
 - [🤗emojixd.com](https://emojixd.com/)

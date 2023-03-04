@@ -56,7 +56,7 @@ AC算法也可以由此推出，如果按照DQN的方法拟合一个 $Q(s,a|\the
 
 $$ \nabla_{\theta} J(\theta)=E_{s\sim \beta}[\nabla_{\theta}\mu_\theta(s)\nabla_a Q^\mu(s,a)|_{a=\mu_\theta(s)}] $$
 
-DPG可以是使用AC的方法来估计一个Q函数，DDPG就是借用了DQN经验回放与目标网络的技巧.
+DPG可以是使用AC的方法来估计一个Q函数，DDPG就是借用了DQN经验回放与目标网络的技巧. 
 
 ## 研究痛点
 
