@@ -1,12 +1,51 @@
-# Deep Learning
+### [Deeplearning4j](deeplearning/deeplearning4j/README.md)
 
-### 自然语言处理
+  - [Deeplearning4J](deeplearning/deeplearning4j/Deeplearning4J.md)
+  - [Arbiter](deeplearning/deeplearning4j/Arbiter.md)
 
-  - [chatGPT](deeplearning/nlp/chatGPT.md)
+### [分布式训练](deeplearning/distributed-training/README.md)
 
-### 扩散模型
-  - [重参数化技巧](deeplearning/diffusion_model/diffusion-model-reparameterization.md)
-  - [From Autoencoder to Beta-VAE](deeplearning/diffusion_model/vae_model.md)
-  - [Generative Modeling by Estimating Gradients of the Data Distribution](deeplearning/diffusion_model/通过估计数据分布的梯度进行生成建模.md)
-  - [什么是扩散模型: A Review](deeplearning/diffusion_model/diffusion-models-summary.md)
-  - [扩散模型的工作原理：从零开始的数学](deeplearning/diffusion_model/diffusion-model-math.md)
+  - [分布式训练基础](deeplearning/distributed-training/ch1.md)
+  - [从使用者角度切入](deeplearning/distributed-training/ch2.md)
+  - [Horovodrun背后做了什么](deeplearning/distributed-training/ch3.md)
+  - [网络基础 & Driver](deeplearning/distributed-training/ch4.md)
+  - [融合框架](deeplearning/distributed-training/ch5.md)
+  - [后台线程架构](deeplearning/distributed-training/ch6.md)
+  - [DistributedOptimizer](deeplearning/distributed-training/ch7.md)
+  - [On spark](deeplearning/distributed-training/ch8.md)
+  - [启动 on spark](deeplearning/distributed-training/ch9.md)
+  - [弹性训练总体架构](deeplearning/distributed-training/ch12.md)
+  - [弹性训练之Driver](deeplearning/distributed-training/ch13.md)
+  - [弹性训练发现节点&State](deeplearning/distributed-training/ch14.md)
+  - [广播 & 通知](deeplearning/distributed-training/ch15.md)
+  - [弹性训练之Worker生命周期](deeplearning/distributed-training/ch16.md)
+  - [弹性训练之容错](deeplearning/distributed-training/ch17.md)
+  - [MPI](deeplearning/distributed-training/MPI.md)
+
+### [Model转换](deeplearning/model-convert/README.md)
+
+  - [Pb to om](deeplearning/model-convert/How-to-convert-pb-model-to-om.md)
+  - [Tf to pb](deeplearning/model-convert/How-to-export-tf-model-to-pb.md)
+  - [如何修改 TF 计算图](deeplearning/model-convert/Modify-tf-graph.md)
+
+### [目标检测](deeplearning/object-detection/README.md)
+
+  - [FocalLoss](deeplearning/object-detection/FocalLoss.md)
+
+### [自然语言处理](deeplearning/nlp/README.md)
+
+  - [Transformer 模型](deeplearning/nlp/Transformer.md)
+  - [Bag-of-words](deeplearning/nlp/Bag-of-words.md)
+  - [TFIDF](deeplearning/nlp/TFIDF.md)
+  - [Word2Vec 1](deeplearning/nlp/Word2Vec_1.md)
+  - [Word2Vec 2](deeplearning/nlp/Word2Vec_2.md)
+
+### [VIT](deeplearning/transformers/README.md)
+
+  - [SwinTransformer](deeplearning/transformers/SwinTransformer.md)
+  - [Vision transformer](deeplearning/transformers/vision_transformer.md)
+
+### [推荐系统](deeplearning/recommender/README.md)
+
+  - [Deep Cross](deeplearning/recommender/Deep&Cross.md)
+  - [Wide&Deep](deeplearning/recommender/wide&deep.md)
