@@ -8,5 +8,4 @@
 
 ### AI 工具合集
 
-
-[soundraw](https://soundraw.io/)
+- [提升效率的AI工具](toolbox/efficient-ai/aitools.md)
