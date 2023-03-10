@@ -5,6 +5,7 @@
   - [chatGPT](ai-general/chatgpt/chatGPT.md)
   - [open-chatgpt](ai-general/chatgpt/open-chatgpt.md)
   - [RLHF](deep-rl/papers/RLHF.md)
+  - [RLHF](ai-general/chatgpt/RLHF.md)
 
 
 ### 扩散模型
