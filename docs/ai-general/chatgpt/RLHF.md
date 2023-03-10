@@ -4,13 +4,13 @@
 
 随着最近 ChatGPT 的 推出，基于人类反馈的强化学习 (RLHF) 已成为语言建模界的热门话题——包括学术界和工业界。
 
-我们可以追溯 RLHF 在自然语言处理中的应用，  OpenAI 2019 年发布的[Fine-Tuning Language Models from Human Preferences](https://arxiv.org/abs/1909.08593)。快进一年了，OpenAI 发布了第一篇关于从人类反馈强化学习应用于自然语言生成的重要论文之一。在那篇论文——[学习从人类反馈中总结](https://arxiv.org/abs/2009.01325)——OpenAI 表明，在根据人类偏好进行评估时，简单地对总结数据进行微调会导致表现不佳。作者建议直接通过强化学习方法针对人类偏好进行优化，以缓解这些性能问题。
+我们可以追溯 RLHF 在自然语言处理中的应用，可以找到 2020年，由OpenAI 发表的论文——[Learning to summarize from human feedback](https://arxiv.org/pdf/2009.01325.pdf)， 在这篇论文中，OpenAI 展示了如何使用强化学习和人类反馈 (RLHF) 来微调语言模型，以生成比监督微调模型更高质量的新闻文章和 Reddit 帖子摘要。
 
-## 使用 trlX]
+## 使用 trlX
 
 ﻿[CarperAI 的trlX](https://github.com/CarperAI/trlx)是一个分布式训练框架，其灵感来自 Transformer 强化学习库（可在此处找到：[lvwerra/trl）](https://github.com/lvwerra/trl)。trlX 从头开始设计，以大规模关注 RLHF，这是重现最近 RLHF 文献中观察到的许多结果的必要因素 [ [Steinnon 等人，2020 年](https://arxiv.org/abs/2009.01325)；[Askell et al., 2021](https://arxiv.org/abs/2112.00861) , [Ouyang et al., 2022](https://arxiv.org/abs/2203.02155) ].
 
-特别是，trlX[从人类偏好过程中抽象出微调语言模型](https://arxiv.org/abs/1909.08593)的 RL 部分，使研究人员能够专注于管理强化学习的挑剔动态的高级选择，而不是运行分布式训练所需的样板代码。它的设计足够灵活以支持广泛的算法，目前支持[近端策略优化](https://openai.com/blog/openai-baselines-ppo/)(PPO) 和[隐式语言 Q 学习](https://arxiv.org/abs/2206.11871)(ILQL) 。
+特别是，trlX[从人类偏好过程中抽象出微调语言模型](https://arxiv.org/abs/1909.08593)的 RL 部分，使研究人员能够专注于管理强化学习的模型选择，而不是运行分布式训练所需的样板代码。它的设计足够灵活以支持广泛的算法，目前支持[近端策略优化](https://openai.com/blog/openai-baselines-ppo/)(PPO) 和[隐式语言 Q 学习](https://arxiv.org/abs/2206.11871)(ILQL) 。
 
 > 在下面的例子中，奖励函数是手工制作的。如上所述，trlX 抽象了 RLHF 的 RL 组件，用于微调 LLM。您可以带上训练有素的奖励模型或手工制作。
 
@@ -24,25 +24,20 @@ sentiment_fn = pipeline(
 	batch_size=256,
 	device=device,
 )
-
-
 def get_positive_score(scores):
 	"Extract value associated with a positive sentiment from pipeline's output"
 	return dict(map(lambda x: tuple(x.values()), scores))["POSITIVE"]
-
 
 def reward_fn(samples: List[str]) -> List[float]:
 	sentiments = list(map(get_positive_score, sentiment_fn(samples)))
 	return sentiments
 
-
 trainer = trlx.train("gpt2", reward_fn=reward_fn)
-
 ```
 
 或者，要使用离线 ILQL，请提供您的奖励标记数据集：
 
-```
+```python
 trainer = trlx.train(
 	"EleutherAI/gpt-j-6B",
 	dataset=[("dolphins", "geese"), (1.0, 100.0)],
@@ -55,42 +50,29 @@ trainer = trlx.train(
 
 ## 从摘要中学习
 
-在本节使用的 trlX 中，我们将为摘要任务实施 RLHF。训练过程包括三个部分：
+对于一般的 RLHF，训练过程主要包括下面三个部分：
 
-- 我们将首先在我们的摘要数据集上微调预训练的Transformer模型（下一节将详细介绍数据集）。这是我们的监督微调模型 (SFT)。
-- 然后我们将训练一个奖励模型（RM）。该模型从 SFT 模型初始化并输出一个标量值。这个标量值是表示摘要偏好的奖励。
-- 最后，我们使用 RM 通过 PPO 微调 SFT 模型。此步骤使我们的 SFT 模型与人类偏好保持一致。
+- Step1:  Fine-tune With Supervision（SFT）
+
+首先准备一个性能不错的预训练语言模型作为 Base Model， 如 gpt2, opt 等; 我们将在带有人类标注的数据集上微调这个Base Model, 这是我们的监督微调模型 (SFT)。
+
+- Step2:  Reward Model
+
+接下来我们训练一个奖励模型RM）来预测人类的打分。使用由 OpenAI 公开的人类反馈数据集，我们从SFT 模型初始化训练奖励模型，并输出一个标量值，这个标量值是表示人类对于这个输出偏好的奖励。
+
+- Step3：RLHF
+
+最后，一旦我们有了训练好的SFT 模型和奖励模型(RM)，现在可以通过强化学习(RL) 使用 RM来根据反馈微调 SFT 模型。此步骤使我们的 SFT 模型与人类偏好保持一致。
 
 ## 数据集
 
-对于我们今天的实验，我们将使用最初在学习中使用的 TL;DR 摘要数据集[来从人类反馈中进行总结](https://arxiv.org/abs/2009.01325)。
+### Reddit TL;DR dataset
 
-基于上述训练过程，我们需要两种类型的数据集：
-
-- 一个用于微调预训练的监督模型，然后用 PPO 和奖励模型再次对其进行微调，以及
-- 一个用于训练我们的奖励模型。
-
-在我们的例子中，用于微调的数据集是过滤过的 TL;DR 数据集。用于训练奖励模型的数据集是比较或偏好数据集。
-
-> 作者过滤了原始的 TL;DR 数据集，以包含一个安全的 subreddits 列表，这些列表很容易被普通大众理解。此外，他们只有样本，其中人工编写的摘要在 24 到 48 个标记之间。
-
-### 如何下载数据集
-
-我们将首先下载[AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10)，这是一个命令行实用程序，可用于将 blob 或文件复制到存储帐户或从中复制。相关代码：
-
-[可以在官方存储库](https://github.com/openai/summarize-from-feedback)中找到指向 TL;DR 数据集和比较数据集的不同拆分的链接。
-
-以下是下载 TL;DR 数据集的训练拆分的方法：
-
-```
-!azcopy copy "https://openaipublic.blob.core.windows.net/summarize-from-feedback/datasets/tldr_3_filtered/train.jsonl"
-```
-
-### TL;DR 数据集
+我将使用OpenAI 在论文 [Learning to summarize from human feedback](https://arxiv.org/abs/2009.01325) 中使用的数据集 [Reddit TL;DR dataset](https://github.com/openai/summarize-from-feedback), 你可以在openai 的[项目主页](https://github.com/openai/summarize-from-feedback#reddit-tldr-dataset)找到。
 
 TL;DR 摘要数据集包含 129,722 个 Reddit 帖子，其中约 5% 用于拆分验证和测试。训练集中总共有 116,722 个样本，验证集中有 6,447 个样本，测试集中有 6,553 个样本。我们将使用此数据集来微调我们的模型。
 
-这是一个示例：
+下面是一个示例：
 
 ```json
 {
@@ -102,7 +84,21 @@ TL;DR 摘要数据集包含 129,722 个 Reddit 帖子，其中约 5% 用于拆�
 }
 ```
 
-该数据集经过精心整理以用于微调，并作为 Hugging Face 数据集托管。[你可以在这里](https://huggingface.co/datasets/CarperAI/openai_summarize_tldr)找到。数据集格式（验证集）如下所示。提示是与 Subreddit 名称和标题相连的 Reddit 帖子。label是真人写的总结：
+该数据集经过[CarperAI 公司](https://github.com/CarperAI)整理并且上传到了Hugging Face 数据集托管平台，在这里[openai_summarize_tldr](https://huggingface.co/datasets/CarperAI/openai_summarize_tldr)可以找到。数据集格式如下所示。prompt是与 Subreddit 名称和标题相连的 Reddit 帖子，label是真人写的总结。
+
+| prompt (string)                                              | label (string)                                               |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| "SUBREDDIT: r/relationships TITLE: I (f/22) have to figure out if I want to still know these girls or not and would hate to sound insulting POST: Not sure if this belongs here but it's worth a try. Backstory: When I (f/22) went through my first real breakup 2 years ago because he needed space after a year of dating roand it effected me more than I thought. It was a horrible time in my life due to living with my mother and finally having the chance to cut her out of my life. I can admit because of it was an emotional wreck and this guy was stable and didn't know how to deal with me. We ended by him avoiding for a month or so after going to a festival with my friends. When I think back I wish he just ended. So after he ended it added my depression I suffered but my friends helped me through it and I got rid of everything from him along with cutting contact. Now: Its been almost 3 years now and I've gotten better after counselling and mild anti depressants. My mother has been out of my life since then so there's been alot of progress. Being stronger after learning some lessons there been more insight about that time of my life but when I see him or a picture everything comes back. The emotions and memories bring me back down. His friends (both girls) are on my facebook because we get along well which is hard to find and I know they'll always have his back. But seeing him in a picture or talking to him at a convention having a conversation is tough. Crying confront of my current boyfriend is something I want to avoid. So I've been thinking that I have to cut contact with these girls because it's time to move on because it's healthier. It's best to avoid him as well. But will they be insulted? Will they accept it? Is there going to be awkwardness? I'm not sure if it's the right to do and could use some outside opinions. TL;DR: " | "I still have contact with an old ex's friends but can't stand to see or talk to him. His friends are really nice ,so how do I tell them I possibly want to unfriend them on Facebook because of him?" |
+| "SUBREDDIT: r/loseit TITLE: SV & NSV! Keeping on keeping on. POST: 30F, 5'6". SW: 236 GW: 150 CW: 219 I weigh myself weekly and measure myself monthly. I'd hit a plateau the last four weeks or so where I was stuck at 222. Felt like kind of a bummer, but knew it's because I haven't been as strict as I should with my diet, and the last week and a half have been crazy with life things, so I haven't been exercising as frequently as I've gotten used to. When I weighed myself as normal on Monday, I was kind of disappointed to see the scale not budging and figured it was time to buckle down again and really watch my diet. Today was my measure-in day, and I've felt cruddy in general since Monday because I caught some chest congestion/cold bug over the weekend. I get on the scale...it says 219. Whaaaaat? I take my measurements, which are down slightly from last month, and with an total-body loss of 8 inches from my starting point on 12/23/14! Some of my clothes have been feeling a bit looser as of late and now I know it's just not in my head. I'm now the lightest and smallest I've been since right around high school! TL;DR: " | "Progress is still happening, even when you think it might not be! Don't get discouraged, even if your journey seems to be going slowly. Don't give up, warriors." |
+
+基于上述训练过程，我们需要两种类型的数据集：
+
+- 一个用于微调预训练的监督模型，然后用 PPO 和奖励模型再次对其进行微调，以及
+- 一个用于训练我们的奖励模型。
+
+在我们的例子中，用于微调的数据集是过滤过的 TL;DR 数据集。用于训练奖励模型的数据集是比较或偏好数据集。
+
+> 作者过滤了原始的 TL;DR 数据集，以包含一个安全的 subreddits 列表，这些列表很容易被普通大众理解。此外，他们只有样本，其中人工编写的摘要在 24 到 48 个标记之间。
 
 ### 比较数据集
 
