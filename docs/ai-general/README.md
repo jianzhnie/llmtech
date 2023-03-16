@@ -4,8 +4,9 @@
 
   - [chatGPT](ai-general/chatgpt/chatGPT.md)
   - [open-chatgpt](ai-general/chatgpt/open-chatgpt.md)
-  - [RLHF](deep-rl/papers/RLHF.md)
-
+  - [Illustrating Reinforcement Learning from Human Feedback (RLHF)](deep-rl/papers/RLHF.md)
+  - [RLHF](ai-general/chatgpt/RLHF.md)
+  - [Chatgpt_Prompt](ai-general/chatgpt/awesome_chatgpt_prompt.md)
 
 ### 扩散模型
 
@@ -20,3 +21,4 @@
 
   - [AI Community](ai-general/ai-community.md)
   - [AI ToolBox](ai-general/ai-tools.md)
+
