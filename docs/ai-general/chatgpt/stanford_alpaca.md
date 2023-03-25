@@ -38,13 +38,13 @@ Alpaca 的研究团队首先使用 self-instruct 种子集中的 175 个人工�
 
 我们使用具有以下超参数的标准 Hugging Face 训练代码微调我们的模型：
 
-| 超参数   | 价值 |
-| -------- | ---- |
-| 批量大小 | 128  |
-| 学习率   | 2e-5 |
-| 纪元     | 3个  |
-| 最长长度 | 512  |
-| 重量衰减 | 0    |
+| 超参数       | 价值 |
+| ------------ | ---- |
+| 批量大小     | 128  |
+| 学习率       | 2e-5 |
+| Epoch        | 3个  |
+| 最长长度     | 512  |
+| Weigth decay | 0    |
 
 鉴于 Hugging Face 尚未正式支持 LLaMA 模型，我们通过从特定的分支（即要合并的[PR](https://github.com/huggingface/transformers/pull/21955) ）安装它来使用 Hugging Face 的变形金刚库对 LLaMA 进行微调。我们安装的特定提交的哈希是`68d640f7c368bcaaaecfc678f11908ebbd3d6176`.
 
