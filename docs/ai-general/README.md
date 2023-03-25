@@ -7,6 +7,7 @@
   - [Illustrating Reinforcement Learning from Human Feedback (RLHF)](deep-rl/papers/RLHF.md)
   - [RLHF](ai-general/chatgpt/RLHF.md)
   - [Chatgpt_Prompt](ai-general/chatgpt/awesome_chatgpt_prompt.md)
+  - [Prompt DataSets](ai-general/chatgpt/prompt_dataset.md)
 
 ### 扩散模型
 
