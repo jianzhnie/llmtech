@@ -16,5 +16,7 @@
 - AweSome AI Company & Tools
 
   - [Top AI Blogs and Websites](ai-general/ai-news.md)
+  - [Prompt Engineering Guide](ai-general/prompts-guide.md)
   - [AI Community](ai-general/ai-community.md)
   - [AI ToolBox](ai-general/ai-tools.md)
+

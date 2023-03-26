@@ -85,3 +85,6 @@ Apple 在语音识别、预测文本和 Siri 自动更正方面的进步标志�
 
 Google Research 博客致力于解决计算机科学及相关领域中最具挑战性的问题。该博客涵盖了 AI 的广泛研究领域。这个博客是如此独特，因为他们的大部分研究工作都没有被任何其他组织进行过。
 
+## [Dataconomy](https://dataconomy.com/category/topics/data-science/artificial-intelligence/)
+
+Dataconomy 是数据驱动技术领域的新闻、事件和专家意见的领先门户。我们成立于数据科学创新中心柏林，提供一个由[行业知名贡献者](https://dataconomy.com/contributors) 和遍布欧洲的当地社区组成的全球网络。我们关注行业巨头和颠覆性初创公司，只关注最有趣的数据技术应用。

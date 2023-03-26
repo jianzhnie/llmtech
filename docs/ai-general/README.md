@@ -24,4 +24,5 @@
 
   - [AI Community](ai-general/ai-community.md)
   - [AI ToolBox](ai-general/ai-tools.md)
+  - [Prompt Engineering Guide](ai-general/prompts-guide.md)
 
