@@ -1,5 +1,13 @@
 # Top AI Applications
 
+
+
+## ChatGPT API
+
+
+
+
+
 ## Applications with LLMs
 
 - https://github.com/hwchase17/langchain
@@ -44,8 +52,14 @@
 
 - Make-A-Video 
 - Imagen Video
+- Codes
+  - https://github.com/lucidrains/phenaki-pytorch
+  - https://github.com/lucidrains/make-a-video-pytorch
+  - https://github.com/THUDM/CogVideo
+  - https://github.com/Picsart-AI-Research/Text2Video-Zero
 
-## 文本 –> 3D 
+
+## 文本 –> 3D
 
 - DreamFusion
 
@@ -74,8 +88,6 @@
 ## Adobe Firefly AI
 
 - https://firefly.adobe.com/
-
-
 
 ## AI 工具集合
 
