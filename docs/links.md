@@ -1,41 +1,44 @@
 ## Some links
 
 ### Company Or Institution
-
-- [Deepmind](https://www.deepmind.com/) | [Github](https://github.com/deepmind)
-- [OpenAI](https://openai.com/blog/) | [Github](https://github.com/openai/)
-- [Google Reserach](https://ai.googleblog.com/) | [Github](https://github.com/google-research/google-research)
-- [FaceBook Research](https://ai.facebook.com/blog) | [Github](https://github.com/facebookresearch)
-- [Huggingface](https://huggingface.co/blog) | [Github](https://github.com/huggingface)
-- [Cohere](https://txt.cohere.ai/) |[Github](https://github.com/cohere-ai)
-- [Salesforce AI Research](https://blog.salesforceairesearch.com/) | [Github](https://github.com/salesforce)
-- [Stability AI](https://platform.stability.ai/) | [Github](https://github.com/stability-ai)
-- [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1)
-- [Stanford AI](https://ai.stanford.edu/blog/)
-- [EleutherAI](http://www.eleuther.ai/)| [Github](https://github.com/EleutherAI)
-
-## AI 创业公司
-
-- [Jasper](https://www.jasper.ai/)     | 生成广告
-- [Surgehq](https://www.surgehq.ai/blog)  | 数据标注
+|                             公司/机构                             |               Github                |           简介           |
+| :---------------------------------------------------------------: | :---------------------------------: | :----------------------: |
+|               [Deepmind](https://www.deepmind.com/)               |     https://github.com/deepmind     |                          |
+|                [OpenAI](https://openai.com/blog/)                 |      https://github.com/openai      |                          |
+|           [Google Reserach](https://ai.googleblog.com/)           | https://github.com/google-research  |                          |
+|         [FaceBook Research](https://ai.facebook.com/blog)         | https://github.com/facebookresearch |                          |
+|            [Huggingface](https://huggingface.co/blog)             |    https://github.com/huggingfac    |      最大的模型仓库      |
+|                 [Cohere](https://txt.cohere.ai/)                  |    https://github.com/cohere-ai     |                          |
+|              [Anthropic](https://www.anthropic.com/)              |                                     | Opeanai 前员工创办的公司 |
+|                 [Jasper](https://www.jasper.ai/)                  |                                     |         生成广告         |
+| [Salesforce AI Research](https://blog.salesforceairesearch.com/)  |    https://github.com/salesforce    |                          |
+|          [Stability AI](https://platform.stability.ai/)           |   https://github.com/stability-ai   |                          |
+| [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                  -                  |                          |
+|           [Stanford AI](https://ai.stanford.edu/blog/)            |                  -                  |                          |
+|               [EleutherAI](http://www.eleuther.ai/)               |    https://github.com/EleutherAI    |                          |
 
 ### 国内机构
 
-- [统计之都](https://cosx.org/)
-- [openmmlab]() | [Github](https://github.com/open-mmlab)
+| 机构                          | Github                        | 简介                                  |
+| ----------------------------- | ----------------------------- | ------------------------------------- |
+| [统计之都](https://cosx.org/) |                               | 国内最好的统计、数据、模型交流网站    |
+| [openmmlab]()                 | https://github.com/open-mmlab | 计算机视觉任务模型的全家桶， 简单易用 |
+|                               |                               |                                       |
 
 ### Personal Blog
 
-- [科学空间](https://spaces.ac.cn/)
-- [Lilian](https://lilianweng.github.io/)
-- [Jay Alammar](https://jalammar.github.io/)
-- [Nathan Lambert](https://robotic.substack.com/)
-- [int8](https://int8.io/)
-- [Yihui Xie](https://yihui.org/)
-- [Chiyuan Zhang](https://pluskid.org/)
-- [Notes on AI](https://notesonai.com/Notes+on+AI)
-- [Yang Song](https://yang-song.net/)
-- [Phil Wang](https://github.com/lucidrains)
+|                    公司/机构                     | 简介  | 标签 |
+| :----------------------------------------------: | :---: | ----- |
+|        [科学空间](https://spaces.ac.cn/)         ||AI|
+|     [Lilian](https://lilianweng.github.io/)      ||AI|
+|    [Jay Alammar](https://jalammar.github.io/)    ||AI|
+| [Nathan Lambert](https://robotic.substack.com/)  ||AI|
+|             [int8](https://int8.io/)             ||AI|
+|         [Yihui Xie](https://yihui.org/)          ||生活|
+|      [Chiyuan Zhang](https://pluskid.org/)       ||生活|
+| [Notes on AI](https://notesonai.com/Notes+on+AI) ||AI|
+|       [Yang Song](https://yang-song.net/)        ||AI|
+|    [Phil Wang](https://github.com/lucidrains)    ||AI|
 
 ## My projects
 
