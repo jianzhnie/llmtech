@@ -4,10 +4,6 @@
 
 ## ChatGPT API
 
-
-
-
-
 ## Applications with LLMs
 
 - https://github.com/hwchase17/langchain
