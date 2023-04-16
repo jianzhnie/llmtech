@@ -4,9 +4,10 @@
 
 扩散模型的灵感来自非平衡热力学。他们定义了一个扩散步骤的马尔可夫链，以缓慢地将随机噪声添加到数据中，然后学习反转扩散过程以从噪声中构建所需的数据样本。与 VAE 或流模型不同，扩散模型是通过固定过程学习的，并且潜在变量具有高维性（与原始数据相同）。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png)
-
-> 图 1. 不同类型生成模型的概述。
+<div align=center>
+<img width="600" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png"/>
+</div>
+<div align=center>图 1. 不同类型生成模型的概述。</div>
 
 # 什么是扩散模型？
 
@@ -19,13 +20,14 @@ $$
 q(\mathbf{x}_t \vert \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t\mathbf{I}) \quad
 q(\mathbf{x}_{1:T} \vert \mathbf{x}_0) = \prod^T_{t=1} q(\mathbf{x}_t \vert \mathbf{x}_{t-1})
 $$
-当步骤$t$ 逐渐变大, 数据样本$\mathbf{x}_0$逐渐失去其可区分的特征。最终当$t$→∞, $\mathbf{x}_T$ 等价于各向同性高斯分布。
+当步骤$t$ 逐渐变大, 数据样本$\mathbf{x}_0$逐渐失去其可区分的特征。最终当$t$→∞, $\mathbf{x}_T$ 等价于各向同性高斯分布。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM.png)
+<div align=center>
+<img width="600" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM.png"/>
+</div>
+<div align=center>图2. 缓慢加入（去除）噪声生成样本的正向（反向）扩散过程的马尔可夫链。（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)，带有一些附加注释）</div>
 
->  图2. 缓慢加入（去除）噪声生成样本的正向（反向）扩散过程的马尔可夫链。（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)，带有一些附加注释）
-
-上述过程的一个很好的特性是我们用[Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick)以封闭形式在任意时间步 $t$ 都可以采样$\mathbf{x}_t$。让$\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
+上述过程的一个很好的特性是我们用[Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick)以封闭形式在任意时间步 $t$ 都可以采样 $\mathbf{x}_t$。让$\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
 $$
 \begin{aligned}
 \mathbf{x}_t
@@ -108,12 +110,12 @@ $$
 如图 2 所示，这种设置与[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)非常相似，因此我们可以使用变分下界来优化负对数似然。
 $$
 \begin{aligned}
-- \log p_\theta(\mathbf{x}_0)
+- \log p_\theta(\mathbf{x}_0) 
 &\leq - \log p_\theta(\mathbf{x}_0) + D_\text{KL}(q(\mathbf{x}_{1:T}\vert\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}\vert\mathbf{x}_0) ) \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{\mathbf{x}_{1:T}\sim q(\mathbf{x}_{1:T} \vert \mathbf{x}_0)} \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \Big] \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \Big] \\
 &= \mathbb{E}_q \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \\
-\text{Let }L_\text{VLB}
+\text{Let }L_\text{VLB} 
 &= \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
 \end{aligned}
 $$
