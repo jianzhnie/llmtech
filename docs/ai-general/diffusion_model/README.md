@@ -5,10 +5,6 @@
   - [什么是扩散模型: A Review](deeplearning/diffusion_model/diffusion-models-summary.md)
   - [扩散模型的工作原理：从零开始的数学](deeplearning/diffusion_model/diffusion-model-math.md)
 
-
-
-
-
 ## Diffusion Model  Learn Resources
 
 - https://github.com/huggingface/diffusion-models-class
