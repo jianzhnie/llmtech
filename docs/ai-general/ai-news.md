@@ -53,7 +53,7 @@ Towards Data Science 是Medium集团的出版物，可帮助专家交流想法�
 
  KDnuggets是一个专注于人工智能和大数据新闻的顶级科技出版物。**人工智能、机器学习、数据科学和大数据趋势**的权威来源，每月有超过 500,000 名独立访问者。
 
-## [MarkTechPost](https://www.marktechpost.com/) (Developers/ News)
+## [ MarkTechPost](https://www.marktechpost.com/) (Developers/ News) 🤗🤗🤗
 
 MarkTechPost 是位于加利福尼亚州的网站，提供最新的机器学习、深度学习和数据科学研究。除了面向开发人员的文章外，您还可以在那里找到教程和大学研究。对于那些更深入该行业的人，可以采访来自 AI 世界的人。 
 
@@ -69,11 +69,11 @@ Towards AI 是一个用于创建和共享 AI 教育内容的开放平台。它�
 
 来自匹兹堡的卡内基梅隆大学的博客网站，该网站主要关注机器学习，作者范围从教员到博士，甚至学生。该博客的主要目标是与全世界分享原创研究。
 
-##  [OpenAI](https://openai.com/)  (Developers)
+##  [OpenAI](https://openai.com/)  (Developers) 🤗🤗
 
 **OpenAI**  来自于“希望将人工智能带给大众”的行业专家。它是一家 AI 研究和部署公司，其使命是确保 AI 造福全人类，并确保人工智能 (AGI) 这种高度自治的系统能够在最具经济价值的工作中超越人类。
 
-##  [Distill](https://distill.pub/)  (Developers)
+##  [Distill](https://distill.pub/)  (Developers) 🤗🤗
 
 **Distill** 专注于让 ML 和 AI 更容易为读者所接受。传统研究可能难以理解，因此 Distill 通过吸引人的交互式数据可视化来传达 ML 研究。它充当多个作者共同发表的中立平台，文章经过同行评审，出现在谷歌学术搜索中。**Distill**还在美国国会图书馆和 CrossRef 中注册。
 
