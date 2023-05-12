@@ -91,9 +91,9 @@
 
 Futurepedia 是全球最大的AI 工具收集网站， 每天更新.
 
-### [AItoolsClub](https://www.aitoolsclub.com/)
+[AItoolsClub](https://www.aitoolsclub.com/)
 
-Find cool artificial intelligence (AI) tools. Our expert team reviews and provides insights into some of the most cutting-edge AI tools available.
+
 
 ### [AI 研习所](https://www.aiyjs.com/)
 
