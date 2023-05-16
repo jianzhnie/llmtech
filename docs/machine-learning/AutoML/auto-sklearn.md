@@ -101,8 +101,7 @@ Balancing
 - What is meta-learning?
 - Mimics human domain experts: use configurations which are known to work well on similar datasets
 
-仿照人能积累经验的做法，使机器有[配置空间]去记录它们的经验值，有点像迁移学习
-适用的程度，根据数据的相似度
+仿照人能积累经验的做法，使机器有[配置空间]去记录它们的经验值，有点像迁移学习适用的程度，根据数据的相似度
 meta-learning: warmstart the Bayesian optimization procedure
 也就是学习算法工程师的建模习惯，比如看到什么类型的数据就会明白套用什么模型比较适合，去生产对于数据的 metafeatures：
 
@@ -123,8 +122,7 @@ meta-learning: warmstart the Bayesian optimization procedure
     - 在高维空间不实用。
 - Random Search 随机搜索
     - 很多超参是通过并行选择的，它们之间是相互独立的。一些超参会产生良好的性能，另一些不会。
-- Heuristic Tuning 手动调参
-经验法，耗时长。（不知道经验法的英文是否可以这样表示）
+- Heuristic Tuning 手动调参经验法，耗时长。（不知道经验法的英文是否可以这样表示）
 - Automatic Hyperparameter Tuning
 - Bayesian Optimization
     - 能利用先验知识高效地调节超参数
@@ -232,15 +230,13 @@ AutoSklearnClassifier(dask_client=None,
 - time_left_for_this_task：设置所有模型训练时间总和
 - per_run_time_limit：设置单个模型训练最长时间
 - ml_memory_limit：设置最大内存用量
-##### (2) 模型存储
-参数默认为训练完成后删除训练的暂存目录和输出目录，使用以下参数，可指定其暂存目录及是否删除。
+##### (2) 模型存储参数默认为训练完成后删除训练的暂存目录和输出目录，使用以下参数，可指定其暂存目录及是否删除。
 - tmp_folder：暂存目录
 - output_folder：输出目录
 - delete_tmp_folder_after_terminate：训练完成后是否删除暂存目录
 - delete_output_folder_after_terminate：训练完成后是否删除输出目录
 - shared_mode：是否共享模型
-##### (3) 数据切分
-使用resampling_strategy参数可设置训练集与测试集的切分方法，以防止过拟合，用以下方法设置五折交叉验证：
+##### (3) 数据切分使用resampling_strategy参数可设置训练集与测试集的切分方法，以防止过拟合，用以下方法设置五折交叉验证：
 - resampling_strategy='cv'
 - resampling_strategy_arguments={'folds': 5}
 用以下方法设置将数据切分为训练集和测集，其中训练集数据占2/3。
@@ -248,8 +244,7 @@ AutoSklearnClassifier(dask_client=None,
 resampling_strategy='holdout',
 resampling_strategy_arguments={'train_size': 0.67}
 ```
-##### (4) 模型选择
-参数支持指定备选的机器学习模型，或者从所有模型中去掉一些机器学习模型，这两个参数只需要设置其中之一。
+##### (4) 模型选择参数支持指定备选的机器学习模型，或者从所有模型中去掉一些机器学习模型，这两个参数只需要设置其中之一。
 - include_estimators：指定可选模型
 - exclude_estimators：从所有模型中去掉指定模型
   auto-sklearn除了支持sklearn中的模型以外，还支持xgboost模型。具体模型及其在auto-sklearn中对应的名称可通过查看源码中具体实现方法获取，通过以下目录内容查看支持的分类模型：autosklearn/pipeline/components/classification/，可看到其中包含：adaboost、extra_trees、random_forest、libsvm_svc、xgradient_boosting等方法。

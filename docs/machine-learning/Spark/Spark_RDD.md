@@ -34,8 +34,7 @@ Executors 是负责执行任务的分布式过程。每个Spark应用程序都�
 
 ![img](https://hackernoon.com/hn-images/1*GZG2aogNS8Jg14jOM2rjmQ.png)
 
-### Spark Application工作流程
-当您将作业提交给Spark进行处理时，幕后还有很多事情要做。
+### Spark Application工作流程当您将作业提交给Spark进行处理时，幕后还有很多事情要做。
 
 我们的独立应用程序启动，并初始化其SparkContext。 只有拥有SparkContext之后，才能将应用程序称为驱动程序
 
@@ -142,8 +141,7 @@ Spark中的所有转换都是惰性的。这意味着，当我们告诉Spark通�
 
 最后，在第31行，我们触发了Spark动作：将RDD保存到文件系统中。 由于Spark订阅了惰性执行模型，因此直到这一行Spark生成weatherData，tempsByCountry和maxTempsByCountry才最终保存我们的结果。
 
-### 有向无环图
-每当在RDD上执行操作时，Spark都会创建DAG，即无向循环的有限直接图（否则我们的工作将永远运行）。 请记住，图只不过是一系列连接的顶点和边，并且该图也没有什么不同。 DAG中的每个顶点都是Spark函数，在RDD上执行某些操作（map，mapToPair，reduceByKey等）。
+### 有向无环图每当在RDD上执行操作时，Spark都会创建DAG，即无向循环的有限直接图（否则我们的工作将永远运行）。 请记住，图只不过是一系列连接的顶点和边，并且该图也没有什么不同。 DAG中的每个顶点都是Spark函数，在RDD上执行某些操作（map，mapToPair，reduceByKey等）。
 
 在MapReduce中，DAG由两个顶点组成：“贴图”→“缩小”。
 

@@ -158,8 +158,7 @@ Spark官网提供了两种方法来实现从RDD转换得到DataFrame，第一种
 
 ## 利用反射机制推断RDD模式
 
-在利用反射机制推断RDD模式时,我们会用到toDF()方法
-下面是在pyspark中执行命令以及反馈的信息：
+在利用反射机制推断RDD模式时,我们会用到toDF()方法下面是在pyspark中执行命令以及反馈的信息：
 
 ```python
 >>> from pyspark.sql.types import Row

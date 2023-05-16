@@ -43,8 +43,7 @@
 >
 > — Benedict Evans (@BenedictEvans) [2016 年 2 月 2 日](https://twitter.com/BenedictEvans/status/694342874729545729)
 
-第一种工程师总是寻求深入学习计算机科学的方法，或是通过传统的方法学习，或是在职业生涯中永无止息地学习；第二种工程师
-通常浮于表面，只学习某些特定的工具和技术，而不研究其底层的基本原理，仅仅在技术潮流的风向改变时学习新的技能。
+第一种工程师总是寻求深入学习计算机科学的方法，或是通过传统的方法学习，或是在职业生涯中永无止息地学习；第二种工程师通常浮于表面，只学习某些特定的工具和技术，而不研究其底层的基本原理，仅仅在技术潮流的风向改变时学习新的技能。
 
 如今，涌入计算机行业的人数激增，然而计算机专业的毕业生数量基本上未曾改变。第二种工程师的供过于求正在开始减少他们的工作机会，使他们无法涉足行业内更加有意义的工作。对你而言，不论正在努力成为第一种工程师，还是只想让自己的职业生涯更加安全，学习计算机科学是唯一可靠的途径。
 
@@ -110,8 +109,7 @@
 
 关于算法与数据结构，有成百上千的书可供使用，但是我们的最爱是 Steven Skiena 编写的 [《算法设计手册》](https://book.douban.com/subject/4048566/) 。显而易见，他对此充满热爱，迫不及待地想要帮助其他人理解。在我们看来，这本书给人一种焕然一新的体验，完全不同于那些更加经常被推荐的书（比如 Cormen、Leiserson、Rivest、Stein 或 Sedgewick 的书，后两者充斥着过多的证明，不适合以 **解决问题** 为导向的学习）。
 
-如果你更喜欢视频课程，[Skiena 慷慨地提供了他的课程](https://www.youtube.com/watch?v=A2bFN3MyNDA&list=PLOtl7M3yp-DX32N0fVIyvn7ipWKNGmwpp)。此外，Tim Roughgarden 的课程也很不错，
-在 Stanford 的 MOOC 平台 Lagunita，或者 [Coursera](https://www.coursera.org/specializations/algorithms) 上均可获得。Skiena 和 Roughgarden 的这两门课程没有优劣之分，选择何者取决于个人品味。
+如果你更喜欢视频课程，[Skiena 慷慨地提供了他的课程](https://www.youtube.com/watch?v=A2bFN3MyNDA&list=PLOtl7M3yp-DX32N0fVIyvn7ipWKNGmwpp)。此外，Tim Roughgarden 的课程也很不错，在 Stanford 的 MOOC 平台 Lagunita，或者 [Coursera](https://www.coursera.org/specializations/algorithms) 上均可获得。Skiena 和 Roughgarden 的这两门课程没有优劣之分，选择何者取决于个人品味。
 
 至于练习，我们推荐学生在 [Leetcode](https://leetcode.com) 上解决问题。Leetcode 上的问题往往有趣且带有良好的解法和讨论。此外，在竞争日益激烈的软件行业，这些问题可以帮助你评估自己应对技术面试中常见问题的能力。我们建议解决大约 100 道随机挑选的 Leetcode 问题，作为学习的一部分。
 

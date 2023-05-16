@@ -223,8 +223,7 @@ Arbiter目前支持的模型保存方式包括保存至本地磁盘（FileModelS
 
 设置方法并不复杂。FileModelSaver 构造器接受字符串格式的路径，将配置、参数和计分保存至：baseDir/0/、baseDir/1/等，索引值由OptimizationResult.getIndex()给出。InMemoryResultSaver不需要任何参数。
 
-指定一项计分函数
-计分函数共有三个类：EvaluationScoreFunction、ROCScoreFunction、RegressionScoreFunction。
+指定一项计分函数计分函数共有三个类：EvaluationScoreFunction、ROCScoreFunction、RegressionScoreFunction。
 
 EvaluationScoreFunction使用DL4J的评估指标之一。可用的指标包括准确率（ACCURACY）、F1值、精确度（PRECISION）、召回率（RECALL）、GMEASURE、MCC。以下是一个使用准确率的简单示例：
 

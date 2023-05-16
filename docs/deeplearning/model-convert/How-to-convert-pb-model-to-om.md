@@ -2,8 +2,7 @@
 
 关于 ATC 工具的介绍 [ATC 工具使用指导 ](https://support.huaweicloud.com/ti-atc-A200_3000/altasatc_16_002.html)
 
-### ATC 的使用
-在环境准备好后， ATC 工具的使用比较简单:
+### ATC 的使用在环境准备好后， ATC 工具的使用比较简单:
 
 ```shell
 atc --framework=3 --model=yolov3_coco.pb --output=yolov3 --soc_version=Ascend310 --input_shape="input:1,416,416,3"
