@@ -154,14 +154,14 @@ Adam在SGD基础上，为每个参数梯度增加了一阶动量（momentum）�
 
 混合精度训练，字如其名，同时存在fp16和fp32两种格式的数值，其中模型参数、模型梯度都是fp16，此外还有fp32的模型参数，如果优化器是Adam，则还有fp32的momentum和variance。
 
-![img](https://basicv8vc.github.io/images/zero/mixed-precision-training.png#center)
+https://basicv8vc.github.io/images/zero/mixed-precision-training.png
 
 ZeRO将模型训练阶段，每张卡中显存内容分为两类：
 
 1. 模型状态（model states）: 模型参数（fp16）、模型梯度（fp16）和 Adam 状态（fp32的模型参数备份，fp32的momentum和fp32的variance）。假设模型参数量 Φ ，则共需要 2Φ+2Φ+(4Φ+4Φ+4Φ)=4Φ+12Φ=16Φ 字节存储，可以看到，Adam状态占比 75% 75% 。
 2. 剩余状态（residual states）: 除了模型状态之外的显存占用，包括激活值（activation）、各种临时缓冲区（buffer）以及无法使用的显存碎片（fragmentation）。
 
-来看一个例子，GPT-2含有1.5B个参数，如果用fp16格式，只需要3GB显存，但是模型状态实际上需要耗费24GB！相比之下，激活值可以用 [activation checkpointing](https://arxiv.org/pdf/1604.06174.pdf) 来大大减少，所以模型就成了头号显存杀手，它也是ZeRO的重点优化对象。而其中Adam状态又是第一个要被优化的。
+来看一个例子，GPT-2含有1.5B个参数，如果用fp16格式，只需要3GB显存，但是模型状态实际上需要耗费24GB！相比之下，激活值可以用 [activation checkpointing](https://arxiv.org/pdf/1604.06174.pdf) 来大大减少，所以模型就成了头号显存杀手，它也是ZeRO的重点优化对象。而其中Adam状态又是第一个要被优化的。
 
 针对模型状态的存储优化（去除冗余），ZeRO使用的方法是分区（partition），即每张卡只存 1/N的模型状态量，这样系统内只维护一份模型状态。
 
@@ -173,7 +173,7 @@ ZeRO将模型训练阶段，每张卡中显存内容分为两类：
 
 在DeepSpeed中，  Pos 对应ZeRO-1，Pos+g 对应ZeRO-2，Pos+g+p 对应ZeRO-3，一般使用ZeRO-1就足够了。
 
-![img](https://basicv8vc.github.io/images/zero/DeepSpeed-Image-1.png#center)
+https://basicv8vc.github.io/images/zero/DeepSpeed-Image-1.png
 
 > ZeRO-DP优化的三个阶段之中每个设备内存消耗比较。ψ表示模型大小（参数数量），K表示优化器状态的内存乘数，Nd表示DP并行度，即Nd个GPU。在本例中，我们假设基于Adam优化器的混合精度训练，模型大小为ψ=7.5B，DP为Nd=64，K=12。
 
@@ -189,7 +189,7 @@ ZeRO将模型训练阶段，每张卡中显存内容分为两类：
 
 传统数据数据并行在每一步（step/iteration）计算梯度后，需要进行一次 AllReduce 操作来计算梯度均值，目前常用的是Ring AllReduce，分为ReduceScatter和AllGather两步，每张卡的通信数据量（发送+接受）近似为 2Φ。
 
-我们直接分析  Pos+g ，每张卡只存储 1/ N 的优化器状态和梯度，对于 gpu0 来说，为了计算它这 1/ N梯度的均值，需要进行一次Reduce操作，通信数据量是 (1/N  Φ)⋅N=Φ ，然后其余显卡则不需要保存这部分梯度值了。实现中使用了bucket策略，保证 1/ N 梯度只发送一次。
+我们直接分析  Pos+g ，每张卡只存储 1/ N 的优化器状态和梯度，对于 gpu0 来说，为了计算它这 1/ N梯度的均值，需要进行一次Reduce操作，通信数据量是 (1/N  Φ)⋅N=Φ ，然后其余显卡则不需要保存这部分梯度值了。实现中使用了bucket策略，保证 1/ N 梯度只发送一次。
 
 ```
 这里还要注意一点，假如模型最后两层的梯度落在 gpu0，为了节省显存，其他卡将这两层梯度删除，怎么计算倒数第三层的梯度呢？还是因为用了bucket，其他卡可以将梯度发送和计算倒数第三层梯度同时进行，当二者都结束，就可以放心将后两层梯度删除了。
@@ -267,16 +267,7 @@ Checkpointing 技术是一项很早就被提出，用于优化神经网络模型
 上文中提到，ZeRO3 技术将引入额外的通信时间，采用通信计算策略来进行通信时间的优化。以反向传播为例，由于使用了 ZeRO-3 技术，需要将切碎至各个计算卡上的模型进行临时的重组装（对应图中的 Gather ）；而在反向传播  对应图中的 Calculate  之后，还需要将得到的局部梯度重新切碎至不同的计算卡上（对应图中的 Scatter ）。通过不同的 CUDA stream 区分不同的操作，让运算和通信得以同时运行，通过大量的计算时间隐藏通信的时间开销。
 
 <div align=center><img src="https://simg.baai.ac.cn/hubview/aef5c4fa65abd6791b1fcc71ae93b4cf.png" style="zoom:50%;" />
-</div>
-
-
-
-
-
-
-
-
-
+</div
 # ZeRO-Offload: 让人人都能训练得起大模型
 
 [ZeRO-Offload: Democratizing Billion-Scale Model Training](https://www.usenix.org/conference/atc21/presentation/ren-jie)发表在ATC 21，一作是来自UC Merced的[Jie Ren](https://jren73.github.io/)，博士期间的研究方向是 Memory Management on Heterogeneous Memory Systems for Machine Learning and HPC。
@@ -289,7 +280,8 @@ ZeRO说到底是一种数据并行方案，可是很多人只有几张甚至一�
 
 直接看下效果，在单张V100的情况下，用PyTorch能训练1.4B的模型，吞吐量是30TFLOPS，有了ZeRO-Offload加持，可以训练10B的模型，并且吞吐量40TFLOPS。这么好的效果能不能扩展到多卡上面呢，比如只用一台[DGX-2](https://www.nvidia.com/en-us/data-center/dgx-2/)服务器，可以训练70B的模型，是原来只用模型并行的4.5倍，在128张显卡的实验上基本也是线性加速，此外还可以与模型并行配合.
 
-![img](https://basicv8vc.github.io/images/zero/cpu-gpu.jpeg#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/cpu-gpu.jpeg" style="zoom:50%;" />
+</div
 
 相比于昂贵的显存，内存廉价多了，能不能在模型训练过程中结合内存呢？其实已经有很多工作了，但是他们几乎只聚焦在内存上面，没有用到CPU计算，更没有考虑多卡的场景。ZeRO-Offload则将训练阶段的某些模型状态下放（offload）到内存以及CPU计算。
 
@@ -311,15 +303,18 @@ ZeRO-Offload并不希望为了最小化显存占用而让系统的计算效率�
 
 下图是某一层的一次迭代过程（iteration/step），使用了混合精读训练，前向计算（FWD）需要用到上一次的激活值（activation）和本层的参数（parameter），反向传播（BWD）也需要用到激活值和参数计算梯度，
 
-![img](https://basicv8vc.github.io/images/zero/offload-1.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-1.png" style="zoom:80%;" />
+</div
 
 如果用Adam优化器进行参数更新（Param update），流程如下：
 
-![img](https://basicv8vc.github.io/images/zero/offload-2.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-2.png" style="zoom:50%;" />
+</div
 
 下面我们为边添加权重，物理含义是数据量大小（单位是字节），假设模型参数量是  M ，在混合精度训练的前提下，边的权重要么是2M（fp16），要么是4M（fp32），
 
-![img](https://basicv8vc.github.io/images/zero/offload-3.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-3.png" style="zoom:50%;" />
+</div
 
 我们现在要做的就是沿着边把数据流图切分为两部分，分布对应GPU和CPU，计算节点（矩形节点）落在哪个设备，哪个设备就执行计算，数据节点（圆形）落在哪个设备，哪个设备就负责存储，将被切分的边权重加起来，就是CPU和GPU的通信数据量。
 
@@ -327,11 +322,13 @@ ZeRO-Offload的切分思路是：
 
 图中有四个计算类节点：FWD、BWD、Param update和float2half，前两个计算复杂度大致是 O(MB) ， O(B) 是batch size，后两个计算复杂度是 O(M) 。为了不降低计算效率，将前两个节点放在GPU，后两个节点不但计算量小还需要和Adam状态打交道，所以放在CPU上，Adam状态自然也放在内存中，为了简化数据图，将前两个节点融合成一个节点FWD-BWD Super Node，将后两个节点融合成一个节点Update Super Node。如下图右边所示，沿着gradient 16和parameter 16两条边切分。
 
-![img](https://basicv8vc.github.io/images/zero/data-flow-partition.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/data-flow-partition.png" style="zoom:30%;" />
+</div
 
 现在的计算流程是，在GPU上面进行前向和后向计算，将梯度传给CPU，进行参数更新，再将更新后的参数传给GPU。为了提高效率，可以将计算和通信并行起来，GPU在反向传播阶段，可以待梯度值填满bucket后，一遍计算新的梯度一遍将bucket传输给CPU，当反向传播结束，CPU基本上已经有最新的梯度值了，同样的，CPU在参数更新时也同步将已经计算好的参数传给GPU，如下图所示。
 
-![img](https://basicv8vc.github.io/images/zero/offload-training-one-cpu.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-training-one-cpu.png" style="zoom:30%;" />
+</div
 
 到目前为止，说的都是单卡场景
 
@@ -345,21 +342,25 @@ ZeRO-Offload的切分思路是：
 
 并且CPU和GPU的通信量和  N 无关，因为传输的是fp16 gradient和fp16 parameter，总的传输量是固定的，由于利用多核并行计算，每个CPU进程只负责 1/ N 的计算，反而随着卡数增加节省了CPU计算时间。
 
-![img](https://basicv8vc.github.io/images/zero/offload-mul-gpu.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-mul-gpu.png" style="zoom:30%;" />
+</div
 
 直接看下效果吧，
 
-![img](https://basicv8vc.github.io/images/zero/offload-performance.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-performance.png" style="zoom:30%;" />
+</div
 
 但是有一个问题，当batch size很小时，GPU上每个micro-batch计算很快，此时CPU计算时长会成为训练瓶颈，一种方法是让CPU在某个节点更新参数时延迟一步，`后面就可以让`GPU和CPU并行起来。
 
 前N-1步，不进行延迟，避免早期训练不稳定，模型无法收敛，在第N步，CPU拿到GPU计算的梯度后，不更新参数，相当于GPU空算了一步，到N+1步，CPU开始根据刚才拿到的第N步的梯度计算，此时GPU开始算N+1步的梯度。
 
-![img](https://basicv8vc.github.io/images/zero/offload-step.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-step.png" style="zoom:50%;" />
+</div
 
 当然这样会有一个问题，用来更新参数的梯度并不是根据当前模型状态计算得到的，论文的实验结果表明暂未发现对收敛和效果产生影响。
 
-![img](https://basicv8vc.github.io/images/zero/offload-delayed.png#center)
+<div align=center><img src="https://basicv8vc.github.io/images/zero/offload-delayed.png" style="zoom:30%;" />
+</div
 
 # ZeRO-Infinity: 利用NVMe打破GPU显存墙
 
