@@ -784,4 +784,3 @@ For further resources and deeper insights, I impel the inquisitive reader to che
   - [Score-Based Generative Modeling through Stochastic Differential Equations](https://arxiv.org/abs/2011.13456)
   - [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)
   - [Classifier-Free Diffusion Guidance](https://arxiv.org/abs/2207.12598)
-

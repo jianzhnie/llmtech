@@ -18,10 +18,13 @@
   - [什么是扩散模型: A Review](ai-general/diffusion_model/diffusion-model-summary.md)
   - [扩散模型的工作原理：从零开始的数学](ai-general/diffusion_model/diffusion-model-math.md)
 
+### 分布式计算
+
+- [ZeRO 技术原理](ai-general/zero-optimizer.md)
+
 ### AweSome AI Company & Tools
 
 - [Top AI Blogs and Websites](ai-general/ai-news.md)
 - [AI Community](ai-general/ai-community.md)
 - [AI ToolBox](ai-general/ai-tools.md)
 - [Prompt Engineering Guide](ai-general/prompts-guide.md)
-

@@ -9,7 +9,7 @@
 首先，让我们安装我们需要的包。我们可以将我们需要的所有pip包存储在`requirements.txt`文件中。
 
 ```python
-whisper 
+whisper
 git+https://github.com/openai/whisper.git
 pytube
 fastapi
@@ -261,4 +261,3 @@ OpenAI 发布了一种新的语音识别模型，可在 GitHub 上免费开源�
 ## Reference
 
 - https://ahmadrosid.com/blog/youtube-transcriptioin-with-openai-whisper
-

@@ -21,4 +21,3 @@ LAION，即 Large-scale Artificial Intelligence Open Network，是一个非盈�
 Philip Wang 是 DALL-E 2、AlphaFold 和 Imagen 等几个闭源 AI 系统逆向工程的幕后开发者，他刚刚发布了 PaLM + RLHF 的实现，这是一种基于文本的 AI 模型，其工作方式[与](https://github.com/lucidrains/PaLM-rlhf-pytorch)[ChatGPT](https://metaroids.com/learn/what-is-chatgpt-beginners-guide-to-using-the-ai-chatbot/)类似。[该系统结合了 Google 的 PaLM，一种具有 540B 个参数（参数比 ChatGPT 多 3 倍](https://metaroids.com/news/googles-ai-is-allegedly-3x-more-powerful-than-chatgpt/)）的 LLM（大型语言模型），以及一种通常称为人类反馈强化学习 (RLHF) 的方法，以允许创建一个聊天机器人，它可以只做关于 ChatGPT 可以做的任何事情，包括回答一般问题、写电子邮件和创建计算机代码。
 
 - Github: https://github.com/lucidrains/PaLM-rlhf-pytorch
-

@@ -450,5 +450,4 @@ def train(self, data_loader, **kwargs):
 不难看出，train 方法定义的就是训练的过程。run 方法中的 while 循环表示的就是一个完整的训练过程，故而在这个循环的前后分别执行了 self.call_hook('before_run')和 self.call_hook('after_run')，而 train 方法中的 for 循环定义了一个 epoch 训练的过程，并且每次循环都表示一次 iteration，因此在整个循环前后分别执行了 self.call_hook('before_train_epoch')和 self.call_hook('after_train_epoch')，在每次迭代前后又分别执行 self.call_hook('before_train_iter')和 self.call_hook('after_train_iter')。
 
 
-### 需要注意的地方
-如果有一个hook需要在两个不同时机执行两个需求，如在before_train_epoch和after_train_epoch，但是恰巧这两个需求的优先级不同，这个时候建议写成两个hook，每个hook只负责做一件事，这也是编程中一般原则吧。
+### 需要注意的地方如果有一个hook需要在两个不同时机执行两个需求，如在before_train_epoch和after_train_epoch，但是恰巧这两个需求的优先级不同，这个时候建议写成两个hook，每个hook只负责做一件事，这也是编程中一般原则吧。

@@ -24,10 +24,10 @@
 
 ## 文本 –> 图像
 
-- Dall-E 
+- Dall-E
 - Imagen
-- MidJourney 
-- StableDiffusion 
+- MidJourney
+- StableDiffusion
 - [MyHeritage AI Time Machine](https://dataconomy.com/2022/11/myheritage-ai-time-machine-how-to-use-it-examples-pricing/)
 - [Reface app](https://dataconomy.com/2022/12/how-to-use-reface-app-free-alternatives/)
 - [Dawn AI](https://dataconomy.com/2022/12/dawn-ai-generated-art-app-how-to-use-review/)
@@ -46,7 +46,7 @@
 
 ## 文本 –> 视频
 
-- Make-A-Video 
+- Make-A-Video
 - Imagen Video
 - Codes
   - https://github.com/lucidrains/phenaki-pytorch
@@ -74,7 +74,7 @@
 
 ## AI search engines
 
-- Neeva AI 
+- Neeva AI
   - https://neeva.com/index
 - Bing AI
 - Bard AI
@@ -90,6 +90,10 @@
 ### [Futurepedia](https://www.futurepedia.io/)
 
 Futurepedia 是全球最大的AI 工具收集网站， 每天更新.
+
+[AItoolsClub](https://www.aitoolsclub.com/)
+
+
 
 ### [AI 研习所](https://www.aiyjs.com/)
 
