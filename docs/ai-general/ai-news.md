@@ -14,7 +14,7 @@ AI Magazine 是全球技术行业的数字社区，将世界上最大的人工�
 
 AI Trends 专注于企业 AI 的业务和技术，自称是领先的行业媒体渠道，旨在让行业高管在不断变化的人工智能和数据世界中保持领先地位。
 
-这是专注于 AI 业务和技术的领先博客之一。由于提供对各个行业应用程序的见解，包括电子商务、医疗保健和能源等，它在 AI 爱好者中很受欢迎。 
+这是专注于 AI 业务和技术的领先博客之一。由于提供对各个行业应用程序的见解，包括电子商务、医疗保健和能源等，它在 AI 爱好者中很受欢迎。
 
 它是查找有关行业的有价值信息和使用新兴技术获得率先进入市场的优势的绝佳来源。此外，如果您对与 AI 领域相关的网络研讨会和其他活动感兴趣，您可以在网站上找到有关它们的信息。
 
@@ -43,7 +43,7 @@ Wired 是最多产、最著名、广为阅读和公认的技术网站之一，�
 
 ## [Analytics Vidhya](https://www.analyticsvidhya.com/blog/) (Developers)
 
-Analytics Vidhya 是数据科学家的博客。 该领域的专家通过深度文章分享见解，其中包括对业余爱好者和专业人士同样有用的技巧和指南。 
+Analytics Vidhya 是数据科学家的博客。 该领域的专家通过深度文章分享见解，其中包括对业余爱好者和专业人士同样有用的技巧和指南。
 
 ## [Towards Data Science](https://towardsdatascience.com/) (Developers/Business)
 
@@ -55,7 +55,7 @@ Towards Data Science 是Medium集团的出版物，可帮助专家交流想法�
 
 ## [ MarkTechPost](https://www.marktechpost.com/) (Developers/ News) 🤗🤗🤗
 
-MarkTechPost 是位于加利福尼亚州的网站，提供最新的机器学习、深度学习和数据科学研究。除了面向开发人员的文章外，您还可以在那里找到教程和大学研究。对于那些更深入该行业的人，可以采访来自 AI 世界的人。 
+MarkTechPost 是位于加利福尼亚州的网站，提供最新的机器学习、深度学习和数据科学研究。除了面向开发人员的文章外，您还可以在那里找到教程和大学研究。对于那些更深入该行业的人，可以采访来自 AI 世界的人。
 
 ## [DeepMind Blog](https://deepmind.com/blog) (News/Developers)
 

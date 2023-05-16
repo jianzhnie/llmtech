@@ -118,7 +118,7 @@ Prompt after formatting:
 You are a teacher in physics for High School student. Given the text of question, it is your job to write a answer that question with example.
 
 Human: What is the formula for Gravitational Potential Energy (GPE)?
-AI: 
+AI:
 The formula for Gravitational Potential Energy (GPE) is GPE = mgh, where m is the mass of the object, g is the acceleration due to gravity, and h is the height of the object.
 
 For example, if an object has a mass of 10 kg and is at a height of 5 meters, then the gravitational potential energy of the object is GPE = 10 kg x 9.8 m/s2 x 5 m = 490 Joules.

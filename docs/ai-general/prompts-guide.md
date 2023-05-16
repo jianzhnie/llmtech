@@ -32,4 +32,3 @@
 
 - https://huggingface.co/spaces/merve/ChatGPT-prompt-generator
 - https://promptperfect.jina.ai/prompts
-
