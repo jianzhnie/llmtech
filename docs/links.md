@@ -16,7 +16,7 @@
 |        [Stability AI](https://platform.stability.ai/)        |   https://github.com/stability-ai   |           Stability 公司，代表作 stable-diffusion            |
 | [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                  -                  |                      伯克利大学 AI 研究                      |
 |         [Stanford AI](https://ai.stanford.edu/blog/)         |                  -                  |                      斯坦福大学 AI 研究                      |
-|            [EleutherAI](http://www.eleuther.ai/)             |    https://github.com/EleutherAI    |                                                              |
+|            [EleutherAI](http://www.eleuther.ai/)             |    https://github.com/EleutherAI    |                          EleutherAI                          |
 
 ### 国内机构
 
