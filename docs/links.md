@@ -1,10 +1,11 @@
 ## Some links
 
 ### Company Or Institution
+
 |                          公司/机构                           |               Github                |                             简介                             |
 | :----------------------------------------------------------: | :---------------------------------: | :----------------------------------------------------------: |
-|            [Deepmind](https://www.deepmind.com/)             |     https://github.com/deepmind     |    Google 旗下的DeepMind公司，AlphaGO, AlphaFold 等代表作    |
-|              [OpenAI](https://openai.com/blog/)              |      https://github.com/openai      |        与 DeepMind 齐名，代表作 GPT3， GPT4， chatgpt        |
+|            [Deepmind](https://www.deepmind.com/)             |     https://github.com/deepmind     |          DeepMind公司，AlphaGO, AlphaFold 等代表作           |
+|              [OpenAI](https://openai.com/blog/)              |      https://github.com/openai      |           OpenAI公司，代表作 GPT3， GPT4， chatgpt           |
 |        [Google Reserach](https://ai.googleblog.com/)         | https://github.com/google-research  |                          谷歌研究院                          |
 |      [FaceBook Research](https://ai.facebook.com/blog)       | https://github.com/facebookresearch |                       FaceBook 研究院                        |
 |          [Huggingface](https://huggingface.co/blog)          |    https://github.com/huggingfac    |               Huggingface 最大的AI模型开源社区               |
@@ -17,6 +18,7 @@
 | [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                  -                  |                      伯克利大学 AI 研究                      |
 |         [Stanford AI](https://ai.stanford.edu/blog/)         |                  -                  |                      斯坦福大学 AI 研究                      |
 |            [EleutherAI](http://www.eleuther.ai/)             |    https://github.com/EleutherAI    |                          EleutherAI                          |
+| [lightning.ai](https://lightning.ai/pages/category/tutorial/) |                                     |      开发出 PyTorch Lightning 工具，让AI模型开发更简单       |
 
 ### 国内机构
 
