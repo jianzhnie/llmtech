@@ -18,7 +18,7 @@
 | [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                  -                  |                      伯克利大学 AI 研究                      |
 |         [Stanford AI](https://ai.stanford.edu/blog/)         |                  -                  |                      斯坦福大学 AI 研究                      |
 |            [EleutherAI](http://www.eleuther.ai/)             |    https://github.com/EleutherAI    |                          EleutherAI                          |
-| [lightning.ai](https://lightning.ai/pages/category/tutorial/) |                                     |      开发出 PyTorch Lightning 工具，让AI模型开发更简单       |
+| [lightning.ai](https://lightning.ai/pages/category/tutorial/) |                                     |          PyTorch Lightning 工具，让AI模型开发更简单          |
 
 ### 国内机构
 
