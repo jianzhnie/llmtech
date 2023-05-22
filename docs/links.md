@@ -9,6 +9,7 @@
 |        [Google Reserach](https://ai.googleblog.com/)         |   https://github.com/google-research   |                          谷歌研究院                          |
 |      [FaceBook Research](https://ai.facebook.com/blog)       |  https://github.com/facebookresearch   |                       FaceBook 研究院                        |
 |          [Huggingface](https://huggingface.co/blog)          |     https://github.com/huggingfac      |               Huggingface 最大的AI模型开源社区               |
+|                 [AI2](https://allenai.org/)                  |       https://github.com/allenai       | AI2 is a non-profit research institute founded in 2014 with the mission of conducting high-impact AI research and engineering in service of the common good. |
 |               [Cohere](https://txt.cohere.ai/)               |      https://github.com/cohere-ai      |                                                              |
 |           [Anthropic](https://www.anthropic.com/)            |     https://github.com/anthropics      |                   Opeanai 前员工创办的公司                   |
 |       [BigScience](https://bigscience.huggingface.co/)       | https://github.com/bigscience-workshop |          Research workshop on large language models          |
