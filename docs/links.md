@@ -9,6 +9,7 @@
 |        [Google Reserach](https://ai.googleblog.com/)         |   https://github.com/google-research   |                          谷歌研究院                          |
 |      [FaceBook Research](https://ai.facebook.com/blog)       |  https://github.com/facebookresearch   |                       FaceBook 研究院                        |
 |          [Huggingface](https://huggingface.co/blog)          |     https://github.com/huggingfac      |               Huggingface 最大的AI模型开源社区               |
+|                 [AI2](https://allenai.org/)                  |       https://github.com/allenai       | AI2 is a non-profit research institute founded in 2014 with the mission of conducting high-impact AI research and engineering in service of the common good. |
 |               [Cohere](https://txt.cohere.ai/)               |      https://github.com/cohere-ai      |                                                              |
 |           [Anthropic](https://www.anthropic.com/)            |     https://github.com/anthropics      |                   Opeanai 前员工创办的公司                   |
 |       [BigScience](https://bigscience.huggingface.co/)       | https://github.com/bigscience-workshop |          Research workshop on large language models          |
@@ -23,11 +24,20 @@
 |            [EleutherAI](http://www.eleuther.ai/)             |     https://github.com/EleutherAI      |                          EleutherAI                          |
 | [lightning.ai](https://lightning.ai/pages/category/tutorial/) |    https://github.com/Lightning-AI     |          PyTorch Lightning 工具，让AI模型开发更简单          |
 
+### LLM Courses
+
+|                             课程                             |        机构        |                             简介                             |
+| :----------------------------------------------------------: | :----------------: | :----------------------------------------------------------: |
+| [CS324: Large Language Models](https://stanford-cs324.github.io/winter2022/) |     斯坦福大学     | -  大型语言模型的能力  <br />- 与大型语言模型相关的危害，例如毒性、错误信息、隐私风险、社会偏见等  <br />- 大型语言模型的建模和训练，例如仅编码器、仅解码器和编码器-解码器架构 |
+| [COS 597G: Understanding Large Language Models](https://www.cs.princeton.edu/courses/archive/fall22/cos597G/) |    普林斯顿大学    | 大语言模型基础 <br />深入回顾 BERT、T5 和 GPT 3  <br />Promoting language models 提示语言模型模型  <br />大型语言模型中的缩放和风险  <br />多模态语言模型 |
+| [Large language models](https://rycolab.io/classes/llm-s23/) | 苏黎世联邦理工学院 | - 神经网络建模和推理 <br /> - 训练、微调和推理  <br />-  并行性和扩展  安全和滥用 |
+| [CS224n：Deep learning for NLP](https://web.stanford.edu/class/cs224n/) |     斯坦福大学     |    从传统的 NLP 和语言学概念一直到大型语言模型和伦理挑战     |
+
 ### 国内机构
 
 |             机构              |            Github             |                 简介                  |
 | :---------------------------: | :---------------------------: | :-----------------------------------: |
-| [统计之都](https://cosx.org/) |                               |  国内最好的统计、数据、模型交流网站   |
+| [统计之都](https://cosx.org/) |                               |     国内最好的统计、数据交流网站      |
 |         [openmmlab]()         | https://github.com/open-mmlab | 计算机视觉任务模型的全家桶， 简单易用 |
 |                               |                               |                                       |
 
@@ -38,6 +48,7 @@
 |        [科学空间](https://spaces.ac.cn/)         ||AI|
 |     [Lilian](https://lilianweng.github.io/)      ||AI|
 |    [Jay Alammar](https://jalammar.github.io/)    ||AI|
+| [sebastian raschka](https://sebastianraschka.com/blog/) ||AI|
 | [Nathan Lambert](https://robotic.substack.com/)  ||AI|
 |             [int8](https://int8.io/)             ||AI|
 |         [Yihui Xie](https://yihui.org/)          ||生活|
