@@ -154,7 +154,8 @@ Adam在SGD基础上，为每个参数梯度增加了一阶动量（momentum）�
 
 混合精度训练，字如其名，同时存在fp16和fp32两种格式的数值，其中模型参数、模型梯度都是fp16，此外还有fp32的模型参数，如果优化器是Adam，则还有fp32的momentum和variance。
 
-https://basicv8vc.github.io/images/zero/mixed-precision-training.png
+<div align=center><img src="https://basicv8vc.github.io/images/zero/mixed-precision-training.png" style="zoom:30%;" />
+</div>
 
 ZeRO将模型训练阶段，每张卡中显存内容分为两类：
 
@@ -173,7 +174,8 @@ ZeRO将模型训练阶段，每张卡中显存内容分为两类：
 
 在DeepSpeed中，  Pos 对应ZeRO-1，Pos+g 对应ZeRO-2，Pos+g+p 对应ZeRO-3，一般使用ZeRO-1就足够了。
 
-https://basicv8vc.github.io/images/zero/DeepSpeed-Image-1.png
+<div align=center><img src="https://basicv8vc.github.io/images/zero/DeepSpeed-Image-1.png" style="zoom:80%;" />
+</div>
 
 > ZeRO-DP优化的三个阶段之中每个设备内存消耗比较。ψ表示模型大小（参数数量），K表示优化器状态的内存乘数，Nd表示DP并行度，即Nd个GPU。在本例中，我们假设基于Adam优化器的混合精度训练，模型大小为ψ=7.5B，DP为Nd=64，K=12。
 
