@@ -52,13 +52,14 @@
 | :----------------------------------------------: | :---: |
 |        [科学空间](https://spaces.ac.cn/)         |      🤗🤗🤗 |
 |     [Lilian](https://lilianweng.github.io/)      | 🤗🤗🤗🤗🤗 |
+| [Andrej Karpathy](https://karpathy.ai/) | 🤗🤗🤗 |
 |    [Jay Alammar](https://jalammar.github.io/)    |    🤗🤗🤗🤗🤗    |
 | [Ahead of AI](https://magazine.sebastianraschka.com/) | 🤗🤗🤗🤗 |
 | [Nathan Lambert](https://robotic.substack.com/)  | 🤗🤗 |
 |             [int8](https://int8.io/)             | 🤗🤗 |
 |       [Yang Song](https://yang-song.net/)        |   🤗🤗🤗   |
-| [Chiyuan Zhang](https://pluskid.org/) | 生活，艺术 |
-| [Yihui Xie](https://yihui.org/) | 生活，艺术 |
+| [Chiyuan Zhang](https://pluskid.org/) | 生活，艺术 🤗🤗🤗 |
+| [Yihui Xie](https://yihui.org/) | 生活，艺术 🤗🤗🤗 |
 |  | |
 
 ## My projects
