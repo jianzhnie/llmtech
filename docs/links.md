@@ -51,20 +51,21 @@
 
 ## Personal Blog
 
-|                       公司/机构                       |    推荐指数    |
-| :---------------------------------------------------: | :------------: |
-|           [科学空间](https://spaces.ac.cn/)           |      🤗🤗🤗       |
-|        [Lilian](https://lilianweng.github.io/)        |     🤗🤗🤗🤗🤗      |
-|        [Andrej Karpathy](https://karpathy.ai/)        |      🤗🤗🤗       |
-|      [Jay Alammar](https://jalammar.github.io/)       |     🤗🤗🤗🤗🤗      |
-| [Ahead of AI](https://magazine.sebastianraschka.com/) |      🤗🤗🤗🤗      |
-|    [Nathan Lambert](https://robotic.substack.com/)    |       🤗🤗       |
-|               [int8](https://int8.io/)                |      🤗🤗🤗🤗      |
-|          [Yang Song](https://yang-song.net/)          |      🤗🤗🤗       |
-|       [Tim Dettmers](https://timdettmers.com/)        |      🤗🤗🤗       |
-|         [Chiyuan Zhang](https://pluskid.org/)         | 生活，艺术 🤗🤗🤗 |
-|            [Yihui Xie](https://yihui.org/)            | 生活，艺术 🤗🤗🤗 |
-|                                                       |                |
+|                          公司/机构                           |    推荐指数    |
+| :----------------------------------------------------------: | :------------: |
+|              [科学空间](https://spaces.ac.cn/)               |      🤗🤗🤗       |
+|           [Lilian](https://lilianweng.github.io/)            |     🤗🤗🤗🤗🤗      |
+|           [Andrej Karpathy](https://karpathy.ai/)            |      🤗🤗🤗       |
+|          [Jay Alammar](https://jalammar.github.io/)          |     🤗🤗🤗🤗🤗      |
+|    [Ahead of AI](https://magazine.sebastianraschka.com/)     |      🤗🤗🤗🤗      |
+|       [Nathan Lambert](https://robotic.substack.com/)        |       🤗🤗       |
+|                   [int8](https://int8.io/)                   |      🤗🤗🤗🤗      |
+|             [Yang Song](https://yang-song.net/)              |      🤗🤗🤗       |
+|           [Tim Dettmers](https://timdettmers.com/)           |      🤗🤗🤗       |
+| [[Xavier Amatriain](https://amatriain.net/blog/)](https://amatriain.net/blog/posts/) |      🤗🤗🤗       |
+|            [Chiyuan Zhang](https://pluskid.org/)             | 生活，艺术 🤗🤗🤗 |
+|               [Yihui Xie](https://yihui.org/)                | 生活，艺术 🤗🤗🤗 |
+|                                                              |                |
 
 ## My projects
 
