@@ -36,17 +36,11 @@ C 程序设计语言的作者是Brian W. Kernighan/ Dennis M. Ritchie，因此�
 
 ### 操作系统导论
 
-
-
-
-
 ## 相关资源
 
 - 计算机专业[学习路线](https://hackway.org/docs/cs/intro)
 
 - [Path to self-taught education in Computer Science](https://github.com/ossu/computer-science)
-
-
 
 ### **2.计算机组成原理**
 
