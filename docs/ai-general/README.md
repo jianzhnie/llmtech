@@ -22,8 +22,11 @@
 
 - [ZeRO 技术原理](ai-general/zero-optimizer.md)
 
+### 量化压缩
+
+- [模型量化](ai-general/quantization/README.md)
+
 ### AweSome AI Company & Tools
 
 - [Top AI Blogs and Websites](ai-general/ai-news.md)
-- [AI Community](ai-general/ai-community.md)
 - [AI ToolBox](ai-general/ai-tools.md)
