@@ -100,7 +100,7 @@ Our 8-bit optimizers maintain 32-bit performance at a fraction of the original m
 
 An optimizer updates the parameters w of a neural network by using the gradient of the loss with respect to the weight $\mathbf{g}_{t}=\frac{\partial \mathbf{L}}{\partial \mathbf{w}}$ at update iteration $t$. Stateful optimizers compute statistics of the gradient with respect to each parameter over time for accelerated optimization. Two of the most commonly used stateful optimizers are Adam (Kingma and Ba, 2014), and SGD with momentum (Qian, 1999) - or Momentum for short. Without damping and scaling constants, the update rules of these optimizers are given by:
 
-优化器通过使用损失相对于权重的梯度 $\mathbf{g}_{t}=\frac{\partial \mathbf{L}}{\partial \mathbf{w}}$ 来更新神经网络的参数 w.   有状态优化器随时间计算每个参数的梯度统计数据，以加速优化。两个最常用的有状态优化器是 Adam（Kingma 和 Ba，2014 年）和带动量的 SGD（Qian，1999 年）——或简称 Momentum。在没有阻尼和缩放常数的情况下，这些优化器的更新规则由下式给出：
+优化器通过使用损失相对于权重的梯度 $\mathbf{g}_{t}=\frac{\partial \mathbf{L}}{\partial \mathbf{w}}$ 来更新神经网络的参数 w.   有状态优化器随时间计算每个参数的梯度统计数据，以加速优化。两个最常用的有状态优化器是 Adam（Kingma 和 Ba，2014 年）和带动量的 SGD（Qian，1999 年）——或简称 Momentum。在没有阻尼和缩放常数的情况下，这些优化器的更新规则由下式给出：
 $$
 \begin{gathered}
 \operatorname{Momentum}\left(\mathbf{g}_{t}, \mathbf{w}_{t-1}, \mathbf{m}_{t-1}\right)= \begin{cases}\mathbf{m}_{0}=\mathbf{g}_{0} & \text { Initialization } \\
