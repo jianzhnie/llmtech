@@ -9,6 +9,7 @@
   - [ Langchain ](ai-general/chatgpt/langchain.md)
   - [Prompt Engineering Guide](ai-general/prompts-guide.md)
   - [Chatgpt_Prompt](ai-general/chatgpt/chatgpt_prompt.md)
+  - [大型语言模型 (LLM) 微调方法](ai-general/chatgpt/finetune_llm.md)
 
 ### 扩散模型
 
