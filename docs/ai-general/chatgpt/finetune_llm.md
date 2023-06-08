@@ -8,13 +8,13 @@
 
 ## In-Context Learning和索引
 
-自 GPT-2（[Radford 等人](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)）和 GPT-3（[Brown 等人](https://arxiv.org/abs/2005.14165)）以来，我们已经看到，在一般文本语料库上预训练的生成性大语言模型（LLM）能够进行语境学习，如果我们想执行LLM没有被明确训练的特定或新任务，就不需要我们进一步训练或微调预训练的LLM。相反，我们可以直接通过输入Prompt提供一些目标任务的例子，如下面的例子所示。
+自 GPT-2（[Radford 等人](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)）和 GPT-3（[Brown 等人](https://arxiv.org/abs/2005.14165)）以来，我们已经看到，在一般文本语料库上预训练的生成式大语言模型（LLM）能够进行语境学习，如果我们想执行LLM没有被明确训练的特定或新任务，就不需要我们进一步训练或微调预训练的LLM。相反，我们可以直接通过输入Prompt提供一些目标任务的例子，如下面的例子所示。
 
 ![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffea460ea-84d5-4973-9bc7-dc0e53a13ae0_1340x680.png)
 
 >  In-Context Learning的一个例子。
 
-如果我们无法直接访问模型，例如，如果我们通过 API 使用模型，则In-Context Learning非常有用。
+如果我们无法直接访问模型，例如，通过 API 或用户界面与 LLM 交互时，则In-Context Learning 非常有用。
 
 与In-Context Learning相关的是HardPrompt Tuning的概念，我们修改输入以希望改进输出，如下图所示。
 
@@ -24,9 +24,9 @@
 
 顺便说一句，我们称之为HardPrompt Tuning，因为我们是直接修改输入的单词或标记。稍后，我们将讨论称为Soft Prompt调优（或通常简称为Prompt调优）的可微分版本。
 
-上面提到的快速调整方法提供了一种比参数微调更节省资源的替代方法。但是，它的性能通常达不到微调的要求，因为它不会针对特定任务更新模型的参数，这可能会限制其对特定任务细微差别的适应性。此外，Prompt Tuning可能是劳动密集型的，因为它通常需要人工参与比较不同Prompt的质量。
+上面提到的快速调整方法提供了一种比参数微调更节省资源的替代方法。但是，它的性能通常达不到微调的要求，因为它不会针对特定任务更新模型的参数，这可能会限制其对特定任务细微差别的适应性。此外，Prompt Tuning 可能是劳动密集型的，因为它通常需要人工参与比较不同Prompt的质量。
 
-另一种利用纯基于In-Context Learning的方法的方法是索引。在 LLM 领域内，索引可以被视为一种In-Context Learning变通方法，它可以将 LLM 转换为信息检索系统，以便从外部资源和网站中提取数据。在此过程中，索引模块将文档或网站分解为更小的部分，将它们转换为可存储在矢量数据库中的矢量。然后，当用户提交查询时，索引模块计算Embedding查询与数据库中每个向量之间的向量相似度。最终，索引模块获取前k个最相似的Embedding以生成响应。
+另一种利用纯基于In-Context Learning的方法的方法是索引。在 LLM 领域内，索引可以被视为一种In-Context Learning 变通方法，它可以将 LLM 转换为信息检索系统，以便从外部资源和网站中提取数据。在此过程中，索引模块将文档或网站分解为更小的部分，将它们转换为可存储在矢量数据库中的矢量。然后，当用户提交查询时，索引模块计算Embedding查询与数据库中每个向量之间的向量相似度。最终，索引模块获取前k个最相似的Embedding以生成响应。
 
 ![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4063347e-8920-40c6-86b3-c520084b303c_1272x998.jpeg)
 
@@ -34,15 +34,13 @@
 
 ## 三种传统的基于特征和微调的方法
 
-对于直接访问大型语言模型 (LLM) 受限的情况，例如通过 API 或用户界面与 LLM 交互时，In-Context Learning是一种有价值且用户友好的方法。
-
 但是，如果我们可以访问 LLM，则使用来自目标域的数据在目标任务上对其进行微调通常会产生更好的结果。那么，我们如何才能使模型适应目标任务呢？下图概述了三种常规方法。
 
 ![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa505c654-5ddf-485f-90a8-b656d03b94dc_2394x834.png)
 
 > 3 种传统的基于特征和微调的方法。
 
-为了下面的讨论提供一些实际背景，我们正在为分类任务微调编码器样式的 LLM，例如 BERT ( [Devlin et al. 2018 )。](https://arxiv.org/abs/1810.04805)（为简单起见，此分类任务预测电影评论是否具有正面或负面情绪。）请注意，与其对编码器式的LLM进行微调，同样的方法也适用于类似GPT的解码器式LLM，我将在以后的文章中提供一个例子。此外，我们还可以对解码器式的LLM进行微调，以生成特定指令的多句话答案，而不是仅仅对文本进行分类。另外，对于这一点，我将在以后的文章中提供实战案例。
+为了下面的讨论提供一些实际背景，我们正在为分类任务微调编码器样式的 LLM，例如 BERT ( [Devlin et al. 2018 )。](https://arxiv.org/abs/1810.04805)（此分类任务预测电影评论是否具有正面或负面情绪。）请注意，与其对编码器式的LLM进行微调，同样的方法也适用于类似GPT的解码器式LLM。此外，我们还可以对解码器式的LLM进行微调，以生成特定指令的多句话答案，而不是仅仅对文本进行分类。
 
 ### 1. 基于特征的方法
 
@@ -141,7 +139,7 @@ trainer.test(lightning_model, dataloaders=test_loader)
 
 虽然最初的BERT论文（Devlin等人）报告说，只对输出层进行微调可以使建模性能与对所有层进行微调相当，但由于涉及更多的参数，所以成本要高得多。例如，一个BERT基础模型有大约1.1亿个参数。然而，用于二元分类的BERT基础模型的最后一层仅由1,500个参数组成。此外，BERT基础模型的最后两层占60,000个参数--这只占总模型大小的0.6%左右。
 
-我们的里程将根据我们的目标任务和目标领域与模型预训练的数据集的相似程度而有所不同。但在实践中，对所有层进行微调，几乎总是能带来卓越的建模性能。
+我们的里程数将根据我们的目标任务和目标领域与模型预训练的数据集的相似程度而有所不同。但在实践中，对所有层进行微调，几乎总是能带来卓越的建模性能。
 
 因此，在优化建模性能时，使用预训练的LLM的黄金标准是更新所有层（这里称为微调II）。从概念上讲，微调II与微调I非常相似。唯一的区别是，我们不冻结预训练的LLM的参数，而是对其进行微调：
 
@@ -185,11 +183,13 @@ trainer.test(lightning_model, dataloaders=test_loader)
 
 ![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fae8e84db-16f9-485d-a0cb-0392fc8aca56_1454x536.png)
 
->  各种方法的经验法则计算和建模性能权衡。
+>  各种方法的经验法则，计算和建模性能权衡。
 
-## Parameter-Efficient Finetuning
+## Parameter-Efficient Finetuning （Peft）
 
-然而，微调 LLM 在计算资源和时间方面可能非常昂贵，这就是研究人员开始开发参数高效微调方法的原因。
+在前面的章节中，我们了解到，微调更多的层通常会导致更好的结果。上面的实验是基于一个DistilBERT模型，它相对较小。如果我们想微调更大的模型，而这些模型只能勉强装入GPU内存，例如最新的生成型LLMs，该怎么办？当然，我们可以使用上面的基于特征或微调I的方法。但是，假设我们想获得类似于微调II的建模质量？
+
+微调 LLM 在计算资源和时间方面可能非常昂贵，这就是研究人员开始开发参数高效微调方法的原因。
 
 参数有效的微调使我们能够重复使用预训练的模型，同时最大限度地减少计算和资源的占用。总而言之，参数高效微调至少有5个原因：
 
@@ -197,13 +197,11 @@ trainer.test(lightning_model, dataloaders=test_loader)
 
 - 更快的训练时间（更快地完成训练）；
 
-- 更低的Hard件要求（可使用更小的GPU和更少的智能存储器）；
+- 更低的硬件件要求（可使用更小的GPU和更少的智能存储器）；
 
 - 更好的建模性能（减少过度拟合）；
 
 - 更少的存储空间（大部分权重可以在不同的任务中共享）。
-
-在前面的章节中，我们了解到，微调更多的层通常会导致更好的结果。上面的实验是基于一个DistilBERT模型，它相对较小。如果我们想微调更大的模型，而这些模型只能勉强装入GPU内存，例如最新的生成型LLMs，该怎么办？当然，我们可以使用上面的基于特征或微调I的方法。但是，假设我们想获得类似于微调II的建模质量？
 
 最近几年，研究人员开发了几种技术（[Lialin 等人](https://arxiv.org/abs/2303.15647)）来微调LLM，使其具有较高的建模性能，同时只需要训练少量的参数。这些方法通常被称为参数高效微调技术（PEFT）。
 
@@ -219,7 +217,7 @@ trainer.test(lightning_model, dataloaders=test_loader)
 
 要了解 LLaMA-Adapter 的工作原理，我们必须后退一步，回顾称为 Prefix Tuning 和 Adapters 的两种相关技术 ——LLaMA-Adapter（[Zhang 等人](https://arxiv.org/abs/2303.16199)）结合并扩展了这两种思想。
 
-因此，在本文的其余部分，我们将在仔细研究 LLaMA-Adapter 之前讨论Prompt修改的各种概念，以了解Prefix Tuning和Adapters 方法。（我们将在以后的文章中保存低等级改编。）
+因此，在本文的其余部分，我们将在仔细研究 LLaMA-Adapter 之前讨论Prompt修改的各种概念，以了解Prefix Tuning和Adapters 方法。
 
 ### Prompt Tuning和Prefix Tuning
 
@@ -236,22 +234,14 @@ Prompt Tuning的一种特殊方法是Prefix Tuning（[Li 和 Liang](https://arxi
 ![LLM 的Prefix Tuning](https://lightningaidev.wpengine.com/wp-content/uploads/2023/04/prefix-tuning.png)
 
 请注意，在上图中，“全连接层”指的是一个小型多层感知器（两个全连接层，中间有一个非线性激活函数）。这些完全连接的层将Soft Prompt嵌入到与Transformer Block输入具有相同维度的特征空间中，以确保连接的兼容性。
-使用（Python）伪代码，我们可以说明常规Transformer Block和前缀修改Transformer Block之间的区别，如下所示：
 
+使用（Python）伪代码，我们可以说明常规Transformer Block和前缀修改Transformer Block之间的区别，如下所示：
 
 ![带有前缀代码的转换器博客](https://lightningaidev.wpengine.com/wp-content/uploads/2023/04/prefix-code.png)
 
 根据原始 [Prefix Tuning](https://arxiv.org/abs/2101.00190) 论文，Prefix Tuning实现了与微调所有层相当的建模性能，同时只需要训练 0.1% 的参数——实验基于 GPT-2 模型。此外，在许多情况下，Prefix Tuning甚至优于所有层的微调，这可能是因为涉及的参数更少，这有助于减少较小目标数据集上的过度拟合。
 
 最后，推理过程中Soft Prompt的使用：学习Soft Prompt后，我们必须在执行微调模型的特定任务时将其作为前缀提供。这允许模型调整其对特定任务的响应。此外，我们可以有多个Soft Prompt，每个Soft Prompt对应一个不同的任务，并在推理过程中提供适当的前缀以获得特定任务的最佳结果。
-
-Prompt tuning（不同于Prompt）将一个张量附加到预训练的 LLM 的embedded输入中。然后调整张量以优化微调任务和数据的损失函数，同时 LLM 中的所有其他参数保持冻结状态。例如，假设一个 LLM 在通用数据集上进行预训练以生成文本。Prompt tuning（微调）需要采用这个预训练的 LLM，将Prompt标记添加到embedded 输入，然后对LLM进行微调，例如，在微调数据集上进行情感分类。
-
-Prompt调优和一般Peft微调方法背后的主要思想是向预训练的 LLM 添加少量新参数，并且仅微调新添加的参数以使 LLM 在 (a) 目标数据集上表现更好（例如，特定领域的数据集，如医学或法律文件）和 (b) 目标任务（例如，情感分类）。
-
-![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd9c855ba-814f-4f95-9b1b-c97a46eb2f42_1646x880.png)
-
-> 参数高效微调技术（如 prompt, prefix, and adapter tuning)的想法是将一小组参数添加到预训练的 LLM。只有新添加的参数被微调，而预训练的 LLM 的所有参数都保持冻结状态。
 
 ### Adapters
 
@@ -270,7 +260,9 @@ Prompt调优和一般Peft微调方法背后的主要思想是向预训练的 LLM
 
 请注意，Adapters 的全连接层通常相对较小，并且具有类似于自动编码器的瓶颈结构。每个Adapters 块的第一个全连接层将输入向下投影到低维表示上。第二个全连接层将输入投影回输入维度。这个参数如何有效？例如，假设第一个全连接层将 1024 维输入投射到 24 维，第二个全连接层将其投射回 1024 维。这意味着我们引入了 1,024 x 24 + 24 x 1,024 = 49,152 个权重参数。相比之下，将 1024 维输入重新投影到 1,024 维空间的单个全连接层将具有 1,024 x 1024 = 1,048,576 个参数。
 
-根据原始[Adapter论文](https://arxiv.org/abs/1902.00751)，使用Adapter方法训练的 BERT 模型达到了与完全微调的 BERT 模型相当的建模性能，而只需要训练 3.6% 的参数。此外，研究人员提供了一张图，其中他们将Adapter方法与仅对 BERT 模型的输出（顶层）层进行微调进行了比较，发现使用Adapter，可以将微调顶层微调性能与数量少得多的参数：
+根据原始[Adapter论文](https://arxiv.org/abs/1902.00751)，使用Adapter方法训练的 BERT 模型达到了与完全微调的 BERT 模型相当的建模性能，而只需要训练 3.6% 的参数。
+
+此外，研究人员提供了一张图，其中他们将Adapter方法与仅对 BERT 模型的输出（顶层）层进行微调进行了比较，发现使用Adapter，可以将微调顶层微调性能与数量少得多的参数：
 
 ![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F75e6face-6d72-4ce6-888e-b17dbf8bd39b_1014x742.png)
 
@@ -321,8 +313,10 @@ Prompt调优和一般Peft微调方法背后的主要思想是向预训练的 LLM
 
 ## 结论
 
-微调预训练的大型语言模型 (LLM) 是定制这些模型以满足特定业务需求并使其与目标域数据保持一致的有效方法。此过程涉及使用与所需领域相关的较小数据集调整模型参数，这使模型能够学习特定领域的知识和词汇。有几种有效的替代方法可以使用预训练的Transformer。基于特征的方法、In-Context Learning和参数高效微调技术等方法可以将 LLM 有效应用于新任务，同时最大限度地减少计算成本和资源。
+微调预训练的大型语言模型 (LLM) 是定制这些模型以满足特定业务需求并使其与目标域数据保持一致的有效方法。此过程涉及使用与所需领域相关的较小数据集调整模型参数，这使模型能够学习特定领域的知识和词汇。
 
-然而，由于 LLM“很大”，更新 Transformer 模型中的多个层可能非常昂贵，因此研究人员开始开发参数高效的替代方案。我们讨论了传统 LLM 微调机制的几种参数高效替代方案。特别是，我们介绍了通过前缀调整和插入额外的适配器层来预置可调软提示。我们讨论了最近流行的 LLaMA-Adapter 方法，该方法预先设置可调软提示并引入额外的门控机制来稳定训练。
+然而，由于 LLM“很大”，更新 Transformer 模型中的多个层可能非常昂贵，因此研究人员开始开发参数高效的替代方案。
+
+我们讨论了传统 LLM 微调机制的几种参数高效替代方案。特别是，我们介绍了通过前缀调整和插入额外的适配器层来预置可调软提示。我们讨论了最近流行的 LLaMA-Adapter 方法，该方法预先设置可调软提示并引入额外的门控机制来稳定训练。
 
 此外，带有人类反馈的强化学习 (RLHF) 可作为监督微调的替代方案，有可能提高模型性能。
