@@ -10,6 +10,7 @@
   - [Prompt Engineering Guide](ai-general/prompts-guide.md)
   - [Chatgpt_Prompt](ai-general/chatgpt/chatgpt_prompt.md)
   - [大型语言模型 (LLM) 微调方法](ai-general/chatgpt/finetune_llm.md)
+  - [Low-Rank Adaptation (`LoRA`)](ai-general/chatgpt/lora-llm.md)
 
 ### 扩散模型
 
