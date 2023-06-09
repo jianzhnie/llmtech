@@ -23,20 +23,19 @@ QLora 引入了多种创新，旨在在不牺牲性能的情况下减少内存�
 - FP16：半精度浮点数，用5bit 表示指数，10bit 表示小数。FP16 表示整数范围较小，但是尾数精度较高。
 - BF16：是对FP32单精度浮点数截断数据，用8bit 表示指数，7bit 表示小数。BF16 可表示的整数范围与FP32一样广泛。但只有新的硬件(A100\3090\4090等)才支持，V100/昇腾910等不支持
 
-量化的本质实际是从一种数据类型舍入到另一种数据类型，通常包含量化和反量化两步，假如我们有两组数据类型A、B，A可以表示的数值为[0, 1, 2, 3, 4, 5]，B可以表示的数值为[0, 2, 4]。我们要做的便是：
+量化的本质实际是从一种数据类型舍入到另一种数据类型，通常包含量化和反量化两步，假如我们有两组数据类型A、B，A可以表示的数值为[0, 1, 2, 3, 4, 5]，B可以表示的数值为[0, 2, 4]。
 
-- 将数据范围从A标准化为B。数据类型A表示的向量为[3, 1, 2, 3]。
+- 现在有一个数据类型A表示的向量为[3, 1, 2, 3], 我们要做的便是：将数据范围从A标准化为B。
+  - 找到向量[3, 1, 2, 3]的最大绝对值3
+  - 向量[3, 1, 2, 3]除以最大值3：[3, 1, 2, 3]——>[1, 0.33, 0.66, 1.0]
+  - 将向量[1, 0.33, 0.66, 1.0]与B的数据范围4相乘：[1, 0.33, 0.66, 1.0]——>[4.0, 1.33, 2.66, 4.0]
+  - 将向量[4.0, 1.33, 2.66, 4.0]中的每个值用B中最接近的数值表示：[4.0, 1.33, 2.66, 4.0] ——> [4, 2, 2, 4]。
 
-- - 找到向量[3, 1, 2, 3]的最大绝对值3
-  - 向量[3, 1, 2, 3]除以最大值3：[3, 1, 2, 3]->[1, 0.33, 0.66, 1.0]
-  - 将向量[1, 0.33, 0.66, 1.0]与B的数据范围4相乘：[1, 0.33, 0.66, 1.0]->[4.0, 1.33, 2.66, 4.0]
-  - 将向量[4.0, 1.33, 2.66, 4.0]中的每个值用B中最接近的数值表示：[4.0, 1.33, 2.66, 4.0] -> [4, 2, 2, 4]。
-
-- 用B中最接近的数值表示A 。
-
-- - [4, 2, 2, 4]除以4->[1.0, 0.5, 0.5, 1.0]
+- 现在我们将 [4, 2, 2, 4] 反量化， 用B中最接近的数值表示A 。
+  - [4, 2, 2, 4]除以4->[1.0, 0.5, 0.5, 1.0]
   - 乘以量化过程中找到的最大的绝对值：[1.0, 0.5, 0.5, 1.0] -> [3.0, 1.5, 1.5, 3.0]
   - 近似表示：[3.0, 1.5, 1.5, 3.0] -> [3, 2, 2, 3]
+
 
 经过量化、反量化，原来的[3, 1, 2, 3]变成了[3, 2, 2, 3]，产生了量化误差。这样的误差在模型中传播、积累，最终会影响模型性能。提高量化精度的最佳方法是使用更多的量化参数。例如，我们有一个二维的张量：[[3, 1, 2, 3], [0, 1, 1, 0]]。如果分别为[3, 1, 2, 3]和[0, 1, 1, 0]设置独立的量化参数为各自的最大绝对值3和1，那么量化的精度会比为整个[[3, 1, 2, 3], [0, 2, 2, 0]]只设置一个量化参数3更高。
 
@@ -72,13 +71,10 @@ LoRA的优势很明显：
 LoRA 也有一些缺点：
 
 - 参数空间小：LoRA中参与训练的参数量较少，解空间较小，效果相比全量微调有一定的差距。
-
-- 精度损失：LORA进行低秩分解时候可能会损失一些模型的表达能力和泛化能力。
-
 - 微调大模型成本高：对于上百亿参数量的模型，LoRA微调的成本还是很高。
-
+- 精度损失：LORA进行低秩分解时候可能会损失一些模型的表达能力和泛化能力。
+- 量化精度损失：针对第二点，可以采用int8或int4量化，进一步对模型基座的参数进行压缩。但是又会引发精度损失的问题，降低模型性能。
 - 参数调整：LORA微调方法可能会受到初始化和超参数的影响较大，需要进行适当的调整。
-- 精度损失：针对第二点，可以采用int8或int4量化，进一步对模型基座的参数进行压缩。但是又会引发精度损失的问题，降低模型性能。
 
 ### PEFT
 
@@ -86,7 +82,7 @@ LoRA 也有一些缺点：
 
 ## QLora 组件
 
-QLora 通过两种技术实现了高保真 4 位微调——4-bit Normalfloat (NF4) 量化和双量化。此外，引入了 Paged Optimizer，以防止梯度检查点期间的内存峰值导致传统上对大型模型的单个机器进行微调的内存不足错误。\\
+QLora 通过两种技术实现了高保真 4 位微调——4-bit Normalfloat (NF4) 量化和双量化。此外，引入了 Paged Optimizer，以防止梯度检查点期间的内存峰值导致传统上对大型模型的单个机器进行微调的内存不足错误。
 
 QLora 的量化过程如下：QLora有一个用于基本模型权重的低精度存储数据类型（NF4）和一个用于执行计算的计算数据类型（BF16）。QLora 将权重从存储数据类型反量化为计算数据类型 BFloat16以执行向前和向后传递， 但在传递过程中仅计算使用 BF16 的 LoRA 参数的权重梯度。权重仅在需要时解压缩，因此在训练和推理期间内存使用量保持较低。
 
@@ -136,58 +132,3 @@ QLora方法有三个意义：
 - QLora是第一种能够在单个消费者GPU上微调33B参数模型和在单个专业GPU上微调65B参数模型的方法，同时相比于full finetuning baseline并不会降低性能。这有助于大模型微调方法的普及，让更多的普通人和小团队参与到LLM研究中来
 - 另一个是QLora为LLM在手机端微调训练带来了可能，作者估计在iPhone 12 Plus上, QLora可以在手机充电状态下每晚微调300万个token。
 - QLora还可以帮助实现LLM的隐私保护，用户可以拥有和管理他们自己的数据和模型，同时LLM更容易部署。
-
-## 代码
-
-模型量化部分代码如下：
-
-```python
-model = AutoModelForCausalLM.from_pretrained(
-        model_name_or_path='/name/or/path/to/your/model',
-        load_in_4bit=True, # 模型压缩的关键
-        device_map={"": 0},  # 调用GPU，并使用accelerate加载模型
-        max_memory=max_memory,
-        torch_dtype=torch.bfloat16,
-        quantization_config=BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16, #计算时采用BF16最快，默认为FP32
-            bnb_4bit_use_double_quant=True, #二次量化
-            bnb_4bit_quant_type='nf4' #量化时使用nf4最优，也可以使用fp4
-        )
-    )
-# 若想使用Paged Optimizer，则在QLora.py中调用 --optim paged_adamw_32bit
-```
-
-官方也给出了llama-7b模型和guanaco-7b adapter modules的合成示例：
-
-```python
-import torch
-from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaTokenizer, StoppingCriteria, StoppingCriteriaList, TextIteratorStreamer
-
-model_name = "decapoda-research/llama-7b-hf"
-adapters_name = 'timdettmers/guanaco-7b'
-
-print(f"Starting to load the model {model_name} into memory")
-
-m = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    #load_in_4bit=True,
-    torch_dtype=torch.bfloat16,
-    device_map={"": 0}
-)
-m = PeftModel.from_pretrained(m, adapters_name)
-m = m.merge_and_unload()
-tok = LlamaTokenizer.from_pretrained(model_name)
-tok.bos_token_id = 1
-
-stop_token_ids = [0]
-
-print(f"Successfully loaded the model {model_name} into memory")
-```
-
-QLora方法在实际使用中要注意以下几点：
-
-- load_in_4bit=True的情况下模型推理能力较慢。4bit推理还未能与4bit矩阵乘法结合
-- bnb_4bit_compute_type='fp16'会导致量化模型训练不稳定。
-- 要设置 tokenizer.bos_token_id = 1
