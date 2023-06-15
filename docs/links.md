@@ -36,14 +36,15 @@
 
 ## LLM Courses
 
-|                             课程                             |        机构        |                             简介                             |
-| :----------------------------------------------------------: | :----------------: | :----------------------------------------------------------: |
-| [CS224n:Deep learning for NLP](https://web.stanford.edu/class/cs224n/) \| [ShowMeAI 笔记](https://www.showmeai.tech/tutorials/36) |     斯坦福大学     |    从传统的 NLP 和语言学概念一直到大型语言模型和伦理挑战     |
-| [深度学习自然语言处理](https://www.csie.ntu.edu.tw/~miulab/s108-adl/syllabus) \|[课程资料]() | 台湾大学（陈蕴侬） |                - BERT及其相关的内容和NLP任务                 |
-|              [动手学深度学习](https://d2l.ai/)               |        李沐        |                        -从理论到实践                         |
-| [CS324: Large Language Models](https://stanford-cs324.github.io/winter2022/) |     斯坦福大学     | -  大型语言模型的能力  <br />- 与大型语言模型相关的危害，例如毒性、错误信息、隐私风险、社会偏见等  <br />- 大型语言模型的建模和训练，例如仅编码器、仅解码器和编码器-解码器架构 |
-| [COS 597G: Understanding Large Language Models](https://www.cs.princeton.edu/courses/archive/fall22/cos597G/) |    普林斯顿大学    | - 大语言模型基础 <br />- 深入回顾 BERT、T5 和 GPT 3  <br /> - Promoting language models 提示语言模型模型  <br /> - 大型语言模型中的缩放和风险  <br />- 多模态语言模型 |
-| [Large language models](https://rycolab.io/classes/llm-s23/) | 苏黎世联邦理工学院 | - 神经网络建模和推理 <br /> - 训练、微调和推理  <br />-  并行性和扩展  <br />- 安全和滥用 |
+|                             课程                             |         机构         |                             简介                             | 推荐指数 |
+| :----------------------------------------------------------: | :------------------: | :----------------------------------------------------------: | -------- |
+| [CS224n:Deep learning for NLP](https://web.stanford.edu/class/cs224n/) \| [ShowMeAI 笔记](https://www.showmeai.tech/tutorials/36) |      斯坦福大学      |    从传统的 NLP 和语言学概念一直到大型语言模型和伦理挑战     | 🤗🤗🤗      |
+| [深度学习自然语言处理](https://www.csie.ntu.edu.tw/~miulab/s108-adl/syllabus) \|[课程资料]() |  台湾大学（陈蕴侬）  |                - BERT及其相关的内容和NLP任务                 | 🤗🤗       |
+|              [动手学深度学习](https://d2l.ai/)               |         李沐         |                        -从理论到实践                         | 🤗🤗       |
+| [CS324: Large Language Models](https://stanford-cs324.github.io/winter2022/) |      斯坦福大学      | -  大型语言模型的能力  <br />- 与大型语言模型相关的危害，例如毒性、错误信息、隐私风险、社会偏见等  <br />- 大型语言模型的建模和训练，例如仅编码器、仅解码器和编码器-解码器架构 | 🤗🤗🤗      |
+| [COS 484：自然语言处理](https://princeton-nlp.github.io/cos484/) | 普林斯顿大学(陈丹琪) | NLP 的基础知识，涵盖处理自然语言的标准框架以及解决各种 NLP 问题的算法和技术 <br />涵盖的主题包括语言建模、表示学习、文本分类、序列标记、句法解析、机器翻译、问答等。 | 🤗🤗🤗      |
+| [COS 597G: Understanding Large Language Models](https://www.cs.princeton.edu/courses/archive/fall22/cos597G/) |     普林斯顿大学     | - 大语言模型基础 <br />- 深入回顾 BERT、T5 和 GPT 3  <br /> - Promoting language models 提示语言模型模型  <br /> - 大型语言模型中的缩放和风险  <br />- 多模态语言模型 | 🤗🤗🤗      |
+| [Large language models](https://rycolab.io/classes/llm-s23/) |  苏黎世联邦理工学院  | - 神经网络建模和推理 <br /> - 训练、微调和推理  <br />-  并行性和扩展  <br />- 安全和滥用 | 🤗🤗🤗      |
 
 ## Blog
 
