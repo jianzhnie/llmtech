@@ -9,30 +9,30 @@
 
 ## Company Or Institution
 
-|                          公司/机构                           |                 Github                 | 领域       |                            简介                            | 推荐指数 |
-| :----------------------------------------------------------: | :------------------------------------: | ---------- | :--------------------------------------------------------: | -------- |
-|            [Deepmind](https://www.deepmind.com/)             |      https://github.com/deepmind       | 综合       |                        DeepMind公司                        | 🤗🤗       |
-|              [OpenAI](https://openai.com/blog/)              |       https://github.com/openai        | LLMs       |                         OpenAI公司                         | 🤗🤗🤗      |
-|    [Google AI Research Blog](https://ai.google/research)     |   https://github.com/google-research   | 综合       |                         谷歌研究院                         | 🤗🤗       |
-| [Google AI Technology Blog](https://www.blog.google/technology/ai/) |                   -                    | 综合       |                          谷歌科技                          | 🤗🤗       |
-|      [FaceBook Research](https://ai.facebook.com/blog)       |  https://github.com/facebookresearch   | 综合       |                      FaceBook 研究院                       | 🤗🤗       |
-|          [Huggingface](https://huggingface.co/blog)          |     https://github.com/huggingfac      | 综合       |                    Huggingface 开源社区                    | 🤗🤗🤗      |
-|                 [AI2](https://allenai.org/)                  |       https://github.com/allenai       | LLM        |                         AI2 研究院                         | 🤗        |
-|               [Cohere](https://txt.cohere.ai/)               |      https://github.com/cohere-ai      | LLM        |                                                            | 🤗        |
-|           [Anthropic](https://www.anthropic.com/)            |     https://github.com/anthropics      | LLM        |                  Opeanai 前员工创办的公司                  | 🤗        |
-|       [BigScience](https://bigscience.huggingface.co/)       | https://github.com/bigscience-workshop | LLM        |              Research  large language models               | 🤗        |
-|                [LAION-AI](https://laion.ai/)                 |      https://github.com/LAION-AI       | 综合       | LAION 非营利组织，提供数据集、工具和模型来解放机器学习研究 | 🤗        |
-|            [AI21Labs](https://www.ai21.com/blog)             |      https://github.com/AI21Labs       | LLMs       |  AI has a way to go before it matches human intelligence   | 🤗        |
-|               [CarperAI ](https://carper.ai/)                |      https://github.com/CarperAI       | LLMs       |     CarperAI 是 EleutherAI旗下的研究院，专注LLMs 和 RL     | 🤗        |
-|               [Jasper](https://www.jasper.ai/)               |                                        |            |                          生成广告                          | 🤗        |
-| [Salesforce AI Research](https://blog.salesforceairesearch.com/) |     https://github.com/salesforce      | 综合       |                   Salesforce AI  研究院                    | 🤗🤗       |
-|        [Stability AI](https://platform.stability.ai/)        |    https://github.com/stability-ai     | Text2Image |          Stability 公司，代表作 stable-diffusion           | 🤗        |
-|               [Runway]( https://runwayml.com)                |      https://github.com/runwayml       | Text2Image |                                                            |          |
-| [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                   -                    | 综合       |                     伯克利大学 AI 研究                     | 🤗🤗       |
-|         [Stanford AI](https://ai.stanford.edu/blog/)         |                   -                    | 综合       |                     斯坦福大学 AI 研究                     | 🤗🤗       |
-|              [CMU AI](https://blog.ml.cmu.edu/)              |                   -                    | 综合       |                     卡耐基梅隆 AI 研究                     | 🤗🤗       |
-|            [EleutherAI](http://www.eleuther.ai/)             |     https://github.com/EleutherAI      | LLMs       |                         EleutherAI                         | 🤗🤗       |
-| [lightning.ai](https://lightning.ai/pages/category/tutorial/) |    https://github.com/Lightning-AI     | 综合       |           PyTorch Lightning，让AI模型开发更简单            | 🤗🤗       |
+|                          公司/机构                           |                 Github                 | 领域       |                             简介                             | 推荐指数 |
+| :----------------------------------------------------------: | :------------------------------------: | ---------- | :----------------------------------------------------------: | -------- |
+|            [Deepmind](https://www.deepmind.com/)             |      https://github.com/deepmind       | 综合       |                         DeepMind公司                         | 🤗🤗       |
+|              [OpenAI](https://openai.com/blog/)              |       https://github.com/openai        | LLMs       |                          OpenAI公司                          | 🤗🤗🤗      |
+|    [Google AI Research Blog](https://ai.google/research)     |   https://github.com/google-research   | 综合       |                          谷歌研究院                          | 🤗🤗       |
+| [Google AI Technology Blog](https://www.blog.google/technology/ai/) |                   -                    | 综合       |                           谷歌科技                           | 🤗🤗       |
+|      [FaceBook Research](https://ai.facebook.com/blog)       |  https://github.com/facebookresearch   | 综合       |                       FaceBook 研究院                        | 🤗🤗       |
+|          [Huggingface](https://huggingface.co/blog)          |     https://github.com/huggingfac      | 综合       |                     Huggingface 开源社区                     | 🤗🤗🤗      |
+|                 [AI2](https://allenai.org/)                  |       https://github.com/allenai       | LLM        |                          AI2 研究院                          | 🤗        |
+|               [Cohere](https://txt.cohere.ai/)               |      https://github.com/cohere-ai      | LLM        |                                                              | 🤗        |
+|           [Anthropic](https://www.anthropic.com/)            |     https://github.com/anthropics      | LLM        |                   Opeanai 前员工创办的公司                   | 🤗        |
+|       [BigScience](https://bigscience.huggingface.co/)       | https://github.com/bigscience-workshop | LLM        |               Research  large language models                | 🤗        |
+|                [LAION-AI](https://laion.ai/)                 |      https://github.com/LAION-AI       | 综合       |  LAION 非营利组织，提供数据集、工具和模型来解放机器学习研究  | 🤗        |
+|            [AI21Labs](https://www.ai21.com/blog)             |      https://github.com/AI21Labs       | LLMs       |   AI has a way to go before it matches human intelligence    | 🤗        |
+|         [together.ai](https://together.ai/bloglist)          |  https://github.com/togethercomputer   | LLMs       | The cloud service for developers to build with open-source AI. | 🤗        |
+|               [CarperAI ](https://carper.ai/)                |      https://github.com/CarperAI       | LLMs       |      CarperAI 是 EleutherAI旗下的研究院，专注LLMs 和 RL      | 🤗        |
+| [Salesforce AI Research](https://blog.salesforceairesearch.com/) |     https://github.com/salesforce      | 综合       |                    Salesforce AI  研究院                     | 🤗🤗       |
+|        [Stability AI](https://platform.stability.ai/)        |    https://github.com/stability-ai     | Text2Image |           Stability 公司，代表作 stable-diffusion            | 🤗        |
+|               [Runway]( https://runwayml.com)                |      https://github.com/runwayml       | Text2Image |                                                              |          |
+| [Berkeley AI Research](https://bair.berkeley.edu/blog/?refresh=1) |                   -                    | 综合       |                      伯克利大学 AI 研究                      | 🤗🤗       |
+|         [Stanford AI](https://ai.stanford.edu/blog/)         |                   -                    | 综合       |                      斯坦福大学 AI 研究                      | 🤗🤗       |
+|              [CMU AI](https://blog.ml.cmu.edu/)              |                   -                    | 综合       |                      卡耐基梅隆 AI 研究                      | 🤗🤗       |
+|            [EleutherAI](http://www.eleuther.ai/)             |     https://github.com/EleutherAI      | LLMs       |                          EleutherAI                          | 🤗🤗       |
+| [Lightning.ai](https://lightning.ai/pages/category/tutorial/) |    https://github.com/Lightning-AI     | 综合       |            PyTorch Lightning，让AI模型开发更简单             | 🤗🤗       |
 
 ## LLM Courses
 
