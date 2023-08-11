@@ -1,6 +1,6 @@
 -  [首页](/)
 - [强化学习](deep-rl/)
-- [AIGC](ai-general/)
+- [AIGC](aigc/)
 - [深度学习](深度学习)
 - [机器学习](machine-learning/)
 - [学习强国](self-control/)
