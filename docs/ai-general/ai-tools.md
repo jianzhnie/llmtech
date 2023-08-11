@@ -1,7 +1,5 @@
 # Top AI Applications
 
-
-
 ## ChatGPT API
 
 ## Applications with LLMs
@@ -91,9 +89,7 @@
 
 Futurepedia 是全球最大的AI 工具收集网站， 每天更新.
 
-[AItoolsClub](https://www.aitoolsclub.com/)
-
-
+### [AItoolsClub](https://www.aitoolsclub.com/)
 
 ### [AI 研习所](https://www.aiyjs.com/)
 

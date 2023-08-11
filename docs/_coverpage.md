@@ -11,14 +11,11 @@
 > 博客基于 GithubPages 创建，如果你发现有任何错误，欢迎在 Github 上进行编辑纠正。
 
 
-
-- 🔥 [机器学习](machine-learning/)
-- 🚀 [深度学习](deeplearning/)
-- 👑 [强化学习](deep-rl/)
-- 🦖 [计算机视觉](deeplearning/)
-- 💎 [自然语言处理](deeplearning/)
-- 🐍 [Python编程](python-handbook/)
+- 🤖 [强化学习](deep-rl/)
+- 🦄 [AIGC](ai-general/)
+- 🐾 [深度学习](deeplearning/)
 - 🧰 [效率工具](toolbox/)
+- 🐻‍❄️ [友链🔗](links.md)
 - 🤗 [emojixd.com](https://emojixd.com/)
 
 [GitHub](https://github.com/jianzhnie/machine-learning-wiki)
