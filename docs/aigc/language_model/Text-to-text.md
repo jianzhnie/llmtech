@@ -60,7 +60,7 @@ Transformer编码器中的双向自注意力
 
 仅编码器模型利用双向（或完全可见）自注意力，在自注意力过程中考虑整个序列中的所有标记。自注意力中的每个标记表示都被计算为序列中所有其他标记的加权平均值。相比之下，仅解码器模型使用因果自注意力，其中每个标记仅考虑序列中位于其之前的标记。
 
-[![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5302e0b7-be1f-4010-b5c0-52d05b086e76_560x990.png)](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5302e0b7-be1f-4010-b5c0-52d05b086e76_560x990.png)
+![img](https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5302e0b7-be1f-4010-b5c0-52d05b086e76_560x990.png)
 
 （来自[1]）
 
