@@ -15,7 +15,9 @@
 
 ### 语言模型
 
+- [COS 597G](aigc/language_model/llms_course.md)
 - [NLP 任务分类](aigc/language_model/nlp_task.md)
+- [T5 模型](aigc/language_model/Text-to-text.md)
 
 
 ### 扩散模型
