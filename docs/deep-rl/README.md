@@ -13,7 +13,6 @@
 - [第九章：强化学习前沿主题](deep-rl/deep-rl-class/ch9_advanced.md)
 - [第十章：人类反馈的强化学习](deep-rl/papers/RLHF.md)
 
-
 ### [进阶教程](deep-rl/algorithms/README.md)
 
 - [Policy gradient theorem的证明](deep-rl/algorithms/ch1_supp_pg.md)
