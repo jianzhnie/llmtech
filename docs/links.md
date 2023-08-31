@@ -59,14 +59,13 @@
 |    [Ahead of AI](https://magazine.sebastianraschka.com/)     |      🤗🤗🤗🤗      |
 |       [Nathan Lambert](https://robotic.substack.com/)        |       🤗🤗       |
 |                   [int8](https://int8.io/)                   |      🤗🤗🤗🤗      |
-| [Deep (Learning) Focus](https://cameronrwolfe.substack.com/) |      🤗🤗🤗       |
 |             [Yang Song](https://yang-song.net/)              |      🤗🤗🤗       |
 |           [Tim Dettmers](https://timdettmers.com/)           |      🤗🤗🤗       |
 | Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |      🤗🤗🤗       |
 |            [Chiyuan Zhang](https://pluskid.org/)             | 生活，艺术 🤗🤗🤗 |
 |               [Yihui Xie](https://yihui.org/)                | 生活，艺术 🤗🤗🤗 |
 
-## My projects 
+## My projects
 
 Below is an incomplete list of git repository and projects I have worked on.
 
