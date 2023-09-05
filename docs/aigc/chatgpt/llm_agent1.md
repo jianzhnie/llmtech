@@ -1,6 +1,6 @@
 # LLM 赋能 Agent
 
-以LLM（大语言模型）作为核心控制器构建Agent是一个很酷的概念。[AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT)、[GPT-Engineer](https://github.com/AntonOsika/gpt-engineer)和[BabyAGI](https://github.com/yoheinakajima/babyagi)等几个概念验证演示都是鼓舞人心的示例。Large Language Model(LLM)的潜力不仅仅限于生成写得好的副本、故事、论文和程序；它可以被视为一个强大的通用问题解决器。
+以LLM（大语言模型）作为核心控制器构建Agent是一个很酷的概念。[AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT)、[GPT-Engineer](https://github.com/AntonOsika/gpt-engineer) 和 [BabyAGI](https://github.com/yoheinakajima/babyagi) 等几个概念验证演示都是鼓舞人心的示例。Large Language Model(LLM)的潜力不仅仅限于生成写得好的副本、故事、论文和程序；它可以被视为一个强大的通用问题解决器。
 
 # Agent系统概述
 
