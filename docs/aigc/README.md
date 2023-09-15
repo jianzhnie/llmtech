@@ -15,7 +15,7 @@
 ## LLM Agent
 
 - [Autonomous AI Agents](aigc/chatgpt/llm_agent0.md)
-- [LLM 赋能 Agent](aigc/chatgpt/llm_agent.md)
+- [LLM 赋能 Agent](aigc/chatgpt/llm_agent1.md)
 - [AutoGPT与LLM Agent解析](aigc/chatgpt/llm_agent2.md)
 
 ### 语言模型
