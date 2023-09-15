@@ -133,6 +133,7 @@ Jarvis 或 HuggingGPT 是一个协作系统，由作为中央控制器的大型�
 - 用于生成文本的 GPT-4 实例
 - 访问常用网站和平台
 - 使用 GPT-3.5 进行文件存储和汇总
+- 使用插件的可扩展性
 
 资源库: https://github.com/Significant-Gravitas/Auto-GPT
 
