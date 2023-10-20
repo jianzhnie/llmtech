@@ -43,7 +43,6 @@
 - [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](aigc/quantization/llm_int8.md)
 - [QLora: Efficient Finetuning of Quantized LLMs](aigc/quantization/qlora.md)
 - [QLora源码分析](aigc/quantization/qlora_usage.md)
-- 
 
 
 ### AweSome AI Company & Tools
