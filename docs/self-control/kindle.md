@@ -50,11 +50,41 @@ Kindle Unlimited 是亚马逊推出的书籍借阅服务，**只要成为 KU 会
 
 ## 全球免费电子书下载网站
 
-### [1.Z-Library——全球最大数字图书馆](https://zh.z-lib.org/)
+### [1.Z-Library——全球最大数字图书馆](https://zlibrary-global.se/)
+
+- [Z-Library官网](https://zlibrary-global.se/)、[备选1](http://zlibrary-asia.se/) 、[备选2](http://zlibrary-east.se/)、 [备选3](http://zlibrary-global.se/)
+- [Z-Library 备份](https://578435.xyz/)
+
+- [安娜的档案 ](https://zh.annas-archive.gs/) , [安娜的档案](https://zh.annas-archive.se/)
 
 ![Z-Library 电子书下载官网](https://pandavpnpro.com/blog/wp-content/uploads/2022/08/zlibrary.png)
 
+
+
 Z-Library 是全球最大的数字图书馆，目前收录超过 1000 万本电子书籍和 8000 万文章，言情小说、悬疑小说、英文原版等各种，**读者可以根据书名关键词来搜索，也可以通过 ISBN 码搜索，甚至可以对电子书中某一文本片段进行搜索，**再也不用担心找不到自己想要的书了。在这里，所有的书籍都提供了书籍的详细信息，可以让您全方位的了解每一本书籍。如果您没有该电子书平台账号，**一个 IP 地址 24 小时内每天下载的电子书籍和文献是有限的。**因此您想要一次性下载很多的话，可以通过电子邮箱注册账号。每本书免费下载时，可选择适合的格式版本，如一直受欢迎的心理学书籍《蛤蟆先生去看医生》就有 EPUB、 PDF、MOBI 等下载格式，还能手动转换 RTF、TXT 十分方便。
+
+### [1. 安娜的档案——世界最大开源及开放数据图书馆](https://zh.annas-archive.se/)
+
+世界最大开源及开放数据图书馆。包括 Sci-Hub、Library Genesis、Z-Library 还有更多。
+
+Anna’s Archive 是一个非盈利性的开源搜索引擎，专门用于搜索“[影子图书馆](https://en.wikipedia.org/wiki/Shadow_library)”，由 [Anna](http://annas-blog.org/) 建立，她认为需要有一个中心化的平台来搜索书籍、论文、漫画、杂志和其他文件。
+
+我们坚信，信息能自由流通，知识和文化能得以保存。有了这个搜索引擎，我们就站在了巨人的肩膀上。我们敬重各种影子图书馆建立者的辛勤付出，并希望这个搜索引擎能扩大它们的影响力。
+
+Anna’s Archive是一项有两个目标的非盈利性项目：
+
+1. **保存：**将所有的人类知识和文明备份.
+2. **开源：**让世界上的任何人都可获得这些知识和文明。
+
+📈 我们估计我们已经保存了[全球约5%的图书](https://annas-blog.org/blog-isbndb-dump-how-many-books-are-preserved-forever.html)。22,052,322 书籍， 97,847,390 论文, 2,451,032 漫画, 673,013 杂志——永久保存。
+
+### 1. 2  [**Sobooks**](https://sobooks.cc)
+
+一个优质的电子书资源免费下载网站。网站风格简洁大方；电子书类型涵盖历史传记、人文社科、励志成功、经济管理、学习教育、生活时尚、英文原版。
+
+![img](https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2020%2F0407%2F38043cf2j00q8f0vp003ad000s600esp.jpg&thumbnail=660x2147483647&quality=80&type=jpg)
+
+
 
 ### [2.苦瓜书盘——免费电子书共享平台](https://kgbook.com/)
 
