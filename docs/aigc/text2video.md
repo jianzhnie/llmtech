@@ -111,12 +111,12 @@ Text2Video-Zero 是一个文本引导的视频生成和处理框架，其工作�
 
 使用 Hugging Face Diffusers，你可以轻松下载、运行和微调各种预训练的文生视频模型，包括 Text2Video-Zero 和 [阿里巴巴达摩院](https://huggingface.co/damo-vilab) 的 ModelScope。我们目前正在努力将更多优秀的工作集成到 Diffusers 和 🤗 Transformers 中。
 
-|      |                                                              |                                          |
-| ---- | ------------------------------------------------------------ | ---------------------------------------- |
-|      | https://huggingface.co/damo-vilab/text-to-video-ms-1.7b      |                                          |
-|      | https://huggingface.co/cerspense/zeroscope_v2_576w           |                                          |
-|      | https://huggingface.co/hotshotco/Hotshot-XL                  | https://github.com/hotshotco/Hotshot-XL. |
-|      | https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis |                                          |
+| Organization | HuggingFace  ModelZoo                                        | Github                                   |
+| ------------ | ------------------------------------------------------------ | ---------------------------------------- |
+| Ali Damo     | https://huggingface.co/damo-vilab/text-to-video-ms-1.7b      |                                          |
+| zeroscope    | https://huggingface.co/cerspense/zeroscope_v2_576w           |                                          |
+| hotshotco    | https://huggingface.co/hotshotco/Hotshot-XL                  | https://github.com/hotshotco/Hotshot-XL. |
+| Ali Damo     | https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis |                                          |
 
 ### Hugging Face 应用演示
 
