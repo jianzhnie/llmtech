@@ -95,28 +95,27 @@ Text2Video-Zero 是一个文本引导的视频生成和处理框架，其工作�
 
 ## Text-2-Video 模型
 
-### [CogVideo](https://github.com/THUDM/CogVideo)
-
-### [TokenFlow](https://github.com/omerbt/TokenFlow)
-
-### [Tune-A-Video](https://github.com/showlab/Tune-A-Video)
-
-### [Text2Video-Zero](https://github.com/Picsart-AI-Research/Text2Video-Zero)
-
-### [Text-To-Video-Finetuning](https://github.com/ExponentialML/Text-To-Video-Finetuning)
-
-### [Text-to-video-synthesis-colab](https://github.com/camenduru/text-to-video-synthesis-colab)
+|                                                  | Models & Method                                              | Github                                                    | Time | Star |
+| ------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------- | ---- | ---- |
+| THUDM                                            | [CogVideo](https://github.com/THUDM/CogVideo)                | https://github.com/THUDM/CogVideo                         | 2022 |      |
+| omerbt                                           | [TokenFlow](https://github.com/omerbt/TokenFlow)             | https://github.com/omerbt/TokenFlow                       | 2023 |      |
+| **Show Lab** at National University of Singapore | [Tune-A-Video](https://github.com/showlab/Tune-A-Video)      | https://github.com/showlab/Tune-A-Video                   | 2023 |      |
+| Picsart-AI-Research                              | [Text2Video-Zero](https://github.com/Picsart-AI-Research/Text2Video-Zero) | https://github.com/Picsart-AI-Research/Text2Video-Zero    | 2023 |      |
+| ExponentialML                                    | [Text-To-Video-Finetuning](https://github.com/ExponentialML/Text-To-Video-Finetuning) | https://github.com/ExponentialML/Text-To-Video-Finetuning | 2023 |      |
+| Hotshotco                                        | [Hotshot-XL](https://huggingface.co/hotshotco/Hotshot-XL)    | https://huggingface.co/hotshotco/Hotshot-XL               | 2023 |      |
+| TencentAILab-CVC                                 | [VideoCrafter](https://github.com/AILab-CVC/VideoCrafter)    | https://github.com/AILab-CVC/VideoCrafter                 | 2023 |      |
 
 ## Hugging Face 上的文生视频
 
 使用 Hugging Face Diffusers，你可以轻松下载、运行和微调各种预训练的文生视频模型，包括 Text2Video-Zero 和 [阿里巴巴达摩院](https://huggingface.co/damo-vilab) 的 ModelScope。我们目前正在努力将更多优秀的工作集成到 Diffusers 和 🤗 Transformers 中。
 
-| Organization | HuggingFace  ModelZoo                                        | Github                                   |
-| ------------ | ------------------------------------------------------------ | ---------------------------------------- |
-| Ali Damo     | https://huggingface.co/damo-vilab/text-to-video-ms-1.7b      |                                          |
-| zeroscope    | https://huggingface.co/cerspense/zeroscope_v2_576w           |                                          |
-| hotshotco    | https://huggingface.co/hotshotco/Hotshot-XL                  | https://github.com/hotshotco/Hotshot-XL. |
-| Ali Damo     | https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis |                                          |
+| Organization                                                 | HuggingFace  ModelZoo                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Ali Damo                                                     | https://huggingface.co/damo-vilab/text-to-video-ms-1.7b      |
+| zeroscope                                                    | https://huggingface.co/cerspense/zeroscope_v2_576w           |
+| hotshotco                                                    | https://huggingface.co/hotshotco/Hotshot-XL                  |
+| Ali Damo                                                     | https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis |
+| [Text-to-video-synthesis-colab](https://github.com/camenduru/text-to-video-synthesis-colab) | https://github.com/camenduru/text-to-video-synthesis-colab   |
 
 ### Hugging Face 应用演示
 
@@ -158,5 +157,3 @@ video_path = export_to_video(video_frames)
 文生视频的研究正在呈指数级发展，但现有工作在上下文一致性上仍有限制，同时还面临其他诸多挑战。在这篇博文中，我们介绍了文生视频模型的限制、独特挑战和当前状态。我们还看到了最初为其他任务设计的架构范例如何赋能文生视频任务的巨大飞跃，以及这对未来研究意味着什么。虽然进展令人印象深刻，但与文生图模型相比，文生视频模型还有很长的路要走。最后，我们还展示了如何通过 Hub 上的应用演示来使用这些模型，以及如何将这些模型作为 🤗 Diffusers 流水线的一部分来完成各种任务。
 
 本文就到此为止了！我们将继续整合最具影响力的计算机视觉和多模态模型，并希望收到你的反馈。要了解计算机视觉和多模态研究的最新消息，你可以在 Twitter 上关注我们: [@adirik](https://twitter.com/alaradirik)、[@a_e_roberts](https://twitter.com/a_e_roberts)、[@osanviero](https://twitter.com/NielsRogge)、[@risingsayak](https://twitter.com/risingsayak) 以及 [@huggingface](https://twitter.com/huggingface)。
-
-##### ≠≠
