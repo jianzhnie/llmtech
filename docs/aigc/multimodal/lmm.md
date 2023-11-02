@@ -491,3 +491,5 @@ An incomplete list of multimodal systems by time to give you a sense of how fast
 - [CMU course] [11-777 MMML](https://cmu-multicomp-lab.github.io/mmml-course/fall2022/)
 
 - [Open source] [Salesforce’s LAVIS](https://github.com/salesforce/LAVIS)
+
+- [Awesome-Multimodal-Large-Language-Models](https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models)
