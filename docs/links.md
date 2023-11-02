@@ -53,6 +53,7 @@
 |        [AI Summer](https://theaisummer.com/learn-ai/)        |      🤗🤗🤗       |
 |    [syncedreview  \|机器之心](https://syncedreview.com/)     |      🤗🤗🤗       |
 |              [科学空间](https://spaces.ac.cn/)               |      🤗🤗🤗       |
+|          [Chip Huyen](https://huyenchip.com/blog/)           |     🤗🤗🤗🤗🤗      |
 |           [Lilian](https://lilianweng.github.io/)            |     🤗🤗🤗🤗🤗      |
 |           [Andrej Karpathy](https://karpathy.ai/)            |      🤗🤗🤗       |
 |          [Jay Alammar](https://jalammar.github.io/)          |     🤗🤗🤗🤗🤗      |
