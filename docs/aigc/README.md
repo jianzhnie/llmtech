@@ -3,13 +3,13 @@
 ### ChatGPT
 
 - [chatGPT](aigc/chatgpt/chatGPT.md)
-- [Illustrating Reinforcement Learning from Human Feedback (RLHF)](deep-rl/papers/RLHF.md)
-- [Introduce RLHF](aigc/chatgpt/RLHF.md)
+- [RLHF Basic](aigc/chatgpt/rlhf_basic.md)
+- [RLHF Advanced](deep-rl/papers/rlhf_advance.md)
 - [Langchain](aigc/chatgpt/langchain.md)
-- [Prompt Engineering Guide](aigc/prompts-guide.md)
-- [Chatgpt_Prompt](aigc/chatgpt/chatgpt_prompt.md)
+- [Prompt Engineering Guide](aigc/prompts_guide.md)
+- [Useful Chatgpt Prompt](aigc/chatgpt/chatgpt_prompt.md)
 - [大型语言模型 (LLM) 微调方法](aigc/chatgpt/finetune_llm.md)
-- [Low-Rank Adaptation (LoRA)](aigc/chatgpt/lora-llm.md)
+- [Low-Rank Adaptation (LoRA)](aigc/chatgpt/lora_llm.md)
 
 
 ## LLM Agent
@@ -17,6 +17,13 @@
 - [Autonomous AI Agents](aigc/chatgpt/llm_agent0.md)
 - [LLM 赋能 Agent](aigc/chatgpt/llm_agent1.md)
 - [AutoGPT与LLM Agent解析](aigc/chatgpt/llm_agent2.md)
+- [Agent应用:MarkAgent](aigc/chatgpt/market_agent.md)
+- [Agent应用:SightPro](aigc/chatgpt/sightpro.md)
+
+
+## 多模态
+
+- [文生视频: 任务、挑战及现状](aigc/chatgpt/text2video.md)
 
 ### 语言模型
 
@@ -39,7 +46,7 @@
 ### 量化压缩
 
 - [模型量化](aigc/quantization/README.md)
-- [8-bit 优化器中文解读](docs/aigc/quantization/int8_opt.md)
+- [8-bit 优化器中文解读](aigc/quantization/int8_opt.md)
 - [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](aigc/quantization/llm_int8.md)
 - [QLora: Efficient Finetuning of Quantized LLMs](aigc/quantization/qlora.md)
 - [QLora源码分析](aigc/quantization/qlora_usage.md)
