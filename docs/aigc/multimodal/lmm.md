@@ -24,7 +24,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 许多用例在没有多模态性的情况下是不可能实现的，尤其是那些涉及多种数据模态的行业，如医疗保健、机器人技术、电子商务、零售、游戏等。
 
-![Multimodal AI in healthcare](https://huyenchip.com/assets/pics/multimodal/26-healthcare.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/26-healthcare.png" alt="Multimodal AI in healthcare" style="zoom:30%;" />
 
 > 多模态在医疗保健领域的应用示例。图片来自Multimodal biomedical AI (Acosta等，自然医学 2022)
 
@@ -34,7 +34,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 我特别期待的一个用例是，多模态性可以使视觉受损的人们能够浏览互联网并在现实世界中导航。
 
-![Some cool multimodal use cases from GPT-4V](https://huyenchip.com/assets/pics/multimodal/1-gpt-4v-use-cases.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/1-gpt-4v-use-cases.png" alt="Some cool multimodal use cases from GPT-4V" style="zoom:33%;" />
 
 > GPT-4V提供的一些酷炫多模态用例
 
@@ -95,7 +95,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 侧面说明：一个OCR系统在字符级别处理数据。当与一个能够理解更广泛上下文的系统结合使用时，它可以改善用例，比如允许你“与”任何教科书、合同、装配说明等进行交流。
 
-![Document processing with GPT-4V](https://huyenchip.com/assets/pics/multimodal/2-gpt-4v-ocr.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/2-gpt-4v-ocr.png" alt="Document processing with GPT-4V" style="zoom:33%;" />
 
 > 使用GPT-4V进行文档处理使用GPT-4V进行文档处理。模型的错误被标记为红色。
 
@@ -137,7 +137,7 @@ CLIP的关键贡献在于其能够将不同模态的数据，即文本和图像�
 
 训练这个多模态嵌入空间还产生了一个强大的图像编码器，使得CLIP在许多图像分类任务上实现了有竞争力的零样本性能。这个强大的图像编码器可以用于许多其他任务：图像生成、视觉问答和基于文本的图像检索。Flamingo和LLaVa使用CLIP作为它们的图像编码器。DALL-E使用CLIP对生成的图像进行重新排序。目前尚不清楚GPT-4V是否使用了CLIP。
 
-![Zero-shot image classification with CLIP](https://huyenchip.com/assets/pics/multimodal/3-CLIP-image-classification.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/3-CLIP-image-classification.png" alt="Zero-shot image classification with CLIP" style="zoom:33%;" />
 
 > 使用CLIP进行零样本图像分类使用CLIP进行零样本图像分类
 
@@ -147,7 +147,7 @@ CLIP利用了自然语言监督和对比学习，这使得CLIP既能够扩大其
 
 #### CLIP的高级架构
 
-![Architecture of OpenAI's CLIP](https://huyenchip.com/assets/pics/multimodal/4-CLIP-architecture.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/4-CLIP-architecture.png" alt="Architecture of OpenAI's CLIP" style="zoom:33%;" />
 
 > CLIP的架构包括两个主要部分：图像编码器和文本编码器，以及用于将它们投影到相同嵌入空间的两个投影矩阵，这两个部分是从头开始联合训练的。训练的目标是在最大化正确的（图像，文本）配对的相似度分数的同时，最小化错误配对的相似度分数（对比学习）。
 
@@ -194,7 +194,7 @@ CLIP的论文指出，当时可用的（图像，文本）数据集都不够大�
 
 如果分类器只为每个输入输出一个类别，那么语言模型则输出一个类别序列。生成的每个类别被称为一个标记。每个标记都来自语言模型的预定义词汇表。
 
-![Classifier vs. language model objectives](https://huyenchip.com/assets/pics/multimodal/5-classifier-vs-language-model-objectives.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/5-classifier-vs-language-model-objectives.png" alt="Classifier vs. language model objectives" style="zoom:33%;" />
 
 > 分类器与语言模型目标
 
@@ -204,7 +204,7 @@ CLIP的论文指出，当时可用的（图像，文本）数据集都不够大�
 
 例如，在[Flickr30K 数据集中](https://arxiv.org/abs/1509.04942)，每个图像都有由人类注释者提供的 5 个标题，并且同一图像的标题可能非常不同。
 
-![同一张图片的多个标题](https://huyenchip.com/assets/pics/multimodal/6-multiple-captions.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/6-multiple-captions.png" alt="同一张图片的多个标题" style="zoom:33%;" />
 
 
 
@@ -233,11 +233,11 @@ $$
 
 这就是伪代码的样子。
 
-![CLIP pseudocode](https://huyenchip.com/assets/pics/multimodal/8-clip-pseudocode.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/8-clip-pseudocode.png" alt="CLIP pseudocode" style="zoom:33%;" />
 
 CLIP 作者发现，与语言模型目标基线相比，对比目标的效率提高了 12 倍，同时产生了更高质量的图像嵌入。
 
-![CLIP对比学习](https://huyenchip.com/assets/pics/multimodal/9-contrastive-learning-efficiency.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/9-contrastive-learning-efficiency.png" alt="CLIP对比学习" style="zoom:33%;" />
 
 #### CLIP 模型的应用
 
@@ -266,7 +266,7 @@ CLIP 的联合图像文本嵌入对于图像生成非常有用。给定文本提
    - 使用 CLIP 生成此文本的嵌入。
    - 使用扩散解码器生成以此嵌入为条件的图像。
 
-![取消CLIP](https://huyenchip.com/assets/pics/multimodal/11-unCLIP.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/11-unCLIP.png" alt="取消CLIP" style="zoom:33%;" />
 
 ##### 文本生成：视觉问答、图像摘要
 
@@ -278,7 +278,7 @@ CLIP 作者确实尝试创建一个文本生成模型。他们试验的一个版
 
 与 CLIP 不同，Flamingo 可以生成文本响应。从简化的角度来看，Flamingo 是 CLIP + 语言模型，添加了一些技术，使语言模型能够根据视觉和文本输入生成文本标记。
 
-![与 Flamingo LMM 的对话](https://huyenchip.com/assets/pics/multimodal/12-flamingo-chatbots.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/12-flamingo-chatbots.png" alt="与 Flamingo LMM 的对话" style="zoom:33%;" />
 
 > Flamingo 可以根据文本和图像生成文本响应
 
@@ -289,13 +289,13 @@ CLIP 作者确实尝试创建一个文本生成模型。他们试验的一个版
 1. **视觉编码器**：使用对比学习来训练类似 CLIP 的模型。然后丢弃该模型的文本编码器。视觉编码器被冻结以在主模型中使用。
 2. **语言模型**：Flamingo 微调 Chinchilla 以生成文本标记，以视觉效果和文本为条件，使用语言模型损失，以及两个附加组件 Perceiver Resampler 和 GATED XATTN-DENSE 层。我们稍后将在本博客中讨论它们。
 
-![Flamingo 高层架构](https://huyenchip.com/assets/pics/multimodal/13-flamingo-architecture.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/13-flamingo-architecture.png" alt="Flamingo 高层架构" style="zoom:33%;" />
 
 #### 数据
 
 Flamingo 使用了 4 个数据集：2 个（图像、文本）对数据集、1 个（视频、文本）对数据集和 1 个交错的图像和文本数据集。
 
-![Flamingo的4个数据集](https://huyenchip.com/assets/pics/multimodal/14-flamingo-data.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/14-flamingo-data.png" alt="Flamingo的4个数据集" style="zoom:33%;" />
 
 #### Overview of the datasets
 
@@ -318,7 +318,7 @@ Flamingo 首先使用对比学习从头开始训练类似 CLIP 的模型。该�
 
 Flamingo 使用 Chinchilla 作为它们的语言模型。更具体地说，他们冻结了 9 个预训练的 Chinchilla LM 层。传统的语言模型根据前面的文本标记来预测下一个文本标记。Flamingo 根据前面的文本和视觉标记预测下一个文本标记。
 
-![Flamingo的4个数据集](https://huyenchip.com/assets/pics/multimodal/15-lmm-text-generation.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/15-lmm-text-generation.png" alt="Flamingo的4个数据集" style="zoom:33%;" />
 
 > 下一代令牌的生成以文本和视觉令牌为条件。插图取自 Chunyuan Li 的 CVPR 2023 教程：大型多模态模型。
 
@@ -330,7 +330,7 @@ Flamingo 使用 Chinchilla 作为它们的语言模型。更具体地说，他�
 
 有趣的是，在训练视觉编码器时，使用的分辨率为 288 x 288。然而，在此阶段，视觉输入大小调整为 320 × 320。事实证明，使用 CNN 时，更高的测试时分辨率可以提高[性能](https://arxiv.org/abs/1906.06423)。
 
-![Flamingo 的感知器重采样器](https://huyenchip.com/assets/pics/multimodal/16-flamingo-perceiver-resampler.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/16-flamingo-perceiver-resampler.png" alt="Flamingo 的感知器重采样器" style="zoom:33%;" />
 
 
 
@@ -338,7 +338,7 @@ Flamingo 使用 Chinchilla 作为它们的语言模型。更具体地说，他�
 
 门控 XATTN-DENSE 层插入现有的和冻结的 LM 层之间，以允许语言模型在生成文本标记时更有效地处理视觉标记。如果没有这些层，Flamingo 作者指出总体得分下降了 4.2%。
 
-![Flamingo 的门控注意力密集层](https://huyenchip.com/assets/pics/multimodal/17-gated%20xattn-dense.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/17-gated%20xattn-dense.png" alt="Flamingo 的门控注意力密集层" style="zoom:33%;" />
 
 #### 损失函数
 
@@ -382,7 +382,7 @@ CLIP 已经 3 岁了，Flamingo 也快 2 岁了。虽然他们的架构为我们
 - [NExT-GPT: Any-to-Any Multimodal Large Language Model](https://next-gpt.github.io/) (Wu et al., Sep 2023)
 - Jeff Dean 雄心勃勃的[Pathways](https://blog.google/technology/ai/introducing-pathways-next-generation-ai-architecture/)项目（2021 年）：其愿景是“*实现同时包含视觉、听觉和语言理解的多模态模型*。”
 
-![图像绑定](https://huyenchip.com/assets/pics/multimodal/19-imagebind.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/19-imagebind.png" alt="图像绑定" style="zoom:33%;" />
 
 ### 用于遵循指令的多模态系统
 
@@ -393,7 +393,7 @@ Flamingo 接受了补全任务的训练，但没有接受对话或遵循指令�
 - [InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning](https://arxiv.org/abs/2305.06500) (Salesforce, May 11, 2023)
 - LaVIN: [Cheap and Quick: Efficient Vision-Language Instruction Tuning for Large Language Models](https://arxiv.org/abs/2305.15023) (Luo et al., May 24, 2023)
 
-![拉文](https://huyenchip.com/assets/pics/multimodal/20-LaVIN.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/20-LaVIN.png" alt="拉文" style="zoom:33%;" />
 
 > LaVIN 的输出示例与其他 LMM 相比，如 LaVIN 的论文所示
 
@@ -411,11 +411,11 @@ Flamingo 接受了补全任务的训练，但没有接受对话或遵循指令�
 
 下面的两张图片来自 Chunyuan Li在 CVPR 2023 上的 [Large Multimodal Models](https://datarelease.blob.core.windows.net/tutorial/vision_foundation_models_2023/slides/Chunyuan_cvpr2023_tutorial_lmm.pdf) ，顺便说一句，这是一个很棒的教程。
 
-![LMM 适配器](https://huyenchip.com/assets/pics/multimodal/21-adapters-1.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/21-adapters-1.png" alt="LMM 适配器" style="zoom:33%;" />
 
 
 
-![LMM 适配器](https://huyenchip.com/assets/pics/multimodal/22-adapters-2.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/22-adapters-2.png" alt="LMM 适配器" style="zoom:33%;" />
 
 
 
@@ -429,11 +429,11 @@ Flamingo 接受了补全任务的训练，但没有接受对话或遵循指令�
 
 例如，[CM3](https://arxiv.org/abs/2201.07520)（Aghajanyan 等人，2022）输出 HTML 标记，该标记可以编译成不仅包含文本还包含格式、链接和图像的网页。GPT-4V 生成 Latex 代码，然后可以将其重建为数据表。
 
-![CM3](https://huyenchip.com/assets/pics/multimodal/23-cm3.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/23-cm3.png" alt="CM3" style="zoom:33%;" />
 
 > CM3 的采样输出
 
-![GPT-4V生成LaTeX](https://huyenchip.com/assets/pics/multimodal/24-gpt-4v-latex.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/24-gpt-4v-latex.png" alt="GPT-4V生成LaTeX" style="zoom:33%;" />
 
 > GPT-4V生成Latex代码，然后可以将其重建为数据表
 
@@ -443,7 +443,7 @@ Flamingo 接受了补全任务的训练，但没有接受对话或遵循指令�
 
 [使用多模态语言模型生成图像](https://arxiv.org/abs/2305.17216)（Koh 等人，2023 年 6 月）是一篇很棒的论文，展示了 LMM 如何在生成文本的同时生成和检索图像。见下文。
 
-![LMM 生成文本和图像](https://huyenchip.com/assets/pics/multimodal/27-lmms-generating-images.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/27-lmms-generating-images.png" alt="LMM 生成文本和图像" style="zoom:33%;" />
 
 ## 结论
 
