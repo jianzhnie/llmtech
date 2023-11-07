@@ -1,19 +1,19 @@
 - ChatGPT
   - [chatGPT](aigc/chatgpt/chatGPT.md)
   - [RLHF Basic](aigc/chatgpt/rlhf_basic.md)
-  - [RLHF Advanced](deep-rl/papers/rlhf_advance.md)
+  - [RLHF Advanced](aigc/chatgpt/rlhf_advance.md)
   - [Langchain](aigc/chatgpt/langchain.md)
-  - [Prompt Engineering Guide](aigc/prompts_guide.md)
+  - [Prompt Engineering Guide](aigc/chatgpt/prompts_guide.md)
   - [Useful Chatgpt Prompt](aigc/chatgpt/chatgpt_prompt.md)
   - [大型语言模型 (LLM) 微调方法](aigc/chatgpt/finetune_llm.md)
   - [Low-Rank Adaptation (LoRA)](aigc/chatgpt/lora_llm.md)
 
 - LLM Agent
-  - [Autonomous AI Agents](aigc/chatgpt/llm_agent0.md)
-  - [LLM 赋能 Agent](aigc/chatgpt/llm_agent1.md)
-  - [AutoGPT与LLM Agent解析](aigc/chatgpt/llm_agent2.md)
-  - [Agent应用:MarkAgent](aigc/chatgpt/market_agent.md)
-  - [Agent应用:SightPro](aigc/chatgpt/sightpro.md)
+  - [Autonomous AI Agents](aigc/llm_agent/llm_agent0.md)
+  - [LLM 赋能 Agent](aigc/llm_agent/llm_agent1.md)
+  - [AutoGPT与LLM Agent解析](aigc/llm_agent/llm_agent2.md)
+  - [Agent应用:MarkAgent](aigc/llm_agent/market_agent.md)
+  - [Agent应用:SightPro](aigc/llm_agent/sightpro.md)
 
 - 多模态
   - [文生视频: 任务、挑战及现状](aigc/multimodal/text2video.md)
