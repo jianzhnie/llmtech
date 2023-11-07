@@ -24,6 +24,10 @@
 ## 多模态
 
 - [文生视频: 任务、挑战及现状](aigc/chatgpt/text2video.md)
+- [多模态和多模态模型](aigc/multimodal/lmm.md)
+- [BLIP & BLIP-2 ](aigc/multimodal/blip.md)
+- [ALBEF](aigc/multimodal/albef.md)
+- [blip2](aigc/multimodal/blip2.md)
 
 ### 语言模型
 
