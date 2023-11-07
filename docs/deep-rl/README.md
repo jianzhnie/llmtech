@@ -11,7 +11,6 @@
 - [第七章：Decision Transformer](deep-rl/deep-rl-class/ch7_decision-transformer.md)
 - [第八章：Multi-Agent RL](deep-rl/deep-rl-class/ch8_marl.md)
 - [第九章：强化学习前沿主题](deep-rl/deep-rl-class/ch9_advanced.md)
-- [第十章：人类反馈的强化学习](deep-rl/papers/RLHF.md)
 
 ### [进阶教程](deep-rl/algorithms/README.md)
 
