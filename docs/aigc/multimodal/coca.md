@@ -19,21 +19,15 @@
 - Foundation Models：在机器学习中作为各种应用的起点的预训练模型，可适应特定任务。
 - Contrastive Loss.： 一种损失函数，用于训练模型学习相似输入对的相似表示以及不同输入对的不同表示。
 
-Cross-Modal Interaction.不同类型数据模态（例如图像和文本）之间的交互，用于生成联合表示。
+- Cross-Modal Interaction:  不同类型数据模态（例如图像和文本）之间的交互，用于生成联合表示。
 
-编码器-解码器架构。一种神经网络结构，具有用于处理输入数据的编码器和用于生成输出的解码器，用于序列到序列任务。
-
-因果掩蔽。Transformer 模型中的一项技术，用于防止在训练期间访问序列中的未来标记。
-
-注意机制：允许模型在处理信息时对输入的不同部分进行加权和优先排序的组件。
-
-零样本学习。一种学习范例，模型对训练期间未见过的数据类进行预测或分类。
-
-视觉问答（VQA）。模型结合计算机视觉和自然语言处理回答有关图像内容的问题的任务。
-
-单模态和多模态表示：单模态表示从一种数据模态中捕获信息，而多模态表示集成了来自多个模态的信息。
-
-对比语言图像预训练（CLIP）:  使用对比学习训练的模型，将图像和文本在共享表示空间中对齐。
+- Encoder-Decoder Architecture: 一种神经网络结构，具有用于处理输入数据的编码器和用于生成输出的解码器，用于序列到序列任务。
+- Causal Masking  Transformer: 模型中的一项技术，用于防止在训练期间访问序列中的未来标记。
+- Attention Mechanism ：允许模型在处理信息时对输入的不同部分进行加权和优先排序的组件。
+- Zero-Shot Learning:  一种学习范例，模型对训练期间未见过的数据类进行预测或分类。
+- Visual Question Answering (VQA): 模型结合计算机视觉和自然语言处理回答有关图像内容的问题的任务。
+- Unimodal and Multimodal Representations：单模态表示从一种数据模态中捕获信息，而多模态表示集成了来自多个模态的信息。
+- Contrastive Language-Image Pre-training (CLIP):  使用对比学习训练的模型，将图像和文本在共享表示空间中对齐。
 
 ## Single Encoder Models
 
@@ -55,11 +49,9 @@ Cross-Modal Interaction.不同类型数据模态（例如图像和文本）之�
 
 这类模型的最近版本，比如CLIP，已经在各种视觉语言任务中取得了出色的性能，但几乎无法用于需要图像和文本融合表示的任务，比如视觉问答，因为我们只学会了对齐图像和文本表示，而没有生成一个统一的既包含图像又包含文本输入信息的表示。
 
-![图 3 - 对比语言-图像预训练 (CLIP)](https://images.datacamp.com/image/upload/v1696435759/image2_e50a296052.png)
+<img src="https://images.datacamp.com/image/upload/v1696435759/image2_e50a296052.png" alt="图 3 - 对比语言-图像预训练 (CLIP)" style="zoom:50%;" />
 
 > 图 3 - 对比语言-图像预训练 (CLIP)
-
-
 
 ## 生成式预训练与编码器-解码器架构
 
