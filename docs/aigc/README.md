@@ -25,9 +25,10 @@
 
 - [文生视频: 任务、挑战及现状](aigc/multimodal/text2video.md)
 - [多模态和多模态模型](aigc/multimodal/lmm.md)
+- [ALBEF](aigc/multimodal/albef.md)
 - [BLIP](aigc/multimodal/blip.md)
 - [BLIP-2](aigc/multimodal/blip2.md)
-- [ALBEF](aigc/multimodal/albef.md)
+- [CoCa](aigc/multimodal/coca.md)
 
 
 ### 语言模型
