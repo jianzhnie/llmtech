@@ -263,6 +263,8 @@ CLIP 作者发现，与语言模型目标基线相比，对比目标的效率提
 
 如今，对于许多图像分类任务，CLIP 仍然是一个强大的开箱即用基线，可以按原样使用或进行微调。
 
+<img src="https://huyenchip.com/assets/pics/multimodal/10-clip-perf.png" alt="CLIP 作为图像分类的强大基线" style="zoom:50%;" />
+
 ##### 基于文本的图像检索
 
 由于 CLIP 的训练过程在概念上类似于图像到文本检索和文本到图像检索，因此 CLIP“*为图像检索或搜索等广泛应用的任务展现了巨大的前景*。” 然而，“*在图像检索方面，CLIP 的性能相对于整体现有技术水平明显较低。*”
@@ -381,7 +383,7 @@ VTP 的权重比其他数据集小得多（0.03 与 0.2 和 1 相比），因此
 
 ### CLIP 与 Flamingo
 
-![Flamingo的4个数据集](https://huyenchip.com/assets/pics/multimodal/18-clip-flamingo.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/18-clip-flamingo.png" alt="Flamingo的4个数据集" style="zoom:50%;" />
 
 ## 第 3 部分. LMM 的研究方向
 
