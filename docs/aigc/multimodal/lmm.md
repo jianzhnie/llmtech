@@ -1,18 +1,36 @@
 #  多模态和多模态模型
 
-OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_System_Card.pdf) 中指出，“将额外的模态（例如图像输入）融入到LLMs中被视为人工智能研究和发展的关键前沿。”
+ChatGPT再次让世界惊叹。通过GPT4的最新升级，ChatGPT 将其功能从文本扩展到图像和语音。借助 ChatGPT 的新功能，您可以让您的孩子在不发脾气的情况下完成作业，或者帮助他们轻松地将“超级向日葵刺猬”的想象力转化为富有表现力的图形。ChatGPT的新功能不仅使AI多模态系统的行业应用实现了飞跃，也引发了围绕多模态模型未来的新一波讨论。
 
-将额外的模态融入到LLMs（大型语言模型）可以创建LMMs（大型多模态模型）。在过去的一年里，每周都有一个主要的研究实验室推出了一个新的LMM，例如DeepMind的Flamingo，Salesforce的BLIP，微软的KOSMOS-1，谷歌的PaLM-E和腾讯的Macaw-LLM。像 [ChatGPT](https://openai.com/blog/chatgpt-can-now-see-hear-and-speak) 和 [Gemini](https://blog.google/technology/ai/google-io-2023-keynote-sundar-pichai/#palm-2-gemini) 这样的聊天机器人就是LMMs。
+## 从LLM到LMM
 
-并不是所有的多模态系统都是LMMs。例如，文本生成图像的模型，比如Midjourney、Stable Diffusion和Dall-E，是多模态的，但它们没有语言模型组件。多模态可以意味着以下特点中的一个或多个：
+生成式人工智能中的多模态系统或多模态性表示模型产生各种输出的能力，包括文本、图像、音频、视频甚至基于输入的其他模态。这些模型根据特定数据进行训练，学习潜在模态以生成类似的新数据，从而丰富人工智能应用。
+
+并非所有多模态系统都是大型多模态模型 (LMM)。例如，像 Midjourney 和 Stable Diffusion 和Dall-E这样的文本到图像模型是多模态的，但不是 LMM，因为它们没有大型语言模型组件。多模态可以意味着以下特点中的一个或多个：
 
 1. 输入和输出属于不同的模态（例如文本到图像，图像到文本）
 2. 输入是多模态的（例如，一个能够同时处理文本和图像的系统）
 3. 输出是多模态的（例如，一个能够生成文本和图像的系统）
 
+LMM 是通过将额外的模态合并到大型语言模型（LLM）中而构成的， 例如 Open AI 新推出的[DALL.E-3 ](https://openai.com/dall-e-3)。虽然 LMM 的表现高度依赖于其基础 LLM 的表现，但随着每种模态的添加，它也增强了其基础 LLM 的表现。
+
+与仅生成文本的 LMM 相比，LMM 更接近人类的自然智能。我们通过多种方式感知世界，尤其是通过视觉。使用图像作为Prompt可以让用户更轻松地查询和使用模型，而不是在文本中起草出完美的Prompt。
+
+事实上，整合多模态模型扩展并丰富了LMM对世界的理解。不同信息格式的融合可以使人工智能系统模仿人类的认知模型，使它们能够通过多种感官而不是单纯的语言来理解世界，从而减少幻觉，提高推理能力和持续学习能力。
+
+### 科技巨头引领LMM 发展
+
+多模态 ChatGPT 让 OpenAI 更接近通用人工智能 (AGI) 时代，这是 OpenAI 在其网站上提出的终极愿景，也是数十年来 AI 社区的圣杯。正如OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_System_Card.pdf) 中指出，“将额外的模态（例如图像输入）融入到LLMs中被视为人工智能研究和发展的关键前沿。”
+
+OpenAI 并不是唯一一家在多模态人工智能领域占据领先地位的公司。在过去的一年里，每周都有一个主要的研究实验室推出了一个新的LMM，例如DeepMind的Flamingo，Salesforce的BLIP，微软的KOSMOS-1，谷歌的PaLM-E和腾讯的Macaw-LLM。
+
+OpenAI推出GPT-4V系统后，谷歌也顶着压力发布了Gemini，号称是一个从头开始创建的多模态系统。据说Gemini 接受训练的Token数量是 GPT4 两倍，在从大量专有数据中获得的见解和推论的复杂性方面具有明显的优势。同样，Meta 最近推出的[SeamlessM4T](https://aibusiness.com/nlp/meta-s-seamlessm4t-ai-model-translates-voice-text-into-100-languages)、[AudioCraft](https://aibusiness.com/nlp/meta-open-sources-audiocraft-its-text-to-audio-or-music-models)和[CM3leon](https://economictimes.indiatimes.com/tech/technology/meta-introduces-generative-ai-model-cm3leon-for-text-images/articleshow/101805639.cms?from=mdr)系列都表明了其在多模态 AI 进步方面与 OpenAI 和 Google 竞争的决心。
+
+### LLM 内容总览
+
 这篇文章涵盖了一般的多模态系统，包括LMMs。它分为3个部分：
 
-- 第1部分介绍了多模态性的背景，包括为什么需要多模态，不同的数据模态以及多模态任务的类型。
+- 第1部分介绍多模态的背景，包括为什么需要多模态，不同的数据模态以及多模态任务的类型。
 - 第2部分讨论了多模态系统的基础知识，以CLIP为例，它为多模态系统奠定了基础，以及Flamingo，它的出色性能催生了LMMs。
 - 第3部分讨论了LMMs的一些活跃研究领域，包括生成多模态输出和更高效多模态训练的适配器，涵盖了新的多模态系统，例如BLIP-2，LLaVA，LLaMA-Adapter V2，LAVIN等。
 
@@ -22,7 +40,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 ### 为什么需要多模态
 
-许多用例在没有多模态性的情况下是不可能实现的，尤其是那些涉及多种数据模态的行业，如医疗保健、机器人技术、电子商务、零售、游戏等。
+许多用例在没有多模态的情况下是不可能实现的，尤其是那些涉及多种数据模态的行业，如医疗保健、机器人技术、电子商务、零售、游戏等。
 
 <img src="https://huyenchip.com/assets/pics/multimodal/26-healthcare.png" alt="Multimodal AI in healthcare" style="zoom:30%;" />
 
@@ -30,13 +48,13 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 不仅如此，整合来自其他模态的数据可以帮助提高模型性能。一个既能从文本学习又能从图像学习的模型，应该比只能从文本或图像学习的模型性能更好。
 
-多模态系统可以提供更灵活的接口，允许您以在特定时刻以最适合您的方式与它们交互。想象一下，您可以通过键入、说话或者只需将摄像头对准某物来提问。
+多模态系统可以提供更灵活的界面，允许您以在特定时刻以最适合您的方式与它们交互。想象一下，您可以通过打字、说话或者只需将摄像头对准某物来提问。
 
-我特别期待的一个用例是，多模态性可以使视觉受损的人们能够浏览互联网并在现实世界中导航。
+我特别期待的一个用例是，多模态可以让视障人士能够浏览互联网并在现实世界中导航。
 
 <img src="https://huyenchip.com/assets/pics/multimodal/1-gpt-4v-use-cases.png" alt="Some cool multimodal use cases from GPT-4V" style="zoom:33%;" />
 
-> GPT-4V提供的一些酷炫多模态用例
+> GPT-4V提供的一些酷炫的多模态用例
 
 ### 数据模态
 
@@ -55,21 +73,21 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 所有数字数据格式都可以用位串（由0和1组成的字符串）或字节串表示。一个能够有效学习位串或字节串的模型将非常强大，它可以从任何数据模态中学习。
 
-还有其他我们没有涉及的数据模态，比如图形和三D图。我们也没有涉及用于表示气味和触觉（触觉）的格式。
+还有其他我们没有涉及的数据模态，比如图表和三D图。我们也没有涉及用于表示气味和触觉（触觉）的格式。
 
 ---
 
 在当前的机器学习中，音频仍然主要被视为文本的语音替代品。音频的最常见用例仍然是语音识别（语音转文本）和语音合成（文本转语音）。非语音音频用例，例如音乐生成，仍然相对较为小众。可以参考HuggingFace上的虚假Drake＆Weeknd歌曲和[MusicGen model on HuggingFace](https://huggingface.co/spaces/facebook/MusicGen)。
 
-图像可能是模型输入中最多才多艺的格式，因为它可以用来表示文本、表格数据、音频，并在一定程度上表示视频。而且，与文本数据相比，视觉数据要多得多。现今我们有手机/网络摄像头可以不断地拍照和录制视频。
+图像可能是模型输入最通用的格式，因为它可用于表示文本、表格数据、音频，在某种程度上还可以表示视频。视觉数据也比文本数据多得多。现今我们有手机/网络摄像头可以不断地拍照和录制视频。
 
 文本是模型输出的一个更强大的模态。一个能够生成图像的模型只能用于图像生成，而一个能够生成文本的模型可以用于许多任务：摘要、翻译、推理、回答问题等。
 
-为简单起见，我们将主要关注两种模态：图像和文本。这些经验教训在一定程度上也可以泛化到其他模态。
+为简单起见，我们将主要关注两种模态：图像和文本。这些知识可以在某种程度上推广到其他模态。
 
 ### 多模态任务
 
-在文献中，我通常看到将视觉语言任务分为两组：生成和视觉语言理解（VLU）（这是一个涵盖所有不需要生成的任务的总称）。这两组之间的界限模糊不清，因为生成答案也需要先理解。
+要了解多模态系统，了解它们旨在解决的任务会很有帮助。在文献中，我通常看到将视觉语言任务分为两组：生成和视觉语言理解（VLU）（这是一个涵盖所有不需要生成的任务的总称）。这两组之间的界限是模糊的，因为能够生成答案也需要理解。
 
 #### 生成任务
 
@@ -79,7 +97,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 这个任务类别很直接。例如：Dall-E，Stable Diffusion和Midjourney。
 
-##### 文本生成
+##### 文本生成 ( Text Generation)
 
 一个常见的文本生成任务是视觉问答。与其只依赖文本进行上下文，你可以同时给模型提供文本和图像。想象一下你可以用相机对准任何东西并问问题，比如：“我的车无法启动。出了什么问题？”，“怎么制作这道菜？”，或者“这个梗是什么意思？”。
 
@@ -121,7 +139,7 @@ OpenAI在他们的 [GPT-4V system card](https://cdn.openai.com/papers/GPTV_Syste
 
 - Flamingo虽然不是第一个能够生成开放性回答的大型多模态模型（[Salesforce’s BLIP](https://arxiv.org/abs/2201.12086) 在之前的3个月就发布了）。然而，Flamingo的出色性能使一些人认为它是多模态领域的GPT-3时刻。
 
-尽管这两个模型较老，但它们使用的许多技术今天仍然具有相关性。我希望它们为理解更新的模型奠定基础。多模态领域正在迅速发展，许多新的想法正在被开发。我们将在第3部分介绍这些新模型。
+尽管这两个模型较老，但它们使用的许多技术在今天仍然适用。我希望它们为理解更新的模型奠定基础。多模态领域正在迅速发展，许多新想法不断涌现。我们将在第3部分介绍这些新模型。
 
 从高层次来看，一个多模态系统包括以下组件：
 
@@ -153,8 +171,8 @@ CLIP利用了自然语言监督和对比学习，这使得CLIP既能够扩大其
 
 对于图像编码器，作者尝试了ResNet和ViT两种架构。最佳性能的模型是`ViT-L/14@336px`：
 
-- Large vision transformer ViT-L）
-- Large vision transformer 
+- Large vision transformer ViT-L
+- 
 - on 336x336 pixel input
 
 对于文本编码器，CLIP使用了一个类似于GPT-2但规模较小的Transformer模型。他们的基础模型仅有63M参数和8个注意头。作者发现CLIP的性能对文本编码器的容量不太敏感。
@@ -162,7 +180,7 @@ CLIP利用了自然语言监督和对比学习，这使得CLIP既能够扩大其
 图像编码器和文本编码器生成的嵌入通过使用两个投影矩阵$W_v$和$W_l$被投影到相同的嵌入空间中。
 
 - 给定一个图像嵌入$Vi$，相应的多模态嵌入计算如下：$W_vV_i$。
-- 给定一个文本嵌入$Li$，相应的多模态嵌入计算如下：$W_lL_i$。当人们提到CLIP嵌入时，他们指的是这些多模态嵌入或者是由CLIP的图像编码器生成的嵌入。
+- 给定一个文本嵌入$Li$，相应的多模态嵌入计算如下：$W_lL_i$。
 
 当人们提到CLIP嵌入时，他们指的是这些多模态嵌入或者是由CLIP的图像编码器生成的嵌入。
 
@@ -244,6 +262,8 @@ CLIP 作者发现，与语言模型目标基线相比，对比目标的效率提
 ##### 分类
 
 如今，对于许多图像分类任务，CLIP 仍然是一个强大的开箱即用基线，可以按原样使用或进行微调。
+
+<img src="https://huyenchip.com/assets/pics/multimodal/10-clip-perf.png" alt="CLIP 作为图像分类的强大基线" style="zoom:50%;" />
 
 ##### 基于文本的图像检索
 
@@ -363,7 +383,7 @@ VTP 的权重比其他数据集小得多（0.03 与 0.2 和 1 相比），因此
 
 ### CLIP 与 Flamingo
 
-![Flamingo的4个数据集](https://huyenchip.com/assets/pics/multimodal/18-clip-flamingo.png)
+<img src="https://huyenchip.com/assets/pics/multimodal/18-clip-flamingo.png" alt="Flamingo的4个数据集" style="zoom:50%;" />
 
 ## 第 3 部分. LMM 的研究方向
 
@@ -493,3 +513,8 @@ An incomplete list of multimodal systems by time to give you a sense of how fast
 - [Open source] [Salesforce’s LAVIS](https://github.com/salesforce/LAVIS)
 
 - [Awesome-Multimodal-Large-Language-Models](https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models)
+
+- https://huggingface.co/blog/vision_language_pretraining
+
+- https://theaisummer.com/vision-language-models/
+
