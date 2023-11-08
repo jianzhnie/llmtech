@@ -158,3 +158,8 @@ CoCa 架构的独特性始于其编码器的输出和整个解码器设置。
 像CoCa这样的基础模型的出现标志着机器学习领域的重大进展。CoCa将各种范式的优势融合在一起，提供了一个能够对齐图像和文本表示并生成联合图像-文本表示的统一模型。
 
 该模型证明了整合对比目标和生成目标的潜力，为增强视觉问答和图像字幕等任务的性能铺平了道路。它包含了擅长零样本学习任务的模型和精通多模态图像文本理解任务的模型的能力，为众多下游视觉和语言任务提供了多功能工具。
+
+## Reference
+
+- https://www.datacamp.com/tutorial/coca-contrastive-captioners-are-image-text-foundation-models-visually-explained
+- https://blog.research.google/2022/05/image-text-pre-training-with.html
