@@ -29,6 +29,8 @@
 - [BLIP](aigc/multimodal/blip.md)
 - [BLIP-2](aigc/multimodal/blip2.md)
 - [CoCa](aigc/multimodal/coca.md)
+- [flamingo](aigc/multimodal/flamingo.md)
+
 
 
 ### 语言模型
