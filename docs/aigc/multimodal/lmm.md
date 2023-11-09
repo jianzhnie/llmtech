@@ -380,6 +380,7 @@ VTP 的权重比其他数据集小得多（0.03 与 0.2 和 1 相比），因此
 
 - [IDEFICS](https://huggingface.co/spaces/HuggingFaceM4/idefics_playground) (HuggingFace)
 - [mlfoundations/open_flamingo](https://github.com/mlfoundations/open_flamingo/issues)
+- [open-mmlab/Multimodal-GPT](https://github.com/open-mmlab/Multimodal-GPT)
 
 ### CLIP 与 Flamingo
 
