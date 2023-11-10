@@ -1,6 +1,4 @@
-# 文生视频: 任务、挑战及现状
-
-中文翻译: [MatrixYao](https://huggingface.co/MatrixYao) 校对: [zhongdongy](https://huggingface.co/zhongdongy)
+# 文本生成视频: 任务、挑战及现状
 
 ![video-samples](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/140_text-to-video/text-to-video-samples.gif)
 
@@ -46,8 +44,6 @@
 
 ![samples](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/140_text-to-video/make-a-video.png)
 根据各种文本描述输入生成的视频示例，图片来自论文 [Make-a-Video](https://arxiv.org/abs/2209.14792)。
-
-
 
 ## 文生视频与文生图
 
@@ -242,8 +238,6 @@ video_path = export_to_video(video_frames)
 ## 总结
 
 文生视频的研究正在呈指数级发展，但现有工作在上下文一致性上仍有限制，同时还面临其他诸多挑战。在这篇博文中，我们介绍了文生视频模型的限制、独特挑战和当前状态。我们还看到了最初为其他任务设计的架构范例如何赋能文生视频任务的巨大飞跃，以及这对未来研究意味着什么。虽然进展令人印象深刻，但与文生图模型相比，文生视频模型还有很长的路要走。最后，我们还展示了如何通过 Hub 上的应用演示来使用这些模型，以及如何将这些模型作为 🤗 Diffusers 流水线的一部分来完成各种任务。
-
-本文就到此为止了！我们将继续整合最具影响力的计算机视觉和多模态模型，并希望收到你的反馈。要了解计算机视觉和多模态研究的最新消息，你可以在 Twitter 上关注我们: [@adirik](https://twitter.com/alaradirik)、[@a_e_roberts](https://twitter.com/a_e_roberts)、[@osanviero](https://twitter.com/NielsRogge)、[@risingsayak](https://twitter.com/risingsayak) 以及 [@huggingface](https://twitter.com/huggingface)。
 
 ## **参考文献**
 
