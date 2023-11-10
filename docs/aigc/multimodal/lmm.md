@@ -306,8 +306,8 @@ CLIP 作者确实尝试创建一个文本生成模型。他们试验的一个版
 
 从高层次来看，Flamingo 由两部分组成：
 
-1. **视觉编码器**：使用对比学习来训练类似 CLIP 的模型。然后丢弃该模型的文本编码器。视觉编码器被冻结以在主模型中使用。
-2. **语言模型**：Flamingo 微调 Chinchilla 以生成文本标记，以视觉效果和文本为条件，使用语言模型损失，以及两个附加组件 Perceiver Resampler 和 GATED XATTN-DENSE 层。我们稍后将在本博客中讨论它们。
+1. 视觉编码器：使用对比学习来训练类似 CLIP 的模型。然后丢弃该模型的文本编码器。视觉编码器被冻结以在主模型中使用。
+2. 语言模型：Flamingo 微调 Chinchilla 以生成文本标记，以视觉效果和文本为条件，使用语言模型损失，以及两个附加组件 Perceiver Resampler 和 GATED XATTN-DENSE 层。我们稍后将在本博客中讨论它们。
 
 <img src="https://huyenchip.com/assets/pics/multimodal/13-flamingo-architecture.png" alt="Flamingo 高层架构" style="zoom:33%;" />
 
@@ -319,12 +319,12 @@ Flamingo 使用了 4 个数据集：2 个（图像、文本）对数据集、1 �
 
 #### Overview of the datasets
 
-| **Dataset** | **Type**                           | **Size**         | **How**                                                      | **Training weight** |
-| ----------- | ---------------------------------- | ---------------- | ------------------------------------------------------------ | ------------------- |
-| M3W         | Interleaved image and text dataset | 43M webpages     | For each webpage, they sample a random subsequence of 256 tokens and take up to the first 5 images included in the sampled sequence. | 1.0                 |
-| ALIGN       | (Image, text) pairs                | 1.8B pairs       | Texts are alt-texts, averaging 12 tokens/text.               | 0.2                 |
-| LTIP        | (Image, text) pairs                | 312M pairs       | Texts are long descriptions, averaging 20.5 tokens/text.     | 0.2                 |
-| VTP         | (Video, text) pairs                | 27M short videos | ~22 seconds/video on average                                 | 0.03                |
+| Dataset | Type                               | Size             | How                                                                                                                                  | Training weight |
+| ------- | ---------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
+| M3W     | Interleaved image and text dataset | 43M webpages     | For each webpage, they sample a random subsequence of 256 tokens and take up to the first 5 images included in the sampled sequence. | 1.0             |
+| ALIGN   | (Image, text) pairs                | 1.8B pairs       | Texts are alt-texts, averaging 12 tokens/text.                                                                                       | 0.2             |
+| LTIP    | (Image, text) pairs                | 312M pairs       | Texts are long descriptions, averaging 20.5 tokens/text.                                                                             | 0.2             |
+| VTP     | (Video, text) pairs                | 27M short videos | ~22 seconds/video on average                                                                                                         | 0.03            |
 
 #### Flamingo 的视觉编码器
 
@@ -372,7 +372,7 @@ $$\sum_{m=1}^M \lambda_m E_{(x, y)\sim D_m} [ -\sum_{l=1}^L \log p(y|x)]$$
 
 #### 训练
 
-虽然 Chinchilla LM 层经过微调和冻结，但附加组件是使用所有 4 个具有不同权重的 Flamingo 数据集从头开始训练的。*找到正确的每个数据集权重是性能的关键。*每个数据集的权重位于上面数据集表的**“训练权重”**列中。
+虽然 Chinchilla LM 层经过微调和冻结，但附加组件是使用所有 4 个具有不同权重的 Flamingo 数据集从头开始训练的。*找到正确的每个数据集权重是性能的关键。*每个数据集的权重位于上面数据集表的“训练权重”列中。
 
 VTP 的权重比其他数据集小得多（0.03 与 0.2 和 1 相比），因此它对训练的贡献应该很小。然而，作者指出，删除该数据集会对所有视频任务的性能产生负面影响。
 
@@ -472,6 +472,22 @@ Flamingo 接受了补全任务的训练，但没有接受对话或遵循指令�
 
 ## Resources
 
+## Awesome Paper with code
+| Title                                                        |    Date    |                             Code                             |                             Demo                             |                             Star                             |
+| :----------------------------------------------------------- | :--------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [OtterHD: A High-Resolution Multi-modality Model](https://arxiv.org/pdf/2311.04219.pdf) | 2023-11-07 |          [Github](https://github.com/Luodian/Otter)          |                              -                               | <img src="https://img.shields.io/github/stars/Luodian/Otter.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [Improved Baselines with Visual Instruction Tuning](https://arxiv.org/pdf/2310.03744.pdf) | 2023-10-05 |        [Github](https://github.com/haotian-liu/LLaVA)        |                [Demo](https://llava.hliu.cc/)                | <img src="https://img.shields.io/github/stars/haotian-liu/LLaVA.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [MiniGPT-v2: large language model as a unified interface for vision-language multi-task learning](https://arxiv.org/pdf/2310.09478.pdf) | 2023-10-14 |      [Github](https://github.com/Vision-CAIR/MiniGPT-4)      |                          Local Demo                          | <img src="https://img.shields.io/github/stars/Vision-CAIR/MiniGPT-4.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [InternLM-XComposer: A Vision-Language Large Model for Advanced Text-image Comprehension and](https://arxiv.org/pdf/2309.15112.pdf) | 2023-09-26 |   [Github](https://github.com/InternLM/InternLM-XComposer)   |                          Local Demo                          | <img src="https://img.shields.io/github/stars/InternLM/InternLM-XComposer.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [NExT-GPT: Any-to-Any Multimodal LLM](https://arxiv.org/pdf/2309.05519.pdf) | 2023-09-11 |        [Github](https://github.com/NExT-GPT/NExT-GPT)        |       [Demo](https://fc7a82a1c76b336b6f.gradio.live/)        | <img src="https://img.shields.io/github/stars/NExT-GPT/NExT-GPT.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [ImageBind-LLM: Multi-modality Instruction Tuning](https://arxiv.org/pdf/2309.03905.pdf) | 2023-09-07 |     [Github](https://github.com/OpenGVLab/LLaMA-Adapter)     |         [Demo](http://imagebind-llm.opengvlab.com/)          | <img src="https://img.shields.io/github/stars/OpenGVLab/LLaMA-Adapter.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [Qwen-VL: A Frontier Large Vision-Language Model with Versatile Abilities](https://arxiv.org/pdf/2308.12966.pdf) | 2023-08-24 |         [Github](https://github.com/QwenLM/Qwen-VL)          | [Demo](https://modelscope.cn/studios/qwen/Qwen-VL-Chat-Demo/summary) | <img src="https://img.shields.io/github/stars/QwenLM/Qwen-VL.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [ImageBind: One Embedding Space To Bind Them All](https://arxiv.org/abs/2305.05665) | 2023-05-31 |   [Github](https://github.com/facebookresearch/ImageBind)    |                             Demo                             | <img src="https://img.shields.io/github/stars/facebookresearch/ImageBind.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning](https://arxiv.org/pdf/2305.06500.pdf) | 2023-05-11 | [Github](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip) |                          Local Demo                          | <img src="https://img.shields.io/github/stars/salesforce/LAVIS.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [LLaMA-Adapter: Efficient Fine-tuning of Language Models with Zero-init Attention](https://arxiv.org/pdf/2303.16199.pdf) | 2023-03-28 |     [Github](https://github.com/OpenGVLab/LLaMA-Adapter)     |  [Demo](https://huggingface.co/spaces/csuhan/LLaMA-Adapter)  | <img src="https://img.shields.io/github/stars/OpenGVLab/LLaMA-Adapter.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models](https://arxiv.org/pdf/2301.12597.pdf) | 2023-01-30 | [Github](https://github.com/salesforce/LAVIS/tree/main/projects/blip2) | [Demo](https://colab.research.google.com/github/salesforce/LAVIS/blob/main/examples/blip2_instructed_generation.ipynb) | <img src="https://img.shields.io/github/stars/salesforce/LAVIS.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+| [OpenFlamingo: An Open-Source Framework for Training Large Autoregressive Vision-Language Models](https://arxiv.org/pdf/2308.01390.pdf) | 2023-08-02 |   [Github](https://github.com/mlfoundations/open_flamingo)   | [Demo](https://huggingface.co/spaces/openflamingo/OpenFlamingo) | <img src="https://img.shields.io/github/stars/mlfoundations/open_flamingo.svg?style=social&label=Star" alt="Star" style="zoom:100%;" /> |
+
 ### Models
 
 An incomplete list of multimodal systems by time to give you a sense of how fast the space is moving!
@@ -480,7 +496,7 @@ An incomplete list of multimodal systems by time to give you a sense of how fast
 - [VQA: Visual Question Answering](https://arxiv.org/abs/1505.00468) (May 2015)
 - [VideoBERT: A Joint Model for Video and Language Representation Learning](https://arxiv.org/abs/1904.01766) (Google, Apr 3, 2019)
 - [LXMERT: Learning Cross-Modality Encoder Representations from Transformers](https://arxiv.org/abs/1908.07490) (UNC Chapel Hill, Aug 20, 2019)
-- [[CLIP\] Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020) (OpenAI, 2021)
+- [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020) (OpenAI, 2021)
 - [Unifying Vision-and-Language Tasks via Text Generation](https://arxiv.org/abs/2102.02779) (UNC Chapel Hill, May 2021)
 - [BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation](https://arxiv.org/abs/2201.12086) (Salesforce, Jan 28, 2022)
 - [Flamingo: a Visual Language Model for Few-Shot Learning](https://arxiv.org/abs/2204.14198) (DeepMind, April 29, 2022)
@@ -512,10 +528,4 @@ An incomplete list of multimodal systems by time to give you a sense of how fast
 - [CMU course] [11-777 MMML](https://cmu-multicomp-lab.github.io/mmml-course/fall2022/)
 
 - [Open source] [Salesforce’s LAVIS](https://github.com/salesforce/LAVIS)
-
 - [Awesome-Multimodal-Large-Language-Models](https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models)
-
-- https://huggingface.co/blog/vision_language_pretraining
-
-- https://theaisummer.com/vision-language-models/
-
