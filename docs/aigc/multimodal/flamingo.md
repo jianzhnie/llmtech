@@ -2,19 +2,17 @@
 
 在本文中，我们将探讨 Flamingo — 由 DeepMind 开发的用于多模态机器学习研究的开放式单视觉语言模型 (VLM)。
 
-Flamingo 是一种新的视觉语言模型 (VLM)，能够执行字幕、视觉对话、[分类](https://wandb.ai/fully-connected/blog/classification)和视觉问答等多模态任务。正如你所看到的，它运行得相当好：
-
-本文将引导您学习这项新研究、了解其架构和训练数据，最后对其进行测试运行以了解其工作原理。
+Flamingo 是一种新的视觉语言模型 (VLM)，能够执行图像摘要、视觉对话、[分类](https://wandb.ai/fully-connected/blog/classification)和视觉问答等多模态任务。
 
 ## 什么是Flamingo？
 
-[Flamingo](https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model)是一系列视觉语言模型 (VLM)，在广泛的开放式视觉和语言任务的小样本学习中取得了新的最先进水平。
+[Flamingo](https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model)是一种视觉语言模型 (VLM)，在广泛的开放式视觉和语言任务的小样本学习中取得了新的最先进水平。
 
 Flamingo 是一种视觉条件自回归文本生成模型，能够摄取与图像和/或视频交错的一系列文本标记，并生成文本作为输出。
 
 Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模型与强大的视觉嵌入融合（组合），每个模型都经过单独预训练和冻结。
 
-### Examples of inputs and outputs obtained from 80B parameter Flamingo model
+### Examples of inputs and outputs obtained from  Flamingo model
 
 在深入研究之前，让我们看一些 Flamingo 模型可以执行的任务类型的示例。
 
@@ -32,8 +30,6 @@ Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模�
 
 ## 多模态生成建模的挑战
 
-在这里，让我们看看一些挑战以及 Flamingo 如何解决这些挑战：
-
 ### 统一强大的单模态模型
 
 挑战：
@@ -45,7 +41,7 @@ Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模�
 
 建议的方法：
 
-将交叉注意力层与仅在训练期间保持冻结的常规语言自注意力层交错。作者还引入了一种特定的门控机制，以最小化这些新添加的层在初始化时的影响，从而大大提高了稳定性和最终性能。
+将交叉注意力层与仅在训练期间保持冻结的常规语言自注意力层进行 Cross Attention。作者还引入了一种特定的门控机制，以最小化这些新添加的层在初始化时的影响，从而大大提高了稳定性和最终性能。
 
 ### 支持图像和视频
 
@@ -53,7 +49,7 @@ Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模�
 
 - 图像和视频（即使是中等分辨率）也是高维的。
 - 将它们展平为一维序列（如单峰文本生成中所使用的）的成本很高，因为计算量与序列长度呈二次方关系。
-- 作者还希望以统一的方式处理图像和视频，但这并不简单。
+- 作者希望以统一的方式处理图像和视频，但这并不简单。
 
 建议的方法：使用 [Perceiver](https://www.deepmind.com/publications/perceiver-general-perception-with-iterative-attention)-based architecture ，在给定大量不同数量的视觉输入特征（最多数千个）的情况下，可以为每个图像/视频生成少量固定数量的视觉标记（大约一百个）。
 
@@ -70,7 +66,7 @@ Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模�
 
 ## Flamingo 的核心思想
 
-DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模态任务（例如字幕、视觉对话、分类或视觉问答）。这是通过以下关键思想实现的：
+DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模态任务（例如图像摘要、视觉对话、分类或视觉问答）。这是通过以下关键思想实现的：
 
 - 一种新颖的架构，用于接受任意交错的视觉和文本数据作为输入并以开放式方式生成输出文本。
 - 架构创新和训练策略有效地利用大型预训练的仅视觉和仅语言模型，节省大量计算并保留这些初始模型的优势，同时有效地融合模态。具体来说，作者使用了[Chinchilla](https://www.deepmind.com/publications/an-empirical-analysis-of-compute-optimal-large-language-model-training)，一个 70B 最先进的 LM（被冻结在 Flamingo 中），并训练了 Flamingo，一个 80B 参数的 VLM。
@@ -86,13 +82,13 @@ DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模
 
 > 图3 | Flamingo 模型概述。Flamingo 模型是视觉语言模型 (VLM) 系列，它可以采用与文本交叉的输入视觉数据并生成自由格式的文本作为输出。其性能的关键是新颖的架构组件和预训练策略。
 
-Flamingo 接受与图像/视频交错的文本并输出自由格式的文本。它可以处理开放式任务（例如视觉问答或字幕）和封闭式任务（例如分类）。
+Flamingo 接受与图像/视频交错的文本并输出自由格式的文本。它可以处理开放式任务（例如视觉问答或图像摘要）和封闭式任务（例如分类）。
 
-- 作者的第一个目标是利用预先训练的语言模型，而不需要花费计算从头开始训练它们。具体来说，他们使用了DeepMind 最近推出的名为[Chinchillah](https://www.deepmind.com/blog/an-empirical-analysis-of-compute-optimal-large-language-model-training)的模型。这使得 Flamingo 模型具有强大的生成语言能力，并且可以访问存储在 LM 权重中的大量知识。
+- 作者的第一个目标是利用预先训练的语言模型，而不需要从头开始训练它们。具体来说，他们使用了DeepMind 最近推出的名为[Chinchillah](https://www.deepmind.com/blog/an-empirical-analysis-of-compute-optimal-large-language-model-training)的模型。这使得 Flamingo 模型具有强大的生成语言能力，并且可以访问存储在 LM 权重中的大量知识。
 - 在视觉方面，作者使用类似于[CLIP 的](https://openai.com/blog/clip/)对比文本图像方法来预训练视觉编码器。该模型的作用是从给定的图像/视频中提取丰富的语义空间特征。
 - 第二个目标是和谐地连接这两种模型。为此，作者冻结了这些模型的权重，并通过两个可学习的架构将它们连接起来。
 - 感知器重采样器（Perceiver Resampler）从视觉编码器接收时空特征（从可变数量的图像或视频获得）并输出一组固定大小的视觉标记。
-- 然后，使用视觉标记来使用新初始化的交叉注意力层来调节冻结的 LM，这些交叉注意力层交错（或插入）在预训练的 LM 层之间。这些层为 LM 提供了一种将视觉信息整合到下一个标记预测任务中的方法。
+- 然后，使用视觉标记来使用新初始化的交叉注意力层来调节冻结的 LM，这些Cross Ateention 层（或插入）在预训练的 LM 层之间。这些层为 LM 提供了一种将视觉信息整合到下一个标记预测任务中的方法。
 
 Flamingo 模型的一个重要方面是它们可以对文本 $y$ 与图像/视频 $x$ 序列交织的似然进行建模。视觉条件文本似然建模如下：
 $$
@@ -162,7 +158,7 @@ def perceiver_resampler(
     x = x + attention_i(q=x, kv=concat([x_f, x]))
     # Feed forward.
     x = x + ffw_i(x)
-return x复制错误！复制了！
+return x
 ```
 
 #### 感知器重采样器结构
@@ -210,7 +206,7 @@ def gated_xattn_dense(
 
 <img src="https://api.wandb.ai/files/gladiator/Flamingo%20VLM/16cbasdt/media/images/example_0_4ee56698aabcb42916a0.png?height=850" alt="卡片" style="zoom:33%;" />
 
-图5 | 门控 XATTN-DENSE 层。作者插入了新的交叉注意力层，其键和值是在使用语言查询时从视觉特征中获得的，然后在现有的预训练和冻结的 LM 层之间插入密集的前馈层，以便根据视觉输入调节LM。这些层*经过门控*，以便 LM 在初始化时保持完整，从而提高稳定性和性能。
+> 图5 | 门控 XATTN-DENSE 层。作者插入了新的交叉注意力层，其键和值是在使用语言查询时从视觉特征中获得的，然后在现有的预训练和冻结的 LM 层之间插入密集的前馈层，以便根据视觉输入调节LM。这些层*经过门控*，以便 LM 在初始化时保持完整，从而提高稳定性和性能。
 
 -  文本生成由 Transformer 解码器执行，以感知器重采样器生成的*视觉*表示$X$为条件。
 - 作者使用了最大的 Flamingo 的70B 参数模型[Chinchilla](https://www.deepmind.com/publications/an-empirical-analysis-of-compute-optimal-large-language-model-training)模型作为语言模型。
@@ -227,7 +223,7 @@ def gated_xattn_dense(
 
 <img src="https://api.wandb.ai/files/gladiator/Flamingo%20VLM/38ghtrlr/media/images/example_0_b79357164aa154dda382.png?height=420" alt="卡片" style="zoom:33%;" />
 
-图6 | 交错的视觉数据和文本支持。`<image>`给定与图像/视频交错的文本（例如来自网页），作者首先通过在文本中视觉数据的位置插入标签以及特殊标记（`<BOS>`用于“句子开头”或`<EOC>`“句子结尾” ）来处理文本。块”）。图像由视觉编码器和感知器重采样器独立处理以提取视觉标记。每个文本标记仅交叉关注与最后一个前面的图像对应的视觉标记。下面所示的函数 𝜙 为每个标记指示最后一个前面图像的索引是什么（如果没有前面的图像，则为 0）。在实践中，这种选择性交叉注意是通过屏蔽交叉注意机制实现的——此处用深蓝色条目（未屏蔽）和浅蓝色条目（屏蔽）进行说明。
+> 图6 | 交错的视觉数据和文本支持。`<image>`给定与图像/视频交错的文本（例如来自网页），作者首先通过在文本中视觉数据的位置插入标签以及特殊标记（`<BOS>`用于“句子开头”或`<EOC>`“句子结尾” ）来处理文本块）。图像由视觉编码器和感知器重采样器独立处理以提取视觉标记。每个文本标记仅交叉关注与最后一个前面的图像对应的视觉标记。下面所示的函数 𝜙 为每个标记指示最后一个前面图像的索引是什么（如果没有前面的图像，则为 0）。在实践中，这种选择性交叉注意是通过屏蔽交叉注意机制实现的——此处用深蓝色条目（未屏蔽）和浅蓝色条目（屏蔽）进行说明。
 
 - 训练数据还包括从网页抓取和处理的交错序列。
 - 每个交错示例由：文本序列*y* 、图像序列*x*以及图像在文本中的位置序列组成。
