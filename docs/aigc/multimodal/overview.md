@@ -434,12 +434,6 @@ BLIP-2 是 Saleforce 的工作。该工作的主要目标是在多模态模型�
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fb87d3df2-d5f6-4ba8-b315-7e23ecd8a15d%2FUntitled.png?table=block&id=15082eae-0591-4aea-9510-511ec919cfd9" alt="notion image" style="zoom:33%;" />
 
- ## **分享视频：**
-
-- **Bilibili**：[**Part 1**](https://www.bilibili.com/video/BV1AM4y1J7r1), [**Part 2**](https://www.bilibili.com/video/BV1Ag4y1N7fw)
-
-
-
 ## Reference
 
 - https://www.breezedeus.com/
