@@ -12,7 +12,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fc13741a5-306f-4ed5-85c1-503cb38dc087%2FUntitled.png?table=block&id=11a7820d-0a19-4f82-a225-312ece108b72" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 让我们深入研究一下多模态学习的具体内容。从下面的图片中，你会看到两种不同颜色的数据，它们代表两种不同的模态的数据。每个图标都代表数据中的一个**基本单元**。例如，在文本中，基本单元可能是字符，在视频中，基本单元可能是每一帧的图像。因此，三角形可能代表一个字符，而圆形可能代表一帧的图像。
 
@@ -24,7 +24,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F9f091488-5f26-46d0-bce0-058d56459d25%2FUntitled.png?table=block&id=937f74ba-0cff-4717-acb6-3db3cecd8591" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 大约在2017年，这种模态之间的耦合度开始发生显著变化。这主要归功于Transformer模型的出现，这是一个跨模态应用的强大框架。由于Transformer模型的出现，各种不同的行业或模态的数据开始向通用单一框架靠拢。
 
@@ -40,7 +40,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4587dfb8-9765-4cc6-b696-b219cb2ed895%2FUntitled.png?table=block&id=88b7e488-fb9b-47cc-92fe-fde898ce94e7" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 刚才我们也提到，多模态学习本身存在一些特性，其中包括**异构**的数据之间的信息表达方式会有所不同，或者说数据中包含的信息不会完全相同。同时，他们之间存在**关联性**，而且当它们被放在一起建模时，它们应该能够产生一些**交互**，通过这些交互能够带来一些单模态无法提供的信息，这是交互带来的价值。
 
@@ -58,7 +58,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F59719492-718e-4d70-a73f-5cce3b9605c3%2FUntitled.png?table=block&id=4ca96ee5-89ee-4268-b1eb-1afe8a7655e3" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 
 
@@ -76,7 +76,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1edfab7d-e0a0-40c6-81f5-eb9516181e10%2FUntitled.png?table=block&id=1d33f6d1-0393-4016-b804-7050417b8739" alt="notion image" style="zoom: 33%;" />
 
- 
+
 
 从模型效果方面看，多模态学习在不同模态之间进行能力借鉴，特别是存在在数据较少或者学习能力差的模态情况下，可以通过从较强的模态中迁移能力来优化弱模态的学习结果。
 
@@ -90,7 +90,7 @@
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fdc1e4014-5a1c-41cd-b188-4b099407b542%2FUntitled.png?table=block&id=91141f8d-8825-41b6-97c6-9a3e8ea49838" alt="notion image" style="zoom:33%;" />
 
-有一种观点认为，要真正向AGI进军，仅仅依赖LLM是不够的，需要让模型接触到更多的模态数据。这也是为什么像Meta这样的公司在推动多模态学习方面投入了大量的精力，他们不仅在图像处理方面具有传统优势，而且在多模态学习领域也开源了许多模型。尽管这一观点并非所有人都认可，但确实也有人相信多模态模型更有可能推动AGI的发展。 
+有一种观点认为，要真正向AGI进军，仅仅依赖LLM是不够的，需要让模型接触到更多的模态数据。这也是为什么像Meta这样的公司在推动多模态学习方面投入了大量的精力，他们不仅在图像处理方面具有传统优势，而且在多模态学习领域也开源了许多模型。尽管这一观点并非所有人都认可，但确实也有人相信多模态模型更有可能推动AGI的发展。
 
 ## 多模态学习的几个发展阶段
 
@@ -237,13 +237,13 @@ ChatGPT发布后，各个方向都在思考如何将其应用到自己的任务�
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4c1a9429-26b6-48b5-9e57-e55aefd9943c%2FUntitled.png?table=block&id=001f7945-e5a8-40da-af01-80f1b207a4c6" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 在损失函数的部分，有一些常用的方法，比如文本中的**Masked Language Modeling (MLM)**，它会遮盖一些词语并让模型去预测它们。在图像中，也可以使用相似的方法，通过掩蔽一部分图像并让模型去预测被掩蔽的部分（**MRM**）。还有，是让模型学习图像和文本之间的全局表示，并通过匹配或对比的方式去判断它们是否匹配（**ITM、ITC**）。这些都是让模型学习如何处理和理解多模态数据的常用损失函数。
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F039fe833-bdc1-474f-a7ed-d2a322d49612%2FUntitled.png?table=block&id=0bbf11fe-f9e2-4d7c-8faf-f5b581ed9fab" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 ## 多模态学习中的代表性模型
 
@@ -338,7 +338,7 @@ CLIP的一些其他应用案例：
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fa1d364c8-51dd-451f-9a08-c86744a62a5f%2FUntitled.png?table=block&id=335bc53d-83e9-4461-a79f-8d965f454e75" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 这种方式训练出来的模型有很强的**跨模态检索**能力，例如，可以通过一个声音去检索图片、视频、深度图和文本等。这样的跨模态模型可以被应用在很多场景中。
 
@@ -356,7 +356,7 @@ Multimodal-CoT是近期亚马逊李沐团队的工作。该工作的目标是探
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F68c37a7d-d644-46e5-9de5-604eacdbe5b5%2FUntitled.png?table=block&id=92d4b8ae-d182-408d-a6f8-44530e650682" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 ### BLIP-2
 
@@ -366,7 +366,7 @@ BLIP-2 是 Saleforce 的工作。该工作的主要目标是在多模态模型�
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F2c6c62a5-9cbe-45b0-b03c-a5886bef0b6e%2FUntitled.png?table=block&id=0a2c5fd7-a98a-4fb7-bb1f-b1e42c328696" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 今年的一个趋势，是使用大型预训练模型（如7B或33B的LLM）来增强多模态模型的性能。这是因为在大部分情况下，研究者没有足够的资源从零开始训练一个大型模型。所以，一个可能的解决方案就是使用已经存在的公开模型，并用少量的数据和参数来训练一个具有类似能力的模型。
 
@@ -388,13 +388,13 @@ BLIP-2 是 Saleforce 的工作。该工作的主要目标是在多模态模型�
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F9a6f91db-fc90-4f43-b3e4-4dc78a5a13ea%2FUntitled.png?table=block&id=c1096aa6-fbcf-4031-b500-d42d77b5e661" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 另一个大的挑战是**模型的可迁移能力**。一个数据集上训练的多模态模型能不能在其他的数据集上表现良好？如何利用在一个强模态上训练的模型来增强弱模态的能力，以及如何将这些模型推广到其他模态的数据上。这些都是当前多模态学习领域正在探索的问题和发展方向。
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F60ee2e45-23e2-4ddb-a13b-829c41cfb877%2FUntitled.png?table=block&id=63d3464c-ec44-4dfa-920a-017c47323465" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 模型方面的一些其他挑战：
 
@@ -408,7 +408,7 @@ BLIP-2 是 Saleforce 的工作。该工作的主要目标是在多模态模型�
 
 <img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F783093ef-afef-4f75-a5ab-6b25474c72f4%2FUntitled.png?table=block&id=9a9d7852-78c4-4b3b-a135-2e80609463f6" alt="notion image" style="zoom:33%;" />
 
- 
+
 
 ### 更高效地训练模型
 
@@ -443,4 +443,3 @@ BLIP-2 是 Saleforce 的工作。该工作的主要目标是在多模态模型�
 - [Awesome-CLIP / yzhuoning](https://github.com/yzhuoning/Awesome-CLIP)
 - [Yutong-Zhou-cv/Awesome-Multimodality: A Survey on multimodal learning research](https://github.com/Yutong-Zhou-cv/Awesome-Multimodality)
 - [BradyFU/Awesome-Multimodal-Large-Language-Models: Latest Papers and Datasets on Multimodal Large Language Models](https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models#awesome-multimodal-large-language-models)
-

@@ -20,9 +20,7 @@
 模型生成的内容如下：
 
 ```text
-思考：我需要使用计算器来计算 123 乘以 456 的结果
-动作：调用计算器
-动作输入：123  456
+思考：我需要使用计算器来计算 123 乘以 456 的结果动作：调用计算器动作输入：123  456
 观测结果：
 ```
 
@@ -58,7 +56,7 @@ AutoGPT Slogan : 基于 GPT4 将 LLM 的 "思想 "串联起来，自主地实现
 
 AutoGPT 的核心逻辑是一个 Prompt Loop，步骤如下
 
-1. AutoGPT 会基于一定策略自动组装 Command Prompt (后文会提到)，这些首次会包含用户输入的 Name, Role和Goals 
+1. AutoGPT 会基于一定策略自动组装 Command Prompt (后文会提到)，这些首次会包含用户输入的 Name, Role和Goals
 2. Command Prompt 的目标不是为了拿到最终结果，而是通过 GPT Chat API(对应界面Thinking 的过程)返回下一步的 Command (包含name和arguments, 如`browser_website(url = "www.baidu.com")` )
 3. 这些 Command 都是可扩展的，每一种命令代表一种外部能力(比如爬虫、Google搜索，也包括GPT的能力)，通过这些 Command 调用返回的 Result 又会成为到 Command Prompt 的组成元素，
 4. 回到第 1 步往复循环，直到拿到最终结果结果（状态为“compelete”）
@@ -115,7 +113,7 @@ Commands:
 2. Browse Website: "browse_website", args: "url": "<url>", "question": "<what_you_want_to_find_on_website>"
 3. Start GPT Agent: "start_agent", args: "name": "<name>", "task": "<short_task_desc>", "prompt": "<prompt>"
 4. Message GPT Agent: "message_agent", args: "key": "<key>", "message": "<message>"
-5. List GPT Agents: "list_agents", args: 
+5. List GPT Agents: "list_agents", args:
 6. Delete GPT Agent: "delete_agent", args: "key": "<key>"
 7. Clone Repository: "clone_repository", args: "repository_url": "<url>", "clone_path": "<directory>"
 8. Write to file: "write_to_file", args: "file": "<file>", "text": "<text>"
@@ -129,7 +127,7 @@ Commands:
 16. Execute Python File: "execute_python_file", args: "file": "<file>"
 17. Generate Image: "generate_image", args: "prompt": "<prompt>"
 18. Send Tweet: "send_tweet", args: "text": "<text>"
-19. Do Nothing: "do_nothing", args: 
+19. Do Nothing: "do_nothing", args:
 20. Task Complete (Shutdown): "task_complete", args: "reason": "<reason>"
 
 Resources:
@@ -144,8 +142,8 @@ Performance Evaluation:
 3. Reflect on past decisions and strategies to refine your approach.
 4. Every command has a cost, so be smart and efficient. Aim to complete tasks in the least number of steps.
 
-You should only respond in JSON format as described below 
-Response Format: 
+You should only respond in JSON format as described below
+Response Format:
 {
     "thoughts": {
         "text": "thought",
@@ -160,7 +158,7 @@ Response Format:
             "arg name": "value"
         }
     }
-} 
+}
 Ensure the response can be parsed by Python json.loads
 ```
 
