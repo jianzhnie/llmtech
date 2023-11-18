@@ -141,7 +141,7 @@ Jarvis 或 HuggingGPT 是一个协作系统，由作为中央控制器的大型�
 
 ### BabyAGI
 
-BabyAGI 是一个人工智能驱动的任务管理系统。该系统使用 OpenAI 和 Pinecone API 来创建、优先处理和执行任务。Baby AGI 的魅力在于它能根据先前任务的结果自主解决任务，并保持预定义的目标。它还能高效地确定任务的优先级。 
+BabyAGI 是一个人工智能驱动的任务管理系统。该系统使用 OpenAI 和 Pinecone API 来创建、优先处理和执行任务。Baby AGI 的魅力在于它能根据先前任务的结果自主解决任务，并保持预定义的目标。它还能高效地确定任务的优先级。
 
 BabyAGI 是一个非常优雅的项目，初始版本仅用105行代码就实现了Baby版本的AGI。这个项目同时也是后续几个商业化项目的重要参考工作。
 
@@ -165,7 +165,7 @@ BabyAGI 是一个非常优雅的项目，初始版本仅用105行代码就实现
 - 基于 OpenAI 模型
 - 测试使用无需 OpenAI 密钥
 - 平台：https://agentgpt.reworkd.ai/
-  
+
 
 AgentGPT：如果你想找一个开源的带UI界面的 Autonomous Agents项目，那就来找他吧。界面做的非常简洁大方，新的功能也在不断提PR中。
 

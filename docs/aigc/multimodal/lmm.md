@@ -172,7 +172,7 @@ CLIP利用了自然语言监督和对比学习，这使得CLIP既能够扩大其
 对于图像编码器，作者尝试了ResNet和ViT两种架构。最佳性能的模型是`ViT-L/14@336px`：
 
 - Large vision transformer ViT-L
-- 
+-
 - on 336x336 pixel input
 
 对于文本编码器，CLIP使用了一个类似于GPT-2但规模较小的Transformer模型。他们的基础模型仅有63M参数和8个注意头。作者发现CLIP的性能对文本编码器的容量不太敏感。
@@ -519,7 +519,7 @@ An incomplete list of multimodal systems by time to give you a sense of how fast
 
 ### Other resources
 
-- [CVPR2023 Tutorial Talk] 
+- [CVPR2023 Tutorial Talk]
 
   Large Multimodal Models: Towards Building and Surpassing Multimodal GPT-4
 

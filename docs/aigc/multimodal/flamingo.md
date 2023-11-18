@@ -192,7 +192,7 @@ def gated_xattn_dense(
 ):
     """Applies a GATED XATTN-DENSE layer."""
     # 1. Gated Cross Attention
-    y = y + tanh(alpha_xattn) * attention(q=y, 
+    y = y + tanh(alpha_xattn) * attention(q=y,
     kv=x)
     # 2. Gated Feed Forward (dense) Layer
     y = y + tanh(alpha_dense) * ffw(y)

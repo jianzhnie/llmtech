@@ -32,7 +32,7 @@
   - 为句子中的每个词汇标注一个成分标签，如NP、VP、PP等，给出一棵树由终结符和非终结符构成的句法树
 
 - 依存句法分析 （Dependency Parsing）
-  -  为句子中的每个词汇标注一个依存标签，如主谓关系、动宾关系等，给出一棵由词语依存关系构成的依存句法树 
+  -  为句子中的每个词汇标注一个依存标签，如主谓关系、动宾关系等，给出一棵由词语依存关系构成的依存句法树
 
 - 语种识别 （Language Identification）
   - 识别出句子所属的语种
@@ -50,19 +50,19 @@
 - 词义消歧 （Word Sense Disambiguation）
   - 对有歧义的词汇进行消歧，确定其准确的词义
 
-- 语义角色标注 （Semantic Role Labeling） 
+- 语义角色标注 （Semantic Role Labeling）
   - 标注句子中的语义角色类标，语义角色，语义角色包括施事、受事、影响等
 
-- 抽象语义表示 （Abstract Meaning Representation） 
+- 抽象语义表示 （Abstract Meaning Representation）
   - 为句子构建抽象语义表示，抽象语义表示是一种图结构，图中的节点表示句子中的词汇，边表示词汇之间的语义关系
 
-- 一阶谓词逻辑 （First-Order Predicate Logic） 
+- 一阶谓词逻辑 （First-Order Predicate Logic）
   - 使用一阶谓词逻辑系统表达语义
 
 - 框架语义分析 （Frame Semantic Parsing）
   - 根据框架语义学的观点，对句子进行语义分析
 
-- 词汇/句子/段落向量化 （Word/Sentence/Paragraph Vectorization） 
+- 词汇/句子/段落向量化 （Word/Sentence/Paragraph Vectorization）
   - 将词汇、句子、段落等文本转换为向量表示
 
 ## 信息抽取（Information Extraction）
@@ -70,7 +70,7 @@
 信息抽取（Information Extraction）指从无结构文本中抽取结构化的信息，主要包括以下任务：
 
 
-- 命名实体识别 （Named Entity Recognition） 
+- 命名实体识别 （Named Entity Recognition）
 
   - 识别出句子中的命名实体，如人名、地名、机构名等
 
@@ -78,7 +78,7 @@
 
   -  对命名实体进行消歧，确定其准确的指称
 
-- 术语抽取 （Terminology Extraction） 
+- 术语抽取 （Terminology Extraction）
 
   - 从文本中抽取出术语
 
@@ -86,23 +86,23 @@
 
   -  确定不同实体的等价描述，包括代词消解和名词消解
 
-- 关系抽取 （Relation Extraction） 
+- 关系抽取 （Relation Extraction）
 
   - 识别出句子中的关系三元组，如人物关系、地理关系等
 
-- 事件抽取 （Event Extraction） 
+- 事件抽取 （Event Extraction）
 
   - 从无结构的文本中抽取结构化事件
 
-- 情感分析 （Sentiment Analysis） 
+- 情感分析 （Sentiment Analysis）
 
   - 对文本的主观性情绪进行提取，如正面情绪、负面情绪等
 
-- 意图识别 （Intent Detection） 
+- 意图识别 （Intent Detection）
 
   - 对话系统中的一个重要模块，对用户给定的对话内容进行分析，识别用户意图
 
-- 槽位填充 （Slot Filling） 
+- 槽位填充 （Slot Filling）
 
   - 对话系统中的一个重要模块，从对话内容中分析出于用户意图相关的有效信息
 
@@ -123,10 +123,7 @@
 **自然语言处理有四大类常见的任务**
 
 ```undefined
-第一类任务：序列标注，譬如命名实体识别、语义标注、词性标注、分词等；
-第二类任务：分类任务，譬如文本分类、情感分析等；
-第三类任务：句对关系判断，譬如自然语言推理、问答QA、文本语义相似性等；
-第四类任务：生成式任务，譬如机器翻译、文本摘要、写诗造句等。
+第一类任务：序列标注，譬如命名实体识别、语义标注、词性标注、分词等；第二类任务：分类任务，譬如文本分类、情感分析等；第三类任务：句对关系判断，譬如自然语言推理、问答QA、文本语义相似性等；第四类任务：生成式任务，譬如机器翻译、文本摘要、写诗造句等。
 ```
 
 ## 序列标注任务
@@ -272,4 +269,3 @@ GLUE 是通用语言理解评估基准，用于测试模型在广泛自然语言
 |   语义文本相似度    |          Semantic textual similarity           |               SentEval               |            MRPCSICK-RSICK-ESTS            |
 |      关系抽取       |            Relationship Extraction             |        New York Times Corpus         |                P@10%P@30%                 |
 |      关系预测       |              Relation Prediction               |                WN18RR                |                H@10H@1MRR                 |
-
