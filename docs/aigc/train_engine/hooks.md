@@ -325,7 +325,7 @@ def main():
 
 在 MMEngine 中，我们将训练过程抽象成执行器（Runner），执行器除了完成环境的初始化，另一个功能是在特定的位点调用钩子完成定制化逻辑。更多关于执行器的介绍请阅读[执行器文档](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/runner.html)。
 
-### Hook 基类
+### Hook基类
 
 为了方便管理，MMEngine 将位点定义为方法并集成到[钩子基类（Hook）](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.hooks.Hook.html#mmengine.hooks.Hook)中，我们只需继承钩子基类并根据需求在特定位点实现定制化逻辑，再将钩子注册到执行器中，便可自动调用钩子中相应位点的方法。
 
@@ -550,7 +550,156 @@ def register_hook(
 
 可以看到在register_hook中（核心代码45~52行），倒序遍历队列，当找到一个比当前hook优先级高的hook时，就把当前的hook插入到这个hook的后面，如果找不到比它优先级高的就直接放在第一位。
 
-### HOOK函数调用
+### Hook实现
+
+为了便于理解这个过程，我们以 mmcv 中的 LrUpdaterHook 类为例简要分析一下 hook 对象的行为。LrUpdaterHook 类主要封装了一些对学习率的修改操作，看下面的代码：
+
+```python
+class LrUpdaterHook(Hook):
+    """LR Scheduler in MMCV.
+
+    Args:
+        by_epoch (bool): LR changes epoch by epoch
+        warmup (string): Type of warmup used. It can be None(use no warmup),
+            'constant', 'linear' or 'exp'
+        warmup_iters (int): The number of iterations or epochs that warmup
+            lasts
+        warmup_ratio (float): LR used at the beginning of warmup equals to
+            warmup_ratio * initial_lr
+        warmup_by_epoch (bool): When warmup_by_epoch == True, warmup_iters
+            means the number of epochs that warmup lasts, otherwise means the
+            number of iteration that warmup lasts
+    """
+
+    def __init__(self,
+                 by_epoch=True,
+                 warmup=None,
+                 warmup_iters=0,
+                 warmup_ratio=0.1,
+                 warmup_by_epoch=False):
+        # validate the "warmup" argument
+        if warmup is not None:
+            if warmup not in ['constant', 'linear', 'exp']:
+                raise ValueError(
+                    f'"{warmup}" is not a supported type for warming up, valid'
+                    ' types are "constant" and "linear"')
+        if warmup is not None:
+            assert warmup_iters > 0, \
+                '"warmup_iters" must be a positive integer'
+            assert 0 < warmup_ratio <= 1.0, \
+                '"warmup_ratio" must be in range (0,1]'
+
+        self.by_epoch = by_epoch
+        self.warmup = warmup
+        self.warmup_iters = warmup_iters
+        self.warmup_ratio = warmup_ratio
+        self.warmup_by_epoch = warmup_by_epoch
+
+        if self.warmup_by_epoch:
+            self.warmup_epochs = self.warmup_iters
+            self.warmup_iters = None
+        else:
+            self.warmup_epochs = None
+
+        self.base_lr = []  # initial lr for all param groups
+        self.regular_lr = []  # expected lr if no warming up is performed
+
+    def _set_lr(self, runner, lr_groups):
+        if isinstance(runner.optimizer, dict):
+            for k, optim in runner.optimizer.items():
+                for param_group, lr in zip(optim.param_groups, lr_groups[k]):
+                    param_group['lr'] = lr
+        else:
+            for param_group, lr in zip(runner.optimizer.param_groups,
+                                       lr_groups):
+                param_group['lr'] = lr
+
+    def get_lr(self, runner, base_lr):
+        raise NotImplementedError
+
+    def get_regular_lr(self, runner):
+        if isinstance(runner.optimizer, dict):
+            lr_groups = {}
+            for k in runner.optimizer.keys():
+                _lr_group = [
+                    self.get_lr(runner, _base_lr)
+                    for _base_lr in self.base_lr[k]
+                ]
+                lr_groups.update({k: _lr_group})
+
+            return lr_groups
+        else:
+            return [self.get_lr(runner, _base_lr) for _base_lr in self.base_lr]
+
+    def get_warmup_lr(self, cur_iters):
+        if self.warmup == 'constant':
+            warmup_lr = [_lr * self.warmup_ratio for _lr in self.regular_lr]
+        elif self.warmup == 'linear':
+            k = (1 - cur_iters / self.warmup_iters) * (1 - self.warmup_ratio)
+            warmup_lr = [_lr * (1 - k) for _lr in self.regular_lr]
+        elif self.warmup == 'exp':
+            k = self.warmup_ratio**(1 - cur_iters / self.warmup_iters)
+            warmup_lr = [_lr * k for _lr in self.regular_lr]
+        return warmup_lr
+
+    def before_run(self, runner):
+        # NOTE: when resuming from a checkpoint, if 'initial_lr' is not saved,
+        # it will be set according to the optimizer params
+        if isinstance(runner.optimizer, dict):
+            self.base_lr = {}
+            for k, optim in runner.optimizer.items():
+                for group in optim.param_groups:
+                    group.setdefault('initial_lr', group['lr'])
+                _base_lr = [
+                    group['initial_lr'] for group in optim.param_groups
+                ]
+                self.base_lr.update({k: _base_lr})
+        else:
+            for group in runner.optimizer.param_groups:
+                group.setdefault('initial_lr', group['lr'])
+            self.base_lr = [
+                group['initial_lr'] for group in runner.optimizer.param_groups
+            ]
+
+    def before_train_epoch(self, runner):
+        if self.warmup_iters is None:
+            epoch_len = len(runner.data_loader)
+            self.warmup_iters = self.warmup_epochs * epoch_len
+
+        if not self.by_epoch:
+            return
+
+        self.regular_lr = self.get_regular_lr(runner)
+        self._set_lr(runner, self.regular_lr)
+
+    def before_train_iter(self, runner):
+        cur_iter = runner.iter
+        if not self.by_epoch:
+            self.regular_lr = self.get_regular_lr(runner)
+            if self.warmup is None or cur_iter >= self.warmup_iters:
+                self._set_lr(runner, self.regular_lr)
+            else:
+                warmup_lr = self.get_warmup_lr(cur_iter)
+                self._set_lr(runner, warmup_lr)
+        elif self.by_epoch:
+            if self.warmup is None or cur_iter > self.warmup_iters:
+                return
+            elif cur_iter == self.warmup_iters:
+                self._set_lr(runner, self.regular_lr)
+            else:
+                warmup_lr = self.get_warmup_lr(cur_iter)
+                self._set_lr(runner, warmup_lr)
+```
+
+这个类重写了 `before_run`、`before_train_epoch`、`before_train_iter `方法，其构造函数的参数 by_epoch 如果为 True 则表明我们以 epoch 为单位计量训练进程，否则以 iteration 为单位。warmup 参数为字符串，指定了 warmup 算法中学习率的变化方式，warmup_iters 和 warmup_ratio 分别指定了 warmup 的 iteration 数和增长比例。
+
+从代码中可以看出，在训练开始前，LrUpdaterHook 对象首先会设置 Runner 对象中所维护的优化器的各项参数，然后在每个 iteration 和 epoch 开始前检查学习率和 iteration（epoch）的值，然后计算下一次迭代过程的学习率的值并修改 Runner 中的学习率。
+
+换句话说，LrUpdaterHook 类仅提供了在相应时间修改学习率的代码，至于学习率的衰减方式则应该根据需要自行设置。Hook 机制的好处在于，当我们需要在某些时间点添加一组特定的操作时，只需要编写相应的 hook 类将操作封装并调用 Runner 对象的 register_hook 方法注册即可，这使得整个训练的过程变得更容易定制。
+
+其实实现hook时，用户的疑问往往是自定义hook需要使用的数据从哪里来？显然用户不知道Run类中有哪些数据。用户其实是知道的，因为Run中原本是没有数据的，它仅是一个流程执行类，其中的数据均来自与用户创建run时传入的，如runner.LrUpdaterHook。所以可以看到，一个hook仅仅需要两个元素，一个是执行者，这里是runner，另外一个是执行时间（触发条件，挂载点）。
+
+### Hook函数调用
 
 Runner 类中维护了一个存放 hook 对象的列表 self._hooks，在每个位点会通过 call_hook 方法依次调用列表中所有 hook 对象对应的接口以执行相关操作，call_hook 方法定义为：
 
@@ -659,7 +808,7 @@ def after_train_epoch(self, runner) -> None:
         +----------------------+-------------------------+
 ```
 
-### Runner 中的 Hooks 调用
+### Runner中的 Hooks 调用
 
 现在我们回过头来看 Runner 类的 train 方法，看下面的代码
 
@@ -939,153 +1088,7 @@ runner = Runner(default_hooks=default_hooks, custom_hooks=custom_hooks, ...)
 runner.train()
 ```
 
-### Hook实现
 
-为了便于理解这个过程，我们以 mmcv 中的 LrUpdaterHook 类为例简要分析一下 hook 对象的行为。LrUpdaterHook 类主要封装了一些对学习率的修改操作，看下面的代码：
-
-```python
-class LrUpdaterHook(Hook):
-    """LR Scheduler in MMCV.
-
-    Args:
-        by_epoch (bool): LR changes epoch by epoch
-        warmup (string): Type of warmup used. It can be None(use no warmup),
-            'constant', 'linear' or 'exp'
-        warmup_iters (int): The number of iterations or epochs that warmup
-            lasts
-        warmup_ratio (float): LR used at the beginning of warmup equals to
-            warmup_ratio * initial_lr
-        warmup_by_epoch (bool): When warmup_by_epoch == True, warmup_iters
-            means the number of epochs that warmup lasts, otherwise means the
-            number of iteration that warmup lasts
-    """
-
-    def __init__(self,
-                 by_epoch=True,
-                 warmup=None,
-                 warmup_iters=0,
-                 warmup_ratio=0.1,
-                 warmup_by_epoch=False):
-        # validate the "warmup" argument
-        if warmup is not None:
-            if warmup not in ['constant', 'linear', 'exp']:
-                raise ValueError(
-                    f'"{warmup}" is not a supported type for warming up, valid'
-                    ' types are "constant" and "linear"')
-        if warmup is not None:
-            assert warmup_iters > 0, \
-                '"warmup_iters" must be a positive integer'
-            assert 0 < warmup_ratio <= 1.0, \
-                '"warmup_ratio" must be in range (0,1]'
-
-        self.by_epoch = by_epoch
-        self.warmup = warmup
-        self.warmup_iters = warmup_iters
-        self.warmup_ratio = warmup_ratio
-        self.warmup_by_epoch = warmup_by_epoch
-
-        if self.warmup_by_epoch:
-            self.warmup_epochs = self.warmup_iters
-            self.warmup_iters = None
-        else:
-            self.warmup_epochs = None
-
-        self.base_lr = []  # initial lr for all param groups
-        self.regular_lr = []  # expected lr if no warming up is performed
-
-    def _set_lr(self, runner, lr_groups):
-        if isinstance(runner.optimizer, dict):
-            for k, optim in runner.optimizer.items():
-                for param_group, lr in zip(optim.param_groups, lr_groups[k]):
-                    param_group['lr'] = lr
-        else:
-            for param_group, lr in zip(runner.optimizer.param_groups,
-                                       lr_groups):
-                param_group['lr'] = lr
-
-    def get_lr(self, runner, base_lr):
-        raise NotImplementedError
-
-    def get_regular_lr(self, runner):
-        if isinstance(runner.optimizer, dict):
-            lr_groups = {}
-            for k in runner.optimizer.keys():
-                _lr_group = [
-                    self.get_lr(runner, _base_lr)
-                    for _base_lr in self.base_lr[k]
-                ]
-                lr_groups.update({k: _lr_group})
-
-            return lr_groups
-        else:
-            return [self.get_lr(runner, _base_lr) for _base_lr in self.base_lr]
-
-    def get_warmup_lr(self, cur_iters):
-        if self.warmup == 'constant':
-            warmup_lr = [_lr * self.warmup_ratio for _lr in self.regular_lr]
-        elif self.warmup == 'linear':
-            k = (1 - cur_iters / self.warmup_iters) * (1 - self.warmup_ratio)
-            warmup_lr = [_lr * (1 - k) for _lr in self.regular_lr]
-        elif self.warmup == 'exp':
-            k = self.warmup_ratio**(1 - cur_iters / self.warmup_iters)
-            warmup_lr = [_lr * k for _lr in self.regular_lr]
-        return warmup_lr
-
-    def before_run(self, runner):
-        # NOTE: when resuming from a checkpoint, if 'initial_lr' is not saved,
-        # it will be set according to the optimizer params
-        if isinstance(runner.optimizer, dict):
-            self.base_lr = {}
-            for k, optim in runner.optimizer.items():
-                for group in optim.param_groups:
-                    group.setdefault('initial_lr', group['lr'])
-                _base_lr = [
-                    group['initial_lr'] for group in optim.param_groups
-                ]
-                self.base_lr.update({k: _base_lr})
-        else:
-            for group in runner.optimizer.param_groups:
-                group.setdefault('initial_lr', group['lr'])
-            self.base_lr = [
-                group['initial_lr'] for group in runner.optimizer.param_groups
-            ]
-
-    def before_train_epoch(self, runner):
-        if self.warmup_iters is None:
-            epoch_len = len(runner.data_loader)
-            self.warmup_iters = self.warmup_epochs * epoch_len
-
-        if not self.by_epoch:
-            return
-
-        self.regular_lr = self.get_regular_lr(runner)
-        self._set_lr(runner, self.regular_lr)
-
-    def before_train_iter(self, runner):
-        cur_iter = runner.iter
-        if not self.by_epoch:
-            self.regular_lr = self.get_regular_lr(runner)
-            if self.warmup is None or cur_iter >= self.warmup_iters:
-                self._set_lr(runner, self.regular_lr)
-            else:
-                warmup_lr = self.get_warmup_lr(cur_iter)
-                self._set_lr(runner, warmup_lr)
-        elif self.by_epoch:
-            if self.warmup is None or cur_iter > self.warmup_iters:
-                return
-            elif cur_iter == self.warmup_iters:
-                self._set_lr(runner, self.regular_lr)
-            else:
-                warmup_lr = self.get_warmup_lr(cur_iter)
-                self._set_lr(runner, warmup_lr)
-```
-这个类重写了 `before_run`、`before_train_epoch`、`before_train_iter `方法，其构造函数的参数 by_epoch 如果为 True 则表明我们以 epoch 为单位计量训练进程，否则以 iteration 为单位。warmup 参数为字符串，指定了 warmup 算法中学习率的变化方式，warmup_iters 和 warmup_ratio 分别指定了 warmup 的 iteration 数和增长比例。
-
-从代码中可以看出，在训练开始前，LrUpdaterHook 对象首先会设置 Runner 对象中所维护的优化器的各项参数，然后在每个 iteration 和 epoch 开始前检查学习率和 iteration（epoch）的值，然后计算下一次迭代过程的学习率的值并修改 Runner 中的学习率。
-
-换句话说，LrUpdaterHook 类仅提供了在相应时间修改学习率的代码，至于学习率的衰减方式则应该根据需要自行设置。Hook 机制的好处在于，当我们需要在某些时间点添加一组特定的操作时，只需要编写相应的 hook 类将操作封装并调用 Runner 对象的 register_hook 方法注册即可，这使得整个训练的过程变得更容易定制。
-
-其实实现hook时，用户的疑问往往是自定义hook需要使用的数据从哪里来？显然用户不知道Run类中有哪些数据。用户其实是知道的，因为Run中原本是没有数据的，它仅是一个流程执行类，其中的数据均来自与用户创建run时传入的，如runner.LrUpdaterHook。所以可以看到，一个hook仅仅需要两个元素，一个是执行者，这里是runner，另外一个是执行时间（触发条件，挂载点）。
 
 下面逐一介绍 MMEngine 中内置钩子的用法。
 
@@ -1173,8 +1176,6 @@ class LrUpdaterHook(Hook):
   default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=2, save_begin=5))
   ```
 
-
-
 ### LoggerHook
 
 [LoggerHook](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.hooks.LoggerHook.html#mmengine.hooks.LoggerHook) 负责收集日志并把日志输出到终端或者输出到文件、TensorBoard 等后端。
@@ -1184,8 +1185,6 @@ class LrUpdaterHook(Hook):
 ```python
 default_hooks = dict(logger=dict(type='LoggerHook', interval=20))
 ```
-
-
 
 如果你对日志的管理感兴趣，可以阅读[记录日志（logging）](https://mmengine.readthedocs.io/zh-cn/latest/advanced_tutorials/logging.html)。
 
@@ -1215,15 +1214,11 @@ runner = Runner(custom_hooks=custom_hooks, ...)
 runner.train()
 ```
 
-
-
 `EMAHook` 默认使用 `ExponentialMovingAverage`，可选值还有 `StochasticWeightAverage` 和 `MomentumAnnealingEMA`。可以通过设置 `ema_type` 使用其他的平均策略。
 
 ```python
 custom_hooks = [dict(type='EMAHook', ema_type='StochasticWeightAverage')]
 ```
-
-
 
 更多用法请阅读 [EMAHook API 文档](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.hooks.EMAHook.html#mmengine.hooks.EMAHook)。
 
@@ -1304,8 +1299,6 @@ custom_hooks = [
 runner = Runner(custom_hooks=custom_hooks, ...)  # 实例化执行器，主要完成环境的初始化以及各种模块的构建
 runner.train()  # 执行器开始训练
 ```
-
-
 
 便会在每次模型前向计算后检查损失值。
 
