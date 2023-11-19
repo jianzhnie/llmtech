@@ -416,7 +416,7 @@ class CustomRunner(Runner):
 
 ![基本数据流](https://user-images.githubusercontent.com/112053249/199228350-5f80699e-7fd2-4b4c-ac32-0b16b1922c2e.png)
 
-上图是执行器的**基本**数据流，其中虚线边框、灰色填充的不同形状代表不同的数据格式，实线方框代表模块或方法。由于 MMEngine 强大的灵活性与可扩展性，你总可以继承某些关键基类并重载其中的方法，因此上图并不总是成立。只有当你没有自定义 `Runner` 或 `TrainLoop` ，并且你的自定义模型没有重载 `train_step`、`val_step` 与 `test_step` 方法时上图才会成立（而这在检测、分割等任务上是常见的，参考[模型](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/model.html)教程）。 
+上图是执行器的**基本**数据流，其中虚线边框、灰色填充的不同形状代表不同的数据格式，实线方框代表模块或方法。由于 MMEngine 强大的灵活性与可扩展性，你总可以继承某些关键基类并重载其中的方法，因此上图并不总是成立。只有当你没有自定义 `Runner` 或 `TrainLoop` ，并且你的自定义模型没有重载 `train_step`、`val_step` 与 `test_step` 方法时上图才会成立（而这在检测、分割等任务上是常见的，参考[模型](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/model.html)教程）。
 
 Dataloader、model、evaluator 之间的数据格式如何约定
 
@@ -432,7 +432,7 @@ Dataloader、model、evaluator 之间的数据格式如何约定
 >         losses = model.forward(*data_batch, mode='loss')
 >     else:
 >         raise TypeError()
-> 
+>
 > # 验证过程
 > for data_batch in val_dataloader:
 >     data_batch = data_preprocessor(data_batch)
@@ -537,7 +537,7 @@ class Runner:
         self.message_hub = self.build_message_hub()
         self.visualizer = self.build_visualizer(visualizer)
         self.model = self.build_model(model)
-        self.model = self.wrap_model(self.cfg.get('model_wrapper_cfg'), self.model) 
+        self.model = self.wrap_model(self.cfg.get('model_wrapper_cfg'), self.model)
 
         self.register_hooks(default_hooks, custom_hooks)
 
@@ -548,9 +548,9 @@ class Runner:
 
 - 基础环境配置：`setup_env`，
 - 设置随机种子 `set_randomness`，
-- 获取 `default_scope` (如 `mmdet`、`mmcls` 等)； 
-- 实例化 `log_processor`、`logger`、`message_hub`、`visualizer`、`model` 等模块； 
-- 注册各类钩子 `hooks` (默认自带的 `default_hooks` 以及用户自定义的 `custom_hooks` )； 
+- 获取 `default_scope` (如 `mmdet`、`mmcls` 等)；
+- 实例化 `log_processor`、`logger`、`message_hub`、`visualizer`、`model` 等模块；
+- 注册各类钩子 `hooks` (默认自带的 `default_hooks` 以及用户自定义的 `custom_hooks` )；
 - 模块延迟初始化 `Lazy Initialization`（此处未展示相关代码），如不同的 `dataloader`，仅当对应流程真正启动时，才需要完整实例化；
 
 ### 训练/验证/测试流程
@@ -608,11 +608,11 @@ def test(self) -> dict:
 
 ![Loop](https://user-images.githubusercontent.com/12907710/184577588-d74e16dd-15c7-4f73-9857-61c56c29057b.png)
 
-对照上述流程图，这里重点讨论以下（粗方框）几部分： 
+对照上述流程图，这里重点讨论以下（粗方框）几部分：
 
-- train 流程构建： `build_train_loop` 
-- val 流程构建： `build_val_loop` 
--  train 流程调用： `train_loop.run()` 
+- train 流程构建： `build_train_loop`
+- val 流程构建： `build_val_loop`
+-  train 流程调用： `train_loop.run()`
 -  val 流程调用： `val_loop.run()`
 
 #### Train 流程构建与调用
@@ -872,7 +872,7 @@ class BaseMetric(metaclass=ABCMeta):
         return metrics[0]
 ```
 
-该类包含了2个抽象方法，为了便于理解，可以参考 `mmdet/evaluation/metrics/coco_metric.py` 中的子类 `CocoMetric` 进一步分析： 
+该类包含了2个抽象方法，为了便于理解，可以参考 `mmdet/evaluation/metrics/coco_metric.py` 中的子类 `CocoMetric` 进一步分析：
 
 - `metric.process()` 会处理一个 `Batch` 的数据以及对应的预测结果、标签等，并将其处理结果保存至 `metric.results` 中；
 -  `metric.evaluate()` 则会收集所有（分布式 `rank` 上的）处理结果，并调用 `metric.compute_metrics()` 计算最终指标；
@@ -880,6 +880,3 @@ class BaseMetric(metaclass=ABCMeta):
 至此，MMEngine 中的评估模块基本分析完毕，简单来说，虽然不同的 Metric 可能千差万别，但是可以将其封装成统一的类与接口，再使用 `Evaluator` 间接去调用这些接口，从而用统一方法实现不同的指标计算。
 
 对比旧版 MMCV 基于 `EvalHook` 的实现方式，新版实现抽象程度更高，也相对更加灵活，这里采用的思想可以说与前述的 `OptimWrapper` 有异曲同工之妙。
-
-
-

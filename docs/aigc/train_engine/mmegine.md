@@ -51,4 +51,3 @@ MMEngine 中还实现了各种算法模型执行过程中需要用到的公共�
 - [其他工具（Utils）](https://mmengine.readthedocs.io/zh-cn/latest/advanced_tutorials/manager_mixin.html)：还有一些工具性的模块，如 ManagerMixin，它实现了一种全局变量的创建和获取方式，执行器内很多全局可见对象的基类就是 ManagerMixin。
 
 用户可以进一步阅读[教程](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/runner.html)来了解这些模块的高级用法，也可以参考[设计文档](https://mmengine.readthedocs.io/zh-cn/latest/design/hook.html) 了解它们的设计思路与细节。
-
