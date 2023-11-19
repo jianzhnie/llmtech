@@ -56,17 +56,20 @@ for img in imgs:
 - 掌握执行器的常见参数与使用方式
 - 了解执行器的最佳实践——配置文件的写法
 - 了解执行器基本数据流与简要执行逻辑
-- 亲身感受使用执行器的优越性（也许）
+- 亲身感受使用执行器的优越性
 
 ## 执行器示例
 
 下面我们将通过一个适合初学者参考的例子，说明其中最常用的参数，并为一些不常用参数给出进阶指引。
 
-> 我们希望你在本教程中更多地关注整体结构，而非具体模块的实现。这种“自顶向下”的思考方式是我们所倡导的。别担心，之后你将有充足的机会和指引，聚焦于自己想要改进的模块
+> 我们希望你在本教程中更多地关注整体结构，而非具体模块的实现。这种“自顶向下”的思考方式是我们所倡导的。
 
 ### 构建模型
 
-首先，我们需要构建一个**模型**，在 MMEngine 中，我们约定这个模型应当继承 `BaseModel`，并且其 `forward` 方法除了接受来自数据集的若干参数外，还需要接受额外的参数 `mode`：对于训练，我们需要 `mode` 接受字符串 “loss”，并返回一个包含 “loss” 字段的字典；对于验证，我们需要 `mode` 接受字符串 “predict”，并返回同时包含预测信息和真实信息的结果。
+首先，我们需要构建一个**模型**，在 MMEngine 中，我们约定这个模型应当继承 `BaseModel`，并且其 `forward` 方法除了接受来自数据集的若干参数外，还需要接受额外的参数 `mode`：
+
+- 对于训练，我们需要 `mode` 接受字符串 “loss”，并返回一个包含 “loss” 字段的字典；
+- 对于验证，我们需要 `mode` 接受字符串 “predict”，并返回同时包含预测信息和真实信息的结果。
 
 ```python
 import torch.nn.functional as F
@@ -82,14 +85,15 @@ class MMResNet50(BaseModel):
     def forward(self, imgs, labels, mode):
         x = self.resnet(imgs)
         if mode == 'loss':
-            return {'loss': F.cross_entropy(x, labels)}
+          	loss = F.cross_entropy(x, labels)
+            return {'loss': loss}
         elif mode == 'predict':
             return x, labels
 ```
 
 ### 构建数据集和数据加载器
 
-其次，我们需要构建训练和验证所需要的**数据集 (Dataset)\**和\**数据加载器 (DataLoader)**。 对于基础的训练和验证功能，我们可以直接使用符合 PyTorch 标准的数据加载器和数据集。
+其次，我们需要构建训练和验证所需要的**数据集 (Dataset) **和  **数据加载器 (DataLoader)**。 对于基础的训练和验证功能，我们可以直接使用符合 PyTorch 标准的数据加载器和数据集。
 
 ```python
 import torchvision.transforms as transforms
@@ -300,8 +304,6 @@ System environment:
 
 所以，MMEngine 与执行器会确实地让你更加轻松。只要花费一点点努力完成迁移，你的代码与实验会随着 MMEngine 的发展而与时俱进；如果再花费一点努力，MMEngine 的配置系统可以让你更加高效地管理数据、模型、实验。便利性与可靠性，这些正是我们努力的目标。
 
-
-
 ## 执行器（架构）
 
 <img src="https://user-images.githubusercontent.com/12907710/184577204-3ea033bd-91dd-4da8-b4ac-22763d7d6c7d.png" alt="Runner" style="zoom:150%;" />
@@ -322,10 +324,10 @@ MMEngine 的执行器内包含训练、测试、验证所需的各个模块，�
 
 在 MMEngine 中，我们将任务的执行流程抽象成循环控制器（Loop），因为大部分的深度学习任务执行流程都可以归纳为模型在一组或多组数据上进行循环迭代。 MMEngine 内提供了四种默认的循环控制器：
 
-- EpochBasedTrainLoop 基于轮次的训练循环
-- IterBasedTrainLoop 基于迭代次数的训练循环
-- ValLoop 标准的验证循环
-- TestLoop 标准的测试循环
+- `EpochBasedTrainLoop `基于轮次的训练循环
+- `IterBasedTrainLoop `基于迭代次数的训练循环
+- `ValLoop` 标准的验证循环
+- `TestLoop` 标准的测试循环
 
 ![Loop](https://user-images.githubusercontent.com/12907710/184577588-d74e16dd-15c7-4f73-9857-61c56c29057b.png)
 
@@ -453,17 +455,15 @@ Dataloader、model、evaluator 之间的数据格式如何约定
 
 为什么 model 产生了 3 个不同的输出？ loss、predict、tensor 是什么含义？
 
-> 15 分钟上手对此有一定的描述，你需要在自定义模型的 forward 函数中实现 3 条数据通路，适配训练、验证等不同需求。模型文档中对此有详细解释
+> 前面的例子中对此有一定的描述，你需要在自定义模型的 forward 函数中实现 3 条数据通路，适配训练、验证等不同需求。模型文档中对此有详细解释
 
- 我可以看出红线是训练流程，蓝线是验证/测试流程，但绿线是什么？
+ 可以看出红线是训练流程，蓝线是验证/测试流程，绿线是什么？
 
 > 在目前的执行器流程中，`'tensor'` 模式的输出并未被使用，大多数情况下用户无需实现。但一些情况下输出中间结果可以方便地进行 debug。
 
 如果我重载了 train_step 等方法，上图会完全失效吗？
 
 > 默认的 `train_step`、`val_step`、`test_step` 的行为，覆盖了从数据进入 `data preprocessor` 到 `model` 输出 `loss`、`predict` 结果的这一段流程，不影响其余部分。
-
-###
 
 ## Runner 调用流程
 
