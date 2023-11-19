@@ -178,19 +178,19 @@ class BaseDataPreprocessor(nn.Module):
    class MixUpDataPreprocessor(nn.Module):
        def __init__(self, num_class, alpha):
            self.alpha = alpha
-   
+
        def forward(self, data, training=True):
            data = tuple(_data.cuda() for _data in data)
            # 验证阶段无需进行 MixUp 数据增强
            if not training:
                return data
-   
+
            label = F.one_hot(label)  # label 转 onehot 编码
            batch_size = len(label)
            index = torch.randperm(batch_size)  # 计算用于叠加的图片数
            img, label = data
            lam = np.random.beta(self.alpha, self.alpha)  # 融合因子
-   
+
            # 原图和标签的 MixUp.
            img = lam * img + (1 - lam) * img[index, :]
            label = lam * batch_scores + (1 - lam) * batch_scores[index, :]
@@ -198,7 +198,7 @@ class BaseDataPreprocessor(nn.Module):
            return tuple(img, label)
    ```
 
-   
+
 
    因此，除了数据搬运和归一化，`data_preprocessor` 另一大功能就是数据批增强（BatchAugmentation）。数据预处理器的模块化也能帮助我们实现算法和数据增强之间的自由组合。
 
@@ -207,4 +207,3 @@ class BaseDataPreprocessor(nn.Module):
    答案是都不合适。理想的解决方案是我们能够在不破坏模型和数据已有接口的情况下完成适配。这个时候数据预处理器也能承担类型转换的工作，例如将传入的 data 从 `tuple` 转换成指定字段的 `dict`。
 
 看到这里，相信你已经能够理解数据预处理器存在的合理性，并且也能够自信地回答教程最初提出的两个问题！但是你可能还会疑惑 `train_step` 接口中传入的 `optim_wrapper` 又是什么，`test_step` 和 `val_step` 返回的结果和 evaluator 又有怎样的关系，这些问题会在[模型精度评测教程](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/evaluation.html)和[优化器封装](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/optim_wrapper.html)得到解答。
-
