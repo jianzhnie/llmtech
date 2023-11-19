@@ -2,26 +2,23 @@
 
 ## Hook设计描述
 
-Hook，又称钩子，在C/C++中一般叫做回调函数。一个钩子方法由一个抽象类或具体类声明并实现，而其子类可能会加以扩展。通常在父类中给出的实现是一个空实现，并以该空实现作为方法的默认实现，当然钩子方法也可以提供一个非空的默认实现. 钩子是从功能角度描述这种编程模式，回调则是从函数调用时间角度描述的。
+Hook，又称钩子，在C/C++中一般叫做回调函数。一个钩子方法由一个抽象类或具体类声明并实现，而其子类可能会加以扩展。通常在父类中给出的实现是一个空实现，并以该空实现作为方法的默认实现，当然钩子方法也可以提供一个非空的默认实现。 钩子是从功能角度描述这种编程模式，回调则是从函数调用角度描述的。
 
-钩子编程是一种编程模式，通常理解的Hook是指在程序的一个或者多个位置设置位点（挂载点），当程序运行至某个位点时，会自动调用运行时注册到位点的所有方法(使得程序在执行前或执行后做一些额外的处理)。钩子编程可以提高程序的灵活性和拓展性，用户将自定义的方法注册到位点便可被调用而无需修改程序中的代码。
+钩子编程是一种编程模式，通常理解的Hook是指在程序的一个或者多个位置设置位点（挂载点），当程序运行至该位点时，会自动调用运行时注册到位点的所有方法(使得程序在执行前或执行后做一些额外的处理)。钩子编程可以提高程序的灵活性和拓展性，用户将自定义的方法注册到位点便可被调用而无需修改程序中的代码。
 
-如我们熟知的windows系统消息响应事件，鼠标点击对程序产生的影响是由程序自己决定的，但是程序的执行是受制于框架（windows系统），框架提供了一些通用的流程执行，但是往往框架或流程在设计时无法完全预料到以后的使用会有什么新需求，或者有些行为只有在运行时才能确定的。这就产生了回调的需求，即用户提供需求，框架负责执行，流程先于具体需求，当触发或者满足某种条件时，执行Hook函数。Hook函数的数据也是由用户自己提供的，框架只负责流程执行，这样框架的通用性就能大大提高。
-
+例如我们熟知的windows系统消息响应事件，鼠标点击对程序产生的影响是由程序自己决定的，但是程序的执行是受制于框架（windows系统），框架提供了一些通用的流程执行，但是往往框架或流程在设计时无法完全预料到以后的使用会有什么新需求，或者有些行为只有在运行时才能确定的。这就产生了回调的需求，即用户提供需求，框架负责执行，流程先于具体需求，当触发或者满足某种条件时，执行Hook函数。Hook函数的数据也是由用户自己提供的，框架只负责流程执行，这样框架的通用性就能大大提高。
 
 ## Hook设计三要素
 
-- Hook函数或类：实现自定义操作或功能
+- Hook 函数或类：实现自定义操作或功能
 - 注册：只有经过注册的Hook才能被系统或框架调用
 - 挂载点：通常由系统或框架决定，用户无法修改
-
-
 
 ## 钩子（HOOK）示例
 
 ### 钩子示例一
 
-Hook是一个编程机制，与语言无关。这里给出几个Python的简单例子，帮助大家理解
+Hook是一个编程机制，与语言无关。这里给出几个Python的简单例子，帮助大家理解。
 
 下面是钩子的第一个简单示例。
 
@@ -51,7 +48,9 @@ goodbye
 
 ### 钩子示例二
 
-我最近打算好好锻炼身体，健康生活，努力工作，打算让自己变得更加自律。我给自己定下了几个条例，每天吃早饭之前得**晨练30分钟**，运动完之后才会感觉充满活力，吃完早饭工作3个小时，吃完午饭之后**午休60分钟**，午休完继续工作3个小时； 晚上下班前我如果没什么事再**锻炼600分钟**， 晚饭之后工作继续60分钟， 工作完就洗漱睡觉。秉承着这样的原则我给自己定义一个工作安排时间表来规范我的生活。定义了三个 HOOK： RunningHOOK，WorkingHOOK,  SleepingHOOK, 然后对这三个不同的 HOOK 进行合理安排，行成我的时间表。
+一个日常活动安排 Hook，如下描述：
+
+我最近打算好好锻炼身体，健康生活，努力工作，打算让自己变得更加自律。我给自己定下了几个条例，每天吃早饭之前得**晨练30分钟，运动完之后才会感觉充满活力，吃完早饭工作3个小时，吃完午饭之后**午休60分钟**，午休完继续工作3个小时； 晚上下班前我如果没什么事再**锻炼60分钟， 晚饭之后工作继续60分钟，工作完就洗漱睡觉。秉承着这样的原则我给自己定义一个工作安排时间表来规范我的生活。定义了三个 HOOK： RunningHOOK，WorkingHOOK,  SleepingHOOK, 然后对这三个不同的 HOOK 进行合理安排，行成我每天的时间安排表。
 
 - 定义我的HOOK
 
@@ -322,7 +321,7 @@ def main():
 这些钩子函数的作用非常不言自明：
 
 - `call_hooks.on_epoch_begin()`  意味着 “嘿，钩子函数，我正在开始一个新的 Epoch，这里有人想做点什么吗？”
-- `call_hooks.on_step_end()`是 “ 嘿，钩子函数，我刚刚完成了一个Step, 采取了优化器步骤，即将将梯度归零。现在有什么事情要做吗？”
+- `call_hooks.on_step_end()` 意思是 “ 嘿，钩子函数，我刚刚完成了一个Step, 采取了优化器步骤，即将将梯度归零。现在有什么事情要做吗？”
 
 在 MMEngine 中，我们将训练过程抽象成执行器（Runner），执行器除了完成环境的初始化，另一个功能是在特定的位点调用钩子完成定制化逻辑。更多关于执行器的介绍请阅读[执行器文档](https://mmengine.readthedocs.io/zh-cn/latest/tutorials/runner.html)。
 
@@ -404,7 +403,7 @@ class Hook:
     def before_val_iter(self, runner):
         self.before_iter(runner, mode='val')
 
-    def before_val_iter(self, runner):
+    def before_test_iter(self, runner):
         self.before_iter(runner, mode='test')
 
     def after_train_iter(self, runner):
@@ -439,18 +438,16 @@ class Hook:
         return runner.iter + 1 == runner.max_iters
 ```
 
-观察 Hook 类中的方法不难发现，Hook 类将训练过程中我们可能采取额外操作（如调整学习率，存储模型和日志文件，打印训练信息等）的时间点分为开始训练前、一个 iteration 前、一个 iteration 后、 一个 epoch 前、一个 epoch 后、每 n 个 iteration 后、每 n 个 epoch 后，这些时间点又分为 train 和 validate 过程（在基类中默认两个过程采取相同的操作）。
+观察 Hook 类中的方法不难发现，Hook 类将训练过程中我们可能采取额外操作（如调整学习率，存储模型和日志文件，打印训练信息等）的时间点分为开始训练前、一个 iteration 前、一个 iteration 后、 一个 epoch 前、一个 epoch 后、每 n 个 iteration 后、每 n 个 epoch 后，这些时间点又分为 train、 validate 过程和 test 过程（在基类中默认两个过程采取相同的操作）。
 
-Hook类是所有hook类的父类,是一个抽象类，规定了具体的调用名称和挂载点，如before_run、before_epoch、after_epoch、after_run等，但是仅仅定义了一组接口而没有具体实现。
-
-意味着我们必须通过继承的方式来使用。如果希望在某几个时间点采取一些特定的操作，需要定义一个新的类并继承 Hook 类， 然后然后重写各个时间点对应的方法，实现一些定制化的东西，比如：
+Hook 类是所有hook类的父类, 是一个抽象类，规定了具体的调用名称和挂载点，如before_run、before_epoch、after_epoch、after_run等，但是仅仅定义了一组接口而没有具体实现，这意味着我们必须通过继承的方式来使用。如果希望在某几个时间点采取一些特定的操作，需要定义一个新的类并继承 Hook 类， 然后然后重写各个时间点对应的方法，实现一些定制化的东西，比如：
 
 - `CheckPointHook`  钩子类中` after_epoch` 函数实现：训练一个epoch后我们要保存下训练的模型；
 - `EvalHook`钩子类中 `after_train` 函数实现：在`结束训练`时用最好的模型执行下测试集的效果等等。
 
-定义完 Hook类之后，最后调用 Runner 对象的 register_hook 方法在对象中注册这个 hook。 用户的 Hooks 是放在一个有序列表中，按优先级排列，优先级高的在前，先得到执行，优先级也是由用户确定的，这是用户仅有的权力。
-
 可以看到HOOK中每一个参数都是有runner作为参数传入的。Runner是一个模型训练的总控制器，在其中我们可以加载数据、训练、验证以及梯度backward 等等全套流程，在每一个hook函数中，都可以对runner进行你想要的操作。
+
+定义完钩子函数之后，最后调用 Runner 对象的 register_hook 方法在对象中注册这个 hook。 用户的 Hooks 是放在一个有序列表中，按优先级排列，优先级高的在前，先得到执行，优先级也是由用户确定的，这是用户仅有的权力。
 
 
 ### Hook注册
@@ -553,11 +550,9 @@ def register_hook(
 
 可以看到在register_hook中（核心代码45~52行），倒序遍历队列，当找到一个比当前hook优先级高的hook时，就把当前的hook插入到这个hook的后面，如果找不到比它优先级高的就直接放在第一位。
 
-
-
 ### HOOK函数调用
 
-Runner 类中维护了一个存放 hook 对象的列表 self._hooks，在每个时间点会通过 call_hook 方法依次调用列表中所有 hook 对象对应的接口以执行相关操作，call_hook 方法定义为：
+Runner 类中维护了一个存放 hook 对象的列表 self._hooks，在每个位点会通过 call_hook 方法依次调用列表中所有 hook 对象对应的接口以执行相关操作，call_hook 方法定义为：
 
 ```python
 def call_hook(self, fn_name: str, **kwargs) -> None:
@@ -577,7 +572,7 @@ def call_hook(self, fn_name: str, **kwargs) -> None:
         raise TypeError(f'{e} in {hook}') from None
 ```
 
-其中 fn_name 是一个字符串对象，表示希望执行的方法名，这里利用了 python 的内建函数 getattr 来获得 hook 对象中同名方法的引用。用户仅仅需要实现自己所需要的hook，如果没有自定义的hook，框架会调用父类Hook中相应的方法。父类Hook可能提供了一些默认行为，也可能什么都没做。
+其中 fn_name 是一个字符串对象，表示希望执行的方法名，这里利用了 Python 的内建函数 getattr 来获得 hook 对象中同名方法的引用。用户仅仅需要实现自己所需要的hook，如果没有自定义的hook，框架会调用父类Hook中相应的方法。父类Hook可能提供了一些默认行为，也可能什么都没做。
 
 
 根据实现可以看出:
@@ -640,9 +635,9 @@ def after_train_epoch(self, runner) -> None:
     self._save_checkpoint(runner
 ```
 
-可以看到不同的HOOK虽然都是重写了`after_train_epoch`函数，但是调用的顺序还是先调用`param_scheduler_hook.py`中after_train_epoch的，然后再调用`checkpoint_hook.py`中的`after_train_epoch`。
+可以看到不同的HOOK虽然都是重写了`after_train_epoch`函数，但是调用时还是先调用`param_scheduler_hook.py`中after_train_epoch，然后再调用`checkpoint_hook.py`中的`after_train_epoch`。
 
-用一个Priority queue存储实例化的hook对象，用来保证hook调用的优先级。具体的优先级定义有以下7种，作为HOOK的类成员属性。
+用一个Priority queue 存储实例化的hook对象，用来保证hook调用的优先级。具体的优先级定义有以下7种，作为HOOK的类成员属性。
 
 ```
         Default hooks and their priorities:
@@ -666,95 +661,224 @@ def after_train_epoch(self, runner) -> None:
 
 ### Runner 中的 Hooks 调用
 
-现在我们回过头来看 Runner 类的 run 方法，看下面的代码
+现在我们回过头来看 Runner 类的 train 方法，看下面的代码
 
 ```python
-def run(self, data_loaders, workflow, max_epochs, **kwargs):
-    """Start running.
+def train(self) -> nn.Module:
+    """Launch training.
 
-    Args:
-        data_loaders (list[:obj:`DataLoader`]): Dataloaders for training
-            and validation.
-        workflow (list[tuple]): A list of (phase, epochs) to specify the
-            running order and epochs. E.g, [('train', 2), ('val', 1)] means
-            running 2 epochs for training and 1 epoch for validation,
-            iteratively.
-        max_epochs (int): Total training epochs.
+    Returns:
+        nn.Module: The model after training.
     """
-    assert isinstance(data_loaders, list)
-    assert mmcv.is_list_of(workflow, tuple)
-    assert len(data_loaders) == len(workflow)
+    if is_model_wrapper(self.model):
+        ori_model = self.model.module
+    else:
+        ori_model = self.model
+    assert hasattr(ori_model, 'train_step'), (
+        'If you want to train your model, please make sure your model '
+        'has implemented `train_step`.')
 
-    self._max_epochs = max_epochs
-    for i, flow in enumerate(workflow):
-        mode, epochs = flow
-        if mode == 'train':
-            self._max_iters = self._max_epochs * len(data_loaders[i])
-            break
+    if self._val_loop is not None:
+        assert hasattr(ori_model, 'val_step'), (
+            'If you want to validate your model, please make sure your '
+            'model has implemented `val_step`.')
 
-    work_dir = self.work_dir if self.work_dir is not None else 'NONE'
-    self.logger.info('Start running, host: %s, work_dir: %s',
-                        get_host_info(), work_dir)
-    self.logger.info('workflow: %s, max: %d epochs', workflow, max_epochs)
+    if self._train_loop is None:
+        raise RuntimeError(
+            '`self._train_loop` should not be None when calling train '
+            'method. Please provide `train_dataloader`, `train_cfg`, '
+            '`optimizer` and `param_scheduler` arguments when '
+            'initializing runner.')
+
+    self._train_loop = self.build_train_loop(
+        self._train_loop)  # type: ignore
+
+    # `build_optimizer` should be called before `build_param_scheduler`
+    #  because the latter depends on the former
+    self.optim_wrapper = self.build_optim_wrapper(self.optim_wrapper)
+    # Automatically scaling lr by linear scaling rule
+    self.scale_lr(self.optim_wrapper, self.auto_scale_lr)
+
+    if self.param_schedulers is not None:
+        self.param_schedulers = self.build_param_scheduler(  # type: ignore
+            self.param_schedulers)  # type: ignore
+
+    if self._val_loop is not None:
+        self._val_loop = self.build_val_loop(
+            self._val_loop)  # type: ignore
+    # TODO: add a contextmanager to avoid calling `before_run` many times
     self.call_hook('before_run')
 
-    while self.epoch < max_epochs:
-        for i, flow in enumerate(workflow):
-            mode, epochs = flow
-            if isinstance(mode, str):  # self.train()
-                if not hasattr(self, mode):
-                    raise ValueError(
-                        f'runner has no method named "{mode}" to run an '
-                        'epoch')
-                epoch_runner = getattr(self, mode)
-            else:
-                raise TypeError(
-                    'mode in workflow must be a str, but got {}'.format(
-                        type(mode)))
+    # initialize the model weights
+    self._init_model_weights()
 
-            for _ in range(epochs):
-                if mode == 'train' and self.epoch >= max_epochs:
-                    break
-                epoch_runner(data_loaders[i], **kwargs)
+    # try to enable activation_checkpointing feature
+    modules = self.cfg.get('activation_checkpointing', None)
+    if modules is not None:
+        self.logger.info(f'Enabling the "activation_checkpointing" feature'
+                            f' for sub-modules: {modules}')
+        turn_on_activation_checkpointing(ori_model, modules)
 
-    time.sleep(1)  # wait for some hooks like loggers to finish
+    # try to enable efficient_conv_bn_eval feature
+    modules = self.cfg.get('efficient_conv_bn_eval', None)
+    if modules is not None:
+        self.logger.info(f'Enabling the "efficient_conv_bn_eval" feature'
+                            f' for sub-modules: {modules}')
+        turn_on_efficient_conv_bn_eval(ori_model, modules)
+
+    # make sure checkpoint-related hooks are triggered after `before_run`
+    self.load_or_resume()
+
+    # Initiate inner count of `optim_wrapper`.
+    self.optim_wrapper.initialize_count_status(
+        self.model,
+        self._train_loop.iter,  # type: ignore
+        self._train_loop.max_iters)  # type: ignore
+
+    # Maybe compile the model according to options in self.cfg.compile
+    # This must be called **AFTER** model has been wrapped.
+    self._maybe_compile('train_step')
+
+    model = self.train_loop.run()  # type: ignore
     self.call_hook('after_run')
+    return model
 ```
-其中 data_loaders 表示数据加载的对象，max_epochs 表示训练的 epoch 数，workflow 是一个列表对象，需要我们在配置文件中指定，表示在每一个 epoch 中需要采取的行为，例如 `workflow = [('train', 1)]` 表示在一个 epoch 中调用 Runner 的 train 方法训练一个 epoch，train 方法的定义如下:
+Runner.train() 方法中
+
+- 第一步：创建 `model`, `optim_wrapper`, `param_schedulers`, `train_loop`。
+- 第二步：`self.call_hook('before_run')`, `model = self.train_loop.run()` ,`self.call_hook('before_run')`
+
+EpochBasedTrainLoop 类的定义如下:
+
 ```python
-def train(self, data_loader, **kwargs):
-    self.model.train()
-    self.mode = 'train'
-    self.data_loader = data_loader
-    self._max_iters = self._max_epochs * len(self.data_loader)
-    self.call_hook('before_train_epoch')
-    time.sleep(2)  # Prevent possible deadlock during epoch transition
-    for i, data_batch in enumerate(self.data_loader):
-        self._inner_iter = i
-        self.call_hook('before_train_iter')
-        if self.batch_processor is None:
-            outputs = self.model.train_step(data_batch, self.optimizer,
-                                            **kwargs)
+class EpochBasedTrainLoop(BaseLoop):
+    """Loop for epoch-based training.
+
+    Args:
+        runner (Runner): A reference of runner.
+        dataloader (Dataloader or dict): A dataloader object or a dict to
+            build a dataloader.
+        max_epochs (int): Total training epochs.
+        val_begin (int): The epoch that begins validating.
+            Defaults to 1.
+        val_interval (int): Validation interval. Defaults to 1.
+        dynamic_intervals (List[Tuple[int, int]], optional): The
+            first element in the tuple is a milestone and the second
+            element is a interval. The interval is used after the
+            corresponding milestone. Defaults to None.
+    """
+
+    def __init__(
+            self,
+            runner,
+            dataloader: Union[DataLoader, Dict],
+            max_epochs: int,
+            val_begin: int = 1,
+            val_interval: int = 1,
+            dynamic_intervals: Optional[List[Tuple[int, int]]] = None) -> None:
+        super().__init__(runner, dataloader)
+        self._max_epochs = int(max_epochs)
+        assert self._max_epochs == max_epochs, \
+            f'`max_epochs` should be a integer number, but get {max_epochs}.'
+        self._max_iters = self._max_epochs * len(self.dataloader)
+        self._epoch = 0
+        self._iter = 0
+        self.val_begin = val_begin
+        self.val_interval = val_interval
+        # This attribute will be updated by `EarlyStoppingHook`
+        # when it is enabled.
+        self.stop_training = False
+        if hasattr(self.dataloader.dataset, 'metainfo'):
+            self.runner.visualizer.dataset_meta = \
+                self.dataloader.dataset.metainfo
         else:
-            outputs = self.batch_processor(
-                self.model, data_batch, train_mode=True, **kwargs)
-        if not isinstance(outputs, dict):
-            raise TypeError('"batch_processor()" or "model.train_step()"'
-                            ' must return a dict')
-        if 'log_vars' in outputs:
-            self.log_buffer.update(outputs['log_vars'],
-                                    outputs['num_samples'])
-        self.outputs = outputs
-        self.call_hook('after_train_iter')
+            print_log(
+                f'Dataset {self.dataloader.dataset.__class__.__name__} has no '
+                'metainfo. ``dataset_meta`` in visualizer will be '
+                'None.',
+                logger='current',
+                level=logging.WARNING)
+
+        self.dynamic_milestones, self.dynamic_intervals = \
+            calc_dynamic_intervals(
+                self.val_interval, dynamic_intervals)
+
+    @property
+    def max_epochs(self):
+        """int: Total epochs to train model."""
+        return self._max_epochs
+
+    @property
+    def max_iters(self):
+        """int: Total iterations to train model."""
+        return self._max_iters
+
+    @property
+    def epoch(self):
+        """int: Current epoch."""
+        return self._epoch
+
+    @property
+    def iter(self):
+        """int: Current iteration."""
+        return self._iter
+
+    def run(self) -> torch.nn.Module:
+        """Launch training."""
+        self.runner.call_hook('before_train')
+
+        while self._epoch < self._max_epochs and not self.stop_training:
+            self.run_epoch()
+
+            self._decide_current_val_interval()
+            if (self.runner.val_loop is not None
+                    and self._epoch >= self.val_begin
+                    and self._epoch % self.val_interval == 0):
+                self.runner.val_loop.run()
+
+        self.runner.call_hook('after_train')
+        return self.runner.model
+
+    def run_epoch(self) -> None:
+        """Iterate one epoch."""
+        self.runner.call_hook('before_train_epoch')
+        self.runner.model.train()
+        for idx, data_batch in enumerate(self.dataloader):
+            self.run_iter(idx, data_batch)
+
+        self.runner.call_hook('after_train_epoch')
+        self._epoch += 1
+
+    def run_iter(self, idx, data_batch: Sequence[dict]) -> None:
+        """Iterate one min-batch.
+
+        Args:
+            data_batch (Sequence[dict]): Batch of data from dataloader.
+        """
+        self.runner.call_hook(
+            'before_train_iter', batch_idx=idx, data_batch=data_batch)
+        # Enable gradient accumulation mode and avoid unnecessary gradient
+        # synchronization during gradient accumulation process.
+        # outputs should be a dict of loss.
+        outputs = self.runner.model.train_step(
+            data_batch, optim_wrapper=self.runner.optim_wrapper)
+
+        self.runner.call_hook(
+            'after_train_iter',
+            batch_idx=idx,
+            data_batch=data_batch,
+            outputs=outputs)
         self._iter += 1
 
-    self.call_hook('after_train_epoch')
-    self._epoch += 1
+    def _decide_current_val_interval(self) -> None:
+        """Dynamically modify the ``val_interval``."""
+        step = bisect.bisect(self.dynamic_milestones, (self.epoch + 1))
+        self.val_interval = self.dynamic_intervals[step - 1]
 ```
 
-不难看出，train 方法定义的就是训练的过程。run 方法中的 while 循环表示的就是一个完整的训练过程，故而在这个循环的前后分别执行了 self.call_hook('before_run')和 self.call_hook('after_run')，而 train 方法中的 for 循环定义了一个 epoch 训练的过程，并且每次循环都表示一次 iteration，因此在整个循环前后分别执行了 self.call_hook('before_train_epoch')和 self.call_hook('after_train_epoch')，在每次迭代前后又分别执行 self.call_hook('before_train_iter')和 self.call_hook('after_train_iter')。
+`EpochBasedTrainLoop  `类定义了训练的过程。run 方法中的 while 循环表示的就是一个完整的训练过程，故而在这个循环的前后分别执行了 `self.call_hook('before_train')` 和 `self.call_hook('after_train')`，而 `run_epoch` 方法中的 for 循环定义了一个 `epoch ` 训练的过程，并且每次循环都表示一次 `iteration`，因此在整个循环前后分别执行了 `self.call_hook('before_train_epoch')`和 `self.call_hook('after_train_epoch')`，在每次迭代前后又分别执行 `self.call_hook('before_train_iter')`和 `self.call_hook('after_train_iter')`。
 
-需要注意的地方如果有一个hook需要在两个不同时机执行两个需求，如在before_train_epoch和after_train_epoch，但是恰巧这两个需求的优先级不同，这个时候建议写成两个hook，每个hook只负责做一件事，这也是编程中一般原则吧。
+需要注意的地方如果有一个 hook 需要在两个不同时机执行两个需求，如在 `before_train_epoch`和`after_train_epoch`，但是恰巧这两个需求的优先级不同，这个时候建议写成两个hook，每个hook只负责做一件事，这也是编程中一般原则。
 
 ## MMEngine 中的内置 Hook
 
@@ -814,8 +938,6 @@ custom_hooks = [dict(type='EmptyCacheHook')]
 runner = Runner(default_hooks=default_hooks, custom_hooks=custom_hooks, ...)
 runner.train()
 ```
-
-
 
 ### Hook实现
 
@@ -957,9 +1079,9 @@ class LrUpdaterHook(Hook):
                 warmup_lr = self.get_warmup_lr(cur_iter)
                 self._set_lr(runner, warmup_lr)
 ```
-这个类重写了 before_run、before_train_epoch、before_train_iter 方法，其构造函数的参数 by_epoch 如果为 True 则表明我们以 epoch 为单位计量训练进程，否则以 iteration 为单位。warmup 参数为字符串，指定了 warmup 算法中学习率的变化方式，warmup_iters 和 warmup_ratio 分别指定了 warmup 的 iteration 数和增长比例。
+这个类重写了 `before_run`、`before_train_epoch`、`before_train_iter `方法，其构造函数的参数 by_epoch 如果为 True 则表明我们以 epoch 为单位计量训练进程，否则以 iteration 为单位。warmup 参数为字符串，指定了 warmup 算法中学习率的变化方式，warmup_iters 和 warmup_ratio 分别指定了 warmup 的 iteration 数和增长比例。
 
-从代码中可以看出，在训练开始前，LrUpdaterHook 对象首先会设置 Runner 对象中所维护的优化器的各项参数，然后在每个 iteration 和 epoch 开始前检查学习率和 iteration（epoch）的值，然后计算下一次迭代过程的学习率的值并修改 Runner 中的学习率。需要注意的是，LrUpdaterHook 类并未实现 get_lr 方法，要使用 LrUpdaterHook 类必须通过继承的方式并给出 get_lr 方法的实现。
+从代码中可以看出，在训练开始前，LrUpdaterHook 对象首先会设置 Runner 对象中所维护的优化器的各项参数，然后在每个 iteration 和 epoch 开始前检查学习率和 iteration（epoch）的值，然后计算下一次迭代过程的学习率的值并修改 Runner 中的学习率。
 
 换句话说，LrUpdaterHook 类仅提供了在相应时间修改学习率的代码，至于学习率的衰减方式则应该根据需要自行设置。Hook 机制的好处在于，当我们需要在某些时间点添加一组特定的操作时，只需要编写相应的 hook 类将操作封装并调用 Runner 对象的 register_hook 方法注册即可，这使得整个训练的过程变得更容易定制。
 
@@ -991,15 +1113,11 @@ class LrUpdaterHook(Hook):
   default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=5, by_epoch=True))
   ```
 
-
-
   如果想以迭代次数作为保存间隔，则可以将 `by_epoch` 设为 False，`interval=5` 则表示每迭代 5 次保存一次权重。
 
   ```python
   default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=5, by_epoch=False))
   ```
-
-
 
 - 保存最新的多个权重
 
@@ -1009,11 +1127,7 @@ class LrUpdaterHook(Hook):
   default_hooks = dict(checkpoint=dict(type='CheckpointHook', interval=5, max_keep_ckpts=2))
   ```
 
-
-
   上述例子表示，假如一共训练 20 个 epoch，那么会在第 5, 10, 15, 20 个 epoch 保存模型，但是在第 15 个 epoch 的时候会删除第 5 个 epoch 保存的权重，在第 20 个 epoch 的时候会删除第 10 个 epoch 的权重，最终只有第 15 和第 20 个 epoch 的权重才会被保存。
-
-
 
 - 保存最优权重
 
