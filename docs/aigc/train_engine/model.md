@@ -28,8 +28,6 @@ for data_batch in val_dataloader:
 metrics = evaluator.evaluate(len(val_dataloader.dataset))
 ```
 
-
-
 在 Runner 的教程中，我们简单介绍了模型和前后组件之间的数据流通关系，提到了 `data_preprocessor` 的概念，对 model 有了一定的了解。然而在 Runner 实际运行的过程中，模型的功能和调用关系，其复杂程度远超上述伪代码。为了让你能够不感知模型和外部组件的复杂关系，进而聚焦精力到算法本身，我们设计了 [BaseModel](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.model.BaseModel.html#mmengine.model.BaseModel)。大多数情况下你只需要让 model 继承 `BaseModel`，并按照要求实现 `forward` 接口，就能完成训练、测试、验证的逻辑。
 
 在继续阅读模型教程之前，我们先抛出两个问题，希望你在阅读完 model 教程后能够找到相应的答案：
@@ -64,8 +62,6 @@ def train_step(self, data, optim_wrapper):
     return log_vars
 ```
 
-
-
 [**val_step**](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.model.BaseModel.html#mmengine.model.BaseModel.val_step): 执行 `forward` 方法的 `predict` 分支，返回预测结果：
 
 ```python
@@ -74,8 +70,6 @@ def val_step(self, data, optim_wrapper):
     outputs = self(**data, mode='predict') # 预测模式，返回预测结果
     return outputs
 ```
-
-
 
 [**test_step**](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.model.BaseModel.html#mmengine.model.BaseModel.test_step): 同 `val_step`
 
@@ -91,8 +85,6 @@ for data_batch in val_dataloader:
     evaluator.process(data_samples=outputs, data_batch=data_batch)
 metrics = evaluator.evaluate(len(val_dataloader.dataset))
 ```
-
-
 
 没错，抛开 Hook 不谈，[loop](https://mmengine.readthedocs.io/zh-cn/latest/api/generated/mmengine.runner.EpochBasedTrainLoop.html#mmengine.runner.EpochBasedTrainLoop) 调用 model 的过程和上述代码一模一样！看到这，我们再回过头去看 [15 分钟上手 MMEngine](https://mmengine.readthedocs.io/zh-cn/latest/get_started/15_minutes.html) 里的模型定义部分，就有一种看山不是山的感觉：
 
@@ -178,19 +170,19 @@ class BaseDataPreprocessor(nn.Module):
    class MixUpDataPreprocessor(nn.Module):
        def __init__(self, num_class, alpha):
            self.alpha = alpha
-
+   
        def forward(self, data, training=True):
            data = tuple(_data.cuda() for _data in data)
            # 验证阶段无需进行 MixUp 数据增强
            if not training:
                return data
-
+   
            label = F.one_hot(label)  # label 转 onehot 编码
            batch_size = len(label)
            index = torch.randperm(batch_size)  # 计算用于叠加的图片数
            img, label = data
            lam = np.random.beta(self.alpha, self.alpha)  # 融合因子
-
+   
            # 原图和标签的 MixUp.
            img = lam * img + (1 - lam) * img[index, :]
            label = lam * batch_scores + (1 - lam) * batch_scores[index, :]

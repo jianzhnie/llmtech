@@ -31,6 +31,13 @@
 - [CoCa](aigc/multimodal/coca.md)
 - [flamingo](aigc/multimodal/flamingo.md)
 
+## MMEngine 指南
+
+- [MMEngine](aigc/train_engine/mmengine.md)
+- [Runner](aigc/train_engine/runner.md)
+- [Model](aigc/train_engine/model.md)
+- [Hooks](aigc/train_engine/hooks.md)
+- [Logger](aigc/train_engine/logger.md)
 
 
 ### 语言模型
