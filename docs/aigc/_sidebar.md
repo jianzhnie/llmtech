@@ -25,6 +25,14 @@
   - [flamingo](aigc/multimodal/flamingo.md)
 
 
+- MMEngine 指南
+  - [MMEngine](aigc/train_engine/mmengine.md)
+  - [Runner](aigc/train_engine/runner.md)
+  - [Model](aigc/train_engine/model.md)
+  - [Hooks](aigc/train_engine/hooks.md)
+  - [Logger](aigc/train_engine/logger.md)
+
+
 - 语言模型
   - [NLP 任务分类](aigc/language_model/nlp_task.md)
   - [T5 模型](aigc/language_model/Text-to-text.md)
