@@ -33,6 +33,7 @@
 |              [CMU AI](https://blog.ml.cmu.edu/)              |                   -                    | 综合       |                      卡耐基梅隆 AI 研究                      | 🤗🤗       |
 |            [EleutherAI](http://www.eleuther.ai/)             |     https://github.com/EleutherAI      | LLMs       |                          EleutherAI                          | 🤗🤗       |
 | [Lightning.ai](https://lightning.ai/pages/category/tutorial/) |    https://github.com/Lightning-AI     | 综合       |            PyTorch Lightning，让AI模型开发更简单             | 🤗🤗       |
+|         [幻方AI](https://www.high-flyer.cn/blog#ALL)         |                   -                    | 综合       |                                                              | 🤗🤗       |
 
 ## LLM Courses
 
