@@ -39,12 +39,12 @@
 - [Hooks](aigc/train_engine/hooks.md)
 - [Logger](aigc/train_engine/logger.md)
 
-
 ### 语言模型
 
+- [Transformer 中的位置编码](aigc/language_model/position_encoding.md)
+- [旋转式位置编码(Rotary Position Embedding)](aigc/language_model/rope.md)
 - [NLP 任务分类](aigc/language_model/nlp_task.md)
 - [T5 模型](aigc/language_model/Text-to-text.md)
-
 
 ### 扩散模型
 
