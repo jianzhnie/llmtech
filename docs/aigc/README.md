@@ -33,7 +33,7 @@
 
 ## MMEngine 指南
 
-- [MMEngine](aigc/train_engine/mmengine.md)
+- [MMEngine](aigc/train_engine/engine.md)
 - [Runner](aigc/train_engine/runner.md)
 - [Model](aigc/train_engine/model.md)
 - [Hooks](aigc/train_engine/hooks.md)

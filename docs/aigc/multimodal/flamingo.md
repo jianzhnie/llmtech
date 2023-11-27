@@ -2,7 +2,7 @@
 
 在本文中，我们将探讨 Flamingo — 由 DeepMind 开发的用于多模态机器学习研究的开放式单视觉语言模型 (VLM)。
 
-Flamingo 是一种新的视觉语言模型 (VLM)，能够执行图像摘要、视觉对话、[分类](https://wandb.ai/fully-connected/blog/classification)和视觉问答等多模态任务。
+Flamingo 是一种新的视觉语言模型 (VLM)，能够执行Image Caption、视觉对话、[分类](https://wandb.ai/fully-connected/blog/classification)和视觉问答等多模态任务。
 
 ## 什么是Flamingo？
 
@@ -10,7 +10,7 @@ Flamingo 是一种新的视觉语言模型 (VLM)，能够执行图像摘要、�
 
 Flamingo 是一种视觉条件自回归文本生成模型，能够摄取与图像和/或视频交错的一系列文本标记，并生成文本作为输出。
 
-Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模型与强大的视觉嵌入融合（组合），每个模型都经过单独预训练和冻结。
+Flamingo 模型通过添加新颖的架构组件，将大型语言模型与强大的视觉嵌入融合（组合），每个模型都经过单独预训练和冻结。
 
 ### Examples of inputs and outputs obtained from  Flamingo model
 
@@ -66,7 +66,7 @@ Flamingo 模型通过在其间添加新颖的架构组件，将大型语言模�
 
 ## Flamingo 的核心思想
 
-DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模态任务（例如图像摘要、视觉对话、分类或视觉问答）。这是通过以下关键思想实现的：
+DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模态任务（例如Image Caption、视觉对话、分类或视觉问答）。这是通过以下关键思想实现的：
 
 - 一种新颖的架构，用于接受任意交错的视觉和文本数据作为输入并以开放式方式生成输出文本。
 - 架构创新和训练策略有效地利用大型预训练的仅视觉和仅语言模型，节省大量计算并保留这些初始模型的优势，同时有效地融合模态。具体来说，作者使用了[Chinchilla](https://www.deepmind.com/publications/an-empirical-analysis-of-compute-optimal-large-language-model-training)，一个 70B 最先进的 LM（被冻结在 Flamingo 中），并训练了 Flamingo，一个 80B 参数的 VLM。
@@ -82,7 +82,7 @@ DeepMind 的 Flamingo 可以仅通过几个输入/输出示例执行各种多模
 
 > 图3 | Flamingo 模型概述。Flamingo 模型是视觉语言模型 (VLM) 系列，它可以采用与文本交叉的输入视觉数据并生成自由格式的文本作为输出。其性能的关键是新颖的架构组件和预训练策略。
 
-Flamingo 接受与图像/视频交错的文本并输出自由格式的文本。它可以处理开放式任务（例如视觉问答或图像摘要）和封闭式任务（例如分类）。
+Flamingo 接受与图像/视频交错的文本并输出自由格式的文本。它可以处理开放式任务（例如视觉问答或Image Caption）和封闭式任务（例如分类）。
 
 - 作者的第一个目标是利用预先训练的语言模型，而不需要从头开始训练它们。具体来说，他们使用了DeepMind 最近推出的名为[Chinchillah](https://www.deepmind.com/blog/an-empirical-analysis-of-compute-optimal-large-language-model-training)的模型。这使得 Flamingo 模型具有强大的生成语言能力，并且可以访问存储在 LM 权重中的大量知识。
 - 在视觉方面，作者使用类似于[CLIP 的](https://openai.com/blog/clip/)对比文本图像方法来预训练视觉编码器。该模型的作用是从给定的图像/视频中提取丰富的语义空间特征。
@@ -120,7 +120,7 @@ $$
 
 表 1 | 显示针对不同数据集组合进行的消融研究的表格。
 
-![卡片](https://api.wandb.ai/files/gladiator/Flamingo%20VLM/yqai7pll/media/images/example_0_72c8191a7fff7a4d054b.png?height=392)
+<img src="https://api.wandb.ai/files/gladiator/Flamingo%20VLM/yqai7pll/media/images/example_0_72c8191a7fff7a4d054b.png?height=392" alt="卡片" style="zoom:50%;" />
 
 #### 预训练数据
 
@@ -310,7 +310,7 @@ $\lambda_{\mathrm{m}} \text { - positive scalar weight for the } \mathrm{m}_{\ma
 - 该模型以（图像，文本）或（视频，文本）的形式给出一组支持示例（其中图像或视频是输入视觉效果，文本是预期响应）以及单个视觉查询，其中模型需要做出预测。
 - 给定一些支持示例，作者通过连接支持示例和视觉查询来构建多模态提示，如图 8 所示。
 
-![卡片](https://api.wandb.ai/files/gladiator/Flamingo%20VLM/3i4lb3hh/media/images/example_0_68a6a3e53b26b09415cb.png?height=646)
+<img src="https://api.wandb.ai/files/gladiator/Flamingo%20VLM/3i4lb3hh/media/images/example_0_68a6a3e53b26b09415cb.png?height=646" alt="卡片" style="zoom:50%;" />
 
 > 图8 | 少镜头交错提示生成。给定一些特定于任务的少数示例（支持示例）和 Flamingo 模型必须进行预测的查询，作者通过在每个相应文本之前交错图像来构建提示。他们引入了一些格式来做到这一点，例如，他们预先考虑`"Output:"`所有视觉对文本任务的预期响应，或者`"Question: {question} Answer: {answer}"`对视觉回答任务使用格式提示。
 

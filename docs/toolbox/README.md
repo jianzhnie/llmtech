@@ -3,6 +3,7 @@
 - [Linux手册](toolbox/technical/linux-manual.md)
 - [Homebrew手册](toolbox/technical/homebrew.md)
 - [item2手册](toolbox/technical/item2-manual.md)
+- [zsh配置指南](toolbox/technical/install_zsh.md)
 - [其他常用指令](toolbox/technical/tools.md)
 - [深度学习环境配置手册](toolbox/technical/ubuntu-nvidia-cuda-install.md)
 

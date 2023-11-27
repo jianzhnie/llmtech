@@ -6,7 +6,7 @@ ChatGPT再次让世界惊叹。通过GPT4的最新升级，ChatGPT 将其功能�
 
 生成式人工智能中的多模态系统或多模态性表示模型产生各种输出的能力，包括文本、图像、音频、视频甚至基于输入的其他模态。这些模型根据特定数据进行训练，学习潜在模态以生成类似的新数据，从而丰富人工智能应用。
 
-并非所有多模态系统都是大型多模态模型 (LMM)。例如，像 Midjourney 和 Stable Diffusion 和Dall-E这样的文本到图像模型是多模态的，但不是 LMM，因为它们没有大型语言模型组件。多模态可以意味着以下特点中的一个或多个：
+并非所有多模态系统都是大型多模态模型 (LMM)。例如，像 Midjourney、Stable Diffusion 和 Dall-E这样的文本到图像模型是多模态的，但不是 LMM，因为它们没有大型语言模型组件。多模态味着以下特点中的一个或多个：
 
 1. 输入和输出属于不同的模态（例如文本到图像，图像到文本）
 2. 输入是多模态的（例如，一个能够同时处理文本和图像的系统）
@@ -34,7 +34,7 @@ OpenAI推出GPT-4V系统后，谷歌也顶着压力发布了Gemini，号称是�
 - 第2部分讨论了多模态系统的基础知识，以CLIP为例，它为多模态系统奠定了基础，以及Flamingo，它的出色性能催生了LMMs。
 - 第3部分讨论了LMMs的一些活跃研究领域，包括生成多模态输出和更高效多模态训练的适配器，涵盖了新的多模态系统，例如BLIP-2，LLaVA，LLaMA-Adapter V2，LAVIN等。
 
-这篇文章很长。请随时跳到您最感兴趣的部分。
+这篇文章很长，请随时跳到您最感兴趣的部分。
 
 ## 第1部分：了解多模态
 
@@ -77,7 +77,7 @@ OpenAI推出GPT-4V系统后，谷歌也顶着压力发布了Gemini，号称是�
 
 ---
 
-在当前的机器学习中，音频仍然主要被视为文本的语音替代品。音频的最常见用例仍然是语音识别（语音转文本）和语音合成（文本转语音）。非语音音频用例，例如音乐生成，仍然相对较为小众。可以参考HuggingFace上的虚假Drake＆Weeknd歌曲和[MusicGen model on HuggingFace](https://huggingface.co/spaces/facebook/MusicGen)。
+在当前的机器学习中，音频仍然主要被视为文本的语音替代品。音频的最常见用例仍然是语音识别（语音转文本）和语音合成（文本转语音）。非语音音频用例，例如音乐生成，仍然相对较为小众。可以参考HuggingFace上的Drake＆Weeknd歌曲和[MusicGen model on HuggingFace](https://huggingface.co/spaces/facebook/MusicGen)。
 
 图像可能是模型输入最通用的格式，因为它可用于表示文本、表格数据、音频，在某种程度上还可以表示视频。视觉数据也比文本数据多得多。现今我们有手机/网络摄像头可以不断地拍照和录制视频。
 
@@ -137,7 +137,7 @@ OpenAI推出GPT-4V系统后，谷歌也顶着压力发布了Gemini，号称是�
 
 - CLIP是第一个能够通过零样本和少样本学习泛化到多个图像分类任务的模型。
 
-- Flamingo虽然不是第一个能够生成开放性回答的大型多模态模型（[Salesforce’s BLIP](https://arxiv.org/abs/2201.12086) 在之前的3个月就发布了）。然而，Flamingo的出色性能使一些人认为它是多模态领域的GPT-3时刻。
+- Flamingo虽然不是第一个能够生成开放性回答的大型多模态模型（[Salesforce’s BLIP](https://arxiv.org/abs/2201.12086) 在它之前的3个月就发布了）。然而，Flamingo的出色性能使一些人认为它是多模态领域的GPT-3时刻。
 
 尽管这两个模型较老，但它们使用的许多技术在今天仍然适用。我希望它们为理解更新的模型奠定基础。多模态领域正在迅速发展，许多新想法不断涌现。我们将在第3部分介绍这些新模型。
 
@@ -172,7 +172,6 @@ CLIP利用了自然语言监督和对比学习，这使得CLIP既能够扩大其
 对于图像编码器，作者尝试了ResNet和ViT两种架构。最佳性能的模型是`ViT-L/14@336px`：
 
 - Large vision transformer ViT-L
--
 - on 336x336 pixel input
 
 对于文本编码器，CLIP使用了一个类似于GPT-2但规模较小的Transformer模型。他们的基础模型仅有63M参数和8个注意头。作者发现CLIP的性能对文本编码器的容量不太敏感。
@@ -283,8 +282,8 @@ CLIP 的联合图像文本嵌入对于图像生成非常有用。给定文本提
 
 1. CLIP 经过训练并冻结。预训练的 CLIP 模型可以在同一嵌入空间中生成文本和图像的嵌入。
 2. 图像生成时发生两件事：
-   - 使用 CLIP 生成此文本的嵌入。
-   - 使用扩散解码器生成以此嵌入为条件的图像。
+  - 使用 CLIP 生成此文本的嵌入。
+  - 使用扩散解码器生成以此嵌入为条件的图像。
 
 <img src="https://huyenchip.com/assets/pics/multimodal/11-unCLIP.png" alt="取消CLIP" style="zoom:33%;" />
 
@@ -340,7 +339,7 @@ Flamingo 使用 Chinchilla 作为它们的语言模型。更具体地说，他�
 
 <img src="https://huyenchip.com/assets/pics/multimodal/15-lmm-text-generation.png" alt="Flamingo的4个数据集" style="zoom:33%;" />
 
-> 下一代令牌的生成以文本和视觉令牌为条件。插图取自 Chunyuan Li 的 CVPR 2023 教程：大型多模态模型。
+> 下一个Token的生成以文本和视觉Token为条件。插图取自 Chunyuan Li 的 CVPR 2023 教程：大型多模态模型。
 
 为了能够根据文本和视觉输入生成文本，Flamingo 依赖于 Perceiver Resampler 和 GATED XATTN-DENSE 层。
 
