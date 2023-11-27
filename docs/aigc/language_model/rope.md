@@ -107,7 +107,178 @@ $$
 
 即 $\{\varphi(m)\}$ 是等差数列, 设右端为 $\theta$, 那么就解得 $\varphi(m)=m \theta$ 。
 
-### 编码形式 
+
+
+## RoPE证明过程
+
+#### 简单证明
+
+简单起见, 我们先假设 $\boldsymbol{q}_{m}, \boldsymbol{k}_{n}$ 是所在位置分别为 $m, n$ 的二维行向量, 既然是二维, 那么我们可以将它当作复数来运算。我们知道, Attention关键之处在于向量的内积, 用复数表示为
+
+$$
+\left\langle\boldsymbol{q}_{m}, \boldsymbol{k}_{n}\right\rangle=\operatorname{Re}\left[\boldsymbol{q}_{m} \boldsymbol{k}_{n}^{*}\right]
+$$
+
+其中* 是共轭复数, 右端的乘法是普通的复数乘法, $\operatorname{Re}[]$ 表示取结果的实部。上式也就是说：
+如果我们将 $\boldsymbol{q}_{m}, \boldsymbol{k}_{n}$ 分别乘以 $e^{\mathrm{i} i \theta}, e^{\mathrm{i} n \theta}$ 变成 $\boldsymbol{q}_{m} e^{\mathrm{i} i n}, \boldsymbol{k}_{n} e^{\mathrm{i} n \theta}$, 那么就相当于给它们配上了绝对位置编码了（因为显式地依赖绝对位置 $m, n)$, 然后放到内积里边, 我们有
+
+$$
+\left\langle\boldsymbol{q}_{m} e^{\mathrm{i} i \theta}, \boldsymbol{k}_{n} e^{\mathrm{i} n \theta}\right\rangle=\operatorname{Re}\left[\left(\boldsymbol{q}_{m} e^{\mathrm{i} m \theta}\right)\left(\boldsymbol{k}_{n} e^{\mathrm{i} n \theta}\right)^{*}\right]=\operatorname{Re}\left[\boldsymbol{q}_{m} \boldsymbol{k}_{n}^{*} e^{\mathrm{i}(m-n) \theta}\right]
+$$
+
+相当有意思的是，内积只依赖于相对位置 $m-n$ ! 这就巧妙地将绝对位置与相对位置融合在一起了。
+
+由上述结果可知, 对于位置为 $n$ 的二维实数向量 $[x, y]$, 我们当它复数来运算, 乘以 $e^{\mathrm{i} n \theta}$, 得到恒等式
+$$
+(x+y \mathrm{i}) e^{\mathrm{i} n \theta}=(x \cos n \theta-y \sin n \theta)+\mathrm{i}(x \sin n \theta+y \cos n \theta)
+$$
+
+这也就是意味着，通过
+
+$$
+\left(\begin{array}{l}
+x \\
+y
+\end{array}\right) \rightarrow\left(\begin{array}{c}
+x \cos n \theta-y \sin n \theta \\
+x \sin n \theta+y \cos n \theta
+\end{array}\right)=\left(\begin{array}{l}
+x \\
+y
+\end{array}\right) \cos n \theta+\left(\begin{array}{c}
+-y \\
+x
+\end{array}\right) \sin n \theta
+$$
+
+来赋予 $[x, y]$ 绝对位置信息, 那么在Attention运算的时候也等价于相对位置编码。如果是多于二维的向量, 可以考虑每两维为一组进行同样的运算, 每一组的 $\theta$ 可以不一样。
+
+这样一来, 我们得到了一种融绝对位置与相对位置于一体的位置编码方案, 从形式上看它有点像乘性的绝对位置编码, 通过在 $q, k$ 中施行该位置编码, 那么效果就等价于相对位置编码, 而如果还需要显式的绝对位置信息, 则可以同时在 $v$ 上施行这种位置编码。
+
+#### 完整证明
+
+假定 query 向量 `qm` 和 key 向量 `kn` 之间的内积操作可以被一个函数 `g` 表示，该函数 `g` 的输入是词嵌入向量 `xm` ， `xn` 和它们之间的相对位置 `m - n`：
+$$
+<f_q(x_m,m),f_k(x_n,n)>=g(x_m,x_n,m-n) \\
+$$
+我们的目标就是找到一个等价的位置编码方式，从而使得上述关系成立。
+
+假定现在词嵌入向量的维度是两维 `d=2`，这样就可以利用上2维度平面上的向量的几何性质，然后论文中提出了一个满足上述关系的 `f` 和 `g` 的形式如下：
+$$
+f_q(x_m,m)=(W_qx_m)e^{im\theta} \\ f_k(x_n,n)=(W_kx_n)e^{in\theta} \\ g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\
+$$
+这里面 Re 表示复数的实部。
+
+首先看到上述 `f` 和 `g` 公式中有个指数函数： $$e^{ix} $$
+
+这个其实是欧拉公式 `[2]`，其中 `x` 表示任意实数， `e` 是自然对数的底数，`i` 是复数中的虚数单位，则根据欧拉公式有：
+$$
+e^{ix} = \cos x + i\sin x \\
+$$
+则是上述指数函数可以表示为实部为 `cosx`，虚部为 `sinx` 的一个复数，欧拉公式 `[2] `建立了指数函数、三角函数和复数之间的桥梁。
+
+则上述 `f` 和 `g` 公式中的
+$$
+e^{im\theta}=\cos (m\theta) + i\sin (m\theta) \\ e^{in\theta}=\cos (n\theta) + i\sin (n\theta) \\ e^{i(m-n)\theta}=\cos ((m-n)\theta) + i\sin ((m-n)\theta) \\
+$$
+然后我们看回公式：
+$$
+f_q(x_m,m)=(W_qx_m)e^{im\theta} \\
+$$
+其中 `Wq` 是个二维矩阵，`xm` 是个二维向量，相乘的结果也是一个二维向量，这里用 `qm` 表示：
+$$
+q_m= \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} = W_qx_m =\begin{pmatrix} W_q^{(11)} & W_q^{(12)} \\ W_q^{(21)} & W_q^{(22)} \end{pmatrix} \begin{pmatrix} x_m^{(1)} \\ x_m^{(2)} \end{pmatrix} \\
+$$
+然后首先将 `qm` 表示成复数形式：
+$$
+q_m = [q_m^{(1)}, q_m^{(2)}] = [q_m^{(1)} + iq_m^{(2)}] \\
+$$
+接着
+$$
+f_q(x_m,m)=(W_qx_m)e^{im\theta}=q_me^{im\theta} \\
+$$
+其实就是两个复数相乘：
+$$
+q_me^{im\theta}=(q_m^{(1)} + iq_m^{(2)}) * (\cos (m\theta) + i\sin (m\theta)) \\
+$$
+我们首先来复习一下复数乘法的性质：
+$$
+(a+ib) \cdot (c+id) = ac + ibc + iad + i^2bd=(ac-bd)+i(bc+ad) \\
+$$
+可以看到，复数乘法也是用的分配律，还有用到了复数的一个性质： i^2=-1
+
+然后就有：
+$$
+q_me^{im\theta}=(q_m^{(1)} + iq_m^{(2)}) * (\cos (m\theta) + i\sin (m\theta)) \\ =(q_m^{(1)}cos (m\theta) - q_m^{(2)} \sin (m\theta) ) + i(q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)) \\
+$$
+将结果重新表达成实数向量形式就是：
+$$
+q_me^{im\theta}=[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\
+$$
+
+$$
+f_q(x_m,m)=(W_qx_m)e^{im\theta}=q_me^{im\theta}\\ =[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\ = \begin{pmatrix} \cos (m\theta) & -\sin (m\theta) \\ \sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} \\
+$$
+
+看到这里会发现，这不就是 query 向量乘以了一个旋转矩阵吗？这就是为什么叫做旋转位置编码的原因。
+
+同理，$f_k$  可以表示成下面的式子：
+$$
+\begin{align} f_k\left( {x}_m,m \right) &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix} \begin{pmatrix} W^{(1,1)}_{k} & W^{(1,2)}_{k} \\ W^{(2,1)}_{k} & W^{(2,2)}_{k} \end{pmatrix} \begin{pmatrix} x_m^{(1)} \\ x_m^{(2)} \end{pmatrix} \\ &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix}\begin{pmatrix} k_m^{(1)} \\ k_m^{(2)} \end{pmatrix} \end{align}
+$$
+这就是为什么叫做旋转式位置编码的原因。
+
+同理可得 key 向量 `kn` ：
+$$
+f_k(x_n,n)=(W_kx_n)e^{in\theta}=k_ne^{in\theta}\\ =[k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta), k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta)] \\ = \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\
+$$
+最后还有个函数 `g`：
+$$
+g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\
+$$
+其中 `Re[x]` 表示一个复数 `x` 的实部部分，而 $(W_kx_n)^{*} $则表示复数 $W_kx_n$ 的共轭。
+
+复习一下共轭复数的定义：
+$$
+z=a+ib\\ z^*=a-ib \\
+$$
+所以可得：
+$$
+W_qx_m = q_m = q_m^{(1)} + iq_m^{(2)} \\ W_kx_n=k_n= k_n^{(1)} + ik_n^{(2)} \\ (W_kx_n)^*=k_n^*= k_n^{(1)} - ik_n^{(2)} \\ e^{i(m-n)\theta}=\cos((m-n)\theta) + i \sin((m-n)\theta) \\
+$$
+继续可得：
+$$
+g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\ = Re[(q_m^{(1)} + iq_m^{(2)})(k_n^{(1)} - ik_n^{(2)})(\cos((m-n)\theta) + i \sin((m-n)\theta))] \\ = Re[((q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)}) + i(q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)}))(\cos((m-n)\theta) + i \sin((m-n)\theta))] \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) - (q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)})\sin((m-n)\theta) \\
+$$
+接下来我们就要证明函数 `g` 的计算公式是成立的。
+
+首先回顾一下 attention 操作， 位置 m 的 query 和位置 n 的 key 会做一个内积操作：
+$$
+f_q(x_m,m)=[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\ f_k(x_n,n) =[k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta), k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta)] \\ <f_q(x_m,m),f_k(x_n,n)> = \\ (q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta))(k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta)) \\+ (q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta))(k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta))\\ =q_m^{(1)} \cos (m\theta) k_n^{(1)} \cos (n\theta) - q_m^{(1)} \cos (m\theta)k_n^{(2)} \sin (n\theta)\\ - q_m^{(2)} \sin (m\theta)k_n^{(1)} \cos (n\theta) + q_m^{(2)} \sin (m\theta)k_n^{(2)} \sin (n\theta) \\ + q_m^{(2)}\cos (m\theta)k_n^{(2)}\cos (n\theta) + q_m^{(2)}\cos (m\theta)k_n^{(1)}\sin (n\theta) \\ + q_m^{(1)}\sin (m\theta)k_n^{(2)}\cos (n\theta) + q_m^{(1)}\sin (m\theta)k_n^{(1)}\sin (n\theta) \\
+$$
+接着继续之前先复习一下三角函数的一些性质`[3]`：
+$$
+\sin(a+b) = \sin a \cos b + \cos a \sin b \\ \sin(a-b) = \sin a \cos b - \cos a \sin b \\ \cos(a+b) = \cos a \cos b - \sin a \sin b \\ \cos(a-b) = \cos a \cos b + \sin a \sin b \\
+$$
+好了回到上面那堆式子，我们整理一下：
+$$
+<f_q(x_m,m),f_k(x_n,n)> = \\ q_m^{(1)}k_n^{(1)}(\cos(m\theta)\cos(n\theta) + \sin(m\theta)\sin(n\theta) ) \\ + q_m^{(1)}k_n^{(2)}(-\cos(m\theta)\sin(n\theta) + \sin(m\theta)\cos(n\theta) ) \\ + q_m^{(2)}k_n^{(1)}(-\sin(m\theta)\cos(n\theta) + \cos(m\theta)\sin(n\theta) ) \\ + q_m^{(2)}k_n^{(2)}(\sin(m\theta)\sin(n\theta) + \cos(m\theta)\cos(n\theta) ) \\ = q_m^{(1)}k_n^{(1)}\cos((m-n)\theta) \\ + q_m^{(1)}k_n^{(2)}\sin((m-n)\theta) \\ - q_m^{(2)}k_n^{(1)}\sin((m-n)\theta) \\ + q_m^{(2)}k_n^{(2)}\cos((m-n)\theta) \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) + (q_m^{(1)}k_n^{(2)}- q_m^{(2)}k_n^{(1)})\sin((m-n)\theta) \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) - (q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)})\sin((m-n)\theta) \\ =g(x_m,x_n,m-n) \\
+$$
+这就证明上述关系是成立的，位置 m 的 query 和位置 n 的 key 的内积就是函数 `g`。
+
+把上面的式子用矩阵向量乘的形式来表达就是：
+$$
+<f_q(x_m,m),f_k(x_n,n)> \\ =\begin{pmatrix} \begin{pmatrix} \cos (m\theta) & -\sin (m\theta) \\ \sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} \end{pmatrix}^T \begin{pmatrix} \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \end{pmatrix} \\ = \begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos (m\theta) & \sin (m\theta) \\ -\sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\ = \begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos(m\theta)\cos(n\theta) + \sin(m\theta)\sin(n\theta) & -\cos(m\theta)\sin(n\theta) + \sin(m\theta)\cos(n\theta) \\ -\sin(m\theta)\cos(n\theta) + \cos(m\theta)\sin(n\theta) & \sin(m\theta)\sin(n\theta) + \cos(m\theta)\cos(n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\ =\begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos((m-n)\theta) & -\sin((m-n)\theta) \\ \sin((m-n)\theta) & \cos((m-n)\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\
+$$
+然后上面的讲解是假定的词嵌入维度是2维向量，而对于`d >= 2` 的通用情况，则是将词嵌入向量元素按照两两一组分组，每组应用同样的旋转操作且每组的旋转角度计算方式如下：
+$$
+\theta_j=10000^{-2(j-1)/d}, j \in [1,2,...,d/2] \\
+$$
+所以简单来说 RoPE 的 self-attention 操作的流程是，对于 token 序列中的每个词嵌入向量，首先计算其对应的 query 和 key 向量，然后对每个 token 位置都计算对应的旋转位置编码，接着对每个 token 位置的 query 和 key 向量的元素按照 两两一组 应用旋转变换，最后再计算 query 和 key 之间的内积得到 self-attention 的计算结果。
+
+## RoPE 分析
+
+### RoPE编码形式
 
 综上, 我们得到二维情况下用复数表示的RoPE：
 
@@ -196,7 +367,35 @@ $$
 
 其中 $\otimes$ 是逐位对应相乘，即Numpy、Tensorflow等计算框架中的 $*$ 运算。从这个实现也可以看到，RoPE可以视为是言概括置编码的变体。
 
-### 线性场景 
+### 远程衰减
+
+可以看到, RoPE形式上和Sinusoidal位置编码有点相似, 只不过Sinusoidal位置编码是加性的, 而RoPE可以视为乘性的。在 $\theta_{i}$ 的选择上, 我们同样沿用了Sinusoidal位置编码的方案, 即 $\theta_{i}=10000^{-2 i / d}$, 它可以带来一定的远程衰减性。
+
+具体证明如下：将 $q, k$ 两两分组后, 它们加上RoPE后的内积可以用复数乘法表示为
+
+$$
+\left(\boldsymbol{\mathcal { R }}_{m} \boldsymbol{q}\right)^{\top}\left(\boldsymbol{\mathcal { R }}_{n} \boldsymbol{k}\right)=\operatorname{Re}\left[\sum_{i=0}^{d / 2-1} \boldsymbol{q}_{[2 i: 2 i+1]} \boldsymbol{k}_{[2 i: 2 i+1]}^{*} e^{\mathrm{i}(m-n) \theta_{i}}\right]
+$$
+
+记 $h_{i}=\boldsymbol{q}_{[2 i: 2 i+1]} \boldsymbol{k}_{[2 i: 2 i+1]}^{*}, S_{j}=\sum_{i=0}^{j-1} e^{\mathrm{i}(m-n) \theta_{i}}$, 并约定 $h_{d / 2}=0, S_{0}=0$, 那么由Abel变换（分部求和法）可以得到:
+
+$$
+\sum_{i=0}^{d / 2-1} \boldsymbol{q}_{[2 i: 2 i+1]} \boldsymbol{k}_{[2 i: 2 i+1]}^{*} e^{\mathrm{i}(m-n) \theta_{i}}=\sum_{i=0}^{d / 2-1} h_{i}\left(S_{i+1}-S_{i}\right)=-\sum_{i=0}^{d / 2-1} S_{i+1}\left(h_{i+1}-h_{i}\right)
+$$
+
+所以
+
+$$
+\begin{aligned}
+\left|\sum_{i=0}^{d / 2-1} \boldsymbol{q}_{[2 i: 2 i+1]} \boldsymbol{k}_{[2 i: 2 i+1]}^{*} e^{\mathrm{i}(m-n) \theta_{i}}\right| & =\left|\sum_{i=0}^{d / 2-1} S_{i+1}\left(h_{i+1}-h_{i}\right)\right| \\
+& \leq \sum_{i=0}^{d / 2-1}\left|S_{i+1}\right|\left|h_{i+1}-h_{i}\right| \\
+& \leq\left(\max _{i}\left|h_{i+1}-h_{i}\right|\right) \sum_{i=0}^{d / 2-1}\left|S_{i+1}\right|
+\end{aligned}
+$$
+
+因此我们可以考察 $\frac{1}{d / 2} \sum_{i=1}^{d / 2}\left|S_{i}\right|$ 随着相对距离的变化情况来作为衰减性的体现, 我们可以可以看到随着相对距离的变大, 内积结果有衰减趋势的出现。因此, 选择 $\theta_{i}=10000^{-2 i / d}$, 确实能带来一定的远程衰减性。
+
+### 线性场景
 
 最后, 我们指出, RoPE是目前唯一一种可以用于线性Attention的相对位置编码。这是因为其他的相对位置编码, 都是直接基于Attention矩阵进行操作的, 但是线性Attention并没有事先算出Attention矩阵, 因此也就不存在操作Attention矩阵的做法, 所以其他的方案无法应用到线性Attention中。而对于RoPE来说, 它是用绝对位置编码的方式来实现相对位置编码, 不需要操作Attention矩阵, 因此有了应用到线性Attention的可能性。
 
@@ -220,177 +419,23 @@ $$
 
 也就是说，RoPE只插入分子中，而分母则不改变，这样的注意力不再是基于概率的（注意力矩阵不再满足非负归一性）,但它某种意义上来说也是一个归一化方案，而且也没有证据表明非概率式的注意力就不好（比如Nyströmformer也算是没有严格依据概率分布的方式构建注意力）, 所以我们将它作为候选方案之一进行实验, 而我们初步的实验结果显示这样的线性Attention也是有效的。
 
-## RoPE证明过程
+## 总结
 
-#### 简单证明
+从理论上来看，RoPE与Sinusoidal位置编码有些相通之处，但RoPE不依赖于泰勒展开，更具严谨性与可解释性；从预训练模型RoFormer的结果来看，RoPE具有良好的外推性，应用到Transformer中体现出较好的处理长文本的能力。此外，RoPE还是目前唯一一种可用于线性Attention的相对位置编码。
 
-简单起见, 我们先假设 $\boldsymbol{q}_{m}, \boldsymbol{k}_{n}$ 是所在位置分别为 $m, n$ 的二维行向量, 既然是二维, 那么我们可以将它当作复数来运算。我们知道, Attention关键之处在于向量的内积, 用复数表示为
+## Reference
 
-$$
-\left\langle\boldsymbol{q}_{m}, \boldsymbol{k}_{n}\right\rangle=\operatorname{Re}\left[\boldsymbol{q}_{m} \boldsymbol{k}_{n}^{*}\right]
-$$
+[1] [https://arxiv.org/pdf/2104.09864.pdf](https://arxiv.org/pdf/2104.09864.pdf)
 
-其中* 是共轭复数, 右端的乘法是普通的复数乘法, $\operatorname{Re}[]$ 表示取结果的实部。上式也就是说：
-如果我们将 $\boldsymbol{q}_{m}, \boldsymbol{k}_{n}$ 分别乘以 $e^{\mathrm{i} i \theta}, e^{\mathrm{i} n \theta}$ 变成 $\boldsymbol{q}_{m} e^{\mathrm{i} i n}, \boldsymbol{k}_{n} e^{\mathrm{i} n \theta}$, 那么就相当于给它们配上了绝对位置编码了（因为显式地依赖绝对位置 $m, n)$, 然后放到内积里边, 我们有
+[2] [https://en.wikipedia.org/wiki/Euler's_formula](https://en.wikipedia.org/wiki/Euler's_formula)
 
-$$
-\left\langle\boldsymbol{q}_{m} e^{\mathrm{i} i \theta}, \boldsymbol{k}_{n} e^{\mathrm{i} n \theta}\right\rangle=\operatorname{Re}\left[\left(\boldsymbol{q}_{m} e^{\mathrm{i} m \theta}\right)\left(\boldsymbol{k}_{n} e^{\mathrm{i} n \theta}\right)^{*}\right]=\operatorname{Re}\left[\boldsymbol{q}_{m} \boldsymbol{k}_{n}^{*} e^{\mathrm{i}(m-n) \theta}\right]
-$$
+[3] [https://en.wikipedia.org/wiki/List_of_trigonometric_identities](https://en.wikipedia.org/wiki/List_of_trigonometric_identities)
 
-相当有意思的是，内积只依赖于相对位置 $m-n$ ! 这就巧妙地将绝对位置与相对位置融合在一起了。
+[4] [https://github.com/facebookresearch/llama/tree/main](https://github.com/facebookresearch/llama/tree/main)
 
-由上述结果可知, 对于位置为 $n$ 的二维实数向量 $[x, y]$, 我们当它复数来运算, 乘以 $e^{\mathrm{i} n \theta}$, 得到恒等式
-$$
-(x+y \mathrm{i}) e^{\mathrm{i} n \theta}=(x \cos n \theta-y \sin n \theta)+\mathrm{i}(x \sin n \theta+y \cos n \theta)
-$$
+[5] [https://zh.wikipedia.org/wiki/旋转矩阵](https://zh.wikipedia.org/wiki/%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5)
 
-这也就是意味着，通过
+[6] ROFORMER: ENHANCED TRANSFORMER WITH ROTARY POSITION EMBEDDING
 
-$$
-\left(\begin{array}{l}
-x \\
-y
-\end{array}\right) \rightarrow\left(\begin{array}{c}
-x \cos n \theta-y \sin n \theta \\
-x \sin n \theta+y \cos n \theta
-\end{array}\right)=\left(\begin{array}{l}
-x \\
-y
-\end{array}\right) \cos n \theta+\left(\begin{array}{c}
--y \\
-x
-\end{array}\right) \sin n \theta
-$$
+[7] 苏剑林：Transformer升级之路：2、博采众长的旋转式位置编码
 
-来赋予 $[x, y]$ 绝对位置信息, 那么在Attention运算的时候也等价于相对位置编码。如果是多于二维的向量, 可以考虑每两维为一组进行同样的运算, 每一组的 $\theta$ 可以不一样。
-
-这样一来, 我们得到了一种融绝对位置与相对位置于一体的位置编码方案, 从形式上看它有点像乘性的绝对位置编码, 通过在 $q, k$ 中施行该位置编码, 那么效果就等价于相对位置编码, 而如果还需要显式的绝对位置信息, 则可以同时在 $v$ 上施行这种位置编码。
-
-#### 完整证明
-
-假定 query 向量 `qm` 和 key 向量 `kn` 之间的内积操作可以被一个函数 `g` 表示，该函数 `g` 的输入是词嵌入向量 `xm` ， `xn` 和它们之间的相对位置 `m - n`：
-$$
-<f_q(x_m,m),f_k(x_n,n)>=g(x_m,x_n,m-n) \\
-$$
-目标就是找到一个等价的位置编码方式，从而使得上述关系成立。
-
-假定现在词嵌入向量的维度是两维 `d=2`，这样就可以利用上2维度平面上的向量的几何性质，然后论文中提出了一个满足上述关系的 `f` 和 `g` 的形式如下：
-$$
-f_q(x_m,m)=(W_qx_m)e^{im\theta} \\ f_k(x_n,n)=(W_kx_n)e^{in\theta} \\ g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\
-$$
-这里面 Re 表示复数的实部。
-
-
-
-上面的公式一眼看过去感觉很复杂，怎么理解呢？首先我们得先了解一下基本的复数相关知识。
-
-首先看到上述 `f` 和 `g` 公式中有个指数函数： $$e^{ix} $$
-
-这个其实是欧拉公式 `[2]`，其中 `x` 表示任意实数， `e` 是自然对数的底数，`i` 是复数中的虚数单位，则根据欧拉公式有：
-$$
-e^{ix} = \cos x + i\sin x \\
-$$
-则是上述指数函数可以表示为实部为 `cosx`，虚部为 `sinx` 的一个复数，欧拉公式 `[2] `建立了指数函数、三角函数和复数之间的桥梁。
-
-则上述 `f` 和 `g` 公式中的
-$$
-e^{im\theta}=\cos (m\theta) + i\sin (m\theta) \\ e^{in\theta}=\cos (n\theta) + i\sin (n\theta) \\ e^{i(m-n)\theta}=\cos ((m-n)\theta) + i\sin ((m-n)\theta) \\
-$$
-然后我们看回公式：
-$$
-f_q(x_m,m)=(W_qx_m)e^{im\theta} \\
-$$
-其中 `Wq` 是个二维矩阵，`xm` 是个二维向量，相乘的结果也是一个二维向量，这里用 `qm` 表示：
-$$
-q_m= \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} = W_qx_m =\begin{pmatrix} W_q^{(11)} & W_q^{(12)} \\ W_q^{(21)} & W_q^{(22)} \end{pmatrix} \begin{pmatrix} x_m^{(1)} \\ x_m^{(2)} \end{pmatrix} \\
-$$
-进一步地， f_q 可以表示成下面的式子：
-$$
-\begin{align} f_q\left( {x}_m,m \right) &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix} \begin{pmatrix} W^{(1,1)}_{q} & W^{(1,2)}_{q} \\ W^{(2,1)}_{q} & W^{(2,2)}_{q} \end{pmatrix} \begin{pmatrix} x_m^{(1)} \\ x_m^{(2)} \end{pmatrix} \\ &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix}\begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} \end{align}
-$$
-然后首先将 `qm` 表示成复数形式：
-$$
-q_m = [q_m^{(1)}, q_m^{(2)}] = [q_m^{(1)} + iq_m^{(2)}] \\
-$$
-接着
-$$
-f_q(x_m,m)=(W_qx_m)e^{im\theta}=q_me^{im\theta} \\
-$$
-其实就是两个复数相乘：
-$$
-q_me^{im\theta}=(q_m^{(1)} + iq_m^{(2)}) * (\cos (m\theta) + i\sin (m\theta)) \\
-$$
-我们首先来复习一下复数乘法的性质：
-$$
-(a+ib) \cdot (c+id) = ac + ibc + iad + i^2bd=(ac-bd)+i(bc+ad) \\
-$$
-可以看到，复数乘法也是用的分配律，还有用到了复数的一个性质： i^2=-1
-
-然后就有：
-$$
-q_me^{im\theta}=(q_m^{(1)} + iq_m^{(2)}) * (\cos (m\theta) + i\sin (m\theta)) \\ =(q_m^{(1)}cos (m\theta) - q_m^{(2)} \sin (m\theta) ) + i(q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)) \\
-$$
-将结果重新表达成实数向量形式就是：
-$$
-q_me^{im\theta}=[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\
-$$
-
-$$
-f_q(x_m,m)=(W_qx_m)e^{im\theta}=q_me^{im\theta}\\ =[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\ = \begin{pmatrix} \cos (m\theta) & -\sin (m\theta) \\ \sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} \\
-$$
-
-看到这里会发现，这不就是 query 向量乘以了一个旋转矩阵吗？这就是为什么叫做旋转位置编码的原因。
-
-同理，$f_k$  可以表示成下面的式子：
-$$
-\begin{align} f_k\left( {x}_m,m \right) &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix} \begin{pmatrix} W^{(1,1)}_{k} & W^{(1,2)}_{k} \\ W^{(2,1)}_{k} & W^{(2,2)}_{k} \end{pmatrix} \begin{pmatrix} x_m^{(1)} \\ x_m^{(2)} \end{pmatrix} \\ &= \begin{pmatrix} \cos m\theta & -\sin m\theta) \\ \sin m \theta & \cos m \theta \end{pmatrix}\begin{pmatrix} k_m^{(1)} \\ k_m^{(2)} \end{pmatrix} \end{align}
-$$
-这就是为什么叫做旋转式位置编码的原因。
-
-同理可得 key 向量 `kn` ：
-$$
-f_k(x_n,n)=(W_kx_n)e^{in\theta}=k_ne^{in\theta}\\ =[k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta), k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta)] \\ = \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\
-$$
-最后还有个函数 `g`：
-$$
-g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\
-$$
-其中 `Re[x]` 表示一个复数 `x` 的实部部分，而 $(W_kx_n)^{*} $则表示复数 $W_kx_n$ 的共轭。
-
-复习一下共轭复数的定义：
-$$
-z=a+ib\\ z^*=a-ib \\
-$$
-所以可得：
-$$
-W_qx_m = q_m = q_m^{(1)} + iq_m^{(2)} \\ W_kx_n=k_n= k_n^{(1)} + ik_n^{(2)} \\ (W_kx_n)^*=k_n^*= k_n^{(1)} - ik_n^{(2)} \\ e^{i(m-n)\theta}=\cos((m-n)\theta) + i \sin((m-n)\theta) \\
-$$
-继续可得：
-$$
-g(x_m,x_n,m-n)=Re[(W_qx_m)(W_kx_n)^{*}e^{i(m-n)\theta}] \\ = Re[(q_m^{(1)} + iq_m^{(2)})(k_n^{(1)} - ik_n^{(2)})(\cos((m-n)\theta) + i \sin((m-n)\theta))] \\ = Re[((q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)}) + i(q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)}))(\cos((m-n)\theta) + i \sin((m-n)\theta))] \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) - (q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)})\sin((m-n)\theta) \\
-$$
-接下来我们就要证明函数 `g` 的计算公式是成立的。
-
-首先回顾一下 attention 操作， 位置 m 的 query 和位置 n 的 key 会做一个内积操作：
-$$
-f_q(x_m,m)=[q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta), q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta)] \\ f_k(x_n,n) =[k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta), k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta)] \\ <f_q(x_m,m),f_k(x_n,n)> = \\ (q_m^{(1)} \cos (m\theta) - q_m^{(2)} \sin (m\theta))(k_n^{(1)} \cos (n\theta) - k_n^{(2)} \sin (n\theta)) \\+ (q_m^{(2)}\cos (m\theta) + q_m^{(1)}\sin (m\theta))(k_n^{(2)}\cos (n\theta) + k_n^{(1)}\sin (n\theta))\\ =q_m^{(1)} \cos (m\theta) k_n^{(1)} \cos (n\theta) - q_m^{(1)} \cos (m\theta)k_n^{(2)} \sin (n\theta)\\ - q_m^{(2)} \sin (m\theta)k_n^{(1)} \cos (n\theta) + q_m^{(2)} \sin (m\theta)k_n^{(2)} \sin (n\theta) \\ + q_m^{(2)}\cos (m\theta)k_n^{(2)}\cos (n\theta) + q_m^{(2)}\cos (m\theta)k_n^{(1)}\sin (n\theta) \\ + q_m^{(1)}\sin (m\theta)k_n^{(2)}\cos (n\theta) + q_m^{(1)}\sin (m\theta)k_n^{(1)}\sin (n\theta) \\
-$$
-接着继续之前先复习一下三角函数的一些性质`[3]`：
-$$
-\sin(a+b) = \sin a \cos b + \cos a \sin b \\ \sin(a-b) = \sin a \cos b - \cos a \sin b \\ \cos(a+b) = \cos a \cos b - \sin a \sin b \\ \cos(a-b) = \cos a \cos b + \sin a \sin b \\
-$$
-好了回到上面那堆式子，我们整理一下：
-$$
-<f_q(x_m,m),f_k(x_n,n)> = \\ q_m^{(1)}k_n^{(1)}(\cos(m\theta)\cos(n\theta) + \sin(m\theta)\sin(n\theta) ) \\ + q_m^{(1)}k_n^{(2)}(-\cos(m\theta)\sin(n\theta) + \sin(m\theta)\cos(n\theta) ) \\ + q_m^{(2)}k_n^{(1)}(-\sin(m\theta)\cos(n\theta) + \cos(m\theta)\sin(n\theta) ) \\ + q_m^{(2)}k_n^{(2)}(\sin(m\theta)\sin(n\theta) + \cos(m\theta)\cos(n\theta) ) \\ = q_m^{(1)}k_n^{(1)}\cos((m-n)\theta) \\ + q_m^{(1)}k_n^{(2)}\sin((m-n)\theta) \\ - q_m^{(2)}k_n^{(1)}\sin((m-n)\theta) \\ + q_m^{(2)}k_n^{(2)}\cos((m-n)\theta) \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) + (q_m^{(1)}k_n^{(2)}- q_m^{(2)}k_n^{(1)})\sin((m-n)\theta) \\ = (q_m^{(1)}k_n^{(1)} + q_m^{(2)}k_n^{(2)})\cos((m-n)\theta) - (q_m^{(2)}k_n^{(1)} - q_m^{(1)}k_n^{(2)})\sin((m-n)\theta) \\ =g(x_m,x_n,m-n) \\
-$$
-这就证明上述关系是成立的，位置 m 的 query 和位置 n 的 key 的内积就是函数 `g`。
-
-把上面的式子用矩阵向量乘的形式来表达就是：
-$$
-<f_q(x_m,m),f_k(x_n,n)> \\ =\begin{pmatrix} \begin{pmatrix} \cos (m\theta) & -\sin (m\theta) \\ \sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} q_m^{(1)} \\ q_m^{(2)} \end{pmatrix} \end{pmatrix}^T \begin{pmatrix} \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \end{pmatrix} \\ = \begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos (m\theta) & \sin (m\theta) \\ -\sin (m\theta) & \cos (m\theta) \end{pmatrix} \begin{pmatrix} \cos (n\theta) & -\sin (n\theta) \\ \sin (n\theta) & \cos (n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\ = \begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos(m\theta)\cos(n\theta) + \sin(m\theta)\sin(n\theta) & -\cos(m\theta)\sin(n\theta) + \sin(m\theta)\cos(n\theta) \\ -\sin(m\theta)\cos(n\theta) + \cos(m\theta)\sin(n\theta) & \sin(m\theta)\sin(n\theta) + \cos(m\theta)\cos(n\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\ =\begin{pmatrix} q_m^{(1)} & q_m^{(2)} \\ \end{pmatrix} \begin{pmatrix} \cos((m-n)\theta) & -\sin((m-n)\theta) \\ \sin((m-n)\theta) & \cos((m-n)\theta) \end{pmatrix} \begin{pmatrix} k_n^{(1)} \\ k_n^{(2)} \end{pmatrix} \\
-$$
-然后上面的讲解是假定的词嵌入维度是2维向量，而对于`d >= 2` 的通用情况，则是将词嵌入向量元素按照两两一组分组，每组应用同样的旋转操作且每组的旋转角度计算方式如下：
-$$
-\theta_j=10000^{-2(j-1)/d}, j \in [1,2,...,d/2] \\
-$$
-所以简单来说 RoPE 的 self-attention 操作的流程是，对于 token 序列中的每个词嵌入向量，首先计算其对应的 query 和 key 向量，然后对每个 token 位置都计算对应的旋转位置编码，接着对每个 token 位置的 query 和 key 向量的元素按照 两两一组 应用旋转变换，最后再计算 query 和 key 之间的内积得到 self-attention 的计算结果。
