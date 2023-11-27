@@ -61,7 +61,7 @@ $$
 
 所以我们要求出该恒等式的一个（尽可能简单的）解。求解过程还需要一些初始条件, 显然我们可以合理地设 $f(\boldsymbol{q}, 0)=\boldsymbol{q}$和 $f(k, 0)=k$ 。
 
-### 求解过程 
+### 求解过程
 
 我们先考虑二维情形, 然后借助复数来求解。在复数中有 $\langle\boldsymbol{q}, \boldsymbol{k}\rangle=\operatorname{Re}\left[\boldsymbol{q} \boldsymbol{k}^{*}\right], \operatorname{Re}[]$ 代表复数的实部, 所以我们有
 $$
@@ -438,4 +438,3 @@ $$
 [6] ROFORMER: ENHANCED TRANSFORMER WITH ROTARY POSITION EMBEDDING
 
 [7] 苏剑林：Transformer升级之路：2、博采众长的旋转式位置编码
-

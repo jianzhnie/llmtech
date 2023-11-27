@@ -43,11 +43,11 @@ $$
 ```python
 def SinusoidalEncoding1d(seq_len, d_model):
     pos_table = np.array([
-        [pos / np.power(10000, 2 * i / d_model) for i in range(d_model)] 
+        [pos / np.power(10000, 2 * i / d_model) for i in range(d_model)]
         for pos in range(seq_len)])
     pos_table[1:, 0::2] = np.sin(pos_table[1:, 0::2])  # pos_table[0]作用于[CLS]，不需要位置编码
-    pos_table[1:, 1::2] = np.cos(pos_table[1:, 1::2])                
-    return torch.FloatTensor(pos_table)  
+    pos_table[1:, 1::2] = np.cos(pos_table[1:, 1::2])
+    return torch.FloatTensor(pos_table)
 ```
 
 很明显，三角函数式位置编码的特点是有显式的生成规律，因此可以期望于它有一定的外推性。根据三角函数的性质，位置$\alpha+\beta$处的编码向量可以表示成位置$\alpha$和位置$\beta$的向量的组合，因此可以**外推**到任意位置：
@@ -156,25 +156,25 @@ $$
 $$
 
 $$
-\begin{equation}\left\{\begin{aligned} 
-\boldsymbol{q}_i =&\, (\boldsymbol{x}_i + \boldsymbol{p}_i)\boldsymbol{W}_Q \\ 
-\boldsymbol{k}_j =&\, (\boldsymbol{x}_j + \boldsymbol{p}_j)\boldsymbol{W}_K \\ 
-\boldsymbol{v}_j =&\, (\boldsymbol{x}_j + \boldsymbol{p}_j)\boldsymbol{W}_V \\ 
-a_{i,j} =&\, softmax\left(\boldsymbol{q}_i \boldsymbol{k}_j^{\top}\right)\\ 
-\boldsymbol{o}_i =&\, \sum_j a_{i,j}\boldsymbol{v}_j 
+\begin{equation}\left\{\begin{aligned}
+\boldsymbol{q}_i =&\, (\boldsymbol{x}_i + \boldsymbol{p}_i)\boldsymbol{W}_Q \\
+\boldsymbol{k}_j =&\, (\boldsymbol{x}_j + \boldsymbol{p}_j)\boldsymbol{W}_K \\
+\boldsymbol{v}_j =&\, (\boldsymbol{x}_j + \boldsymbol{p}_j)\boldsymbol{W}_V \\
+a_{i,j} =&\, softmax\left(\boldsymbol{q}_i \boldsymbol{k}_j^{\top}\right)\\
+\boldsymbol{o}_i =&\, \sum_j a_{i,j}\boldsymbol{v}_j
 \end{aligned}\right.\end{equation}
 $$
 
 其中softmax对j那一维归一化，这里的向量都是指行向量。我们初步展开${q}_i \boldsymbol{k}_j^{\top}$
 $$
-\begin{equation} 
-\boldsymbol{q}_i \boldsymbol{k}_j^{\top} = \left(\boldsymbol{x}_i + \boldsymbol{p}_i\right)\boldsymbol{W}_Q \boldsymbol{W}_K^{\top}\left(\boldsymbol{x}_j + \boldsymbol{p}_j\right)^{\top} = \left(\boldsymbol{x}_i \boldsymbol{W}_Q + \boldsymbol{p}_i \boldsymbol{W}_Q\right)\left(\boldsymbol{W}_K^{\top}\boldsymbol{x}_j^{\top} + \boldsymbol{W}_K^{\top}\boldsymbol{p}_j^{\top}\right) 
+\begin{equation}
+\boldsymbol{q}_i \boldsymbol{k}_j^{\top} = \left(\boldsymbol{x}_i + \boldsymbol{p}_i\right)\boldsymbol{W}_Q \boldsymbol{W}_K^{\top}\left(\boldsymbol{x}_j + \boldsymbol{p}_j\right)^{\top} = \left(\boldsymbol{x}_i \boldsymbol{W}_Q + \boldsymbol{p}_i \boldsymbol{W}_Q\right)\left(\boldsymbol{W}_K^{\top}\boldsymbol{x}_j^{\top} + \boldsymbol{W}_K^{\top}\boldsymbol{p}_j^{\top}\right)
 \end{equation}
 $$
 为了引入相对位置信息，Google把第一项位置去掉，第二项$\boldsymbol{p}_j \boldsymbol{W}_K$改为二元位置向量$\boldsymbol{R}_{i,j}^{K}$，变成
 $$
-\begin{equation} 
-a_{i,j} = softmax\left(\boldsymbol{x}_i \boldsymbol{W}_Q\left(\boldsymbol{x}_j\boldsymbol{W}_K + \color{green}{\boldsymbol{R}_{i,j}^K}\right)^{\top}\right) 
+\begin{equation}
+a_{i,j} = softmax\left(\boldsymbol{x}_i \boldsymbol{W}_Q\left(\boldsymbol{x}_j\boldsymbol{W}_K + \color{green}{\boldsymbol{R}_{i,j}^K}\right)^{\top}\right)
 \end{equation}
 $$
 注意到绝对位置编码相当于在自注意力运算中引入了一系列$p_iW^Q,(p_jW^K)^T,p_jW^V$项。而相对位置编码的出发点便是将这些项调整为与相对位置$(i,j)$有关的向量$R_{i,j}$。

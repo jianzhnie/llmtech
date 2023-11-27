@@ -96,4 +96,3 @@ git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
 ```shell
 git clone git@github.com:agkozak/zsh-z.git $ZSH_CUSTOM/plugins/zsh-z
 ```
-
