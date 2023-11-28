@@ -170,19 +170,19 @@ class BaseDataPreprocessor(nn.Module):
    class MixUpDataPreprocessor(nn.Module):
        def __init__(self, num_class, alpha):
            self.alpha = alpha
-   
+
        def forward(self, data, training=True):
            data = tuple(_data.cuda() for _data in data)
            # 验证阶段无需进行 MixUp 数据增强
            if not training:
                return data
-   
+
            label = F.one_hot(label)  # label 转 onehot 编码
            batch_size = len(label)
            index = torch.randperm(batch_size)  # 计算用于叠加的图片数
            img, label = data
            lam = np.random.beta(self.alpha, self.alpha)  # 融合因子
-   
+
            # 原图和标签的 MixUp.
            img = lam * img + (1 - lam) * img[index, :]
            label = lam * batch_scores + (1 - lam) * batch_scores[index, :]
