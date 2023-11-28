@@ -46,8 +46,9 @@ $$
 
 在RoPE中，我们的出发点就是“通过绝对位置编码的方式实现相对位置编码”，这样做既有理论上的优雅之处，也有实践的实用之处，比如它可以拓展到线性Attention中就是主要因为这一点。
 
-为了达到这个目的，我们假设通过下述运算来给 $q, k$ 添加绝对位置信息：
+在机器学习中，我们通常只关注实数，但对于旋转嵌入来说，使用复数作为空间的基域在数学上更为方便。我们先考虑二维情形, 然后借助复数来求解。将query向量和key向量的元素视为单个复数，我们将使用 $\mathbb{C}^{d/2}$而不是通常的 $\mathbb{R}^{d}$空间来表示。具体来说，我们不再把 $\mathbf{q}=(q_1,q_2,q_3,q_4,\ldots,q_{d})$ 视为 d 维实数向量，而是把它视为 $\mathbf{q}=(q_1+iq_2, q_3+iq_4,\ldots q_{d-1} + iq_{d})\in\mathbb{C}^{d/2}$。如果 d 是奇数，我们可以用一个虚坐标来填充它，以确保对齐。
 
+$q$ 和 $k$ 分别为query 向量和key向量，$m$ 和$n$分别为相应标记的绝对位置。假设 $f(x,ℓ)$ 是一个函数，它接收位于位置 $ℓ$ 的嵌入$ x$，并输出一个包含相对位置信息的新嵌入。我们假设通过下述运算来给 $q, k$ 添加绝对位置信息：
 $$
 \tilde{\boldsymbol{q}}_{m}=\boldsymbol{f}(\boldsymbol{q}, m), \quad \tilde{\boldsymbol{k}}_{n}=\boldsymbol{f}(\boldsymbol{k}, n)
 $$
@@ -62,7 +63,7 @@ $$
 
 ### 求解过程
 
-我们先考虑二维情形, 然后借助复数来求解。在复数中有 $\langle\boldsymbol{q}, \boldsymbol{k}\rangle=\operatorname{Re}\left[\boldsymbol{q} \boldsymbol{k}^{*}\right], \operatorname{Re}[]$ 代表复数的实部, 所以我们有
+在复数中有 $\langle\boldsymbol{q}, \boldsymbol{k}\rangle=\operatorname{Re}\left[\boldsymbol{q} \boldsymbol{k}^{*}\right], \operatorname{Re}[]$ 代表复数的实部, 所以我们有
 $$
 \operatorname{Re}\left[\boldsymbol{f}(\boldsymbol{q}, m) \boldsymbol{f}^{*}(\boldsymbol{k}, n)\right]=g(\boldsymbol{q}, \boldsymbol{k}, m-n)
 $$
@@ -104,7 +105,39 @@ $$
 \varphi(m)-\varphi(m-1)=\Theta_{g}(\boldsymbol{q}, \boldsymbol{k}, 1)+\Theta(\boldsymbol{k})-\Theta(\boldsymbol{q})
 $$
 
-即 $\{\varphi(m)\}$ 是等差数列, 设右端为 $\theta$, 那么就解得 $\varphi(m)=m \theta$ 。
+即 $\{\varphi(m)\}$ 是等差数列, 代入初始值$\varphi(0) = 0,  \varphi(1) = \theta $ , 解得 $\varphi(m)=m \theta$ 。
+
+把前面所有的公式推导放在一起， 就可以得到 Rotery Position Embedding 的最终表达式：
+$$
+f(\mathbf{q}, m) = R_f(\mathbf{q}, m)e^{i\Theta_f(\mathbf{q}, m)}=\mathbf{q}e^{i(\Theta(\mathbf{q})+m\mathbf{\theta})} = \sum_{j=1}^{d/2} q_je^{im\theta_j} \vec{e_j}
+$$
+因此，对于任意的 $0 < \varepsilon \leq \frac \pi {2N}$， 其中$N$是最大序列长度。当按元素计算$q$ 和 $k$ 时， 以$j$作为元素索引，RoPE可以表示如下： 
+$$
+\begin{align}
+\mathrm{RoPE}(x, m) &= xe^{mi\varepsilon} \\
+\langle \mathrm{RoPE}(q_j, m), \mathrm{RoPE}(k_j, n)\rangle &= \langle q_j e^{mi\varepsilon}, k_j e^{ni\varepsilon} \rangle \\
+&= q_j k_j e^{mi\varepsilon} \overline{e^{ni\varepsilon}} \\
+&= q_j k_j e^{(m - n)i\varepsilon} \\
+&= \mathrm{RoPE}(q_j k_j, m - n)
+\end{align}
+$$
+由于与复数相比，计算机更喜欢实数和矩阵，因此将此表达式转换为矩阵方程很方便。
+$$
+f(\mathbf{q}, m) =
+\begin{pmatrix}
+M_1 & & & \\
+& M_2 & & \\
+& & \ddots & \\
+& & & M_{d/2}
+\end{pmatrix}
+\begin{pmatrix}
+q_1\\
+q_2\\
+\vdots\\
+q_d
+\end{pmatrix} = \mathbf{\Theta_m Q_m} = \mathbf{\Theta_m W_q X_m}
+$$
+其中， $M_j=\begin{pmatrix}\cos m\theta_j & -\sin m\theta_j \\sin m\theta_j & \cos m\theta_j\end{pmatrix}$ ， $\mathbf{\Theta_m}$  为块对角矩阵， $\mathbf{\Theta_m}$为可学习的 query 权重。 $\mathbf{X_m}$  为 m 处的嵌入。
 
 ### 编码形式
 
@@ -246,7 +279,7 @@ $$
 $$
 <f_q(x_m,m),f_k(x_n,n)>=g(x_m,x_n,m-n) \\
 $$
-我们的目标就是找到一个等价的位置编码方式，从而使得上述关系成立。
+我们的目标就是找到一个等价的位置编码方式，从而使得上述关系成立。即构造出函数$f$ 和 $g$, 使得上述等式成立。
 
 假定现在词嵌入向量的维度是两维 `d=2`，这样就可以利用上2维度平面上的向量的几何性质，然后论文中提出了一个满足上述关系的 $f$ 和 $g$ 的形式如下：
 $$
@@ -358,7 +391,7 @@ $$
 $$
 所以简单来说 RoPE 的 self-attention 操作的流程是，对于 token 序列中的每个词嵌入向量，首先计算其对应的 query 和 key 向量，然后对每个 token 位置都计算对应的旋转位置编码，接着对每个 token 位置的 query 和 key 向量的元素按照 两两一组 应用旋转变换，最后再计算 query 和 key 之间的内积得到 self-attention 的计算结果。
 
-## RoPE 分析
+## RoPE 的性质
 
 ### 远程衰减
 
@@ -412,6 +445,52 @@ $$
 
 也就是说，RoPE只插入分子中，而分母则不改变，这样的注意力不再是基于概率的（注意力矩阵不再满足非负归一性）,但它某种意义上来说也是一个归一化方案，而且也没有证据表明非概率式的注意力就不好（比如Nyströmformer也算是没有严格依据概率分布的方式构建注意力）, 所以我们将它作为候选方案之一进行实验, 而我们初步的实验结果显示这样的线性Attention也是有效的。
 
+## 代码实现
+
+旋转位置嵌入的简单实现将使用前面所示的块对角矩阵形式。在实践中，以这种方式实现旋转位置嵌入的效率非常低，而且更优化的形式很容易获得。RoPE 的原始实现可在[roformer](https://github.com/ZhuiyiTechnology/roformer)和[bert4keras中找到](https://github.com/bojone/bert4keras)中找到。
+
+此外，我们还在[x-transformers](https://github.com/lucidrains/x-transformers)、[GPT-Neo](https://github.com/EleutherAI/gpt-neo)、[GPT-NeoX](https://github.com/EleutherAI/gpt-neox)和[Mesh Transformer JAX](https://github.com/kingoflolz/mesh-transformer-jax)中实现了旋转位置嵌入。以下是从这些代码库中提取的 PyTorch 实现。
+
+```python
+import torch
+
+class Rotary(torch.nn.Module):
+    def __init__(self, dim, base=10000):
+        super().__init__()
+        inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2).float() / dim))
+        self.register_buffer("inv_freq", inv_freq)
+        self.seq_len_cached = None
+        self.cos_cached = None
+        self.sin_cached = None
+
+    def forward(self, x, seq_dim=1):
+        seq_len = x.shape[seq_dim]
+        if seq_len != self.seq_len_cached:
+            self.seq_len_cached = seq_len
+            t = torch.arange(x.shape[seq_dim], device=x.device).type_as(self.inv_freq)
+            freqs = torch.einsum("i,j->ij", t, self.inv_freq)
+            emb = torch.cat((freqs, freqs), dim=-1).to(x.device)
+            self.cos_cached = emb.cos()[:, None, None, :]
+            self.sin_cached = emb.sin()[:, None, None, :]
+        return self.cos_cached, self.sin_cached
+
+
+# rotary pos emb helpers:
+
+def rotate_half(x):
+    x1, x2 = x[..., : x.shape[-1] // 2], x[..., x.shape[-1] // 2 :]
+    return torch.cat(
+        (-x2, x1), dim=x1.ndim - 1
+    )  # dim=-1 triggers a bug in torch < 1.8.0
+
+
+@torch.jit.script
+def apply_rotary_pos_emb(q, k, cos, sin):
+    return (q * cos) + (rotate_half(q) * sin), (k * cos) + (rotate_half(k) * sin)
+```
+
+
+
 ## 总结
 
 从理论上来看，RoPE与Sinusoidal位置编码有些相通之处，但RoPE不依赖于泰勒展开，更具严谨性与可解释性；从预训练模型RoFormer的结果来看，RoPE具有良好的外推性，应用到Transformer中体现出较好的处理长文本的能力。此外，RoPE还是目前唯一一种可用于线性Attention的相对位置编码。
@@ -428,6 +507,8 @@ $$
 
 [5] [https://zh.wikipedia.org/wiki/旋转矩阵](https://zh.wikipedia.org/wiki/%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5)
 
-[6] ROFORMER: ENHANCED TRANSFORMER WITH ROTARY POSITION EMBEDDING
+[6] Jianlin Su. 让研究人员绞尽脑汁的 Transformer 位置编码. https://kexue.fm/archives/8130, 2021. [Online; accessed 18-April-2021].
 
-[7] 苏剑林：Transformer升级之路：2、博采众长的旋转式位置编码
+[7] Jianlin Su. Transformer 升级之路：2、博采众长的旋转式位置编码. https://kexue.fm/archives/8265, 2021. [Online; accessed 18-April-2021].
+
+[8] Jianlin Su, Yu Lu, Shengfeng Pan, Bo Wen, and Yunfeng Liu. RoFormer: Enhanced Transformer with Rotary Position Embedding. *arXiv preprint [arXiv:2104.09864](https://arxiv.org/abs/2104.09864)*, 2021.
