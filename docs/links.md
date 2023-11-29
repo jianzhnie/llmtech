@@ -57,6 +57,7 @@
 |          [Chip Huyen](https://huyenchip.com/blog/)           |     🤗🤗🤗🤗🤗      |
 |           [Lilian](https://lilianweng.github.io/)            |     🤗🤗🤗🤗🤗      |
 |           [Andrej Karpathy](https://karpathy.ai/)            |      🤗🤗🤗       |
+| [DeepLearning Focus](https://cameronrwolfe.substack.com/archive) |      🤗🤗🤗🤗      |
 |          [Jay Alammar](https://jalammar.github.io/)          |     🤗🤗🤗🤗🤗      |
 |    [Ahead of AI](https://magazine.sebastianraschka.com/)     |      🤗🤗🤗🤗      |
 |       [Nathan Lambert](https://robotic.substack.com/)        |       🤗🤗       |
