@@ -8,7 +8,7 @@
 $$
 S_{N}=\{ {token}_{i} \}_{i=1}^{N} \\
 $$
-其中 ${token}_i$  表示输入序列中第 $i$ 个 token，而输入序列 `SN` 对应的 embedding 表示为：
+其中 ${token}_i$  表示输入序列中第 $i$ 个 token，而输入序列 `SN` 对应的 embedding 表示为：
 $$
 E_{N}=\{ x_i \}_{i=1}^N\\
 $$
@@ -18,9 +18,9 @@ $$
 $$
 q_m=f_q(x_m,m) \\ k_n=f_k(x_n,n) \\ v_n=f_v(x_n,n) \\
 $$
-其中 $q_m$ 表示第 `m` 个 token 对应的词向量 $x_m$  集成位置信息 `m` 之后的 query 向量。而 $k_n$ 和 $v_n$ 则表示第 `n` 个 token 对应的词向量 $x_n$ 集成位置信息 `n` 之后的 key 和 value 向量。
+其中 $q_m$ 表示第 `m` 个 token 对应的词向量 $x_m$  集成位置信息 `m` 之后的 query 向量。而 $k_n$ 和 $v_n$ 则表示第 `n` 个 token 对应的词向量 $x_n$ 集成位置信息 `n` 之后的 key 和 value 向量。
 
-基于 transformer 的位置编码方法都是着重于构造一个合适的 `f{q,k,v}` 函数形式。而计算第 m 个词嵌入向量 $x_m$ 对应的 self-attention 输出结果，就是 $q_m$ 和其他 $k_n$ 都计算一个 $attention score$ ，然后再将 $attention score$ 乘以对应的 $v_n$ 再求和得到输出向量 $o_m$：
+基于 transformer 的位置编码方法都是着重于构造一个合适的 `f{q,k,v}` 函数形式。而计算第 m 个词嵌入向量 $x_m$ 对应的 self-attention 输出结果，就是 $q_m$ 和其他 $k_n$ 都计算一个 $attention score$ ，然后再将 $attention score$ 乘以对应的 $v_n$ 再求和得到输出向量 $o_m$：
 
 $$
 a_{m,n}=\frac{exp(\frac{q_m^Tk_n}{\sqrt{d}})}{\sum_{j=1}^Nexp(\frac{q_m^Tk_j}{\sqrt{d}})} \\ o_m=\sum_{n=1}^Na_{m,n}v_n \\
@@ -59,7 +59,7 @@ $$
 \langle\boldsymbol{f}(\boldsymbol{q}, m), \boldsymbol{f}(\boldsymbol{k}, n)\rangle=g(\boldsymbol{q}, \boldsymbol{k}, m-n)
 $$
 
-所以我们要求给出该恒等式的一个（尽可能简单的）解。求解过程还需要一些初始条件, 显然我们可以合理地设 $f(\boldsymbol{q}, 0)=\boldsymbol{q}$ 和 $f(k, 0)=k$ 。
+所以我们要求给出该恒等式的一个（尽可能简单的）解。求解过程还需要一些初始条件, 显然我们可以合理地设 $f(\boldsymbol{q}, 0)=\boldsymbol{q}$ 和 $f(k, 0)=k$ 。
 
 ### 求解过程
 
@@ -105,13 +105,13 @@ $$
 \varphi(m)-\varphi(m-1)=\Theta_{g}(\boldsymbol{q}, \boldsymbol{k}, 1)+\Theta(\boldsymbol{k})-\Theta(\boldsymbol{q})
 $$
 
-即 $\{\varphi(m)\}$ 是等差数列, 代入初始值$\varphi(0) = 0,  \varphi(1) = \theta $ , 解得 $\varphi(m)=m \theta$ 。
+即 $\{\varphi(m)\}$ 是等差数列, 代入初始值$\varphi(0) = 0,  \varphi(1) = \theta $ , 解得 $\varphi(m)=m \theta$ 。
 
 把前面所有的公式推导放在一起， 就可以得到 Rotery Position Embedding 的最终表达式：
 $$
 f(\mathbf{q}, m) = R_f(\mathbf{q}, m)e^{i\Theta_f(\mathbf{q}, m)}=\mathbf{q}e^{i(\Theta(\mathbf{q})+m\mathbf{\theta})} = \sum_{j=1}^{d/2} q_je^{im\theta_j} \vec{e_j}
 $$
-因此，对于任意的 $0 < \varepsilon \leq \frac \pi {2N}$， 其中$N$是最大序列长度。当按元素计算$q$ 和 $k$ 时， 以$j$作为元素索引，RoPE可以表示如下： 
+因此，对于任意的 $0 < \varepsilon \leq \frac \pi {2N}$， 其中$N$是最大序列长度。当按元素计算$q$ 和 $k$ 时， 以$j$作为元素索引，RoPE可以表示如下：
 $$
 \begin{align}
 \mathrm{RoPE}(x, m) &= xe^{mi\varepsilon} \\
@@ -227,6 +227,107 @@ q_{d-2}
 $$
 
 其中 $\otimes$ 是逐位对应相乘，即Numpy、Tensorflow等计算框架中的 $*$ 运算。从这个实现也可以看到，RoPE可以视为是言概括置编码的变体。
+
+### LLama模型中的 RoPE
+
+LLama模型使用了 Rotary Position Embedding， 对于 Q的第m个位置向量 q, 通过以下方式注入位置编码。
+
+#### Step1:初始化 $\theta$ 矩阵
+
+$$
+\left(\begin{array}{c}
+\theta_{0}  & \theta_{1}   &  \cdots & \theta_{d/2-1}   &
+\theta_{0}  & \theta_{1}   &  \cdots & \theta_{d/2-1}   \\
+
+\theta_{0}  & \theta_{1}   &  \cdots & \theta_{d/2-1}    &
+\theta_{0}  & \theta_{1}   &  \cdots & \theta_{d/2-1}     \\
+
+2\theta_{0} & 2\theta_{1}  &  \cdots & 2\theta_{d/2-1}   &
+2\theta_{0} & 2\theta_{1}  &  \cdots & 2\theta_{d/2-1}   \\
+
+ \vdots     & \vdots       &  \ddots &  \vdots            &
+ \vdots     & \vdots       &  \ddots &  \vdots            \\
+
+m\theta_{0} & m\theta_{1}  &  \cdots & m\theta_{d/2-1}   &
+m\theta_{0} & m\theta_{1}  &  \cdots & m\theta_{d/2-1}   \\
+\end{array}\right)
+$$
+
+#### Step2:计算 $cos$ 矩阵和 $sin$ 矩阵
+
+$$
+\left(\begin{array}{c}
+
+\cos\theta_{0}  & \cos\theta_{1}   & \cdots & \cos\theta_{d/2-1}   &
+\cos\theta_{0}  & \cos\theta_{1}   &  \cdots & \cos\theta_{d/2-1}   \\
+
+\cos\theta_{0}  & \cos\theta_{1}   &  \cdots & \cos\theta_{d/2-1}   &
+\cos\theta_{0}  & \cos\theta_{1}   &  \cdots & \cos\theta_{d/2-1}   \\
+
+\cos2\theta_{0} & \cos2\theta_{1}  &  \cdots & \cos2\theta_{d/2-1}  &
+\cos2\theta_{0} & \cos2\theta_{1}  &  \cdots & \cos2\theta_{d/2-1}  \\
+
+ \vdots     & \vdots       &  \ddots &  \vdots     &  \vdots
+ \vdots     & \vdots       &  \ddots &  \vdots                 \\
+
+\cos m\theta_{0} & \cos  m\theta_{1}  &  \cdots &\cos  m\theta_{d/2-1}  &
+\cos m\theta_{0} & \cos  m\theta_{1}  &  \cdots & \cos  m\theta_{d/2-1}   \\
+
+\end{array}\right)
+$$
+
+#### Step3:计算 Qury 向量
+
+```python
+q_embed = (q * cos) + (rotate_half(q) * sin)
+k_embed = (k * cos) + (rotate_half(k) * sin)
+```
+
+$$
+\left(\begin{array}{c}
+q_{0} \\
+q_{1} \\
+\vdots \\
+q_{d / 2-1} \\
+q_{d /2} \\
+\vdots \\
+q_{d-2}\\
+q_{d-1}
+\end{array}\right) \otimes
+
+\left(\begin{array}{c}
+\cos m \theta_{0} \\
+\cos m \theta_{1} \\
+\vdots \\
+\cos m \theta_{d / 2-1} \\
+\cos m \theta_{0} \\
+\cos m \theta_{1} \\
+\vdots \\
+\cos m \theta_{d / 2-1} \\
+\end{array}\right)
+
++\left(\begin{array}{c}
+-q_{d/2} \\
+-q_{d/2+1} \\
+\vdots \\
+-q_{d-1} \\
+q_{0} \\
+q_{1} \\
+\vdots \\
+q_{d/2-1}
+\end{array}\right) \otimes\left(\begin{array}{c}
+\sin m \theta_{0} \\
+\sin m \theta_{1} \\
+\vdots \\
+\sin m \theta_{d / 2-1} \\
+\sin m \theta_{0} \\
+\sin m \theta_{1} \\
+\vdots \\
+\sin m \theta_{d / 2-1}
+\end{array}\right)
+$$
+
+
 
 ## RoPE证明过程
 
@@ -444,6 +545,38 @@ $$
 $$
 
 也就是说，RoPE只插入分子中，而分母则不改变，这样的注意力不再是基于概率的（注意力矩阵不再满足非负归一性）,但它某种意义上来说也是一个归一化方案，而且也没有证据表明非概率式的注意力就不好（比如Nyströmformer也算是没有严格依据概率分布的方式构建注意力）, 所以我们将它作为候选方案之一进行实验, 而我们初步的实验结果显示这样的线性Attention也是有效的。
+
+### RoPE的长度扩展
+
+在LLM的应用中，有一个非常重要的参数，叫做LLM支持的上下文长度(max context length)。更长的上下文长度允许我们进行更多轮次的对话，允许我们对更长的本文进行总结分析，也允许我们生成更长的文章。但是在训练LLM的时候，我们的训练语料大部分是不够长的，许多LLM训练时候设计的最大文本长度都是只有2k，也就是最长2048个token。那么，能否在训练的时候使用较短的文本，而在推理的时候扩展到长文本上呢？
+
+是有可能的，我们可以对RoPE进行长度扩展。下面我们介绍3种扩展方案。
+
+- 第一种是直接外推
+
+直接外推其实就是继续沿用现有的位置编码公式，不做任何修改。在扩展长度不太长的时候，例如由2k扩展到2.5k时，这种方法可能对性能的影响并不大。因为旋转位置编码只和相对位置m-n的大小有关，一般具有远程衰减性，即相对距离越大的两个token，其相关性一般越弱。
+
+因此如果我们的模型已经从训练数据那里学习到了token之间的相关性相对于相对距离在0-2k的一个合适的衰减规律的时候，可以设想把这个规律应用到0-2.5k也是没有太大的问题的。但是如果我们要扩展到更长的长度，例如从2k扩展到32k，这种直接外推的方案通常会严重地影响性能。因为我们学习到的衰减规律有可能在5k的那里就完全衰减截断基本降为0了，这样我们就无法捕捉相对距离长于5k的两个token之间的相互作用，外推就会导致性能下降。
+
+总结一下，直接外推对衰减规律在长距离情况下的使用容易出现问题，导致性能下降。为了减少长度外推对性能的影响，我们可以让训练好的模型在更长的上下文上做少许步骤的微调。
+
+- 第二种是线性内插
+
+线性内插需要改变位置编码公式，等效于将位置序号等比例缩小。
+
+编码公式变化如 ，当从2k扩展到32k，等效于需要将位置序号变成原来的1/16.线性内插没有改变模型学习到的衰减规律的应用范围，不考虑微调的话，其效果一般好于直接外推方案。但是，扩展倍数非常大的时候，例如从2k扩展到32k，其性能也会明显的受到影响。因为在这种情况下，衰减规律在短距离情况下的使用会受到较严重的影响，本来距离为1的两个token，长度扩展后相当于变成了距离为1/16，衰减规律在短距离时可能具有非常大的变化率，因此对相关性的评估可能会极端地偏离合理值。
+
+应用线性内插时，在长文本上做少许步骤的微调也能够明显地改善性能。
+
+- 第三种是NTK扩展方式
+
+这种方式综合了外推和内插的优点，做长度扩展后即使不微调也能够保持较好的性能。
+
+前面的分析我们知道直接外推对衰减规律在长距离情况下的使用容易出问题，在短距离情况下的使用不受影响。而线性内插对衰减规律在短距离情况下的使用容易出现问题，在长距离的情况下影响较小。我们能否将它们综合起来，在短距离情况下具有外推特性(与扩展前基本一致)，在长距离情况下具有内插特性(缩放到扩展前的范围)，从而使得长距离情况下和短距离情况下衰减规律的使用都不太受到影响呢。
+
+我们观察RoPE位置编码第行的元素计算公式 ，可以发现越大，三角函数对应的角频率系数越小，或者说越低频，对应的三角函数变化越慢。容易得到如下直观结论：短距离之间的差异(例如1和5的差异)，主要体现在高频分量(i比较小)上，长距离之间的差异(例如5000和10000的差异)，主要体现在低频分量(i比较大)上。
+
+为了在短距离情况下具有外推特性，而在长距离情况下具有内插特性，我们可以设计一个和有关的位置序号缩放因子，使得在最高频()时取值为1(与扩展前基本一致)，而在最低频时()恰好为缩放倍数的倒数(缩放到扩展前的范围)。一种有效的选择方案是的指数函数，其效果相当于对中的做一个缩放。NTK扩展方式的要点是高频外推，低频内插，实现方法是直接对底数base进行缩放，类似进制编码转换。采用NTK扩展到长文本，即使不做微调，性能会只会略有下降。
 
 ## 代码实现
 
