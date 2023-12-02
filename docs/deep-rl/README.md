@@ -55,7 +55,9 @@
 - [MADDPG](deep-rl/papers/MADDPG.md)
 - [MAT](deep-rl/papers/MAT.md)
 
-### PPOFamaily  决策智能公开课
+### OpenDILab
+
+#### PPOFamaily  决策智能公开课
 
 **PPO × Family Vol.1** 系统性地讲解了决策智能的核心算法技术——**深度强化学习**，并深入浅出地介绍了最强大通用的算法 PPO。
 
@@ -82,3 +84,33 @@
 [OpenDILab浦策：课程实录｜PPO × Family 第四课：解密稀疏奖励空间（中）](https://zhuanlan.zhihu.com/p/642812757)
 
 [OpenDILab浦策：课程实录｜PPO × Family 第四课：解密稀疏奖励空间（下）](https://zhuanlan.zhihu.com/p/643047368)
+
+#### OpenDILab 实践指南
+
+[OpenDILab 实践指南（1）：RL 算法/环境速查表（cheatsheet）](https://zhuanlan.zhihu.com/p/654237727)
+
+[OpenDILab 实践指南（3）：深入浅出配置文件系统](https://zhuanlan.zhihu.com/p/656886757)
+
+[OpenDILab 实践指南（4）：算法-代码对应解读文档](https://zhuanlan.zhihu.com/p/658146912)
+
+[OpenDILab 实践指南（5）：高效构建决策环境](https://zhuanlan.zhihu.com/p/660266568)
+
+#### MCTS 的前沿动态
+
+[MCTS + RL 系列技术科普博客（1）：AlphaZero](https://zhuanlan.zhihu.com/p/650009275)
+
+[MCTS + RL 系列技术科普博客（2）：MuZero](https://zhuanlan.zhihu.com/p/654059774)
+
+[MCTS + RL 系列技术科普博客（3）：Sampled MuZero](https://zhuanlan.zhihu.com/p/657484426)
+
+[MCTS + RL 系列技术科普博客（4）：EfficientZero](https://zhuanlan.zhihu.com/p/662943334)
+
+[MCTS + RL 系列技术博客（5）：Stochastic MuZero](https://zhuanlan.zhihu.com/p/664542805)
+
+[如何追踪 MCTS 的前沿动态？（4）](https://zhuanlan.zhihu.com/p/643382412)
+
+[如何追踪 MCTS 的前沿动态？（3）](https://zhuanlan.zhihu.com/p/641713866)
+
+[如何追踪 MCTS 的前沿动态？（2）](https://zhuanlan.zhihu.com/p/635570518)
+
+[如何追踪 MCTS 的前沿动态？（1）](https://zhuanlan.zhihu.com/p/633462726)
