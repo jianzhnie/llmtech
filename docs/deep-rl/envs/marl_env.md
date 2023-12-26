@@ -40,19 +40,19 @@ Level-Based Foraging 环境由混合的合作竞争任务组成，重点是相�
 
 有关更多详细信息，请在[此处](https://agents.inf.ed.ac.uk/blog/new-environments-algorithm-multiagent-rl/) 查看我们的博客文章。
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-2p-3f.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-2p-3f.png" alt="img" style="zoom:33%;" />
 
 (a) LBF-8x8-2p-3f 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-2p-2f-coop.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-2p-2f-coop.png" alt="img" style="zoom:33%;" />
 
 (b) LBF-8x8-2p-2f-coop 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-3p-1f-coop.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-8x8-3p-1f-coop.png" alt="img" style="zoom:33%;" />
 
 (c) LBF-8x8-3p-1f-coop 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-10x10-2p-8f.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/lbf/lbf-10x10-2p-8f.png" alt="img" style="zoom: 25%;" />
 
 (d) LBF-10x10-2p-8f 示意图
 
@@ -70,7 +70,7 @@ Level-Based Foraging 环境由混合的合作竞争任务组成，重点是相�
 
 ## PressurePlate
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/pressure_plate_4p.gif)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/pressure_plate_4p.gif" alt="img" style="zoom:33%;" />
 
 具有 4 个智能体的 PressurePlate 线性任务的可视化
 
@@ -92,15 +92,15 @@ Level-Based Foraging 环境由混合的合作竞争任务组成，重点是相�
 | ------------- | ------------ | -------- | ------------------------------------------------------------ | ------- |
 | Collaborative | Discrete     | Discrete | [Environment](https://github.com/uoe-agents/robotic-warehouse) | [5, 16] |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-tiny.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-tiny.png" alt="img" style="zoom:33%;" />
 
 (a) RWARE 微型图，两个智能体
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-small.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-small.png" alt="img" style="zoom:33%;" />
 
 (b) RWARE 小体积，两个智能体的图示
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-medium.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/rware/rware-medium.png" alt="img" style="zoom:33%;" />
 
 (c) RWARE 中型图解，四个智能体
 
@@ -152,23 +152,23 @@ A = {左转、右转、前进、装载/卸载货架}
 
 星际争霸多智能体挑战赛是一组完全协作、部分可观察的多智能体任务。该环境基于流行的实时战略游戏星际争霸 II 实施各种微观管理任务，并利用星际争霸 II 学习环境 (SC2LE) [22]。每个任务都是一个特定的战斗场景，其中一队特工，每个特工控制一个单独的单位，与星际争霸游戏的集中内置游戏 AI 控制的军队作战。这些任务要求智能体学习精确的动作序列以启用风筝等技能，并协调它们的动作以将注意力集中在特定的敌方单位上。许多任务在结构上是对称的，即两支军队都由相同的单位建造。以下，您可以在此环境中找到每个考虑的任务的可视化。奖励密集，任务难度从（相对）简单到非常困难的任务不等。通过智能体的可见半径，所有任务自然包含部分可观察性。
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_3m.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_3m.jpg" alt="img" style="zoom:33%;" />
 
 (a) SMAC 3m 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_8m_small.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_8m_small.jpg" alt="img" style="zoom: 25%;" />
 
 (b) SMAC 8m 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_3s5z.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_3s5z.jpg" alt="img" style="zoom:33%;" />
 
 (c) SMAC 3s5z 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_2s3z.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_2s3z.jpg" alt="img" style="zoom:33%;" />
 
 (d) SMAC 2s3z 示意图
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_1c3s5z.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/smac/smac_1c3s5z.jpg" alt="img" style="zoom:33%;" />
 
 (e) SMAC 1c3s5z 示意图
 
@@ -190,7 +190,7 @@ A = {左转、右转、前进、装载/卸载货架}
 | ----- | ------------------- | -------- | ------------------------------------------------- | ------ |
 | Mixed | Continuous (Pixels) | Discrete | [Environment](https://github.com/microsoft/malmo) | [9]    |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/malmo.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/malmo.jpg" alt="img" style="zoom:33%;" />
 
 MALMO任务可视化
 
@@ -210,7 +210,7 @@ MALMO 平台 [9] 是一个基于游戏 Minecraft 的环境。它的 3D 世界包
 | ----------- | ------------ | -------- | ------------------------------------------------------------ | ------ | ------------------------------------- |
 | Competitive | Discrete     | Discrete | [Environment](https://github.com/MultiAgentLearning/playground) | [18]   | [Website](https://www.pommerman.com/) |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/pommerman.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/pommerman.jpg" alt="img" style="zoom:50%;" />
 
 Pommerman 的可视化
 
@@ -229,15 +229,15 @@ Pommerman 环境 [18] 基于游戏 Bomberman。它包含有竞争力的11×11网
 
 DeepMind 实验室环境
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab_observations.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab_observations.png" alt="img" style="zoom:33%;" />
 
 (a) 观察空间
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab_actions.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab_actions.png" alt="img" style="zoom:33%;" />
 
 (b) 行动空间
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab2d_scissors.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/dm_lab/dm_lab2d_scissors.png" alt="img" style="zoom:33%;" />
 
 (c) 来自 [4]：Deepmind Lab2D 环境 - “Running with Scissors”示例
 
@@ -255,9 +255,9 @@ DeepMind Lab [3] 是一个基于 Quake III Arena 的 3D 学习环境，具有大
 | ----------- | ------------ | ------- | ---------------------------------------------------------- | ------ | ------------------------------------ |
 | Competitive | Discrete     | Mixed   | [Environment documentation](http://docs.gym.derkgame.com/) | /      | [Website](https://gym.derkgame.com/) |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/derk_gym/gym_derk1.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/derk_gym/gym_derk1.png" alt="img" style="zoom:33%;" />
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/derk_gym/gym_derk2.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/derk_gym/gym_derk2.png" alt="img" style="zoom:33%;" />
 
 ### 一般说明
 
@@ -273,7 +273,7 @@ derk 健身房环境的缺点之一是它的许可模式。仅供个人使用的
 | ------------- | ------------ | -------- | ------------------------------------------------------ | ------ |
 | Collaborative | Mixed        | Discrete | [Environment](https://flatland.aicrowd.com/intro.html) | [14]   |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/flatland/flatland_wide.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/flatland/flatland_wide.jpg" alt="img" style="zoom:33%;" />
 
 Visualisation of Flatland task
 
@@ -289,7 +289,7 @@ Visualisation of Flatland task
 | ----------------- | ------------ | -------- | ------------------------------------------------------------ | ------ |
 | Fully-cooperative | Discrete     | Discrete | [Environment](https://github.com/deepmind/hanabi-learning-environment) | [2]    |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/hanabi.png)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/hanabi.png" alt="img" style="zoom:33%;" />
 
 来自 [2]：从玩家 0 的角度来看的四人 Hanabi 游戏示例。玩家 1 在玩家 0 之后行动，依此类推。
 
@@ -303,7 +303,7 @@ Hanabi 挑战 [2] 基于纸牌游戏 Hanabi。这种针对 2 到 5 名玩家的�
 | ----------- | ------------ | -------------- | --------------------------------------------------- | ------ | ------------------------------------------- |
 | Competitive | Discrete     | Multi-Discrete | [Environment](https://github.com/openai/neural-mmo) | [21]   | [Blog](https://openai.com/blog/neural-mmo/) |
 
-![img](https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/neural_mmo_interface.jpg)
+<img src="https://agents.inf.ed.ac.uk/blog/multiagent-learning-environments/img/neural_mmo_interface.jpg" alt="img" style="zoom:33%;" />
 
 来自 [21]：“Neural MMO 是用于 AI 研究的大规模多智能体环境。智能体通过觅食和战斗来争夺资源。本地游戏状态中的观察和动作表示可以实现高效的训练和推理。3D Unity 客户端提供高质量的可视化来解释学习到的行为。环境、客户端、培训代码和政策都是完全开源的，有正式文档，并通过实时社区 Discord 服务器提供积极支持。”
 
