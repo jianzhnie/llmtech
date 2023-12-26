@@ -15,12 +15,12 @@ PetingZoo 是一个多智能体环境库，具有通用、优雅的 Python API�
 首先简要介绍Gym的API。该 API 是单智能体强化学习中事实上的标准，主要用作后续多智能体 API 的基础，稍后将进行比较。
 
 ```python
-import gym 
+import gym
 
-env = gym.make('CartPole-v0') 
-observation = env.reset() 
-for _ in range(1000): 
-  action = policy(observation) 
+env = gym.make('CartPole-v0')
+observation = env.reset()
+for _ in range(1000):
+  action = policy(observation)
   observation, reward, done, info = env.step(action)
 ```
 
@@ -37,12 +37,12 @@ Multi-agent 强化学习没有一个通用的心理和数学模型，如单智�
 图 2 显示了RLlib 中的多智能体 API 的一个例子，其中动作、观察和奖励的智能体关键字典被传递到 Gym API 的简单扩展中。
 
 ```python
-from ray.rllib.examples.env.multi_agent import MultiAgentCartPole 
+from ray.rllib.examples.env.multi_agent import MultiAgentCartPole
 
-env = MultiAgentCartPole() 
-observation = env.reset() 
-for _ in range(1000): 
-	actions = policies(agents, observation) 
+env = MultiAgentCartPole()
+observation = env.reset()
+for _ in range(1000):
+	actions = policies(agents, observation)
 	observation, rewards, dones, infos = env.step(actions)
 ```
 
@@ -58,12 +58,12 @@ for _ in range(1000):
 在基于严格回合的游戏的情况下，POSG模型不太适合(例如国际象棋)，MARL研究人员通常将游戏数学建模为Extensive Form Games (“EFG”)。EFG 将游戏表示为树，明确地将每个可能的动作序列表示为树中叶路径的根。通过添加“自然”玩家（有时也称为“机会”）来捕获游戏（或 MARL 环境）的随机方面，该玩家根据某个给定的概率分布采取行动。对于EFGs的完整定义，我们建议读者参考Osborne和Rubinstein[1994]或附录C.2。OpenSpiel [Lanctot et al.， 2019]，这是一个大型经典棋盘和卡片游戏集合的主要库，用于MARL，其API如图3所示。
 
 ```python
-import pyspiel import numpy as np 
+import pyspiel import numpy as np
 
-game = pyspiel.load_game("kuhn_poker") 
+game = pyspiel.load_game("kuhn_poker")
 state = game.new_initial_state()
-while not state.is_terminal(): 
-  if state.is_chance_node(): 
+while not state.is_terminal():
+  if state.is_chance_node():
     # Step the stochastic environment.action_list,
     prob_list = zip(*state.chance_outcomes())
     state.apply_action(np.random.choice(action_list,
@@ -71,7 +71,7 @@ while not state.is_terminal():
   else:
     # sample an action for the agent
     legal_actions = state.legal_actions()
-    observations = state.observation_tensor() 
+    observations = state.observation_tensor()
     action = policies(state.current_agent(), legal_actions, observations)
     state.apply_action(action) rewards = state.rewards()
 ```
@@ -114,15 +114,15 @@ PettingZoo的设计还考虑了以下原则：
 如图 6 所示，与 Gym API 的强相似性（图 1）——每个智能体向Step函数提供动作，并接收观察、奖励、完成、信息作为返回值。观察空间和状态空间也使用与 Gym 完全相同的空间对象。渲染和接近的方法也与 Gym 的功能相同，显示了当前视觉帧，表示每当调用时到屏幕的环境。reset 方法与 Gym 具有相同的功能——它在播放后将环境重置为起始配置。PetingZoo 真的只有与常规 Gym API 有两个偏差—— the last 和 agent_iter 方法和相应的迭代逻辑。
 
 ```python
-from pettingzoo.butterfly import pistonball_v0 
+from pettingzoo.butterfly import pistonball_v0
 
-env = pistonball_v0.env() 
-env.reset() 
-for agent in env.agent_iter(1000): 
-  	env.render() 
-    observation, reward, done, info = env.last() 
-    action = policy(observation, agent) 
-    env.step(action) 
+env = pistonball_v0.env()
+env.reset()
+for agent in env.agent_iter(1000):
+  	env.render()
+    observation, reward, done, info = env.last()
+    action = policy(observation, agent)
+    env.step(action)
 env.close()
 ```
 
