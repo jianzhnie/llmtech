@@ -432,7 +432,7 @@ env.close()
 
 [Shimmy 提供兼容性包装器，将所有DM Control Soccer](https://github.com/deepmind/dm_control/blob/main/dm_control/locomotion/soccer/README.md)环境转换为[PettingZoo](https://pettingzoo.farama.org/)。
 
-[![深脑足球](https://shimmy.farama.org/_images/dm_soccer.png)](https://shimmy.farama.org/_images/dm_soccer.png)
+<img src="https://shimmy.farama.org/_images/dm_soccer.png" alt="深脑足球" style="zoom:50%;" />
 
 #### 安装
 
@@ -487,7 +487,7 @@ env.close()
 
 [Shimmy 提供了兼容性包装器，将所有OpenSpiel](https://github.com/deepmind/open_spiel)环境转换为[PettingZoo](https://pettingzoo.farama.org/)。
 
-[![开放演讲](https://shimmy.farama.org/_images/openspiel.png)](https://shimmy.farama.org/_images/openspiel.png)
+<img src="https://shimmy.farama.org/_images/openspiel.png" alt="开放演讲" style="zoom:50%;" />
 
 注意：[PettingZoo](https://pettingzoo.farama.org/)还提供流行的棋盘和纸牌游戏环境：[PettingZoo Classic](https://pettingzoo.farama.org/environments/classic/)。
 
