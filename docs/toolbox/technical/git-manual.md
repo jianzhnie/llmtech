@@ -10,10 +10,11 @@ git 是一个分布式版本控制软件，最初由林纳斯·托瓦兹创作�
 - 任意两个开发者之间可以很容易的解决冲突。
 
 ## cheatsheet
+
 ![](tools/img/git-cheatsheet-cn.9c8eed56.jpeg)
 
 <div align=center>
-<img  src="tools/img/git-cheatsheet-cn.9c8eed56.jpeg"/>
+<img  src="toolbox/img/git-cheatsheet-cn.9c8eed56.jpeg"/>
 </div>
 <div align=center>图 1 git-cheatsheet</div>
 
@@ -89,7 +90,7 @@ git push -u origin master
 
 ### 拉取代码
 
- - git  clone 操作
+- git  clone 操作
 
 ```shell
 git clone https://github.com/user/test.git
@@ -151,7 +152,7 @@ git diff <file>
 git diff HEAD -- <文件>
 ```
 
->  注意 --hard 参数会抛弃当前工作区的修改
+> 注意 --hard 参数会抛弃当前工作区的修改
 >
 > 使用 --soft 参数的话会回退到之前的版本，但是保留当前工作区的修改，可以重新提交
 
@@ -249,6 +250,44 @@ ssh-keygen -t rsa -C "your_email@example.com"
 
 ```
 ssh -T git@github.com
+```
+
+### git ssh 端口配置
+
+配置完 git ssh 后，连接超时，如下面的报错。
+
+```shell
+git clone git@github.com:xxxxx/xxxx.git my-awesome-proj
+Cloning into 'my-awesome-proj'...
+ssh: connect to host github.com port 22: Connection timed out
+fatal: Could not read from remote repository.
+
+$ # This should also timeout
+$ ssh -T git@github.com
+ssh: connect to host github.com port 22: Connection timed out
+
+
+$ ssh -T git@github.com
+Hi xxxxx! You've successfully authenticated, but GitHub does not
+provide shell access.
+```
+
+原因：22 端口被禁或者被占用，换成 443 端口可以成功连接
+
+```shell
+$ # but this might work
+$ ssh -T -p 443 git@ssh.github.com
+Hi xxxx! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+解决方案：在 `config `  中对端口进行配置。
+
+```shell
+vim ~/.ssh/config
+# Add section below to it
+Host github.com
+  Hostname ssh.github.com
+  Port 443
 ```
 
 ### 查看 log
@@ -358,7 +397,7 @@ git stash drop stash{0}
 git cherry-pick
 ```
 
-## Git Sync
+## Git 同步 Fork
 
 例如，我最近 fork 了 `mmdetection` 官方仓库到我的 github 地址， 修改了部分文件，并且 push 到我的 github 上。过了一段时间， `mmdetection` 官方仓库有了新的更新， 但是我 fork 的版本没有包含进来，因此我该如何保持我维护的 `mmdetection` 和官方版本保持同步？
 
@@ -405,7 +444,7 @@ upstream	https://github.com/open-mmlab/mmdetection.git (fetch)
 upstream	https://github.com/open-mmlab/mmdetection.git (push)
 ```
 
-###  Fetching
+### Fetching
 
 There are two steps required to sync your repository with the upstream: first you must fetch from the remote, then you must merge the desired branch into your local branch.
 
@@ -433,7 +472,7 @@ git branch -va
   remotes/upstream/master 7f0c4d0 fix sampling result method typo (#3224)
 ```
 
-###  Merging
+### Merging
 
 Now that we have fetched the upstream repository, we want to merge its changes into our local branch. This will bring that branch into sync with the upstream, without losing our local changes.
 
@@ -484,7 +523,7 @@ post-receive # 挂钩在整个过程完结以后运行，可以用来更新其�
 pre-receive # 处理来自客户端的推送操作时，最先被调用的脚本是 pre-receive
 ```
 
-## .gitignore
+## Gitignore 配置
 
 .gitignore 文件对其所在的目录及所在目录的全部子目录均有效。通过将.gitignore 文件添加到仓库，其他开发者更新该文件到本地仓库，以共享同一套忽略规则
 
@@ -503,9 +542,9 @@ index.txt
 ### 配置语法：
 
 - 以斜杠“/”开头表示目录；
-- 以星号“*”通配多个字符；
+- 以星号“\*”通配多个字符；
 - 以问号“?”通配单个字符
-- 以方括号“[]”包含单个字符的匹配列表；
+- 以方括号“\[\]”包含单个字符的匹配列表；
 - 以叹号“!”表示不忽略(跟踪)匹配到的文件或目录；
 
 ## Git 插件
@@ -535,5 +574,5 @@ pre-commit 能够防止不规范代码被 commit，没有 husky 这么全面，�
 
 ## Git 私有库搭建
 
-1.  [gogs](https://gogs.io/)
-2.  [gitlab](https://about.gitlab.com/install/)
+1. [gogs](https://gogs.io/)
+2. [gitlab](https://about.gitlab.com/install/)
