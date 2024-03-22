@@ -4,29 +4,30 @@
 
 We provide three types of MARL algorithms as our baselines including:
 
-**Independent Learning:**
-IQL
-DDPG
-PG
-A2C
-TRPO
-PPO
+### Independent Learning
+- IQL
+- DDPG
+- PG
+- A2C
+- TRPO
+- PPO
 
-**Centralized Critic:**
-COMA
-MADDPG
-MAAC
-MAPPO
-MATRPO
-HATRPO
-HAPPO
+### Centralized Critic
+- COMA
+- MADDPG
+- MAAC
+- MAPPO
+- MATRPO
+- HATRPO
+- HAPPO
 
-**Value Decomposition:**
-VDN
-QMIX
-FACMAC
-VDAC
-VDPPO
+### Value Decomposition
+
+- VDN
+- QMIX
+- FACMAC
+- VDAC
+- VDPPO
 
 Here is a chart describing the characteristics of each algorithm:
 
@@ -115,7 +116,7 @@ MAAC作者写的代码，挺简洁的。包括MADDPG、MAAC。
 
 - https://github.com/marlbenchmark/off-policy
 
-7. marllib（70星）å
+7. marllib（70星）
 
 一个涵盖了大多主流MARL算法的代码库，基于ray的rllib，属于那种模块化做得特别好，但上手需要花些时间的代码，包含independence learning (IQL, A2C, DDPG, TRPO, PPO), centralized critic learning (COMA, MADDPG, MAPPO, HATRPO), and value decomposition (QMIX, VDN, FACMAC, VDA2C)。
 

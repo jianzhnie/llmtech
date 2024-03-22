@@ -21,20 +21,21 @@
   - [重参数化与强化学习](deep-rl/algorithms/ch2_supp_reparameterization.md)
 
 - 强化学习环境
-  - [Awesome RL Envs](deep-rl/rltools/awesomeRLtools.md)
+  - [Awesome RL Envs](deep-rl/envs/awesome_envs.md)
   - [OpenAI Gym](deep-rl/envs/gym.md)
   - [SMAC](deep-rl/envs/smac.md)
   - [MARL Envs](deep-rl/envs/marl_env.md)
-  - [Interesting Environmrnt](deep-rl/envs/interesting_envs.md)
+  - [PettingZoo](deep-rl/envs/pettingzoo.md)
 
 
 - 强化学习工具篇
+  - [强化学习代表人物/机构](deep-rl/rltools/awesome_rl.md)
   - [EnvPool: 并行环境模拟器](deep-rl/rltools/envpool.md)
   - [多智能体强化学习代码汇总](deep-rl/rltools/marltool.md)
 
 - AlphaZero & MuZero & 蒙特卡洛树搜索
   - [蒙特卡洛树搜索入门指南](deep-rl/muzero/mcts_guide.md)
-  - [蒙特卡洛树搜索(MCTS)详解](deep-rl/muzero/MCTS.md)
+  - [蒙特卡洛树搜索(MCTS)详解](deep-rl/muzero/mcts.md)
   - [AlphaGoZero 算法介绍](deep-rl/muzero/alphazero.md)
   - [MuZero算法介绍](deep-rl/muzero/muzero_intro.md)
   - [MuZero伪代码](deep-rl/muzero/muzero_pseudocode.md)
