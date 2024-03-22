@@ -55,10 +55,6 @@ for _ in range(1000):
 env.close()
 ```
 
-输出应该是这个样子
-
-[![https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif](gym.assets/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif)
-
 ### 检查 API 一致性
 
 如果您已经实现了自定义环境并希望执行健全性检查以确保它符合 API，您可以运行：
