@@ -1,4 +1,4 @@
-# Machine Learning Wiki
+# Artificial Intelligence Developer
 
 
 > 专注于机器学习相关领域的知识汇总，技术收集，笔记记录.
