@@ -1,8 +1,8 @@
 ![logo](_media/icon.svg)
 
-# Machine Learning Wiki
+# Artificial Intelligence Developer
 
->欢迎来到 Machine Learning Wiki，这是由 Robin 所维护的 blog site，
+>欢迎来到 Artificial Intelligence Developer，这是由 Robin 所维护的 blog site，
 >
 >博客主要记录AIGC、Machine Learning、编程以及各种技术的相关内容。
 
@@ -18,5 +18,5 @@
 - 🐻‍❄️ [友链🔗](links.md)
 - 🤗 [emojixd.com](https://emojixd.com/)
 
-[GitHub](https://github.com/jianzhnie/machine-learning-wiki)
+[GitHub](https://github.com/jianzhnie/llmtech)
 [Getting Started](deep-rl/)
