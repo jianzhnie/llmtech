@@ -1,5 +1,3 @@
-
-
 # CyberBattleSim： 网络攻防模拟工具
 
 ## CyberBattleSim 介绍
@@ -59,9 +57,9 @@ CyberBattleSim中的强化学习建模：
 
 其目标是通过发现和“拥有”网络中的节点来最大化奖励。
 
-环境是部分可观察的：代理无法提前看到网络图的所有节点和边。
+环境是部分可观察的：智能体无法提前看到网络图的所有节点和边。
 
-相反，攻击者采取行动逐渐观察环境。共有三种操作 为代理提供了混合利用和探索功能：
+相反，攻击者采取行动逐渐观察环境。共有三种操作 为智能体提供了混合利用和探索功能：
 
 - 执行本地攻击，
 - 执行远程攻击，
@@ -135,43 +133,9 @@ CyberBattleSim中的强化学习建模：
 
 如图9提供了另一种比较方法，即跨训练时期模拟步骤的累积奖励。实线显示中位数，而阴影表示一个标准差。这再次显示了某些算法（红色Exploiting DQL、蓝色Tabular Q-learning和绿色DQL）的表现明显优于其他算法（橙色Credential lookups）。
 
-请注意，当所有网络节点都被拥有时，仍然可以通过利用所拥有节点上的漏洞来获得额外的奖励，但在这个实验中，一旦代理拥有所有节点，我们就终止游戏。这解释了为什么优化网络所有权的 DQL 代理尽管击败了所有其他代理，却无法达到最大可能的奖励。
+请注意，当所有网络节点都被拥有时，仍然可以通过利用所拥有节点上的漏洞来获得额外的奖励，但在这个实验中，一旦智能体拥有所有节点，我们就终止游戏。这解释了为什么优化网络所有权的 DQL 智能体尽管击败了所有其他智能体，却无法达到最大可能的奖励。
 
-![image.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-f8f00fe7-466f-4d2b-aaee-dd20720854db.png) 
-
-
-
-
-
-
-
-
-
-
-
-### 功能选择
-
-通过 Q 学习，在对包括特定于网络大小的特征（例如发现的节点数量（左））进行训练时获得了最佳结果。当使用不依赖于网络大小的特征时，也可以获得良好的结果（右）
-
-### 功能选择
-
-
-
-通过 Q 学习，在对包括特定于网络大小的特征（例如发现的节点数量（左））进行训练时获得了最佳结果。当使用不依赖于网络大小的特征时，也可以获得良好的结果（右）。
-
-|               | 尺寸不可知的特征                                             | 尺寸相关的功能                                               |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 表格 Q 与随机 | [![图片.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-9b0b1506-880b-43e5-91b0-75f2ce3fb032.png)](https://github.com/microsoft/CyberBattleSim/blob/main/docs/.attachments/image-9b0b1506-880b-43e5-91b0-75f2ce3fb032.png) | [![图片.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-41f45aa6-0af8-4c67-afec-24b1adc910c2.png)](https://github.com/microsoft/CyberBattleSim/blob/main/docs/.attachments/image-41f45aa6-0af8-4c67-afec-24b1adc910c2.png) |
-
-## `chain`环境迁移学习
-
-该基准旨在衡量从一种环境中学习策略并将其应用于不同规模的类似环境的能力。我们在规模较大的环境中训练代理$x$并在规模环境中对其进行评估$y>x$。
-
-正如预期的那样，使用与环境规模成正比的功能（例如节点数量或凭证数量）并不能提供最佳结果。相反，当使用最近发现的端口滑动窗口和节点属性等时间特征时，代理表现得更好。
-
-|               | 在 4 号上训练，在 10 号上评估                                | - 训练尺码 10，评估尺码 4                                    |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 表格 Q 与随机 | [![图片.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-11d24066-875d-43ac-87cb-e91453688028.png)](https://github.com/microsoft/CyberBattleSim/blob/main/docs/.attachments/image-11d24066-875d-43ac-87cb-e91453688028.png) | [![图片.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-daf58e3d-a4a8-4810-8a5e-1c976a24b266.png)](https://github.com/microsoft/CyberBattleSim/blob/main/docs/.attachments/image-daf58e3d-a4a8-4810-8a5e-1c976a24b266.png) |
+![image.png](https://github.com/microsoft/CyberBattleSim/raw/main/docs/.attachments/image-f8f00fe7-466f-4d2b-aaee-dd20720854db.png)
 
 ## CyberBattleSim 评估
 
