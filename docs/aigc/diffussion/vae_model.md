@@ -6,19 +6,19 @@ Autocoder 的发明是为了使用中间有一个 narrow bottleneck layer 的神
 
 ## 符号
 
-|                 Symbol                  |                             Mean                             |
-| :-------------------------------------: | :----------------------------------------------------------: |
+|                 Symbol                  |                                                    Mean                                                    |
+| :-------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
 |              $\mathcal{D}$              | 数据集，$\mathcal{D} = \{ \mathbf{x}^{(1)}, \mathbf{x}^{(2)}, \dots, \mathbf{x}^{(n)} \}$, 包含n数据样本； |
-|           $\mathbf{x}^{(i)}$            | 每个数据点都是一个$d$维向量，$\mathbf{x}^{(i)} = [x^{(i)}_1, x^{(i)}_2, \dots, x^{(i)}_d]$ |
-|                   $x$                   |    来自数据集的一个数据样本，$\mathbf{x} \in \mathcal{D}$    |
-|              $\mathbf{x}’$              |                   $\mathbf{x}$的重构版本.                    |
-|          $\tilde{\mathbf{x}}$           |                    $\mathbf{x}$的损坏版本                    |
-|              $\mathbf{z}$               |             在bottleneck layer 学习到的压缩向量              |
-|               $a_j^{(l)}$               |          $l$-th 隐藏层的 $j$-th 神经元的激活函数。           |
-|              $g_{\phi}(.)$              |                 参数化的**编码**函数$\phi$.                  |
-|             $f_{\theta}(.)$             |                参数化的**解码**函数$\theta$.                 |
-|  $q_{\phi}(\mathbf{z}\vert\mathbf{x})$  |           估计后验概率函数，也称为**概率编码器**。           |
-| $p_{\theta}(\mathbf{x}\vert\mathbf{z})$ |  给定潜在编码生成真实数据样本的似然，也称为**概率解码器**。  |
+|           $\mathbf{x}^{(i)}$            |         每个数据点都是一个$d$维向量，$\mathbf{x}^{(i)} = [x^{(i)}_1, x^{(i)}_2, \dots, x^{(i)}_d]$         |
+|                   $x$                   |                           来自数据集的一个数据样本，$\mathbf{x} \in \mathcal{D}$                           |
+|              $\mathbf{x}’$              |                                          $\mathbf{x}$的重构版本.                                           |
+|          $\tilde{\mathbf{x}}$           |                                           $\mathbf{x}$的损坏版本                                           |
+|              $\mathbf{z}$               |                                    在bottleneck layer 学习到的压缩向量                                     |
+|               $a_j^{(l)}$               |                                 $l$-th 隐藏层的 $j$-th 神经元的激活函数。                                  |
+|              $g_{\phi}(.)$              |                                        参数化的**编码**函数$\phi$.                                         |
+|             $f_{\theta}(.)$             |                                       参数化的**解码**函数$\theta$.                                        |
+|  $q_{\phi}(\mathbf{z}\vert\mathbf{x})$  |                                  估计后验概率函数，也称为**概率编码器**。                                  |
+| $p_{\theta}(\mathbf{x}\vert\mathbf{z})$ |                         给定潜在编码生成真实数据样本的似然，也称为**概率解码器**。                         |
 
 ## AutoEncoder
 

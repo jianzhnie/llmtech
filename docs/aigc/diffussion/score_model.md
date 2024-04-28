@@ -190,14 +190,14 @@ $$
 
 除了本文介绍之外，我们还有用[Google Colab](https://colab.research.google.com/)编写的教程，以提供在 MNIST 上训练Demo模型的指南。我们还有更高级的代码库，可为大型应用程序提供成熟的实现。
 
-|                             Link                             | Description                                                  |
-| :----------------------------------------------------------: | :----------------------------------------------------------- |
-| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SeXMpILhkJPjXUaesvzEhc3Ke6Zl_zxJ?usp=sharing) | Tutorial of score-based generative modeling with SDEs in JAX + FLAX |
+|                                                                                Link                                                                                 | Description                                                                                                             |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------- |
+| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1SeXMpILhkJPjXUaesvzEhc3Ke6Zl_zxJ?usp=sharing) | Tutorial of score-based generative modeling with SDEs in JAX + FLAX                                                     |
 | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1dRR_0gNRmfLtPavX2APzUggBuXyjWW55?usp=sharing) | Load our pretrained checkpoints and play with sampling, likelihood computation, and controllable synthesis (JAX + FLAX) |
-| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/120kYYBOVa1i0TD85RjlEkFjaWDxSFUx3?usp=sharing) | Tutorial of score-based generative modeling with SDEs in PyTorch |
-| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17lTrPLTt_0EDXa4hkbHmbAFQEkpRDZnh?usp=sharing) | Load our pretrained checkpoints and play with sampling, likelihood computation, and controllable synthesis (PyTorch) |
-|    [Code in JAX](https://github.com/yang-song/score_sde)     | Score SDE codebase in JAX + FLAX                             |
-| [Code in PyTorch](https://github.com/yang-song/score_sde_pytorch) | Score SDE codebase in PyTorch                                |
+| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/120kYYBOVa1i0TD85RjlEkFjaWDxSFUx3?usp=sharing) | Tutorial of score-based generative modeling with SDEs in PyTorch                                                        |
+| [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17lTrPLTt_0EDXa4hkbHmbAFQEkpRDZnh?usp=sharing) | Load our pretrained checkpoints and play with sampling, likelihood computation, and controllable synthesis (PyTorch)    |
+|                                                        [Code in JAX](https://github.com/yang-song/score_sde)                                                        | Score SDE codebase in JAX + FLAX                                                                                        |
+|                                                  [Code in PyTorch](https://github.com/yang-song/score_sde_pytorch)                                                  | Score SDE codebase in PyTorch                                                                                           |
 
 ### Perturbing data with an SDE
 
