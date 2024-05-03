@@ -5,7 +5,7 @@
 扩散模型的灵感来自非平衡热力学。他们定义了一个扩散步骤的马尔可夫链，以缓慢地将随机噪声添加到数据中，然后学习反转扩散过程以从噪声中构建所需的数据样本。与 VAE 或流模型不同，扩散模型是通过固定过程学习的，并且潜在变量具有高维性（与原始数据相同）。
 
 <div align=center>
-<img width="600" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png"/>
+<img width="400" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/generative-overview.png"/>
 </div>
 <div align=center>图 1. 不同类型生成模型的概述。</div>
 
@@ -63,7 +63,7 @@ $$
 p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) \quad
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
 $$
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-example.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-example.png" alt="img" style="zoom: 10%;" />
 
 > Fig. 3. An example of training a diffusion model for modeling a 2D swiss roll data. (Image source: [Sohl-Dickstein et al., 2015](https://arxiv.org/abs/1503.03585))
 
@@ -230,7 +230,7 @@ $$
 $$
 其中小偏移量$s$是为了防止当$t=0$时, $\beta_t$太小.
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-beta.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-beta.png" alt="img" style="zoom:33%;" />
 
 >  Fig. 5. Comparison of linear and cosine-based scheduling of $\beta\_t$ during training. (Image source: [Nichol & Dhariwal, 2021](https://arxiv.org/abs/2102.09672))
 
@@ -244,7 +244,7 @@ $$
 $$
 然而，简单的目标$L_\text{simple}$不依赖于$\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标$L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/improved-DDPM-nll.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/improved-DDPM-nll.png" alt="img" style="zoom: 25%;" />
 
 > 图 6. 改进的 DDPM 与其他基于似然的生成模型的负对数似然比较。NLL 以 bits/dim 为单位报告。（图片来源：[Nichol & Dhariwal，2021 年](https://arxiv.org/abs/2102.09672))
 
@@ -278,7 +278,7 @@ q_{\sigma, \tau}(\mathbf{x}_{\tau_{i-1}} \vert \mathbf{x}_{\tau_t}, \mathbf{x}_0
 $$
 虽然，在实验中，所有模型都经过$T=1000$ 扩散步骤的训练， 他们观察到 DDIM ($\eta=0$) 时， 当$S$ 很小的时候，可以生产出质量最好的样品，而 DDPM ($\eta=1$) 在small 的 $S$上表现更差。当我们有能力运行完整的反向马尔可夫扩散步骤时，DDPM 确实表现更好（$S$=$T$=1000). 使用 DDIM，可以将扩散模型训练到任意数量的前向步，但只能从生成过程中的步骤子集中进行采样。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDIM-results.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDIM-results.png" alt="img" style="zoom:33%;" />
 
 > 图 7. 不同设置的扩散模型在 CIFAR10 和 CelebA 数据集上的 FID 分数，包括DDIM($\eta=0$） 和DDPM($\hat{\sigma}$). （图片来源：[Song et al., 2020](https://arxiv.org/abs/2010.02502)）
 
@@ -290,7 +290,7 @@ $$
 
 *Latent diffusion model* ( **LDM** ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在隐空间而不是在像素空间中运行扩散过程，使训练成本更低，推理速度更快。它的动机是观察到图像的大部分 bits 都有助于感知细节，并且语义和概念组成在积极压缩后仍然存在。LDM 通过生成建模学习松散地分解感知压缩和语义压缩，方法是首先使用自动编码器去除像素级冗余，然后通过扩散过程对学习的潜在数据进行操作/生成语义概念。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png" alt="img" style="zoom:33%;" />
 
 >  Fig. 8. The plot for tradeoff between compression rate and distortion, illustrating two-stage compressions - perceptural and semantic comparession. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752))
 
@@ -313,7 +313,7 @@ $$
 \tau_\theta(y) \in \mathbb{R}^{M \times d_\tau}
 \end{aligned}
 $$
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/latent-diffusion-arch.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/latent-diffusion-arch.png" alt="img" style="zoom: 25%;" />
 
 > Fig. 9. The architecture of latent diffusion model. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.1075))
 
@@ -342,7 +342,7 @@ $$
 $$
 由此产生的*消融扩散模型*( **ADM** ) 和带有附加分类器指导的模型 ( **ADM-G** ) 能够取得比 SOTA 生成模型（例如 BigGAN）更好的结果。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/conditioned-DDPM.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/conditioned-DDPM.png" alt="img" style="zoom:33%;" />
 
 > 图 10. 该算法使用来自分类器的指导，使用 DDPM 和 DDIM 运行条件生成。（图片来源： [Dhariwal & Nichol，2021 年](https://arxiv.org/abs/2105.05233)]）
 
@@ -372,7 +372,7 @@ $$
 
 为了生成高分辨率高质量图像，[Ho 等人。(2021)](https://arxiv.org/abs/2106.15282)提议在增加的分辨率下使用多个扩散模型的Pileline。*Pipeline 模型之间的噪声调节增强*对最终图像质量至关重要，即对每个超分辨率模型$p_\theta(\mathbf{x} \vert \mathbf{z})$的调节输入 $z$ 应用强大数据增强,. 条件噪声有助于减少Pipeline设置中的复合误差。*U-net*是用于高分辨率图像生成的扩散建模中模型架构的常见选择。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png" style="zoom:33%;" />
 
 > 图 11. 分辨率不断增加的多个扩散模型的级联Pipeline。（图片来源： [Ho et al. 2021](https://arxiv.org/abs/2106.15282) ]）
 
@@ -390,7 +390,7 @@ $$
 $$
 \underbrace{P(\mathbf{x} \vert y) = P(\mathbf{x}, \mathbf{c}^i \vert y)}_{\mathbf{c}^i\text{ is deterministic given }\mathbf{x}} = P(\mathbf{x} \vert \mathbf{c}^i, y)P(\mathbf{c}^i \vert y)
 $$
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png" alt="img" style="zoom: 25%;" />
 
 > 图 12. unCLIP 的架构。（图片来源： [Ramesh et al. 2022](https://arxiv.org/abs/2204.06125) ]）
 
