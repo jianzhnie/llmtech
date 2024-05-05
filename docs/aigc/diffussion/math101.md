@@ -6,7 +6,7 @@
 
 ## 扩散模型是什么？
 
-扩散模型 (Diffusion Models) 是一类新的最先进的生成模型，可生成各种各样的高分辨率图像。在 OpenAI、英伟达和谷歌成功训练出大规模模型后，它们已经引起了广泛关注。基于扩散模型的示例架构有 GLIDE、DALLE-2、Imagen 和完全开源的 stable diffusion。
+扩散模型 (Diffusion Models) 是一类新的最先进的生成模型，可生成各种各样的高分辨率图像。在 OpenAI、英伟达和谷歌成功训练出大规模模型后，它们已经引起了广泛关注。基于扩散模型的示例架构有 GLIDE、DALLE-2、Imagen 和完全开源的 Stable diffusion。
 
 它们背后的主要原理是什么？
 
@@ -18,7 +18,7 @@
 
 ## 扩散过程
 
-扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列$T$步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用$t<T$噪声步骤后的图像）是必要的。
+扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列 $T$ 步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用$t<T$噪声步骤后的图像）是必要的。
 
 之后，训练一个神经网络通过逆转噪声过程来恢复原始数据。通过能够对逆向过程建模，我们可以生成新数据。这就是所谓的反向扩散过程，或者通俗地说，就是生成模型的采样过程。
 
@@ -40,7 +40,7 @@ $$
 
 > 前向扩散过程 , 图片修改自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
 
-由于我们处于多维情况下， $\textbf{I}$ 是单位矩阵，表明每个维度有相同的标准偏差 $\beta_t$ 。注意到， $q(\mathbf{x}_t \vert \mathbf{x}_{t-1})$ 是一个正态分布，其均值是 $\boldsymbol{\mu}_t =\sqrt{1 - \beta_t} \mathbf{x}_{t-1}$​​ ，方差为 $\boldsymbol{\Sigma}_t=\beta_t\mathbf{I}$ ，其中 $\boldsymbol{\Sigma}$ 是一个对角矩阵的方差（这里就是 $\beta_t$ ）。
+由于我们处于多维情况下， $\textbf{I}$  是单位矩阵，表明每个维度有相同的标准偏差 $\beta_t$ 。注意到， $q(\mathbf{x}_t \vert \mathbf{x}_{t-1})$ 是一个正态分布，其均值是 $\boldsymbol{\mu}_t =\sqrt{1 - \beta_t} \mathbf{x}_{t-1}$​​ ，方差为 $\boldsymbol{\Sigma}_t=\beta_t\mathbf{I}$ ，其中 $\boldsymbol{\Sigma}$ 是一个对角矩阵的方差（这里就是 $\beta_t$ ）。
 
 因此，我们可以从 $\mathbf{x}_0$ 以一种可操作的方式封闭地转换到到 $\mathbf{x}_t$ 。在数学上，这种后验概率定义如下：
 $$
@@ -81,7 +81,7 @@ $$
 \mathbf{x}_t  \sim q(\mathbf{x}_t \vert \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})
 $$
 
-由于 $\beta_t$ 是一个超参数，我们可以预先计算所有时间步长的 $\alpha_t$ 和 $\bar{\alpha}_t$ 。这意味着我们在任何一个时间点 $t$ 对噪声进行采样，并一次性得到 $\mathbf{x}_t$ 。因此，我们可以在任何一个任意的时间段对我们的潜变量 $\mathbf{x}_t$ 进行采样。这将是我们以后计算可操作的目标损失 $L_t$ 的目标。
+由于 $\beta_t$ 是一个超参数，我们可以预先计算所有时间步的 $\alpha_t$ 和 $\bar{\alpha}_t$ 。这意味着我们在任何一个时间点 $t$ 对噪声进行采样，并一次性得到 $\mathbf{x}_t$ 。因此，我们可以在任何一个任意的时间段对我们的潜变量 $\mathbf{x}_t$ 进行采样。这将是我们以后计算可操作的目标损失 $L_t$ 的目标。
 
 ### 方差表
 
@@ -93,7 +93,7 @@ $$
 
 ## 反向扩散
 
-当 $T \to \infty$ 时，隐变量的 $\mathbf{x}_T$ 几乎是一个 各向同性 (isotropic) 的高斯分布。因此，如果我们设法学习反向分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，我们可以从 $\mathcal{N}(\textbf{0},\mathbf{I})$ 中采样$\mathbf{x}_t$，运行反向过程， 并从 $q(\mathbf{x}_0)$ 中获取一个样本，从而生成原始数据分布中的一个新数据点。
+当 $T \to \infty$ 时，隐变量的 $\mathbf{x}_T$ 几乎是一个各向同性 (isotropic) 的高斯分布。因此，如果我们设法学习反向分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，我们可以从 $\mathcal{N}(\textbf{0},\mathbf{I})$ 中采样$\mathbf{x}_t$，运行反向过程， 并从 $q(\mathbf{x}_0)$ 中获取一个样本，从而生成原始数据分布中的一个新数据点。
 
 
 问题是，我们如何模拟反向扩散过程。
@@ -118,7 +118,7 @@ $$
 p_\theta(\mathbf{x}_{0:T}) = p_{\theta}(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t)
 $$
 
-通过在模型上添加时间  $t$ 的条件，该模型将学会预测每个时间段的高斯参数（指平均值 $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ ）和协方差矩阵 $\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)$。
+通过在模型上添加时间  $t$ 的条件，该模型将学会预测每个时间段的高斯分布参数（指平均值 $\boldsymbol{\mu}_\theta(\mathbf{x}_t, t)$ ）和协方差矩阵 $\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t)$。
 
 但我们如何训练这样一个模型呢？
 
@@ -212,7 +212,7 @@ $$
 
 此外，[Ho et. al 2020](https://arxiv.org/abs/2006.11239) 决定保持方差固定，让网络只学习均值。后来 [Nichol et al. 2021](https://arxiv.org/abs/2102.09672) 对此进行了改进，他们让网络学习协方差矩阵 $(\boldsymbol{\Sigma})$ （通过修改 $L_t^\text{simple}$ ），取得了更好的结果。
 
-![training-sampling-ddpm](https://theaisummer.com/static/411d503d7233bc525088aa275f30f74e/c1b63/training-sampling-ddpm.png)
+<img src="https://theaisummer.com/static/411d503d7233bc525088aa275f30f74e/c1b63/training-sampling-ddpm.png" alt="training-sampling-ddpm" style="zoom:50%;" />
 
 > DDPMs 的训练和采样算法 ，
 > 图片来自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
@@ -221,7 +221,7 @@ $$
 
 到目前为止，我们还没有提到的一件事是模型的架构是什么样子的。请注意，模型的输入和输出应该是相同尺寸的。
 
-为此， [Ho et al.](https://arxiv.org/abs/2006.11239) 采用了一个 U-Net 。如果你对 U-Net 不熟悉，请随时查看我们过去关于 [ U-Net 架构](https://theaisummer.com/unet-architectures/) 的文章。简而言之， U-Net 是一种对称的架构，其输入和输出的空间大小相同，在相应特征维度的编码器和解码器块之间使用 [跳层连接](https://theaisummer.com/skip-connections/) 。通常，输入图像首先被下采样，然后上采样，直到达到其初始尺寸。
+为此， [Ho et al.](https://arxiv.org/abs/2006.11239) 采用了一个 U-Net 。如果你对 U-Net 不熟悉，请随时查看我们过去关于 [ U-Net 架构](https://theaisummer.com/unet-architectures/) 的文章。简而言之， U-Net 是一种对称的架构，其输入和输出的空间大小相同，在相应特征维度的编码器和解码器块之间使用 [跳层连接](https://theaisummer.com/skip-connections/) 。通常，输入图像首先经过下采样，然后上采样，直到达到其初始尺寸。
 
 在 DDPMs 的原始实现中， U-Net 由 [Wide ResNet 块](https://theaisummer.com/skip-connections/#resnet-skip-connections-via-addition) 、 [分组归一化](https://theaisummer.com/normalization/#group-normalization-2018) 以及 [自注意力](https://theaisummer.com/attention/) 块组成。
 
@@ -255,7 +255,7 @@ $$
 \end{aligned}
 $$
 
-因为  $p_\theta(y)$ 被移除，梯度算子 $\nabla_{\textbf{x}_{t}}$ 仅涉及 $\textbf{x}_{t}$， 所以没有 $y$ 的梯度。此外请记住 $\log(a b)= \log(a) + \log(b)$ 。
+因为  $p_\theta(y)$ 被移除，梯度算子 $\nabla_{\textbf{x}_{t}}$ 仅涉及 $\textbf{x}_{t}$， 所以没有 $y$ 的梯度。此外请记住 $\log(a b)= \log(a) + \log(b)$ 。
 
 再加上一个引导标量项  $s$ ，我们就有：
 
@@ -265,7 +265,7 @@ $$
 
 利用这一表述，让我们对分类器和无分类器的引导进行区分。
 
-### 分类指导
+### 分类引导
 
 [Sohl-Dickstein et al.](https://arxiv.org/abs/1503.03585) 以及后来的 [Dhariwal 和 Nichol](https://arxiv.org/abs/2105.05233) 表明，我们可以使用第二个模型，即分类器 $f_\phi(y \vert \mathbf{x}_t, t)$ ，在训练过程中引导扩散朝着目标类别 $y$ 。为了达到这个目的，我们可以在噪声图像 $\mathbf{x}_t$ 上训练一个分类器 $f_\phi(y \vert \mathbf{x}_t, t)$ 以预测其类别 $y$ 。然后我们可以使用梯度 $\nabla \log (f_\phi( y \vert\mathbf{x}_t ))$ 来引导扩散。具体怎么做呢？
 
@@ -287,7 +287,7 @@ $$
 
 结果，他们能够“引导”生成过程朝着用户定义的文本标题发展。
 
-![classifier-guidance](https://theaisummer.com/static/671ddf9d25d76db9371deac995a52642/1c1a4/classifier-guidance.png)
+<img src="https://theaisummer.com/static/671ddf9d25d76db9371deac995a52642/1c1a4/classifier-guidance.png" alt="classifier-guidance" style="zoom:50%;" />
 
 > 分类器引导的扩散采样算法，图片来自 [Dhariwal & Nichol 2021](https://arxiv.org/abs/2105.05233)
 
@@ -330,8 +330,7 @@ $$
 
 [Ho et al. 2021](https://arxiv.org/abs/2106.15282) 引入了级联扩散模型，以产生高保真的图像。级联扩散模型包括一个由许多连续扩散模型组成的$Pipeline$，这些模型生成分辨率逐渐增加的图像。每个模型通过连续上采样图像并添加更高分辨率的细节，生成比前一个更高质量的样本。要生成图像，我们从每个扩散模型顺序采样。
 
-
-![cascade-diffusion](https://theaisummer.com/static/2abb7ee11f7295d634fabf8820156d8c/eba85/cascade-diffusion.png)
+<img src="https://theaisummer.com/static/2abb7ee11f7295d634fabf8820156d8c/eba85/cascade-diffusion.png" alt="cascade-diffusion" style="zoom:50%;" />
 
 > 级联扩散模型$Pipeline$，图片来自 Ho & Saharia et al.
 
@@ -419,7 +418,7 @@ $$
 
 我们不使用有限数量的噪声分布来扰动数据，而是使用连续的分布，这些分布根据扩散过程随时间演变。这个过程由一个规定的随机微分方程 (SDE) 来模拟，它不依赖于数据，也没有可训练的参数。通过逆转这个过程，我们可以生成新的样本。
 
-![score-sde](https://theaisummer.com/static/d007d60f773b61f4585cbec3869490d5/c1b63/score-sde.png)
+<img src="https://theaisummer.com/static/d007d60f773b61f4585cbec3869490d5/c1b63/score-sde.png" alt="score-sde" style="zoom:50%;" />
 
 > 通过随机微分方程 (SDE) 进行基于分数的生成性建模, 图片来自 [Song et al. 2021](https://arxiv.org/abs/2011.13456)
 
