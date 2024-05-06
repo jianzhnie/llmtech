@@ -25,7 +25,7 @@ $$
 <div align=center>
 <img width="600" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM.png"/>
 </div>
-<div align=center>图2. 通过逐步添加（移除）噪声生成样本的前向（反向）扩散过程的马尔可夫链。（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)，带有一些附加注释）</div>
+<div align=center>图2. 通过逐步添加（移除）噪声生成样本的前向（反向）扩散过程的马尔可夫链。（图片来源：[Ho et al.2020](https://arxiv.org/abs/2006.11239)，带有一些附加注释）</div>
 
 上述过程的一个很好的特性是我们用 [Reparameterization Trick](https://lilianweng.github.io/posts/2018-08-12-vae/#reparameterization-trick) 在任意时间步 $t$ 以封闭形式采样 $\mathbf{x}_t$。让 $\alpha_t = 1 - \beta_t$和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$，则:
 $$
@@ -109,7 +109,8 @@ $$
 
 $$
 \begin{aligned}
--\log p_\theta(\mathbf{x}_0) &\leq - \log p_\theta(\mathbf{x}_0) + D_{KL}(q(\mathbf{x}_{1:T}|\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}|\mathbf{x}_0)) \\
+-\log p_\theta(\mathbf{x}_0)
+&\leq - \log p_\theta(\mathbf{x}_0) + D_{KL}(q(\mathbf{x}_{1:T}|\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}|\mathbf{x}_0)) \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{q(\mathbf{x}_1|\mathbf{x}_0)} \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \right] \\
 &= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \right] \\
 &= \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \right] \\
