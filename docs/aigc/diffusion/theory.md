@@ -17,55 +17,55 @@
 
 在拥有时间步 $t$ 的样本的情况下，可以对前向过程中下一个样本进行估计，由真实分布 $q$ 定义：
 
-```math
+$$
 q(x_{t}|x_{t-1})\tag{1}
-```
+$$
 
 通常，可用的是时间步 $0$ 的样本（即干净的样本），并且使用允许轻松高效地表述以下类型的操作是有用的：
 
-```math
+$$
 q(x_{t}|x_{0})\tag{2}
-```
+$$
 
 到目前为止，**最常见的**前向过程选择是 **高斯过程**。易于计算并且在各方面都很便利：
 
-```math
+$$
 q(x_{t}|x_{t-1}) = \mathcal{N}(\sqrt{1-\beta_t}x_{t-1}, \beta_t I)\tag{3}
-```
+$$
 
 上述符号意味着 **先前的样本通过 $\sqrt{1-\beta_t}$ 的因子缩小** 并且 **添加了额外的高斯噪声**（从均值为零，方差为单位的高斯中采样）乘以 $\beta_t$。
 
 此外，$0\to t$ 步骤也可以很容易地定义为：
 
-```math
+$$
 q(x_{t}|x_{0}) = \mathcal{N}(\sqrt{\bar{\alpha_t}}x_0, (1-\bar{\alpha_t}) I) \tag{4}
-```
+$$
 
 其中 $\alpha_t = 1-\beta_t$ 且
 
-```math
+$$
 \bar{\alpha_t}=\prod_{i=0}^{t}\alpha_t \tag{5}
-```
+$$
 
 ### 反向过程
 
 反向过程旨在恢复样本中的信息，从而允许从分布中生成新的样本。通常，它会从某个高时间步 $t$（通常是 $t=T$，表示扩散链的末端，此时概率分布非常接近纯高斯）开始，并尝试逼近前一个样本 $t-1$ 的分布。
 
-```math
+$$
 p_\theta(x_{t-1}|x_t)
-```
+$$
 
 如果扩散步骤足够小，高斯前向过程的反向过程也可以通过高斯来逼近：
 
-```math
+$$
 p_\theta(x_{t-1}|x_t) = \mathcal{N}(\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))\tag{6}
-```
+$$
 
 反向过程通常使用神经网络 $\theta$ 来参数化，神经网络是一个很好的候选者，用于逼近复杂的变换。在许多情况下，可以使用独立于 $x_t$ 的标准差函数 $\sigma_t$：
 
-```math
+$$
 p_\theta(x_{t-1}|x_t) = \mathcal{N}(\mu_\theta(x_t,t),\sigma_t^2 I)\tag{7}
-```
+$$
 
 ## DDPM: 去噪扩散概率模型
 
@@ -75,27 +75,27 @@ p_\theta(x_{t-1}|x_t) = \mathcal{N}(\mu_\theta(x_t,t),\sigma_t^2 I)\tag{7}
 1. 直接预测它作为 $\mu_\theta(x_t,t)$
 2. 预测原始的 $t=0$ 样本 $x_0$，其中
 
-```math
+$$
 \tilde{\mu}_\theta = \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0 + \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t \tag{8}
-```
+$$
 
 3. 预测添加到样本 $x_0$ 上的 **正常** 噪声样本 $\epsilon$（来自单位方差的分布）
 
-```math
+$$
 x_0=\frac{1}{\sqrt{\bar{\alpha}_t}}(x_t-\sqrt{1-\bar{\alpha}_t}\epsilon) \tag{9}
-```
+$$
 
 第三种选择，即网络预测 $\epsilon$，似乎是最常见的，这就是 DDPM 在采样中所做的事情。这导致 $\tilde{\mu}_{\theta}$ 的新方程，以 $x_t$ 和 $\epsilon$ 表示：
 
-```math
+$$
 \tilde{\mu}_\theta = \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}(\frac{1}{\sqrt{\bar{\alpha}_t}}(x_t-\sqrt{1-\bar{\alpha}_t}\epsilon)) + \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t \tag{10}
-```
+$$
 
 因此，
 
-```math
+$$
 \tilde{\mu}_\theta =\frac{1}{\sqrt{\alpha_t}}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon) \tag{11}
-```
+$$
 
 ...这是 DDPM 用于采样的关键方程。
 
@@ -118,15 +118,15 @@ x_0=\frac{1}{\sqrt{\bar{\alpha}_t}}(x_t-\sqrt{1-\bar{\alpha}_t}\epsilon) \tag{9}
 
 然后，直到达到 $t=0$，网络对样本中的噪声 $\tilde{\epsilon}=p_\theta(x_t,t)$ 进行预测，然后使用以下方法逼近过程在 $t-1$ 的均值：
 
-```math
+$$
 \tilde{\mu}_\theta =\frac{1}{\sqrt{\alpha_t}}(x_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\tilde{\epsilon})\tag{12}
-```
+$$
 
 因此，下一个样本 $t-1$ 是从高斯分布中采样的，如下所示：
 
-```math
+$$
 x_{t-1} \sim \mathcal{N}(\tilde{\mu}_\theta,\sigma_t^2 I)\tag{13}
-```
+$$
 
 ...直到达到 $x_0$，在这种情况下，只提取均值 $\tilde{\mu}_\theta$ 作为输出。
 
@@ -138,27 +138,27 @@ x_{t-1} \sim \mathcal{N}(\tilde{\mu}_\theta,\sigma_t^2 I)\tag{13}
 
 如果我们在 (4) 中将 $t-1$ 替换为 $t$：
 
-```math
+$$
 q(x_{t-1}|x_{0}) = \mathcal{N}(\sqrt{\bar{\alpha}_{t-1}}x_0, (1-\bar{\alpha}_{t-1}) I)\tag{14}
-```
+$$
 
 这将产生
 
-```math
+$$
 x_{t-1} \leftarrow \sqrt{\bar{\alpha}_{t-1}}x_0 + \sqrt{1-\bar{\alpha}_{t-1}} \epsilon_{t-1}\tag{15}
-```
+$$
 
 ...并且基于前一步 $t$ 测量的特定 $\epsilon_t$，它可以被重写为：
 
-```math
+$$
 x_{t-1} \leftarrow \sqrt{\bar{\alpha}_{t-1}}x_0 + \sqrt{1-\bar{\alpha}_{t-1}-\sigma_t^2} \epsilon_{t} + \sigma_t \epsilon\tag{16}
-```
+$$
 
 通常，$\sigma_t$ 被设置为：
 
-```math
+$$
 \sigma_t^2 = \tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t\tag{17}
-```
+$$
 
 进一步，我们可以引入一个新参数 $\eta$ 来控制随机组成部分的幅度：
 
