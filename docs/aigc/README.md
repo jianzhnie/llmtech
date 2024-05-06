@@ -63,12 +63,12 @@
 
 ## [扩散模型](aigc/diffusion/README.md)
 
-- [什么是扩散模型: A Review](aigc/diffussion/summary.md)
-- [扩散模型的工作原理：从零开始的数学](aigc/diffussion/math101.md)
-- [扩散模型: 重参数化技巧](aigc/diffussion/reparameterization.md)
-- [基于分数的生成模型](aigc/diffussion/score_model.md)
-- [扩散模型：一个统一的视角](aigc/diffussion/unifie_view.md)
-- [From Autoencoder to Beta-VAE](aigc/diffussion/vae_model.md)
+- [扩散模型理论第一课](aigc/diffusion/theory.md)
+- [什么是扩散模型: A Review](aigc/diffusion/summary.md)
+- [扩散模型的工作原理：从零开始的数学](aigc/diffusion/math101.md)
+- [扩散模型: 重参数化技巧](aigc/diffusion/reparameterization.md)
+- [基于分数的生成模型](aigc/diffusion/score_model.md)
+- [From Autoencoder to Beta-VAE](aigc/diffusion/vae_model.md)
 
 
 ## 量化压缩
