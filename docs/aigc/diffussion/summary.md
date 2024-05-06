@@ -20,7 +20,7 @@ $$
 q(\mathbf{x}_t \vert \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t\mathbf{I}) \quad
 q(\mathbf{x}_{1:T} \vert \mathbf{x}_0) = \prod^T_{t=1} q(\mathbf{x}_t \vert \mathbf{x}_{t-1})
 $$
-当步骤 $t$  逐渐变大, 数据样本 $\mathbf{x}_0$ 逐渐失去其可辨特征。最终当$t$→∞时, $\mathbf{x}_T$ 等价于一个各向同性高斯分布。
+当步骤 $t$  逐渐变大, 数据样本 $\mathbf{x}_0$ 逐渐失去其可辨特征。最终当$t$→∞时, $\mathbf{x}_T$ 等价于一个各向同性高斯分布。
 
 <div align=center>
 <img width="600" src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM.png"/>
@@ -58,7 +58,7 @@ $$
 
 如果说前向过程(forward)是加噪的过程，那么逆向过程(reverse)就是扩散模型的去噪推断过程。
 
-如果我们可以反转上述过程并从 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 中采样，我们将能够从高斯噪声输入$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$重建真实样本. 注意，如果$\beta_t$足够小，$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 也将是高斯分布。不幸的是，我们无法轻易估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ ， 因为它需要用到整个数据集，因此我们需要学习一个模型 $p_\theta$ 近似这些条件概率以运行反向扩散过程。
+如果我们可以反转上述过程并从 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 中采样，我们将能够从高斯噪声输入$\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$重建真实样本. 注意，如果$\beta_t$足够小，$q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ 也将是高斯分布。不幸的是，我们无法轻易估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t)$ ， 因为它需要用到整个数据集，因此我们需要学习一个模型 $p_\theta$ 近似这些条件概率以运行反向扩散过程。
 $$
 p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) \quad
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
@@ -94,7 +94,9 @@ $$
 &= \frac{\sqrt{\alpha_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} \mathbf{x}_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1 - \bar{\alpha}_t} \mathbf{x}_0\\
 \end{aligned}
 $$
+
 由于这个良好的属性, 我们可以表示 $\mathbf{x}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}}(\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}_t)$并将其代入上述等式，得到：
+
 $$
 \begin{aligned}
 \tilde{\boldsymbol{\mu}}_t
@@ -102,19 +104,22 @@ $$
 &= \color{cyan}{\frac{1}{\sqrt{\alpha_t}} \Big( \mathbf{x}_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_t \Big)}
 \end{aligned}
 $$
+
 如图 2 所示，这种设置与[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)非常相似，因此我们可以使用变分下界来优化负对数似然。
+
 $$
 \begin{aligned}
-- \log p_\theta(\mathbf{x}_0)
-&\leq - \log p_\theta(\mathbf{x}_0) + D_\text{KL}(q(\mathbf{x}_{1:T}\vert\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}\vert\mathbf{x}_0) ) \\
-&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{\mathbf{x}_{1:T}\sim q(\mathbf{x}_{1:T} \vert \mathbf{x}_0)} \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \Big] \\
-&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \Big] \\
-&= \mathbb{E}_q \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \\
-\text{Let }L_\text{VLB}
-&= \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
+-\log p_\theta(\mathbf{x}_0) \leq - \log p_\theta(\mathbf{x}_0) + D_{KL}(q(\mathbf{x}_{1:T}|\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}|\mathbf{x}_0)) \\
+= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{q(\mathbf{x}_1|\mathbf{x}_0)} \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \right] \\
+= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \right] \\
+= \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \right] \\
+Let \ L_{VLB} = \mathbb{E}_{q(\mathbf{x}_{0:T})} \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \right] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
 \end{aligned}
 $$
+
+
 使用 Jensen 不等式也可以直接得到相同的结果。假设我们以最小化交叉熵作为学习目标，
+
 $$
 \begin{aligned}
 L_\text{CE}
@@ -126,7 +131,9 @@ L_\text{CE}
 &= \mathbb{E}_{q(\mathbf{x}_{0:T})}\Big[\log \frac{q(\mathbf{x}_{1:T} \vert \mathbf{x}_{0})}{p_\theta(\mathbf{x}_{0:T})} \Big] = L_\text{VLB}
 \end{aligned}
 $$
+
 为了将方程中的每一项转换为可分析计算的，目标可以进一步重写为几个 KL 散度和熵项的组合（参见[Sohl-Dickstein 等人](https://arxiv.org/abs/1503.03585)的附录 B 中详细的推导过程）
+
 $$
 \begin{aligned}
 L_\text{VLB}
@@ -141,7 +148,9 @@ L_\text{VLB}
 &= \mathbb{E}_q [\underbrace{D_\text{KL}(q(\mathbf{x}_T \vert \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_T))}_{L_T} + \sum_{t=2}^T \underbrace{D_\text{KL}(q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_t))}_{L_{t-1}} \underbrace{- \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)}_{L_0} ]
 \end{aligned}
 $$
+
 我们分别标记变分下界损失中的每个组件：
+
 $$
 \begin{aligned}
 L_\text{VLB} &= L_T + L_{T-1} + \dots + L_0 \\
@@ -150,7 +159,8 @@ L_t &= D_\text{KL}(q(\mathbf{x}_t \vert \mathbf{x}_{t+1}, \mathbf{x}_0) \paralle
 L_0 &= - \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)
 \end{aligned}
 $$
-$L_\text{VLB}$ 中的每个 KL 项（除了$L_0$) 比较了两个高斯分布，因此可以用[封闭形式](https://en.wikipedia.org/wiki/Kullback–Leibler_divergence#Multivariate_normal_distributions)计算它们。$L_T$是常数，在训练期间可以忽略，因为$q$没有可学习的参数并且 $\mathbf{x}_t$ 是高斯噪声。[Ho et al. 2020](https://arxiv.org/abs/2006.11239) 使用从$\mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_\theta(\mathbf{x}_1, 1), \boldsymbol{\Sigma}_\theta(\mathbf{x}_1, 1))$ 派生的单独的离散解码器建模了 $L_0$。
+
+$L_\text{VLB}$ 中的每个 KL 项（除了$L_0$) 比较了两个高斯分布，因此可以用[封闭形式](https://en.wikipedia.org/wiki/Kullback–Leibler_divergence#Multivariate_normal_distributions)计算它们。$L_T$是常数，在训练期间可以忽略，因为$q$没有可学习的参数并且 $\mathbf{x}_t$ 是高斯噪声。[Ho et al. 2020](https://arxiv.org/abs/2006.11239) 使用从 $\mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_\theta(\mathbf{x}_1, 1), \boldsymbol{\Sigma}_\theta(\mathbf{x}_1, 1))$  d派生的单独的离散解码器建模了 $L_0$。
 
 ## 对于训练损失参数化 $L_t$
 
@@ -190,7 +200,7 @@ L_t^\text{simple}
 &= \mathbb{E}_{t \sim [1, T], \mathbf{x}_0, \boldsymbol{\epsilon}_t} \Big[\|\boldsymbol{\epsilon}_t - \boldsymbol{\epsilon}_\theta(\sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\boldsymbol{\epsilon}_t, t)\|^2 \Big]
 \end{aligned}
 $$
-其中 $C$ 是一个常数，不依赖于$\theta$.
+其中 $C$ 是一个常数，不依赖于$\theta$.
 
 ![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM-algo.png)
 
@@ -237,7 +247,7 @@ $$
 $$
 \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) = \exp(\mathbf{v} \log \beta_t + (1-\mathbf{v}) \log \tilde{\beta}_t)
 $$
-然而，简单的目标 $L_\text{simple}$ 不依赖于 $\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标 $L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
+然而，简单的目标 $L_\text{simple}$ 不依赖于 $\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标 $L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
 
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/improved-DDPM-nll.png" alt="img" style="zoom: 25%;" />
 
