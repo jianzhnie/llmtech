@@ -1,72 +1,73 @@
-# Generative Modeling by Estimating Gradients of the Data Distribution
+# 基于分数的生成建模
 
 > 本文翻译自 Yang Song (宋飏) 的博客：  https://yang-song.net/blog/2021/score/
 
-这篇博文重点介绍了一个很有前途的生成模型新方向。我们可以在大量噪声扰动的数据分布上学习得分函数（对数概率密度函数的梯度），然后使用 Langevin 采样生成样本。由此产生的生成模型，通常称为**基于分数的生成模型**，与现有模型相比具有几个重要优势:
+这篇博文重点介绍了一个很有前途的生成模型新方向。我们可以在大量噪声扰动的数据分布上学习得分函数（对数概率密度函数的梯度），然后使用 Langevin 采样生成样本。由此产生的生成模型，通常称为基于分数的生成模型，与现有模型相比具有几个重要优势:
 
 - 无需对抗训练即可实现 GAN 水平的样本质量
 - 灵活的模型架构
-- 精确的对数似然计算以及无需重新训练模型的逆向问题求解.
+- 精确的对数似然计算
+- 无需重新训练模型的逆向问题求解.
 
 在这篇博文中，我们将更详细地向您展示基于分数的生成模型的直觉、基本概念和潜在应用。
 
-## Introduction
+## 介绍
 
 现有的生成模型技术可以根据它们表示概率分布的方式大致分为两类。
 
-1. **基于似然的模型**
+1. 基于似然的模型
 
-它通过（近似）最大似然直接学习分布的概率密度（或质量）函数。典型的基于似然的模型包括自回归模型[1, 2, 3], 归一化流模型[4, 5], 基于能量的模型 (EBM)[6, 7]和变分自编码器 (VAE)[8, 9].
+通过（近似）最大似然直接学习分布的概率密度（或质量）函数。典型的基于似然的模型包括自回归模型[1, 2, 3], 归一化流模型[4, 5], 基于能量的模型 (EBM)[6, 7]和变分自编码器 (VAE)[8,9]。
 
-2. **隐式生成模型**[10]
+2. 隐式生成模型
 
 其中概率分布由其采样过程的模型隐式表示。最突出的例子是生成对抗网络（GAN[11]，其中通过使用神经网络变换随机高斯向量来合成来自数据分布的新样本。
 
-![img](https://yang-song.net/assets/img/score/likelihood_based_models.png)
+<img src="https://yang-song.net/assets/img/score/likelihood_based_models.png" alt="img" style="zoom:33%;" />
 
-> 贝叶斯网络、马尔可夫随机场 (MRF)、自回归模型和归一化流模型都是基于似然的模型的示例。所有这些模型都代表分布的概率密度或质量函数。
+> 贝叶斯网络、马尔可夫随机场 (MRF)、自回归模型和归一化流模型都是基于似然模型的示例。所有这些模型都表示分布的概率密度或质量函数。
 
-![img](https://yang-song.net/assets/img/score/implicit_models.png)
+<img src="https://yang-song.net/assets/img/score/implicit_models.png" alt="img" style="zoom:33%;" />
 
->  GAN 是隐式模型的一个例子。它隐含地表示生成器网络可以生成的所有对象的分布。
+>  GAN 是隐式模型的一个例子。它隐式地表示了生成器网络可以生成的所有对象的分布。
 
 然而，基于似然的模型和隐式生成模型都有很大的局限性。基于似然的模型要么需要对模型架构进行严格限制，以确保为似然计算提供易于处理的归一化常数，要么必须依赖代理目标函数来近似最大似然训练。另一方面，隐式生成模型通常需要对抗训练，这是出了名的不稳定[12]，并可能导致模式崩塌[13]。
 
-在这篇博文中，我将介绍另一种表示概率分布的方法，这种方法可以规避其中的一些限制。关键思想是对**对数概率密度函数的梯度**进行建模，这个量通常被称为 (Stein)**得分函数** [14]. 这种**基于分数的模型**不需要具有易于处理的归一化常数，可以直接通过**分数匹配来学习** [15, 16].
+在这篇博文中，我将介绍另一种表示概率分布的方法，这种方法可以规避其中的一些限制。关键思想是对对数概率密度函数的梯度进行建模，该函数通常被称为 (Stein)得分函数 [14,15]. 这种基于分数的模型不需要具有易于处理的归一化常数，并且可以直接通过**分数匹配来学习** [16, 17]。
 
-![img](https://yang-song.net/assets/img/score/score_contour.jpg)
+<img src="https://yang-song.net/assets/img/score/score_contour.jpg" alt="img" style="zoom:33%;" />
 
 >  两个高斯混合的得分函数（向量场）和密度函数（等高线)。
 
-基于分数的模型在许多下游任务和应用程序上取得了最好的性能。这些任务包括图像生成等[17, 18, 19, 20, 21, 22]（比 GAN 更好！），音频合成[23, 24, 25], 形状生成[26], 和音乐合成[27]. 此外，基于分数的模型与[规范化流模型](https://blog.evjang.com/2018/01/nf1.html)有内在关联，允许精确的似然计算和表示学习。此外，建模和估计分数有助于[逆向问题](https://en.wikipedia.org/wiki/Inverse_problem#:~:text=An inverse problem in science,measurements of its gravity field)求解，应用场景包括图像修复[17, 20], 图像着色[20]、[压缩传感](https://en.wikipedia.org/wiki/Compressed_sensing)和医学图像重建等（例如 CT、MRI）[28].
+基于分数的模型在许多下游任务和应用程序上取得了最好的性能。这些任务包括图像生成等[18, 19, 20, 21, 22,23]（比 GAN 更好！），音频合成[24, 25,26], 形状生成[27], 和音乐合成[28]. 此外，基于分数的模型与[规一化流模型](https://blog.evjang.com/2018/01/nf1.html)有内在关联，允许精确的似然计算和表示学习。此外，建模和估计分数有助于[逆向问题](https://en.wikipedia.org/wiki/Inverse_problem#:~:text=An inverse problem in science,measurements of its gravity field)求解，应用场景包括图像修复[18, 21], 图像着色[21]、[压缩传感](https://en.wikipedia.org/wiki/Compressed_sensing)和医学图像重建等（例如 CT、MRI）[29].
 
-![img](https://yang-song.net/assets/img/score/ffhq_samples.jpg)
+<img src="https://yang-song.net/assets/img/score/ffhq_samples.jpg" alt="img" style="zoom: 15%;" />
 
->  从基于分数的模型生成的 1024 x 1024 个样本[20]
+>  从基于分数的模型生成的 1024 x 1024 分辨率的样本[21]
 
 这篇文章旨在向您展示基于分数的生成模型的动机和直觉，以及它的基本概念、属性和应用。
 
-## The score function, score-based models, and score matching
+## 评分函数、基于评分的模型和评分匹配
 
-假设我们有一个数据集$\{\mathbf{x}_1, \mathbf{x}_2, \cdots, \mathbf{x}_N\}$，其中每个点都是独立同分布的样本，从潜在的数据分布 $p_{\text {data }}(\mathbf{x})$ 中采样得到 。给定这个数据集，生成模型的目标是用模型拟合数据分布，这样我们就可以通过从分布中随意采样来合成新的数据点。
+假设我们有一个数据集$\{\mathbf{x}_1, \mathbf{x}_2, \cdots, \mathbf{x}_N\}$，其中每个点都是独立同分布的样本，从潜在的数据分布 $p_{\text {data }}(\mathbf{x})$ 中采样得到 。给定这个数据集，生成模型的目标是用模型拟合数据分布，这样我们就可以通过从分布中随意采样来合成新的数据点。
 
 为了构建这样的生成模型，我们首先需要一种表示概率分布的方法。与基于似然的模型一样，其中一种方法是直接对[概率密度函数](https://en.wikipedia.org/wiki/Probability_density_function)(pdf) 或[概率质量函数](https://en.wikipedia.org/wiki/Probability_mass_function)(pmf) 建模。假设 $f_\theta(\mathbf{x}) \in \mathbb{R}$是由可学习参数 $\theta$ 参数化的实值函数. 我们可以通过下面的公式定义一个pdf  ：
 $$
 \begin{align} p_\theta(\mathbf{x}) = \frac{e^{-f_\theta(\mathbf{x})}}{Z_\theta},  \end{align}
 $$
-其中$Z_\theta > 0$ 是依赖于$\theta$ 的归一化常数,   $\int p_\theta(\mathbf{x}) \textrm{d} \mathbf{x} = 1 $. 这里的$f_\theta(\mathbf{x})$通常称为非标准化概率模型或基于能量的模型[7].
+其中$Z_\theta > 0$ 是依赖于$\theta$ 的归一化常数,   $\int p_\theta(\mathbf{x}) \textrm{d} \mathbf{x} = 1 $. 这里的$f_\theta(\mathbf{x})$通常称为非标准化概率模型或基于能量的模型[7].
 
 我们可以通过最大化数据的对数似然来训练 $p_\theta(\mathbf{x})$.
 $$
 \begin{align} \max_\theta \sum_{i=1}^N \log p_\theta(\mathbf{x}_i). \end{align}
 $$
-然而，等式(2)需要$p_\theta(\mathbf{x})$为归一化概率密度函数。这是不可取的，因为为了计算$p_\theta(\mathbf{x})$，我们必须评估归一化常数$Z_\theta$， 对于任何一般 $f_\theta(\mathbf{x}) $ ，$Z_\theta$都是一个典型的难以处理的量. 因此，为了使最大似然训练可行，基于似然的模型必须限制它们的模型架构（例如，自回归模型中的因果卷积，归一化流模型中的可逆网络）以使$Z_\theta$易于处理，或近似归一化常数（例如，VAE 中的变分推理，或对比发散中使用的 MCMC 采样[29]) 这可能在计算上很昂贵。
+然而，等式(2)需要$p_\theta(\mathbf{x})$为归一化概率密度函数。这是不可取的，因为为了计算$p_\theta(\mathbf{x})$，我们必须评估归一化常数$Z_\theta$， 对于任何一般 $f_\theta(\mathbf{x}) $ ，$Z_\theta$都是一个典型的难以处理的量. 因此，为了使最大似然训练可行，基于似然的模型必须限制它们的模型架构（例如，自回归模型中的因果卷积，归一化流模型中的可逆网络）以使$Z_\theta$易于处理，或近似归一化常数（例如，VAE 中的变分推理，或对比发散中使用的 MCMC 采样[29]) 这可能在计算上很昂贵。
 
-通过对得分函数而不是密度函数进行建模，我们可以避开难以处理的归一化常数的困难。分布的**得分函数**$p(\mathbf{x})$定义为 $\nabla_\mathbf{x} \log p(\mathbf{x})$, 得分函数的模型称为基于**分数的模型** [17]，我们表示为 $\mathbf{s}_\theta(\mathbf{x})$. 基于分数的模型是通过$\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_\mathbf{x} \log p(\mathbf{x})$ 学习的, 并且模型可以参数化，不用担心归一化常数。例如，我们可以使用等式(1)中定义的基于能量的模型轻松地对基于分数的模型进行参数化， 通过
+通过对得分函数而不是密度函数进行建模，我们可以避开难以处理的归一化常数的困难。分布的得分函数$p(\mathbf{x})$定义为 $\nabla_\mathbf{x} \log p(\mathbf{x})$, 得分函数的模型称为基于分数的模型 [18]，我们表示为 $\mathbf{s}_\theta(\mathbf{x})$. 基于分数的模型是通过$\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_\mathbf{x} \log p(\mathbf{x})$ 学习的，并且模型可以参数化，不用担心归一化常数。例如，我们可以使用等式(1)中定义的基于能量的模型轻松地对基于分数的模型进行参数化， 通过
 $$
 \begin{equation} \mathbf{s}_\theta (\mathbf{x}) = \nabla_{\mathbf{x}} \log p_\theta (\mathbf{x} ) = -\nabla_{\mathbf{x}} f_\theta (\mathbf{x}) - \underbrace{\nabla_\mathbf{x} \log Z_\theta}_{=0} = -\nabla_\mathbf{x} f_\theta(\mathbf{x}). \end{equation}
 $$
-注意，基于分数的模型$\mathbf{s}_\theta(\mathbf{x})$与归一化常数$Z_\theta$无关！这显著扩展了我们可以轻松使用的模型族，因为我们不需要任何特殊的架构来使规范化常数变得易于处理。
+注意，基于分数的模型$\mathbf{s}_\theta(\mathbf{x})$与归一化常数$Z_\theta$无关！这显着扩展了我们可以轻松使用的模型系列，因为我们不需要任何特殊的架构来使标准化常数变得易于处理。
 
 ![img](https://yang-song.net/assets/img/score/ebm.gif)
 
@@ -76,39 +77,39 @@ $$
 
 ![img](https://yang-song.net/assets/img/score/score.gif)
 
->  参数化评分函数。无需担心规范化。
+>  参数化评分函数。无需担心标准化。
 
-与基于似然的模型类似，我们可以通过最小化模型和数据分布之间的**Fisher 散度来训练基于分数的模型**,  定义为：
+与基于似然的模型类似，我们可以通过最小化模型和数据分布之间的 Fisher 散度来训练基于分数的模型,  定义为：
 $$
 \begin{equation} \mathbb{E}_{p(\mathbf{x})}[\| \nabla_\mathbf{x} \log p(\mathbf{x}) - \mathbf{s}_\theta(\mathbf{x}) \|_2^2] \end{equation}
 $$
-直观地来看， Fisher 散度 比较了Groud Truth 与基于分数的模型之间的距离$\ell_2$ 距离。然而，直接计算这种差异是不可行的，因为它需要访问未知的数据分数 $\nabla_\mathbf{x} \log p(\mathbf{x})$. 幸运的是，存在一系列称为**分数匹配的方法** [15, 16, 30]， 可以在不知道真实数据得分的情况下最小化 Fisher 散度。得分匹配目标可以直接在数据集上估计并使用随机梯度下降进行优化，类似于训练基于似然的模型（具有已知归一化常数）的对数似然目标。我们可以通过最小化分数匹配目标来训练基于分数的模型，**而不需要对抗优化**。
+直观地来看， Fisher 散度比较了Groud Truth 与基于分数的模型之间的 $\ell_2$ 距离。然而，直接计算这种差异是不可行的，因为它需要访问未知的数据分数 $\nabla_\mathbf{x} \log p(\mathbf{x})$. 幸运的是，存在一系列称为分数匹配的方法 [ 16, 17，31]， 可以在不知道真实数据得分的情况下最小化 Fisher 散度。得分匹配目标可以直接在数据集上估计并使用随机梯度下降进行优化，类似于训练基于似然的模型（具有已知归一化常数）的对数似然目标。我们可以通过最小化分数匹配目标来训练基于分数的模型，而不需要对抗优化。
 
 此外，使用分数匹配目标为我们提供了相当大的建模灵活性。Fisher 散度本身不需要$\mathbf{s}_\theta(\mathbf{x})$是一个真实的归一化分布的实际得分函数——它只是比较 Groud Truth 数据与基于分数的模型之间的$\ell_2$距离，没有对$\mathbf{s}_\theta(\mathbf{x})$形式的额外假设. 事实上，对基于分数的模型的唯一要求是它应该是具有相同输入和输出维度的向量值函数，这在实践中很容易满足。
 
-作一个简短的总结，我们可以通过对评分函数建模来表示分布，这可以通过训练使用得分匹配为目标的得分函数模型来估计。
+简而言之，我们可以通过对评分函数建模来表示分布，这可以通过训练使用得分匹配为目标的得分函数模型来估计。
 
 ## Langevin dynamics
 
-一旦我们训练了基于分数的模型 $\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_\mathbf{x} \log p(\mathbf{x})$，我们可以使用称为[**Langevin 动力学**](https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm)[31, 32]的迭代过程从中抽取样本。
+一旦我们训练了基于分数的模型 $\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_\mathbf{x} \log p(\mathbf{x})$，我们可以使用称为[Langevin 动力学](https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm)[32, 33]的迭代过程从中抽取样本。
 
-Langevin dynamics 提供了一个 MCMC 程序，只使用它的评分函数$\nabla_\mathbf{x} \log p(\mathbf{x})$来从分布$p(\mathbf{x})$中采样⁡. 具体来说，它先通过任意先验分布$\mathbf{x}_0 \sim \pi(\mathbf{x})$ 初始化链，然后迭代以下
+Langevin dynamics 提供了一个 MCMC 程序，只使用它的评分函数$\nabla_\mathbf{x} \log p(\mathbf{x})$来从分布$p(\mathbf{x})$中采样⁡. 具体来说，它先通过任意先验分布$\mathbf{x}_0 \sim \pi(\mathbf{x})$ 初始化链，然后迭代如下
 $$
 \begin{align} \mathbf{x}_{i+1} \gets \mathbf{x}_i + \epsilon \nabla_\mathbf{x} \log p(\mathbf{x}) + \sqrt{2\epsilon}~ \mathbf{z}_i, \quad i=0,1,\cdots, K,  \end{align}
 $$
-其中 $\mathbf{z}_i \sim \mathcal{N}(0, I)$.  当 $\epsilon \to 0$ 和 $K \to \infty$ 时,  $\mathbf{x}_K$ 在一定的规律性条件下, 从程序中获得收敛到来自$p(\mathbf{x})$的样本. 在实践中，$\epsilon $足够小并且$K$足够大时，误差可以忽略不计。
+其中 $\mathbf{z}_i \sim \mathcal{N}(0, I)$.  当 $\epsilon \to 0$ 和 $K \to \infty$ 时,  $\mathbf{x}_K$ 在一定的规律性条件下, 从程序中获得收敛到来自 $p(\mathbf{x})$ 的样本. 在实践中，当 $\epsilon $ 足够小并且 $K$ 足够大时，误差可以忽略不计。
 
-![img](https://yang-song.net/assets/img/score/langevin.gif)
+<img src="https://yang-song.net/assets/img/score/langevin.gif" alt="img" style="zoom:33%;" />
 
->  使用 Langevin 动力学从两个高斯分布的混合物中采样。
+>  使用 Langevin 动力学从两个高斯分布的混合中采样。
 
 请注意，Langevin 动力学只通过$\nabla_\mathbf{x} \log p(\mathbf{x})$访问$p(\mathbf{x})$. 因为$\mathbf{s}_\theta(\mathbf{x}) \approx \nabla_\mathbf{x} \log p(\mathbf{x})$⁡，我们可以通过将其代入方程式(5)，从基于分数的模型中生成样本$\mathbf{s}_\theta(\mathbf{x})$.
 
-## Naive score-based generative modeling and its pitfalls
+## 基于分数的朴素生成模型及其陷阱
 
-到目前为止，我们已经讨论了如何使用分数匹配训练基于分数的模型，然后通过 Langevin 动力学生成样本。然而，这种幼稚的方法在实践中取得的成功有限——我们将讨论一些在之前的工作中很少受到关注的分数匹配的陷阱[17].
+到目前为止，我们已经讨论了如何使用分数匹配训练基于分数的模型，然后通过 Langevin 动力学生成样本。然而，这种幼稚的方法在实践中取得的成功有限——我们将讨论一些在之前的工作中很少受到关注的分数匹配陷阱[18].
 
-![img](https://yang-song.net/assets/img/score/smld.jpg)
+<img src="https://yang-song.net/assets/img/score/smld.jpg" alt="img" style="zoom: 15%;" />
 
 > 基于分数的生成模型，具有分数匹配 + Langevin 动力学。
 
@@ -116,39 +117,37 @@ $$
 $$
 \mathbb{E}_{p(\mathbf{x})}[\| \nabla_\mathbf{x} \log p(\mathbf{x}) - \mathbf{s}_\theta(\mathbf{x}) \|_2^2] = \int p(\mathbf{x}) \| \nabla_\mathbf{x} \log p(\mathbf{x}) - \mathbf{s}_\theta(\mathbf{x}) \|_2^2 \mathrm{d}\mathbf{x}.
 $$
-因为真实数据和和基于评分的模型之间的 $\ell_2$ 差异通过 $p(\mathbf{x})$ 加权，当$p(\mathbf{x})$很小的时候，它们在低密度区域中很大程度上被忽略了。这种行为可能导致结果不佳，如下图所示：
+因为真实数据和和基于评分的模型之间的 $\ell_2$ 差异通过 $p(\mathbf{x})$ 加权，当$p(\mathbf{x})$很小的时候，它们在低密度区域中很大程度上被忽略了。这种行为可能导致结果不佳，如下图所示：
 
-![img](https://yang-song.net/assets/img/score/pitfalls.jpg)
+<img src="https://yang-song.net/assets/img/score/pitfalls.jpg" alt="img" style="zoom:15%;" />
 
 > 估计分数仅在高密度区域是准确的。
 
 当使用 Langevin 动力学进行采样时，当数据位于高维空间时，我们的初始样本很可能位于低密度区域。因此，不准确的基于分数的模型将从程序的一开始就破坏 Langevin 动力学，阻止它生成可以代表数据的高质量样本。
 
-## Score-based generative modeling with multiple noise perturbations
+## 具有多种噪声扰动的基于分数的生成模型
 
-如何绕过在低数据密度区域进行准确分数估计的困难？我们的求解方案是用噪声**扰乱**数据点，然后在噪声数据点上训练基于分数的模型。当噪声幅度足够大时，它可以填充低数据密度区域以提高分数估计的准确性。例如，当我们扰动一个混合（两个通过添加噪声扰动的）高斯分布时，会发生这种情况。
+如何绕过在低数据密度区域进行准确分数估计的困难？我们的求解方案是用噪声扰乱数据点，然后在噪声数据点上训练基于分数的模型。当噪声幅度足够大时，它可以填充低数据密度区域以提高分数估计的准确性。例如，当我们扰动两个受额外高斯噪声扰动的高斯混合体时，会发生以下情况。
 
-![img](https://yang-song.net/assets/img/score/single_noise.jpg)
-
-
+<img src="https://yang-song.net/assets/img/score/single_noise.jpg" alt="img" style="zoom:15%;" />
 
 > 由于低数据密度区域的减少，对于受噪声扰动的数据分布，估计分数在任何地方都是准确的。
 
 但是另一个问题仍然存在：我们如何为扰动过程选择合适的噪声尺度？较大的噪声显然可以覆盖更多的低密度区域以获得更好的分数估计，但它会过度破坏数据并显著改变原始分布。另一方面，较小的噪声会导致原始数据分布的损坏较少，但不会像我们希望的那样覆盖低密度区域。
 
-为了实现两全其美，我们同时使用多个尺度的噪声进行扰动[17, 18]. 假设我们总是用各向同性高斯噪声扰动数据，总共有$L$个逐渐增加标准偏差 $\sigma_1 < \sigma_2 < \cdots < \sigma_L$. 第一步， 我们以高斯噪声 $\mathcal{N}(0, \sigma_i^2 I), i=1,2,\cdots,L $ 扰乱数据分布 $p(\mathbf{x})$  以获得噪声扰动分布
+为了实现两全其美，我们同时使用多个尺度的噪声进行扰动[18,19]. 假设我们总是用各向同性高斯噪声扰动数据，总共有$L$个逐渐增加标准偏差 $\sigma_1 < \sigma_2 < \cdots < \sigma_L$. 第一步， 我们以高斯噪声 $\mathcal{N}(0, \sigma_i^2 I), i=1,2,\cdots,L $ 扰乱数据分布 $p(\mathbf{x})$  以获得噪声扰动分布
 $$
 p_{\sigma_i}(\mathbf{x}) = \int p(\mathbf{y}) \mathcal{N}(\mathbf{x}; \mathbf{y}, \sigma_i^2 I) \mathrm{d} \mathbf{y}.
 $$
-注意，我们可以通过$\mathbf{x} \sim p(\mathbf{x})$轻松地从$p_{\sigma_i}(\mathbf{x})$中通过抽取样本， 并根据$\mathbf{z} \sim \mathcal{N}(0, I)$ 计算 $\mathbf{x} + \sigma_i \mathbf{z}$.
+注意，我们可以通过$\mathbf{x} \sim p(\mathbf{x})$轻松地从$p_{\sigma_i}(\mathbf{x})$中通过抽取样本， 并根据$\mathbf{z} \sim \mathcal{N}(0, I)$ 计算 $\mathbf{x} + \sigma_i \mathbf{z}$.
 
-接下来，我们通过训练一个**基于条件噪声分数的模型**（也称为噪声条件评分网络，或 NCSN[17, 18, 20]，当用神经网络参数化时）估计每个噪声扰动分布的得分函数，$\nabla_\mathbf{x} \log p_{\sigma_i}(\mathbf{x})$⁡  与分数匹配，使得对所有$i= 1, 2, \cdots, L$,    $\mathbf{s}_\theta(\mathbf{x}, i) \approx \nabla_\mathbf{x} \log p_{\sigma_i}(\mathbf{x})$ .
+接下来，我们通过训练一个基于条件噪声分数的模型（也称为噪声条件评分网络，或 NCSN[17, 18, 20]，当用神经网络参数化时）估计每个噪声扰动分布的得分函数，$\nabla_\mathbf{x} \log p_{\sigma_i}(\mathbf{x})$⁡  与分数匹配，使得对所有$i= 1, 2, \cdots, L$,   有 $\mathbf{s}_\theta(\mathbf{x}, i) \approx \nabla_\mathbf{x} \log p_{\sigma_i}(\mathbf{x})$ .
 
-![img](https://yang-song.net/assets/img/score/multi_scale.jpg)
+<img src="https://yang-song.net/assets/img/score/multi_scale.jpg" alt="img" style="zoom:30%;" />
 
-> 我们应用多尺度高斯噪声来扰乱数据分布（**第一行**），并联合估计所有数据的得分函数（**第二行**)。
+> 我们应用多尺度高斯噪声来扰乱数据分布（第一行），并联合估计所有数据的得分函数（第二行)。
 
-![img](https://yang-song.net/assets/img/score/duoduo.jpg)
+<img src="https://yang-song.net/assets/img/score/duoduo.jpg" alt="img" style="zoom: 100%;" />
 
 > 使用多尺度高斯噪声扰动图像。
 
@@ -158,35 +157,35 @@ $$
 $$
 其中 $\lambda(i) \in \mathbb{R}_{>0}$是一个正的加权函数，通常选择 $\lambda(i) = \sigma_i^2$. 目标(8)可以通过分数匹配进行优化，就像优化朴素（无条件）的基于分数的模型$\mathbf{s}_\theta(\mathbf{x})$一样 。
 
-在训练我们的基于噪声条件分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$之后，我们可以通过运行 Langevin 动力学按顺序$i = L, L-1, \cdots, 1$ 从中产生样本。这种方法称为**退火 Langevin 动力学**, 因为噪声尺度$\sigma_i$随着时间的推移逐渐减少（退火）。
+在训练我们的基于噪声条件分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$之后，我们可以通过运行 Langevin 动力学按顺序$i = L, L-1, \cdots, 1$ 从中产生样本。这种方法称为退火 Langevin 动力学, 因为噪声尺度$\sigma_i$随着时间的推移逐渐减少（退火）。
 
-![img](https://yang-song.net/assets/img/score/ald.gif)
+<img src="https://yang-song.net/assets/img/score/ald.gif" alt="img" style="zoom:50%;" />
 
 > 退火 Langevin 动力学将一系列 Langevin 链与逐渐降低的噪声尺度结合起来。
 
-![img](https://yang-song.net/assets/img/score/celeba_large.gif)
+<img src="https://yang-song.net/assets/img/score/celeba_large.gif" alt="img" style="zoom:50%;" />
 
-![img](https://yang-song.net/assets/img/score/cifar10_large.gif)
+<img src="https://yang-song.net/assets/img/score/cifar10_large.gif" alt="img" style="zoom:50%;" />
 
 
 
->  噪声条件评分网络 (NCSN) 模型的退火 Langevin 动力学（来自参考文献。[17]) 在 CelebA（**左**）和 CIFAR-10（**右**）上训练。我们可以从非结构化噪声开始，根据分数修改图像，生成好的样本。该方法在当时的 CIFAR-10 上取得了最好的 Inception 分数。
+>  噪声条件评分网络 (NCSN) 模型的退火 Langevin 动力学（来自参考文献。[18]) 在 CelebA（左）和 CIFAR-10（右）上训练。我们可以从非结构化噪声开始，根据分数修改图像，生成好的样本。该方法在当时的 CIFAR-10 上取得了最好的 Inception 分数。
 
 以下是调整具有多个噪声尺度的基于分数的生成模型的一些实用建议：
 
-- 选择$\sigma_1 < \sigma_2 < \cdots < \sigma_L$作为一个[几何级数](https://en.wikipedia.org/wiki/Geometric_progression#:~:text=In mathematics%2C a geometric progression,number called the common ratio.)，$\sigma_1$足够小并且 $\sigma_L$与所有训练数据点之间的最大成对距离相当[18].  $L$通常是数百或数千的数量级。
-- 使用 U-Net 跳连[17, 19]参数化基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$.
+- 选择$\sigma_1 < \sigma_2 < \cdots < \sigma_L$作为[几何级数](https://en.wikipedia.org/wiki/Geometric_progression#:~:text=In mathematics%2C a geometric progression,number called the common ratio.)，$\sigma_1$足够小并且 $\sigma_L$与所有训练数据点之间的最大成对距离相当[19].  $L$通常是数百或数千的数量级。
+- 使用 U-Net 跳连[17, 19]，参数化基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$.
 - 在测试时，对基于分数的模型的权重应用指数移动平均[18, 19].
 
 有了这样的最佳实践，我们能够在各种数据集上生成与 GAN 质量相当的高质量图像样本，如下所示：
 
-![img](https://yang-song.net/assets/img/score/ncsnv2.jpg)
+<img src="https://yang-song.net/assets/img/score/ncsnv2.jpg" alt="img" style="zoom:33%;" />
 
 > Samples from the NCSNv2[18]model. From left to right: FFHQ 256x256, LSUN bedroom 128x128, LSUN tower 128x128, LSUN church_outdoor 96x96, and CelebA 64x64.
 
-## Score-based generative modeling with stochastic differential equations (SDEs)
+## 使用随机微分方程 (SDE) 的基于分数的生成模型
 
-正如我们已经讨论过的，添加多个噪声尺度对于基于分数的生成模型的成功至关重要。通过将噪声尺度的数量推广到无穷大[20]，我们不仅获得了**更高质量的样本**，而且还获得了**精确的对数似然计算**和**用于逆问题求解的可控生成**。
+正如我们已经讨论过的，添加多个噪声尺度对于基于分数的生成模型的成功至关重要。通过将噪声尺度的数量推广到无穷大[21]，我们不仅获得了更高质量的样本，而且还获得了精确的对数似然计算和用于逆问题求解的可控生成。
 
 除了本文介绍之外，我们还有用[Google Colab](https://colab.research.google.com/)编写的教程，以提供在 MNIST 上训练Demo模型的指南。我们还有更高级的代码库，可为大型应用程序提供成熟的实现。
 
@@ -199,11 +198,11 @@ $$
 |                                                        [Code in JAX](https://github.com/yang-song/score_sde)                                                        | Score SDE codebase in JAX + FLAX                                                                                        |
 |                                                  [Code in PyTorch](https://github.com/yang-song/score_sde_pytorch)                                                  | Score SDE codebase in PyTorch                                                                                           |
 
-### Perturbing data with an SDE
+### 使用 SDE 扰动数据
 
 当噪声尺度的数量接近无穷大时，我们基本上会随着噪声水平的不断增加而扰乱数据分布。在这种情况下，噪声扰动过程是一个连续时间[随机过程](https://en.wikipedia.org/wiki/Stochastic_process#:~:text=A stochastic process is defined,measurable with respect to some)，如下所示
 
-![img](https://yang-song.net/assets/img/score/perturb_vp.gif)
+<img src="https://yang-song.net/assets/img/score/perturb_vp.gif" alt="img" style="zoom: 67%;" />
 
 > 使用连续时间随机过程将数据扰动为噪声。
 
@@ -213,53 +212,53 @@ $$
 $$
 其中 $\mathbf{f}(\cdot, t): \mathbb{R}^d \to \mathbb{R}^d $是称为漂移系数的向量值函数，$g(t)\in \mathbb{R}$是称为扩散系数的实值函数，$w$ 表示标准[布朗运动](https://en.wikipedia.org/wiki/Brownian_motion)，并且$\mathrm{d} \mathbf{w}$可以看作无穷小的白噪声。随机微分方程的解是随机变量的连续集合$\{ \mathbf{x}(t) \}_{t\in [0, T]}$. 这些随机变量跟踪随机轨迹作为时间索引$t$从开始时间 $0$开始增长到$T$.
 
-让 $p_t(\mathbf{x})$表示$\mathbf{x}(t)$的（边际）概率密度函数. 这里 $t \in [0, T] $ 类似 $i = 1, 2, \cdots, L$ 当我们有有限数量的噪声尺度时，并且$p_t(\mathbf{x})$类似于$p_{\sigma_i}(\mathbf{x})$ . 清楚地是，$p_0(\mathbf{x}) = p(\mathbf{x})$ 是一个数据分布，因为在 $t=0$ 没有对数据应用扰动. 在的通过随机过程扰动 $p(\mathbf{x})$足够长的时间$T$,  $p_T(\mathbf{x})$ 接近易处理的噪声分布 $\pi(\mathbf{x})$, 称为**先验分布**。我们注意到在有限噪声尺度的情况下， $p_T(\mathbf{x})$类似于$p_{\sigma_L}(\mathbf{x})$，对应于应用最大的噪声 $ \sigma_L$扰动数据。
+让 $p_t(\mathbf{x})$表示$\mathbf{x}(t)$的（边际）概率密度函数. 这里 $t \in [0, T] $ 类似 $i = 1, 2, \cdots, L$ 当我们有有限数量的噪声尺度时，并且$p_t(\mathbf{x})$类似于$p_{\sigma_i}(\mathbf{x})$ . 清楚地是，$p_0(\mathbf{x}) = p(\mathbf{x})$ 是一个数据分布，因为在 $t=0$ 没有对数据应用扰动. 在的通过随机过程扰动 $p(\mathbf{x})$足够长的时间$T$,  $p_T(\mathbf{x})$ 接近易处理的噪声分布 $\pi(\mathbf{x})$, 称为先验分布。我们注意到在有限噪声尺度的情况下， $p_T(\mathbf{x})$类似于$p_{\sigma_L}(\mathbf{x})$，对应于应用最大的噪声 $ \sigma_L$扰动数据。
 
-SDE是**手工设计**的，类似于在有限噪声尺度的情况下，我们手工设计的$\sigma_1 < \sigma_2 < \cdots < \sigma_L$。添加噪声扰动的方法有很多种，SDE 的选择也不是唯一的。比如下面的SDE
+SDE是手工设计的，类似于在有限噪声尺度的情况下，我们手工设计的$\sigma_1 < \sigma_2 < \cdots < \sigma_L$。添加噪声扰动的方法有很多种，SDE 的选择也不是唯一的。比如下面的SDE
 $$
 \begin{align} \mathrm{d}\mathbf{x} = e^{t} \mathrm{d} \mathbf{w} \end{align}
 $$
-用均值为零且方差呈指数增长的高斯噪声扰动数据，这类似于通过$\mathcal{N}(0, \sigma_1^2 I), \mathcal{N}(0, \sigma_2^2 I), \cdots, \mathcal{N}(0, \sigma_L^2 I)$⋯ $\sigma_1 < \sigma_2 < \cdots < \sigma_L$是一个[几何级数](https://en.wikipedia.org/wiki/Geometric_progression#:~:text=In mathematics%2C a geometric progression,number called the common ratio.) 来扰动数据 。因此SDE 应该被视为模型的一部分，就像$\{\sigma_1, \sigma_2, \cdots, \sigma_L\}$. 在[20]，我们提供了三种通常适用于图像的 SDE：方差爆炸 SDE (VE SDE)、方差保持 SDE (VP SDE) 和 sub- VP SDE。
+用均值为零且方差呈指数增长的高斯噪声扰动数据，这类似于通过$\mathcal{N}(0, \sigma_1^2 I), \mathcal{N}(0, \sigma_2^2 I), \cdots, \mathcal{N}(0, \sigma_L^2 I)$⋯ $\sigma_1 < \sigma_2 < \cdots < \sigma_L$是一个[几何级数](https://en.wikipedia.org/wiki/Geometric_progression#:~:text=In mathematics%2C a geometric progression,number called the common ratio.) 来扰动数据 。因此SDE 应该被视为模型的一部分，就像$\{\sigma_1, \sigma_2, \cdots, \sigma_L\}$. 在[21]，我们提供了三种通常适用于图像的 SDE：方差爆炸 SDE (VE SDE)、方差保持 SDE (VP SDE) 和 sub- VP SDE。
 
-### Reversing the SDE for sample generation
+### 反转 SDE 以生成样本
 
-**回想一下，在有限数量的噪声尺度下，我们可以通过使用退火 Langevin 动力学**反转扰动过程来生成样本，即，使用 Langevin 动力学从每个噪声扰动分布中顺序采样。对于无限噪声尺度，我们可以通过使用反向 SDE 类似地反转样本生成的扰动过程。
+回想一下，在有限数量的噪声尺度下，我们可以通过使用退火 Langevin 动力学反转扰动过程来生成样本，即，使用 Langevin 动力学从每个噪声扰动分布中顺序采样。对于无限噪声尺度，我们可以通过使用反向 SDE 类似地反转样本生成的扰动过程。
 
-![img](https://yang-song.net/assets/img/score/denoise_vp.gif)
+<img src="https://yang-song.net/assets/img/score/denoise_vp.gif" alt="img" style="zoom:50%;" />
 
 >  通过反转扰动过程从噪声中生成数据。
 
-重要的是，任何 SDE 都有相应的反向 SDE[34], 其闭合形式为
+重要的是，任何 SDE 都有相应的反向 SDE[35], 其闭合形式为
 $$
 \begin{equation} \mathrm{d}\mathbf{x} = [\mathbf{f}(\mathbf{x}, t) - g^2(t) \nabla_\mathbf{x} \log p_t(\mathbf{x})]\mathrm{d}t + g(t) \mathrm{d} \mathbf{w}.\end{equation}
 $$
-这里$\mathrm{d} t$表示负无穷小时间步，因为 SDE(10)需要反向运算（从$t=T$到$t=0$). 为了计算反向 SDE，我们需要估计$\nabla_\mathbf{x} \log p(\mathbf{x})$, **这**正是 $p_t(\mathbf{x})$的得分函数.
+这里$\mathrm{d} t$表示负无穷小时间步，因为 SDE(10)需要反向运算（从$t=T$到$t=0$). 为了计算反向 SDE，我们需要估计$\nabla_\mathbf{x} \log p(\mathbf{x})$, 这正是 $p_t(\mathbf{x})$的得分函数.
 
-![img](https://yang-song.net/assets/img/score/sde_schematic.jpg)
+<img src="https://yang-song.net/assets/img/score/sde_schematic.jpg" alt="img" style="zoom:30%;" />
 
 >  求解反向 SDE 会产生一个基于分数的生成模型。可以使用 SDE 将数据转换为简单的噪声分布。如果我们知道每个中间时间步的分布得分，则可以反过来从噪声中生成样本。
 
-### Estimating the reverse SDE with score-based models and score matching
+### 使用基于分数的模型和分数匹配估计反向 SDE
 
-求解反向SDE需要我们知道最终分布$p_T(\mathbf{x})$, 和得分函数$\nabla_\mathbf{x} \log p_t(\mathbf{x})$⁡. 通过设计，前者接近于先验分布$\pi(\mathbf{x})$这是很容易处理的。为了估计$\nabla_\mathbf{x} \log p_t(\mathbf{x})$⁡，我们训练一个**基于时间依赖分数的模型** $\mathbf{s}_\theta(\mathbf{x}, t)$, $\mathbf{s}_\theta(\mathbf{x}, t)$≈$ \nabla_\mathbf{x} \log ⁡p_t(\mathbf{x})$. 这类似于基于噪声条件分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$，用于有限噪声尺度, 经过训练使得 $\mathbf{s}_\theta(\mathbf{x}, i)$≈$\nabla_\mathbf{x} \log ⁡p_{\sigma_i}(\mathbf{x})$
+求解反向SDE需要我们知道最终分布$p_T(\mathbf{x})$, 和得分函数$\nabla_\mathbf{x} \log p_t(\mathbf{x})$⁡. 通过设计，前者接近于先验分布$\pi(\mathbf{x})$这是很容易处理的。为了估计$\nabla_\mathbf{x} \log p_t(\mathbf{x})$⁡，我们训练一个基于时间依赖分数的模型 $\mathbf{s}_\theta(\mathbf{x}, t)$，使得$\mathbf{s}_\theta(\mathbf{x}, t)$≈$ \nabla_\mathbf{x} \log ⁡p_t(\mathbf{x})$. 这类似于基于噪声条件分数的模型$\mathbf{s}_\theta(\mathbf{x}, i)$，用于有限噪声尺度, 经过训练使得 $\mathbf{s}_\theta(\mathbf{x}, i)$≈$\nabla_\mathbf{x} \log ⁡p_{\sigma_i}(\mathbf{x})$
 
 我们的训练目标是： $\mathbf{s}_\theta(\mathbf{x}, t)$ 是 Fisher 散度的连续加权组合，由下式给出
 $$
 \begin{equation} \mathbb{E}_{t \in \mathcal{U}(0, T)}\mathbb{E}_{p_t(\mathbf{x})}[\lambda(t) \| \nabla_\mathbf{x} \log p_t(\mathbf{x}) - \mathbf{s}_\theta(\mathbf{x}, t) \|_2^2], \end{equation}
 $$
-其中$\mathcal{U}(0, T)$表示时间间隔内的均匀分布$[0, T]$，和$\lambda: \mathbb{R} \to \mathbb{R}_{>0}$是正加权函数。通常我们使用$\lambda(t) \propto 1/ \mathbb{E}[\| \nabla_{\mathbf{x}(t)} \log p(\mathbf{x}(t) \mid \mathbf{x}(0))\|_2^2]$ 来平衡不同分数匹配损失随时间的大小。和以前一样，我们的 Fisher 散度的加权组合可以通过分数匹配方法有效优化，例如去噪分数匹配[16]和切片得分匹配[30]. 一旦我们基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t)$被训练到最优，我们可以将它插入到反向 SDE 的表达式中(11)获得估计的反向 SDE。
+其中$\mathcal{U}(0, T)$表示时间间隔内的均匀分布$[0, T]$，和$\lambda: \mathbb{R} \to \mathbb{R}_{>0}$是正加权函数。通常我们使用$\lambda(t) \propto 1/ \mathbb{E}[\| \nabla_{\mathbf{x}(t)} \log p(\mathbf{x}(t) \mid \mathbf{x}(0))\|_2^2]$ 来平衡不同分数匹配损失随时间的大小。和以前一样，我们的 Fisher 散度的加权组合可以通过分数匹配方法有效优化，例如去噪分数匹配[16]和切片得分匹配[30]. 一旦我们基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t)$被训练到最优，我们可以将它插入到反向 SDE 的表达式中(11)获得估计的反向 SDE。
 $$
 \begin{equation} \mathrm{d}\mathbf{x} = [\mathbf{f}(\mathbf{x}, t) - g^2(t) \mathbf{s}_\theta(\mathbf{x}, t)]\mathrm{d}t + g(t) \mathrm{d} \mathbf{w}. \end{equation}
 $$
-我们可以从$\mathbf{x}(T) \sim \pi$ 开始，求解上述反向SDE得到样本$\mathbf{x}(0)$. 让我们表示用$p_\theta$表示$\mathbf{x}(0)$的分布. 当基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t)$训练完，我们有$p_\theta \approx p_0$， 在这种情况下$\mathbf{x}(0)$是数据分布的$p_0$近似采样
+我们可以从$\mathbf{x}(T) \sim \pi$ 开始，求解上述反向SDE得到样本$\mathbf{x}(0)$. 让我们表示用$p_\theta$表示$\mathbf{x}(0)$的分布. 当基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t)$训练完，我们有$p_\theta \approx p_0$， 在这种情况下$\mathbf{x}(0)$是数据分布的$p_0$近似采样
 
-当$\lambda(t) = g^2(t)$，在 Fisher 散度的加权组合与 KL 散度之间有重要联系， $p_0$到$p_\theta$在某些正则条件下[35]，有:
+当$\lambda(t) = g^2(t)$，在 Fisher 散度的加权组合与 KL 散度之间有重要联系， $p_0$到$p_\theta$在某些正则条件下[36]，有:
 $$
 \operatorname{KL}(p_0(\mathbf{x})\|p_\theta(\mathbf{x})) \leq \frac{T}{2}\mathbb{E}_{t \in \mathcal{U}(0, T)}\mathbb{E}_{p_t(\mathbf{x})}[\lambda(t) \| \nabla_\mathbf{x} \log p_t(\mathbf{x}) - \mathbf{s}_\theta(\mathbf{x}, t) \|_2^2] + \operatorname{KL}(p_T \mathrel\| \pi).
 $$
-由于与 KL 散度的这种特殊联系以及模型训练的最小化 KL 散度和最大化似然之间的等价性，我们称$\lambda(t) = g(t)^2$ 为似**然加权函数**。使用这种似然加权函数，我们可以训练基于分数的生成模型来实现非常高的似然，与最好的自回归模型相当甚至更优[35].
+由于与 KL 散度的这种特殊联系以及模型训练的最小化 KL 散度和最大化似然之间的等价性，我们称$\lambda(t) = g(t)^2$ 为似然加权函数。使用这种似然加权函数，我们可以训练基于分数的生成模型来实现非常高的似然，与最好的自回归模型相当甚至更优[35].
 
-### How to solve the reverse SDE
+### 如何解决反向SDE
 
 通过用数值 SDE 求解器求解估计的反向 SDE，我们可以模拟样本生成的反向随机过程。也许最简单的数值 SDE 求解器是[Euler-Maruyama 方法](https://en.wikipedia.org/wiki/Euler–Maruyama_method)。当应用于我们估计的反向 SDE 时，它使用有限的步长和小的高斯噪声对 SDE 进行离散化。具体来说，它选择一个小的负时间步长$\Delta t \approx 0$, 初始化$t \gets T$, 并重复以下过程直到$t \approx 0$:
 $$
@@ -271,47 +270,47 @@ $$
 
 此外，我们的反向 SDE 有两个特殊属性，允许更灵活的采样方法：
 
-- 我们通过我们基于时间的基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t)$估计$\nabla_\mathbf{x} \log p_t(\mathbf{x}))$⁡.
+- 我们通过我们基于时间的分数模型$\mathbf{s}_\theta(\mathbf{x}, t)$估计$\nabla_\mathbf{x} \log p_t(\mathbf{x}))$⁡.
 - 我们只关心从每个边际分布中抽样$p_t(\mathbf{x})$. 在不同时间步长获得的样本可以具有任意相关性，并且不必形成从反向 SDE 采样的特定轨迹。
 
-由于这两个属性，我们可以应用 MCMC 方法来微调从数值 SDE 求解器获得的轨迹。具体来说，我们提出**了 Predictor-Corrector samplers**。**预测器**可以是任何数值 SDE 求解器， 从来自现有样本分布$\mathbf{x}(t) \sim p_t(\mathbf{x})$预测$\mathbf{x}(t + \Delta t) \sim p_{t+\Delta t}(\mathbf{x})$. **校正器**可以是任何完全依赖于得分函数的MCMC 程序，例如 Langevin 动力学和哈密顿蒙特卡洛。
+由于这两个属性，我们可以应用 MCMC 方法来微调从数值 SDE 求解器获得的轨迹。具体来说，我们提出了 Predictor-Corrector samplers。预测器可以是任何数值 SDE 求解器， 从来自现有样本分布$\mathbf{x}(t) \sim p_t(\mathbf{x})$预测$\mathbf{x}(t + \Delta t) \sim p_{t+\Delta t}(\mathbf{x})$. 校正器可以是任何完全依赖于得分函数的MCMC 程序，例如 Langevin 动力学和哈密顿蒙特卡洛。
 
 在 Predictor-Corrector 采样器的每一步，我们首先使用预测器来选择合适的步长$\Delta t < 0$, 然后基于当前样本$\mathbf{x}(t)$预测$\mathbf{x}(t + \Delta t)$. 接下来，我们运行几个校正步骤, 根据我们基于分数的模型$\mathbf{s}_\theta(\mathbf{x}, t + \Delta t)$来改进样本$\mathbf{x}(t + \Delta t)$，  以便$\mathbf{x}(t + \Delta t)$成为更高质量的来自$p_{t+\Delta t}(\mathbf{x})$的样本.
 
-通过预测-校正方法和更好的基于分数的模型架构，我们可以在 CIFAR-10 上实现**最好的**样本质量（在 FID 中测量[37]和初始分数[12])，优于迄今为止最好的 GAN 模型（StyleGAN2 + ADA[38]).
+通过预测-校正方法和更好的基于分数的模型架构，我们可以在 CIFAR-10 上实现最好的样本质量（在 FID 中测量[37]和初始分数[12])，优于迄今为止最好的 GAN 模型（StyleGAN2 + ADA[38]).
 
-|        Method        |  FID ↓   | Inception score ↑ |
-| :------------------: | :------: | :---------------: |
-| StyleGAN2 + ADA [38] |   2.92   |       9.83        |
-|      Ours [20]       | **2.20** |     **9.89**      |
+|        Method        | FID ↓ | Inception score ↑ |
+| :------------------: | :---: | :---------------: |
+| StyleGAN2 + ADA [38] | 2.92  |       9.83        |
+|      Ours [20]       | 2.20  |       9.89        |
 
 采样方法还可以针对极高维数据进行扩展。例如，它可以成功生成高保真分辨率的图像1024×1024.
 
-![img](https://yang-song.net/assets/img/score/ffhq_1024.jpeg)
+<img src="https://yang-song.net/assets/img/score/ffhq_1024.jpeg" alt="img" style="zoom:33%;" />
 
 > 来自在 FFHQ 数据集上训练的基于分数的模型的， 1024 x 1024 样本。
 
 其他数据集的一些额外（未经整理）示例（取自此[GitHub](https://github.com/yang-song/score_sde)存储库）：
 
-![img](https://yang-song.net/assets/img/score/bedroom.jpeg)
+<img src="https://yang-song.net/assets/img/score/bedroom.jpeg" alt="img" style="zoom:33%;" />
 
 >  LSUN 卧室的 256 x 256 样本。
 
-![img](https://yang-song.net/assets/img/score/celebahq_256.jpg)
+<img src="https://yang-song.net/assets/img/score/celebahq_256.jpg" alt="img" style="zoom:33%;" />
 
 > CelebA-HQ 上的 256 x 256 样本。
 
-### Probability flow ODE
+### 概率流常微分方程
 
 尽管能够生成高质量样本，但基于 Langevin MCMC 和 SDE 求解器的采样器并未提供一种方法来计算基于分数的生成模型的精确对数似然。下面，我们介绍一个基于常微分方程 (ODE) 的采样器，它可以进行精确的似然计算。
 
-在[20]，我们证明 t 可以在不改变边际分布的情况下将任何 SDE 转换为常微分方程 (ODE)$\{ p_t(\mathbf{x}) \}_{t \in [0, T]}$. 因此，通过求解此 ODE，我们可以从与反向 SDE 相同的分布中采样。SDE 对应的 ODE 称为**概率流 ODE** [20], 由下面公式表示：
+在[20]，我们证明 t 可以在不改变边际分布的情况下将任何 SDE 转换为常微分方程 (ODE)$\{ p_t(\mathbf{x}) \}_{t \in [0, T]}$. 因此，通过求解此 ODE，我们可以从与反向 SDE 相同的分布中采样。SDE 对应的 ODE 称为概率流 ODE [20], 由下面公式表示：
 $$
 \begin{equation} \mathrm{d} \mathbf{x} = \bigg[\mathbf{f}(\mathbf{x}, t) - \frac{1}{2}g^2(t) \nabla_\mathbf{x} \log p_t(\mathbf{x})\bigg] \mathrm{d}t. \end{equation}
 $$
 下图描绘了 SDE 和概率流 ODE 的轨迹。尽管 ODE 轨迹明显比 SDE 轨迹更平滑，但它们都能将相同的数据分布转换为相同的先验分布，反之亦然，并且共享同一组边际分布$\{ p_t(\mathbf{x}) \}_{t \in [0, T]}$. 换句话说，通过求解概率流 ODE 得到的轨迹与 SDE 轨迹具有相同的边缘分布。
 
-![img](https://yang-song.net/assets/img/score/teaser.jpg)
+<img src="https://yang-song.net/assets/img/score/teaser.jpg" alt="img" style="zoom:33%;" />
 
 > 我们可以使用 SDE 将数据映射到噪声分布（先验)，并反转此 SDE 以进行生成模型。我们还可以反转关联的概率流 ODE，这会产生一个确定性过程，该过程从与 SDE 相同的分布中采样。逆SDE和概率流ODE都可以通过估计得分函数得到。
 
@@ -330,19 +329,19 @@ $$
 |  Glow   |                 3.35                 |
 | FFJORD  |                 3.40                 |
 | Flow++  |                 3.29                 |
-|  Ours   |               **2.99**               |
+|  Ours   |                 2.99                 |
 
-**当使用我们之前讨论的似然加权**训练基于分数的模型，并使用**变分反量化**来获得离散图像的似然时，我们可以获得与最好的自回归模型相当甚至更好的似然（所有这些都没有任何数据增强)[35].
+当使用我们之前讨论的似然加权训练基于分数的模型，并使用变分反量化来获得离散图像的似然时，我们可以获得与最好的自回归模型相当甚至更好的似然（所有这些都没有任何数据增强)[35].
 
 |       Method       | Negative log-likelihood (bits/dim) ↓ on CIFAR-10 | Negative log-likelihood (bits/dim) ↓ on ImageNet 32x32 |
 | :----------------: | :----------------------------------------------: | :----------------------------------------------------: |
-| Sparse Transformer |                     **2.80**                     |                           -                            |
+| Sparse Transformer |                       2.80                       |                           -                            |
 | Image Transformer  |                       2.90                       |                          3.77                          |
-|        Ours        |                       2.83                       |                        **3.76**                        |
+|        Ours        |                       2.83                       |                          3.76                          |
 
-### Controllable generation for inverse problem solving
+### 逆问题求解的可控生成
 
-基于分数的生成模型特别适合求解反问题。从本质上讲，逆问题与贝叶斯推理问题相同。$x$和$y$是是两个随机变量，假设我们知道生成的正向过程是从$x$ 到 $y$, 由$ p(\mathbf{y} \mid \mathbf{x})$表示转移概率分布。 逆问题是计算$p(\mathbf{x} \mid \mathbf{y})$. 根据贝叶斯定理，我们有$p(\mathbf{x} \mid \mathbf{y}) = p(\mathbf{x}) p(\mathbf{y} \mid \mathbf{x}) / \int p(\mathbf{x}) p(\mathbf{y} \mid \mathbf{x}) \mathrm{d} \mathbf{x}$. 这个表达式可以通过对 $x$在两侧求导得到极大简化，导出以下贝叶斯规则评分函数：
+基于分数的生成模型特别适合求解反问题。从本质上讲，逆问题与贝叶斯推理问题相同。$x$和$y$是是两个随机变量，假设我们知道生成的正向过程是从$x$ 到 $y$, 由$ p(\mathbf{y} \mid \mathbf{x})$表示转移概率分布。 逆问题是计算$p(\mathbf{x} \mid \mathbf{y})$. 根据贝叶斯定理，我们有$p(\mathbf{x} \mid \mathbf{y}) = p(\mathbf{x}) p(\mathbf{y} \mid \mathbf{x}) / \int p(\mathbf{x}) p(\mathbf{y} \mid \mathbf{x}) \mathrm{d} \mathbf{x}$. 这个表达式可以通过对 $x$在两侧求导得到极大简化，导出以下贝叶斯规则评分函数：
 $$
 \begin{equation} \nabla_\mathbf{x} \log p(\mathbf{x} \mid \mathbf{y}) = \nabla_\mathbf{x} \log p(\mathbf{x}) + \nabla_\mathbf{x} \log p(\mathbf{y} \mid \mathbf{x}).\end{equation}
 $$
@@ -352,23 +351,23 @@ UT Austin 的最新工作[28]已经证明基于分数的生成模型可以应用
 
 下面我们展示了一些求解计算机视觉逆问题的例子。
 
-![img](https://yang-song.net/assets/img/score/class_cond.png)
+<img src="https://yang-song.net/assets/img/score/class_cond.png" alt="img" style="zoom: 50%;" />
 
 > 类条件生成，无条件的基于分数的模型，以及 CIFAR-10 上的预训练噪声条件图像分类器。
 
-![img](https://yang-song.net/assets/img/score/inpainting.png)
+<img src="https://yang-song.net/assets/img/score/inpainting.png" alt="img" style="zoom:50%;" />
 
 > 使用在 LSUN 卧室上训练的基于分数的模型进行图像修复。最左边的列是基本事实。第二列显示蒙版图像（在我们的框架中为 y)。其余列显示不同的修复图像，通过求解条件逆时 SDE 生成。
 
-![img](https://yang-song.net/assets/img/score/colorization.png)
+<img src="https://yang-song.net/assets/img/score/colorization.png" alt="img" style="zoom:50%;" />
 
 > 使用在 LSUN church_outdoor 和 bedroom 上训练的基于时间的基于分数的模型进行图像着色。最左边的列是基本事实。第二列显示灰度图像（在我们的框架中为 y)。其余列显示不同的彩色图像，通过求解条件逆时 SDE 生成。
 
-![img](https://yang-song.net/assets/img/score/lincoln.png)
+<img src="https://yang-song.net/assets/img/score/lincoln.png" alt="img" style="zoom:50%;" />
 
 > 我们甚至可以使用在 FFHQ 上训练的基于分数的模型为历史名人（亚伯拉罕林肯)的灰度肖像着色。图像分辨率为 1024 x 1024。
 
-## Connection to diffusion models and others
+## 与扩散模型和其他模型的连接
 
 我从 2019 年开始从事基于分数的生成模型，当时我努力使分数匹配具有可扩展性，以便在高维数据集上训练基于深度能量的模型。我在这方面的第一次尝试导致了切片分数匹配的方法[30]. 尽管用于训练基于能量的模型的切片分数匹配具有可扩展性，但我惊讶地发现，即使在 MNIST 数据集上，从这些模型中抽取的 Langevin 样本也无法产生合理的样本。我开始研究这个问题，并发现了三个可以产生极好的样本的关键改进：
 
@@ -394,12 +393,12 @@ UT Austin 的最新工作[28]已经证明基于分数的生成模型可以应用
 
 这篇博文详细介绍了基于分数的生成模型。我们证明了这种新的生成模型范例能够生成高质量样本，计算精确的对数似然，并执行可控生成以求解逆向问题。它是我们过去几年发表的几篇论文的汇编。如果您对更多详细信息感兴趣，请访问他们：
 
-- [Yang Song*, Sahaj Garg*, Jiaxin Shi, and Stefano Ermon. *Sliced Score Matching: A Scalable Approach to Density and Score Estimation*. UAI 2019 (Oral)](https://arxiv.org/abs/1905.07088)
-- [Yang Song, and Stefano Ermon. *Generative Modeling by Estimating Gradients of the Data Distribution*. NeurIPS 2019 (Oral)](https://arxiv.org/abs/1907.05600)
-- [Yang Song, and Stefano Ermon. *Improved Techniques for Training Score-Based Generative Models*. NeurIPS 2020](https://arxiv.org/abs/2006.09011)
-- [Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. *Score-Based Generative Modeling through Stochastic Differential Equations*. ICLR 2021 (Outstanding Paper Award)](https://arxiv.org/abs/2011.13456)
-- [Yang Song*, Conor Durkan*, Iain Murray, and Stefano Ermon. *Maximum Likelihood Training of Score-Based Diffusion Models*. NeurIPS 2021 (Spotlight)](https://arxiv.org/abs/2101.09258)
-- [Yang Song*, Liyue Shen*, Lei Xing, and Stefano Ermon. *Solving Inverse Problems in Medical Imaging with Score-Based Generative Models*. ICLR 2022](https://arxiv.org/abs/2111.08005)
+- [Yang Song, Sahaj Garg, Jiaxin Shi, and Stefano Ermon. Sliced Score Matching: A Scalable Approach to Density and Score Estimation. UAI 2019 (Oral)](https://arxiv.org/abs/1905.07088)
+- [Yang Song, and Stefano Ermon. Generative Modeling by Estimating Gradients of the Data Distribution. NeurIPS 2019 (Oral)](https://arxiv.org/abs/1907.05600)
+- [Yang Song, and Stefano Ermon. Improved Techniques for Training Score-Based Generative Models. NeurIPS 2020](https://arxiv.org/abs/2006.09011)
+- [Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. ICLR 2021 (Outstanding Paper Award)](https://arxiv.org/abs/2011.13456)
+- [Yang Song, Conor Durkan, Iain Murray, and Stefano Ermon. Maximum Likelihood Training of Score-Based Diffusion Models. NeurIPS 2021 (Spotlight)](https://arxiv.org/abs/2101.09258)
+- [Yang Song, Liyue Shen, Lei Xing, and Stefano Ermon. Solving Inverse Problems in Medical Imaging with Score-Based Generative Models. ICLR 2022](https://arxiv.org/abs/2111.08005)
 
 对于受基于分数的生成模型影响的作品列表，牛津大学的研究人员建立了一个非常有用（但不一定完整）的网站：[https](https://scorebasedgenerativemodeling.github.io/) ://scorebasedgenerativemodeling.github.io/ 。
 
