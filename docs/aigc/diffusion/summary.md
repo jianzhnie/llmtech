@@ -206,9 +206,11 @@ L_t^\text{simple}
 $$
 其中 $C$ 是一个常数，不依赖于$\theta$.
 
+
 <div align=center>
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM-algo.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM-algo.png" alt="img" style="zoom:33%;" />
 </div>
+
 
 >  图 4. DDPM 中的训练和采样算法（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)）
 
@@ -289,6 +291,7 @@ $$
 \bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \; w \nabla_{\mathbf{x}_t} \log f_\phi(y | \mathbf{x}_t)
 $$
 结果，去除扩散模型（**ADM**）和带有额外分类器引导的模型（**ADM-G**）能够比SOTA生成模型（例如BigGAN）取得更好的结果。
+
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/conditioned-DDPM.png" alt="img" style="zoom: 25%;" />
 </div>
@@ -350,6 +353,7 @@ $$
 
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDIM-results.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图 8. 在CIFAR10和CelebA数据集上，不同设置的扩散模型的FID得分，包括DDIM($\eta=0$） 和DDPM($\hat{\sigma}$). （图片来源：[Song et al., 2020](https://arxiv.org/abs/2010.02502)）
 
@@ -368,7 +372,9 @@ $$
 
 **渐进式蒸馏**（Salimans和Ho，2022）是一种将经过训练的确定性采样器蒸馏为采样步骤减半的新模型的方法。学生模型从教师模型初始化，并朝着一个目标进行去噪，其中一个学生DDIM步骤匹配2个教师步骤，而不是使用原始样本 $x_0$ 作为去噪目标。在每次渐进式蒸馏迭代中，我们可以将采样步骤减半。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/progressive-distillation-algo.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图10. 算法1（扩散模型训练）和算法2（渐进式蒸馏）并排比较，其中渐进式蒸馏中的相对变化以绿色突出显示。
 
@@ -379,6 +385,7 @@ $$
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models.png" alt="img" style="zoom:50%;" />
 </div>
+
 > 图11. 一致性模型学习将轨迹上的任何数据点映射回其起源。（图片来源：Song等人，2023）
 
 给定一个轨迹 $ \{\mathbf{x}_t | t \in [\epsilon, T]\} $，一致性函数 $ f $ 定义为 $ f: (\mathbf{x}_t, t) \mapsto \mathbf{x}_\epsilon $，并且方程 $ f(\mathbf{x}_t, t) = f(\mathbf{x}_{t'}, t') = \mathbf{x}_\epsilon $ 对所有 $ t, t' \in [\epsilon, T] $ 都成立。当 $ t=\epsilon $ 时，$ f $ 是一个恒等函数。该模型可以如下参数化，其中 $ c_{\text{skip}}(t) $ 和 $ c_{\text{out}}(t) $ 函数被设计成 $ c_{\text{skip}}(\epsilon) = 1, c_{\text{out}}(\epsilon) = 0 $：
@@ -421,7 +428,7 @@ $$
 - 更小的 $ N $ 导致更快的收敛但更差的样本，而更大的 $ N $ 导致更慢的收敛但在收敛时更好的样本。
 
 <div align=center>
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models-exp.png)
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models-exp.png" alt="img" style="zoom:80%;" />
 </div>
 > 图12. 在不同配置下的一致性模型性能比较。CD的最佳配置是LPIPS距离度量、Heun ODE求解器和 $ N=18 $。（图片来源：Song等人，2023）
 
@@ -463,8 +470,9 @@ $$
 
 为了生成高分辨率的高质量图像，Ho等人（2021）提出了使用逐步增加分辨率的多个扩散模型的Pipeline。Pipeline模型之间的噪声条件增强对最终图像质量至关重要，这是通过对每个超分辨率模型 $ p_\theta(\mathbf{x} | \mathbf{z}) $ 的条件输入 $ \mathbf{z} $ 应用强数据增强来实现的。条件噪声有助于减少Pipeline设置中的复合误差。U-Net是高分辨率图像生成中扩散建模的常见选择。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png" alt="img" style="zoom:33%;" />
-
+</div>
 > 图15. 逐步增加分辨率的多个扩散模型的级联Pipeline。（图片来源：Ho等人，2021）
 
 他们发现最有效的噪声是在低分辨率时应用高斯噪声，在高分辨率时应用高斯模糊。此外，他们还探索了两种形式的条件增强，这需要对训练过程进行小的修改。请注意，条件噪声仅在训练时应用，而不在推理时应用。
@@ -527,8 +535,9 @@ Imagen修改了U-Net的几个设计，使其成为高效的U-Net。
 - **上采样**：每个步骤由特征图的上采样组成，后面跟着一个2x2卷积，每个步骤将特征通道的数量减半。
 - **快捷方式**：快捷连接导致与下采样堆栈的相应层进行连接，并将必要的高分辨率特征提供给上采样过程。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/U-Net.png" alt="img" style="zoom:33%;" />
-
+</div>
 > 图17. U-Net架构。每个蓝色方块是一个特征图，顶部标记了通道数，左侧底部标记了高度x宽度维度。灰色箭头标记了快捷连接。（图片来源：Ronneberger，2015）
 
 为了使图像生成能够根据额外的图像进行条件组合信息（如Canny边缘、Hough线、用户涂鸦、人类后骨架、分割图、深度和法线）.
