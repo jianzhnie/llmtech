@@ -63,7 +63,10 @@ $$
 p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) \quad
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
 $$
+
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-example.png" alt="img" style="zoom: 10%;" />
+</div>
 
 > Fig. 3. An example of training a diffusion model for modeling a 2D swiss roll data. (Image source: [Sohl-Dickstein et al., 2015](https://arxiv.org/abs/1503.03585))
 
@@ -203,7 +206,11 @@ L_t^\text{simple}
 $$
 其中 $C$ 是一个常数，不依赖于$\theta$.
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM-algo.png)
+
+<div align=center>
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDPM-algo.png" alt="img" style="zoom:33%;" />
+</div>
+
 
 >  图 4. DDPM 中的训练和采样算法（图片来源：[Ho et al. 2020](https://arxiv.org/abs/2006.11239)）
 
@@ -236,7 +243,9 @@ $$
 $$
 其中小偏移量$s$是为了防止当$t=0$时, $\beta_t$过小.
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/diffusion-beta.png" alt="img" style="zoom:33%;" />
+</div>
 
 >  Fig. 5. Comparison of linear and cosine-based scheduling of $\beta\_t$ during training. (Image source: [Nichol & Dhariwal, 2021](https://arxiv.org/abs/2102.09672))
 
@@ -250,7 +259,9 @@ $$
 $$
 然而，简单的目标 $L_\text{simple}$ 不依赖于 $\boldsymbol{\Sigma}_\theta$. 为了增加依赖性，他们构建了一个混合目标 $L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}$,  其中λ=0.001很小， 并且在$L_\text{VLB}$ 项中的 $\boldsymbol{\mu}_\theta$上停止梯度， 使得$L_\text{VLB}$只指导$\boldsymbol{\Sigma}_\theta$的学习. 根据经验，他们观察到$L_\text{VLB}$可能由于嘈杂的梯度而难以优化，因此他们建议使用具有重要性抽样的$L_\text{VLB}$的时间平滑版本。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/improved-DDPM-nll.png" alt="img" style="zoom: 25%;" />
+</div>
 
 > 图 6. 改进的 DDPM 与其他基于似然的生成模型的负对数似然比较。NLL 以 bits/dim 为单位报告。（图片来源：[Nichol & Dhariwal，2021 年](https://arxiv.org/abs/2102.09672))
 
@@ -281,7 +292,9 @@ $$
 $$
 结果，去除扩散模型（**ADM**）和带有额外分类器引导的模型（**ADM-G**）能够比SOTA生成模型（例如BigGAN）取得更好的结果。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/conditioned-DDPM.png" alt="img" style="zoom: 25%;" />
+</div>
 
 > 图7. 使用分类器引导在DDPM和DDIM中进行条件生成的算法。（图片来源：，[Dhariwal & Nichol (2021)](https://arxiv.org/abs/2105.05233))
 
@@ -338,7 +351,9 @@ q_{\sigma, \tau}(\mathbf{x}_{\tau_{i-1}} \vert \mathbf{x}_{\tau_t}, \mathbf{x}_0
 $$
 虽然，在实验中，所有模型都经过$T=1000$ 扩散步骤的训练， 他们观察到 DDIM ($\eta=0$)  可以在 $S$ 很小的时候生产出质量最好的样本，而 DDPM ($\eta=1$) 在 $S$ 很小的情况下表现要差的多。当我们能够运行完整的逆向马尔可夫扩散步骤（$S$=$T$=1000)时，DDPM 确实表现更好. 使用 DDIM，可以将扩散模型训练到任意数量的前向步，但在生成过程中只从子集中采样。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DDIM-results.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图 8. 在CIFAR10和CelebA数据集上，不同设置的扩散模型的FID得分，包括DDIM($\eta=0$） 和DDPM($\hat{\sigma}$). （图片来源：[Song et al., 2020](https://arxiv.org/abs/2010.02502)）
 
@@ -348,15 +363,18 @@ $$
 2. 具有“一致性”属性，因为生成过程是确定性的，这意味着以相同潜变量为条件的多个样本应该具有相似的高级特征。
 3. 由于一致性，DDIM 可以在潜在变量中进行语义上有意义的插值。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/progressive-distillation.png" alt="img" style="zoom: 33%;" />
-
+</div>
 > 图 9. 渐进蒸馏可以将每次迭代中的扩散采样步骤减少一半。 （图片来源：[Salimans & Ho，2022](https://arxiv.org/abs/2202.00512)）
 
 ### 渐进式蒸馏
 
 **渐进式蒸馏**（Salimans和Ho，2022）是一种将经过训练的确定性采样器蒸馏为采样步骤减半的新模型的方法。学生模型从教师模型初始化，并朝着一个目标进行去噪，其中一个学生DDIM步骤匹配2个教师步骤，而不是使用原始样本 $x_0$ 作为去噪目标。在每次渐进式蒸馏迭代中，我们可以将采样步骤减半。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/progressive-distillation-algo.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图10. 算法1（扩散模型训练）和算法2（渐进式蒸馏）并排比较，其中渐进式蒸馏中的相对变化以绿色突出显示。
 
@@ -364,7 +382,9 @@ $$
 
 **一致性模型**（Song等人，2023）学习将扩散采样轨迹上的任何中间噪声数据点 $ \mathbf{x}_t, t > 0 $ 直接映射回其原始 $ \mathbf{x}_0 $。由于其自我一致性属性，因此得名一致性模型，因为同一轨迹上的任何数据点都映射到同一起源。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models.png" alt="img" style="zoom:50%;" />
+</div>
 
 > 图11. 一致性模型学习将轨迹上的任何数据点映射回其起源。（图片来源：Song等人，2023）
 
@@ -407,16 +427,18 @@ $$
 - 在不同的距离度量函数 $ d(.) $ 选项中，LPIPS度量比 $ \ell_1 $ 和 $ \ell_2 $ 距离工作得更好。
 - 更小的 $ N $ 导致更快的收敛但更差的样本，而更大的 $ N $ 导致更慢的收敛但在收敛时更好的样本。
 
-![img](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models-exp.png)
-
+<div align=center>
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models-exp.png" alt="img" style="zoom:80%;" />
+</div>
 > 图12. 在不同配置下的一致性模型性能比较。CD的最佳配置是LPIPS距离度量、Heun ODE求解器和 $ N=18 $。（图片来源：Song等人，2023）
 
 ## 潜在变量空间
 
 Latent diffusion model ( LDM ; [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752) ) 在隐空间而不是在像素空间中运行扩散过程，使训练成本更低，推理速度更快。这是基于这样的观察：大多数图像的比特贡献于感知细节，而在积极压缩后，语义和概念组合仍然保留。LDM通过首先使用自动编码器减少像素级冗余，然后在学习到的潜在空间中使用扩散过程操作/生成语义概念，松散地分解了感知压缩和语义压缩。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png" alt="img" style="zoom:33%;" />
-
+</div>
 >  Fig. 13. The plot for tradeoff between compression rate and distortion, illustrating two-stage compressions - perceptural and semantic comparession. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752))
 
 感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 隐变量 $\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从隐变量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化，以避免隐空间中的任意高方差。
@@ -438,7 +460,9 @@ $$
 \tau_\theta(y) \in \mathbb{R}^{M \times d_\tau}
 \end{aligned}
 $$
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/latent-diffusion-arch.png" alt="img" style="zoom: 25%;" />
+</div>
 
 > Fig. 14. The architecture of latent diffusion model. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.1075))
 
@@ -446,8 +470,9 @@ $$
 
 为了生成高分辨率的高质量图像，Ho等人（2021）提出了使用逐步增加分辨率的多个扩散模型的Pipeline。Pipeline模型之间的噪声条件增强对最终图像质量至关重要，这是通过对每个超分辨率模型 $ p_\theta(\mathbf{x} | \mathbf{z}) $ 的条件输入 $ \mathbf{z} $ 应用强数据增强来实现的。条件噪声有助于减少Pipeline设置中的复合误差。U-Net是高分辨率图像生成中扩散建模的常见选择。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png" alt="img" style="zoom:33%;" />
-
+</div>
 > 图15. 逐步增加分辨率的多个扩散模型的级联Pipeline。（图片来源：Ho等人，2021）
 
 他们发现最有效的噪声是在低分辨率时应用高斯噪声，在高分辨率时应用高斯模糊。此外，他们还探索了两种形式的条件增强，这需要对训练过程进行小的修改。请注意，条件噪声仅在训练时应用，而不在推理时应用。
@@ -470,8 +495,10 @@ P(\mathbf{x} | y) &= P(\mathbf{x}, \mathbf{c}^i | y) \\
 &= P(\mathbf{x} | \mathbf{c}^i, y)P(\mathbf{c}^i | y) \quad \text{因为} \mathbf{c}^i \text{给定} \mathbf{x} \text{是确定性的}
 \end{aligned}
 $$
-<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png" alt="img" style="zoom:33%;" />
 
+<div align=center>
+<img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png" alt="img" style="zoom:33%;" />
+</div>
 > 图16. unCLIP的架构。（图片来源：Ramesh等人，2022）
 
 unCLIP遵循两阶段图像生成过程：
@@ -508,8 +535,9 @@ Imagen修改了U-Net的几个设计，使其成为高效的U-Net。
 - **上采样**：每个步骤由特征图的上采样组成，后面跟着一个2x2卷积，每个步骤将特征通道的数量减半。
 - **快捷方式**：快捷连接导致与下采样堆栈的相应层进行连接，并将必要的高分辨率特征提供给上采样过程。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/U-Net.png" alt="img" style="zoom:33%;" />
-
+</div>
 > 图17. U-Net架构。每个蓝色方块是一个特征图，顶部标记了通道数，左侧底部标记了高度x宽度维度。灰色箭头标记了快捷连接。（图片来源：Ronneberger，2015）
 
 为了使图像生成能够根据额外的图像进行条件组合信息（如Canny边缘、Hough线、用户涂鸦、人类后骨架、分割图、深度和法线）.
@@ -523,7 +551,9 @@ Imagen修改了U-Net的几个设计，使其成为高效的U-Net。
 3. 使用两个零卷积层，表示为 $ \mathcal{Z}_{\theta_{z1}}(.;.) $ 和 $ \mathcal{Z}_{\theta_{z2}}(.;.) $，这是1x1的卷积层，其权重和偏置初始化为零，将这两个块连接起来。零卷积通过消除初始训练步骤中的随机噪声作为梯度来保护这个背骨。
 4. 最终输出是：$ \mathbf{y}_c = \mathcal{F}_\theta(\mathbf{x}) + \mathcal{Z}_{\theta_{z2}}(\mathcal{F}_{\theta_c}(\mathbf{x} + \mathcal{Z}_{\theta_{z1}}(\mathbf{c}))) $
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/ControlNet.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图18. ControlNet架构。（图片来源：Zhang等人，2023）
 
@@ -537,7 +567,9 @@ Imagen修改了U-Net的几个设计，使其成为高效的U-Net。
 
 4. 变压器解码器输出噪声预测和输出对角线协方差预测。
 
+<div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/DiT.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 图19. Diffusion Transformer（DiT）架构。（图片来源：Peebles和Xie，2023）
 

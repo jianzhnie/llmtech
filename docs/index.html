@@ -35,6 +35,11 @@
             width: auto !important;
         }
     </style>
+    <style>
+        figure {
+            text-align: center
+        }
+    </style>
 </head>
 
 <body>
@@ -105,11 +110,11 @@
                 crossChapter: true,
                 crossChapterText: true,
             },
-            progress: {
-                position: "top",//默认上方
-                color: "var(--theme-color,#42b983)",//进度条颜色
-                height: "3px",//进度条高度
-            },
+            // progress: {
+            //     position: "top",//默认上方
+            //     color: "var(--theme-color,#42b983)",//进度条颜色
+            //     height: "3px",//进度条高度
+            // },
             tabs: {
                 persist: true,
                 sync: true,
@@ -145,6 +150,13 @@
             },
             markdown: {
                 renderer: {
+                    image: function (href, title, text) {
+                        // 按照原来的渲染 img
+                        var image_html = this.origin.image.apply(this, arguments)
+                        // 用 figure 包一下图片，实现居中
+                        return '<figure>' + image_html + '<figcaption>' + text +
+                            '</figcaption></figure>'
+                    },
                     code: function (code, lang, base = null) {
                         if (lang === "mermaid") {
                             return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
@@ -322,7 +334,7 @@
     <!-- 导航栏折叠 -->
     <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
     <!-- 阅读进度条插件 -->
-    <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script> -->
     <!-- 在markdown里回显tabs -->
     <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1.6.1/dist/docsify-tabs.min.js"></script>
     <!-- 支持 mermaid -->
