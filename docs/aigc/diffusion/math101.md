@@ -2,7 +2,9 @@
 
 > 本文翻译自 AI Summer 的工作人员 Sergios Karagiannakos, Nikolas Adaloglou 等几人发布的一篇文章，原文是 [How diffusion models work: the math from scratch | AI Summer (theaisummer.com)](https://theaisummer.com/diffusion-models/)
 
+<div align=center>
 <img src="https://theaisummer.com/static/ecb7a31540b18a8cbd18eedb446b468e/ee604/diffusion-models.png" alt="扩散模型的工作原理：从零开始的数学" style="zoom:50%;" />
+</div>
 
 ## 扩散模型是什么？
 
@@ -81,7 +83,10 @@ $$
 
 方差参数 $\beta_t$ 可以固定为一个常数，也可以选择作为 $T$ 时间段的一个时间表。事实上，我们可以定义一个方差表，它可以是线性的、二次的、余弦的等等。最初的 DDPM 作者利用了一个从 $\beta_1= 10^{-4}$ 到 $\beta_T = 0.02$ 增加的线性时间表。 [Nichol et al. 2021](https://arxiv.org/abs/2102.09672) 的研究表明，采用余弦时间表效果更好。
 
+<div align=center>
 <img src="https://theaisummer.com/static/074ccf8c4830e7cdf07c68a0f1ef1864/2e195/variance-schedule.png" alt="variance-schedule"  />
+</div>
+
 
 > *Latent samples from linear (top) and cosine (bottom) schedules respectively. Source: [Nichol & Dhariwal 2021](https://arxiv.org/abs/2102.09672)*
 
@@ -194,7 +199,9 @@ $$
 
 此外，[Ho et. al 2020](https://arxiv.org/abs/2006.11239) 决定保持方差固定，让网络只学习均值。后来 [Nichol et al. 2021](https://arxiv.org/abs/2102.09672) 对此进行了改进，他们让网络学习协方差矩阵 $(\boldsymbol{\Sigma})$ （通过修改 $L_t^\text{simple}$ ），取得了更好的结果。
 
+<div align=center>
 <img src="https://theaisummer.com/static/411d503d7233bc525088aa275f30f74e/c1b63/training-sampling-ddpm.png" alt="training-sampling-ddpm" style="zoom:50%;" />
+</div>
 
 > DDPMs 的训练和采样算法 ，
 > 图片来自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
@@ -209,7 +216,9 @@ $$
 
 扩散时间段 $t$ 是通过在每个残差块中加入一个正弦的 [位置嵌入](https://theaisummer.com/positional-embeddings/) 来指定的。欲了解更多细节，请随时访问 [官方 GitHub 仓库](https://github.com/hojonathanho/diffusion)  。关于扩散模型的详细实现，请查看 [Hugging Face 的这篇精彩文章](https://huggingface.co/blog/annotated-diffusion) 。
 
+<div align=center>
 <img src="https://theaisummer.com/static/8e35326846f64b64741e92d6ce4cf8b6/58213/unet.png" alt="unet" style="zoom:50%;" />
+</div>
 
 > U-Net 的架构 ，图片来自 [Ronneberger et al.](https://arxiv.org/abs/1505.04597)
 
@@ -266,7 +275,9 @@ $$
 
 结果，他们能够“引导”生成过程朝着用户定义的文本标题发展。
 
+<div align=center>
 <img src="https://theaisummer.com/static/671ddf9d25d76db9371deac995a52642/1c1a4/classifier-guidance.png" alt="classifier-guidance" style="zoom:50%;" />
+</div>
 
 > 分类器引导的扩散采样算法，图片来自 [Dhariwal & Nichol 2021](https://arxiv.org/abs/2105.05233)
 
@@ -306,7 +317,9 @@ $$
 
 [Ho et al. 2021](https://arxiv.org/abs/2106.15282) 引入了级联扩散模型，以产生高保真的图像。级联扩散模型包括一个由许多连续扩散模型组成的$Pipeline$，这些模型生成分辨率逐渐增加的图像。每个模型通过连续上采样图像并添加更高分辨率的细节，生成比前一个更高质量的样本。要生成图像，我们从每个扩散模型顺序采样。
 
+<div align=center>
 <img src="https://theaisummer.com/static/2abb7ee11f7295d634fabf8820156d8c/eba85/cascade-diffusion.png" alt="cascade-diffusion" style="zoom:50%;" />
+</div>
 
 > 级联扩散模型$Pipeline$，图片来自 Ho & Saharia et al.
 
@@ -332,7 +345,9 @@ $$
 L _{LDM} = \mathbb{E}_{ \mathcal{E}(\mathbf{x}), t,  \boldsymbol{\epsilon}} \left[\|  \boldsymbol{\epsilon}-  \boldsymbol{\epsilon}_{\theta}( \mathbf{z}_t, t ) ||^2 \right]
 $$
 
+<div align=center>
 <img src="https://theaisummer.com/static/59e73a1bfb457aa0665b14ad9b914cbc/c1b63/stable-diffusion.png" alt="stable-diffusion" style="zoom:50%;" />
+</div>
 
 > 隐变量的扩散模型,图片来自 [Rombach et al](https://arxiv.org/abs/2112.10752)
 
@@ -372,7 +387,9 @@ $$
 
 因此，添加噪声是使 DDPM 和基于分数的模型都起作用的关键。
 
+<div align=center>
 <img src="https://theaisummer.com/static/dc655bf322dddc80d5596899e053c5e6/c1b63/score-based.png" alt="score-based" style="zoom:50%;" />
+</div>
 
 > 基于分数的生成模型与分数匹配以及 Langevin 动力学,图片来自 [Generative Modeling by Estimating Gradients of the Data Distribution](https://yang-song.github.io/blog/2021/score/)
 
@@ -394,7 +411,10 @@ $$
 
 我们不使用有限数量的噪声分布来扰动数据，而是使用连续的分布，这些分布根据扩散过程随时间演变。这个过程由一个规定的随机微分方程 (SDE) 来模拟，它不依赖于数据，也没有可训练的参数。通过逆转这个过程，我们可以生成新的样本。
 
+<div align=center>
 <img src="https://theaisummer.com/static/d007d60f773b61f4585cbec3869490d5/c1b63/score-sde.png" alt="score-sde" style="zoom:50%;" />
+</div>
+
 
 > 通过随机微分方程 (SDE) 进行基于分数的生成性建模, 图片来自 [Song et al. 2021](https://arxiv.org/abs/2011.13456)
 
@@ -427,7 +447,9 @@ $$
 
 > 有许多解决反向 SDE 的方案，我们在此不作分析。请务必查看原始论文或作者的 [这篇优秀博文](https://yang-song.github.io/blog/2021/score/)
 
+<div align=center>
 <img src="https://theaisummer.com/static/d75c8ee710db405c3b3f9b912ab8b69a/c1b63/score-based-sde-overview.png" alt="score-based-sde-overview" style="zoom:50%;" />
+</div>
 
 > 通过 SDEs 进行基于分数的生成性建模的概述, 图片来自 [Song et al. 2021](https://arxiv.org/abs/2011.13456)
 
@@ -450,21 +472,39 @@ $$
 ## References
 
 [1] Sohl-Dickstein, Jascha, et al.[ Deep Unsupervised Learning Using Nonequilibrium Thermodynamics](https://arxiv.org/abs/1503.03585). arXiv:1503.03585, arXiv, 18 Nov. 2015
+
 [2] Ho, Jonathan, et al. [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239). arXiv:2006.11239, arXiv, 16 Dec. 2020
+
 [3] Nichol, Alex, and Prafulla Dhariwal.[ Improved Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2102.09672). arXiv:2102.09672, arXiv, 18 Feb. 2021
+
 [4] Dhariwal, Prafulla, and Alex Nichol.[ Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233). arXiv:2105.05233, arXiv, 1 June 2021
+
 [5] Nichol, Alex, et al. [GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models](https://arxiv.org/abs/2112.10741). arXiv:2112.10741, arXiv, 8 Mar. 2022
+
 [6] Ho, Jonathan, and Tim Salimans.[ Classifier-Free Diffusion Guidance](https://openreview.net/forum?id=qw8AKxfYbI). 2021. openreview.net
+
 [7] Ramesh, Aditya, et al. [Hierarchical Text-Conditional Image Generation with CLIP Latents](https://arxiv.org/abs/2204.06125). arXiv:2204.06125, arXiv, 12 Apr. 2022
+
 [8] Saharia, Chitwan, et al. [Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding](https://arxiv.org/abs/2205.11487). arXiv:2205.11487, arXiv, 23 May 2022
+
 [9] Rombach, Robin, et al. [High-Resolution Image Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2112.10752). arXiv:2112.10752, arXiv, 13 Apr. 2022
+
 [10] Ho, Jonathan, et al. [Cascaded Diffusion Models for High Fidelity Image Generation](https://arxiv.org/abs/2106.15282). arXiv:2106.15282, arXiv, 17 Dec. 2021
+
 [11] Weng, Lilian. [What Are Diffusion Models?](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/) 11 July 2021
+
 [12] O'Connor, Ryan. [Introduction to Diffusion Models for Machine Learning](https://www.assemblyai.com/blog/diffusion-models-for-machine-learning-introduction/) AssemblyAI Blog, 12 May 2022
+
 [13] Rogge, Niels and Rasul, Kashif. [The Annotated Diffusion Model](https://huggingface.co/blog/annotated-diffusion) . Hugging Face Blog, 7 June 2022
+
 [14] Das, Ayan. “[An Introduction to Diffusion Probabilistic Models.](https://ayandas.me/blog-tut/2021/12/04/diffusion-prob-models.html)” Ayan Das, 4 Dec. 2021
+
 [15] Song, Yang, and Stefano Ermon. [Generative Modeling by Estimating Gradients of the Data Distribution](https://arxiv.org/abs/1907.05600). arXiv:1907.05600, arXiv, 10 Oct. 2020
+
 [16] Song, Yang, and Stefano Ermon. [Improved Techniques for Training Score-Based Generative Models](https://arxiv.org/abs/2006.09011). arXiv:2006.09011, arXiv, 23 Oct. 2020
+
 [17] Song, Yang, et al. [Score-Based Generative Modeling through Stochastic Differential Equations](https://arxiv.org/abs/2011.13456). arXiv:2011.13456, arXiv, 10 Feb. 2021
+
 [18] Song, Yang. [Generative Modeling by Estimating Gradients of the Data Distribution](https://yang-song.github.io/blog/2021/score/), 5 May 2021
+
 [19] Luo, Calvin.[ Understanding Diffusion Models: A Unified Perspective](https://doi.org/10.48550/arXiv.2208.11970). 25 Aug. 2022
