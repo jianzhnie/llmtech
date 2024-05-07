@@ -12,6 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" title="vue" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/light.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css" />
     <link rel="stylesheet" href="_media/amzn_style.css" />
     <link rel="stylesheet" href="_media/netflix_style.css" />
     <style>
@@ -40,13 +44,15 @@
         // Docsify configuration
         window.$docsify = {
             // name: 'Machine-Learning-Wiki',
-            name: '',
+            name: 'Robin Home Page',
             repo: 'https://github.com/jianzhnie/llmtech',
             homepage: 'README.md',
             //自动跳转到页面顶部
             auto2top: true,
             // 封面
             coverpage: true,
+            // 封面和内容单独显示
+            onlyCover: true,
             executeScript: true,
             // 侧边栏
             loadSidebar: true,
@@ -54,8 +60,11 @@
             loadNavbar: true,
             // load from _footer.md
             loadFooter: true,
+            // 小屏设备下合并导航栏到侧边栏
             mergeNavbar: true,
+            // 最大支持渲染的标题层级
             maxLevel: 4,
+            // 自定义侧边栏后默认不会再生成目录，设置生成目录的最大层级（建议配置为2-4）
             subMaxLevel: 3,
             //自动显示标题
             autoHeader: true,
@@ -63,12 +72,21 @@
             mergeNavbar: true,
             // 使用相对路径
             relativePath: false,
+            // 404页面
+            notFoundPage: true,
+            notFoundPage: 'error.md',
+            // 日期格式
+            formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}',
+            ga: 'UA-46744044-1',
             //搜索插件
             search: {
                 placeholder: '搜索',
                 paths: 'auto',
                 noData: '抱歉！找不到对应的结果',
-
+                maxAge: 86400000,// 过期时间，单位毫秒，默认一天
+                depth: 4,
+                hideOtherSidebarContent: false,
+                namespace: 'Robins Home Page',
             },
             alias: {
                 '/.*/_navbar.md': '/_navbar.md',
@@ -85,6 +103,23 @@
                 crossChapter: true,
                 crossChapterText: true,
             },
+            progress: {
+                position: "top",//默认上方
+                color: "var(--theme-color,#42b983)",//进度条颜色
+                height: "3px",//进度条高度
+            },
+            tabs: {
+                persist: true,
+                sync: true,
+                theme: 'classic',
+                tabComments: true,
+                tabHeadings: true
+            },
+            toc: {
+                tocMaxLevel: 5,
+                target: 'h1, h2, h3, h4, h5, h6',
+                ignoreHeaders: ['<!-- {docsify-ignore} -->', '<!-- {docsify-ignore-all} -->']
+            },
             autoHeaders: {
                 separator: String,          // how numbers should be separated
                 custom: String,          // if `separator` is set to other then specify own here
@@ -94,14 +129,28 @@
             },
             count: {
                 countable: true,
+                position: 'top',
+                margin: '10px',
+                float: 'right',
                 fontsize: '0.9em',
                 color: 'rgb(90,90,90)',
-                language: 'chinese'
+                language: 'chinese',
+                localization: {
+                    words: "",
+                    minute: ""
+                },
+                isExpected: true
             },
-            notFoundPage: true,
-            formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}',
-            notFoundPage: 'error.md',
-            ga: 'UA-46744044-1',
+            markdown: {
+                renderer: {
+                    code: function (code, lang) {
+                        if (lang === "mermaid") {
+                            return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
+                        }
+                        return this.origin.code.apply(this, arguments);
+                    },
+                },
+            },
             // other setting
             vueComponents: {
                 'button-counter': {
@@ -170,7 +219,6 @@
                     // })
                 }
             ],
-
             plugins: [
                 function (hook, vm) {
                     hook.beforeEach(function (html) {
@@ -192,37 +240,6 @@
                     })
                 },
             ],
-            // plugins: [
-            //     function (hook, vm) {
-            //         hook.beforeEach(function (html) {
-            //             var url = 'https://github.com/jianzhnie/machine-learning-wiki/blob/master/docs/' + vm.route.file
-            //             var editHtml = '<a class="edit-this-page" href="' + url + '">Edit this page on GitHub<\/a>\n'
-            //             var footer = [
-            //                 '',
-            //             ]
-            //             return html
-            //                 + '\n----\n'
-            //                 + '⏰ : Last modified {docsify-updated} '
-            //                 + editHtml
-            //                 + footer.join('')
-            //         })
-            //     },
-            // ],
-            // plugins: [
-            //     function (hook) {
-            //         var footer = [
-            //             '<hr/>',
-            //             '<footer>',
-            //             '<span><a href="https://github.com/jianzhnie/">Robin</a> &copy;2017 - 2022.</span>',
-            //             '<span>Powered By <a href="https://github.com/QingWei-Li/docsify" target="_blank">docsify</a>.</span>',
-            //             '</footer>'
-            //         ].join('');
-
-            //         hook.afterEach(function (html) {
-            //             return html + footer
-            //         })
-            //     }
-            // ],
         }
     </script>
     <!-- latex 公式渲染 -->
@@ -231,43 +248,79 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@3"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
 
-    <!-- Put them above docsify.min.js -->
+    <!-- docsify的js依赖 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <!-- 搜索功能支持  -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <!-- 图片放大缩小支持 -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+    <!-- emoji表情支持 -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
-
+    <!-- 红心点击特效 -->
+    <script src="//cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/js/click_heart.js"></script>
+    <!-- 访问量统计 -->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <!-- 外链脚本 - External Script -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
-    <!-- 代码渲染 -->
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-nginx.min.js"></script>
+    <!-- 代码复制 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+    <!-- Markdown 引用样式美化 -->
+    <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
+    <!-- 文档里的header（也就是目录，Table of Content ）显示在右侧边栏 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script>
+    <!-- 代码高亮:引入其他语言扩展 -->
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-cpp.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-php.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-css.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-nginx.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-powershell.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-sql.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-properties.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs/components/matlab.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-http.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-shell-session.min.js"></script>
     <!-- autoheader -->
     <script src="https://cdn.jsdelivr.net/npm/@markbattistella/docsify-autoheaders@latest"></script>
     <!-- footer -->
     <script src="//cdn.jsdelivr.net/npm/@alertbox/docsify-footer/dist/docsify-footer.min.js"></script>
     <!-- 翻页 -->
     <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
-    <!-- 代码复制 -->
-    <script src="//unpkg.com/docsify-copy-code@2"></script>
     <!-- 字数统计 -->
     <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
     <!-- 导航栏折叠 -->
     <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
-    <!-- <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github"></script> -->
+    <!-- 阅读进度条插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+    <!-- 在markdown里回显tabs -->
+    <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1.6.1/dist/docsify-tabs.min.js"></script>
+    <!-- 复制提醒 -->
+    <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <!-- 支持 mermaid -->
+    <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- 复制信息提示 -->
+    <script>
+        document.body.oncopy = function () {
+            +swal("复制成功 ",
+                "若要转载或引用请务必保留原文链接，并申明来源。",
+                "success");
+        };
+    </script>
     <!-- gitalk for comments -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css" />
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
     <script>
         const gitalk = new Gitalk({
-            clientID: '2f03a17c37f95f44eed3',
-            clientSecret: 'bbf486199b370b5312fd0295835fbde6e1361835',
-            repo: 'machine-learning-wiki',
+            clientID: 'Ov23liLV6QeSv9YZSuqt',
+            clientSecret: 'a949192290612ccf6eeaa83d8becad40d457e25f',
+            repo: 'llmtech',
             owner: 'jianzhnie',
             admin: ['jianzhnie'],
             title: location.hash.match(/#(.*?)([?]|$)/)[1], // 这个是设置 issue 对应的标题
@@ -282,7 +335,13 @@
             }
         }
     </script>
-
+    <!-- 图片标题 -->
+    <script src="https://unpkg.com/@h-hg/docsify-image-caption/dist/docsify-image-caption.min.js"></script>
+    <style>
+        figure {
+            text-align: center
+        }
+    </style>
     <!-- 回到顶部功能 -->
     <script>
         addBackToTop({
