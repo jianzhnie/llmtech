@@ -1,5 +1,3 @@
-# AIGC
-
 - ChatGPT
 
   - [chatGPT](aigc/chatgpt/chatGPT.md)
@@ -62,7 +60,7 @@
   - [ZeRO 技术原理](aigc/llm_engineer/zero-optimizer.md)
 
 
-- [扩散模型](aigc/diffusion/README.md)
+- 扩散模型
 
   - [扩散模型理论第一课](aigc/diffusion/theory.md)
   - [什么是扩散模型: A Review](aigc/diffusion/summary.md)
