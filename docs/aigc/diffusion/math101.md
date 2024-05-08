@@ -3,7 +3,7 @@
 > 本文翻译自 AI Summer 的工作人员 Sergios Karagiannakos, Nikolas Adaloglou 等几人发布的一篇文章，原文是 [How diffusion models work: the math from scratch | AI Summer (theaisummer.com)](https://theaisummer.com/diffusion-models/)
 
 <div align=center>
-<img src="https://theaisummer.com/static/ecb7a31540b18a8cbd18eedb446b468e/ee604/diffusion-models.png" alt="扩散模型的工作原理：从零开始的数学" style="zoom:50%;" />
+<img src="https://theaisummer.com/static/ecb7a31540b18a8cbd18eedb446b468e/ee604/diffusion-models.png" alt="扩散模型的工作原理：从零开始的数学" style="zoom:80%;" />
 </div>
 
 ## 扩散模型是什么？
@@ -20,13 +20,13 @@
 
 ## 扩散过程
 
-扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列 $T$ 步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用$t<T$噪声步骤后的图像）是必要的。
+扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列 $T$ 步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用$t<T$噪声步骤后的图像）是必要的。
 
 之后，训练一个神经网络通过逆转噪声过程来恢复原始数据。通过能够对逆向过程建模，我们可以生成新数据。这就是所谓的反向扩散过程，或者通俗地说，就是生成模型的采样过程。
 
 我们深入数学，使之清晰明了。
 
-## 正向扩散
+### 正向扩散
 
 扩散模型可以看作是隐变量模型。“隐变量” 意味着我们指的是隐藏的连续特征空间。这样，它们可能看起来类似于[变分自动编码器 (VAE)](https://theaisummer.com/latent-variable-models/)。
 
@@ -55,7 +55,7 @@ $$
 
 [重参数化技巧 (Reparametrization Trick)](https://theaisummer.com/latent-variable-models/#reparameterization-trick) 对此提供了一个魔法般的补救办法。
 
-### 重参数化技巧：在任何时间步的可操作封闭式采样
+#### 重参数化技巧：在任何时间步的可操作封闭式采样
 
 如果我们定义 $\alpha_t= 1- \beta_t$, $\bar{\alpha}_t = \prod_{s=0}^t \alpha_s$ ，其中 $\boldsymbol{\epsilon}_{0},..., \epsilon_{t-2}, \epsilon_{t-1} \sim \mathcal{N}(\textbf{0},\mathbf{I})$ ，那么我们可以使用重参数化技巧证明：
 
@@ -79,7 +79,7 @@ $$
 
 由于 $\beta_t$ 是一个超参数，我们可以预先计算所有时间步的 $\alpha_t$ 和 $\bar{\alpha}_t$ 。这意味着我们在任何一个时间点 $t$ 对噪声进行采样，并一次性得到 $\mathbf{x}_t$ 。因此，我们可以在任何一个任意的时间段对我们的潜变量 $\mathbf{x}_t$ 进行采样。这将是我们以后计算可操作的目标损失 $L_t$ 的目标。
 
-### 方差表
+#### 方差表
 
 方差参数 $\beta_t$ 可以固定为一个常数，也可以选择作为 $T$ 时间段的一个时间表。事实上，我们可以定义一个方差表，它可以是线性的、二次的、余弦的等等。最初的 DDPM 作者利用了一个从 $\beta_1= 10^{-4}$ 到 $\beta_T = 0.02$ 增加的线性时间表。 [Nichol et al. 2021](https://arxiv.org/abs/2102.09672) 的研究表明，采用余弦时间表效果更好。
 
@@ -90,14 +90,14 @@ $$
 
 > *Latent samples from linear (top) and cosine (bottom) schedules respectively. Source: [Nichol & Dhariwal 2021](https://arxiv.org/abs/2102.09672)*
 
-## 反向扩散
+### 反向扩散
 
 当 $T \to \infty$ 时，隐变量的 $\mathbf{x}_T$ 几乎是一个各向同性 (isotropic) 的高斯分布。因此，如果我们设法学习反向分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，我们可以从 $\mathcal{N}(\textbf{0},\mathbf{I})$ 中采样$\mathbf{x}_t$，运行反向过程， 并从 $q(\mathbf{x}_0)$ 中获取一个样本，从而生成原始数据分布中的一个新数据点。
 
 
 问题是，我们如何模拟反向扩散过程。
 
-### 用神经网络近似反向过程
+#### 用神经网络近似反向过程
 
 在实际情况中，我们不知道 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，由于估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 需要涉及数据分布的计算，因此它是不可行的。
 
@@ -121,7 +121,7 @@ $$
 
 但我们如何训练这样一个模型呢？
 
-## 训练扩散模型
+## 扩散模型训练
 
 如果我们退一步讲，可以注意到， $q$ 和 $p$ 的组合与变分自编码器 (VAE) 非常相似。因此，我们可以通过优化训练数据的负对数似然来训练它。经过一系列的计算（我们在此不做分析），我们可以把证据下界 (ELBO) 写成如下：
 
@@ -206,7 +206,7 @@ $$
 > DDPMs 的训练和采样算法 ，
 > 图片来自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
 
-## 架构
+## 扩散模型架构
 
 到目前为止，我们还没有提到的一件事是模型的架构是什么样子的。请注意，模型的输入和输出应该是相同尺寸的。
 
@@ -311,7 +311,7 @@ $$
 
 ### 扩展扩散模型
 
-你可能会问这些模型有什么问题。嗯，将这些U-Nets扩展到高分辨率图像在计算上非常昂贵。这给我们带来了两种方法，将扩散模型扩展到更高分辨率：级联扩散模型和潜在扩散模型。
+你可能会问这些模型有什么问题。嗯，将这些 U-Nets 扩展到高分辨率图像在计算上非常昂贵。这给我们带来了两种方法，将扩散模型扩展到更高分辨率：级联扩散模型和潜在扩散模型。
 
 ### 级联扩散模型
 
