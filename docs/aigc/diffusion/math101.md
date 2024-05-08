@@ -30,7 +30,7 @@
 
 扩散模型可以看作是隐变量模型。“隐变量” 意味着我们指的是隐藏的连续特征空间。这样，它们可能看起来类似于[变分自动编码器 (VAE)](https://theaisummer.com/latent-variable-models/)。
 
-在实践中，它们是使用马尔可夫链的*$T$*步来制定的。这里，马尔可夫链意味着每一步只依赖于前一步，这是一个温和的假设。重要的是，与[基于流的模型](https://lilianweng.github.io/posts/2018-10-13-flow-models/)不同，我们并不局限于使用特定类型的神经网络。
+在实践中，它们是使用马尔可夫链的 *$T$* 步来制定的。这里，马尔可夫链意味着每一步只依赖于前一步，这是一个温和的假设。重要的是，与[基于流的模型](https://lilianweng.github.io/posts/2018-10-13-flow-models/)不同，我们并不局限于使用特定类型的神经网络。
 
 给定一个数据点 $\mathbf{x}_0$ ，从真实数据分布 $q(\mathbf{x})$ ($\mathbf{x}_0 \sim q(\mathbf{x})$) 中采样，我们可以通过添加噪声来定义一个前向扩散过程。具体来说，在马尔科夫链的每一步，我们向 $\mathbf{x}_{t-1}$ 添加方差为 $\beta_t$ 的高斯噪声，产生一个新的隐变量 $\mathbf{x}_{t}$ ，其分布为 $q(\mathbf{x}_t|\mathbf{x}_{t-1})$ 。这个扩散过程可以表述如下：
 
@@ -42,7 +42,7 @@ $$
 
 > 前向扩散过程 , 图片修改自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
 
-由于我们处于多维情况下， $\textbf{I}$  是单位矩阵，表明每个维度有相同的标准偏差 $\beta_t$ 。注意到， $q(\mathbf{x}_t \vert \mathbf{x}_{t-1})$ 是一个正态分布，其均值是 $\boldsymbol{\mu}_t =\sqrt{1 - \beta_t} \mathbf{x}_{t-1}$​​ ，方差为 $\boldsymbol{\Sigma}_t=\beta_t\mathbf{I}$ ，其中 $\boldsymbol{\Sigma}$ 是一个对角矩阵的方差（这里就是 $\beta_t$ ）。
+由于我们处于多维情况下， $\textbf{I}$  是单位矩阵，表明每个维度有相同的标准偏差 $\beta_t$ 。注意到， $q(\mathbf{x}_t \vert \mathbf{x}_{t-1})$ 是一个正态分布，其均值是 $\boldsymbol{\mu}_t =\sqrt{1 - \beta_t} \mathbf{x}_{t-1}$ ，方差为 $\boldsymbol{\Sigma}_t=\beta_t\mathbf{I}$ ，其中 $\boldsymbol{\Sigma}$ 是一个对角矩阵的方差（这里就是 $\beta_t$ ）。 正态分布（也称为高斯分布）由 2 个参数定义：均值 $\mu$ 和方差 $\boldsymbol{\Sigma}$,  基本上，在时间步$t$ 的每个新的（噪音稍大）的图像都可以从条件高斯分布中得出。
 
 因此，我们可以从 $\mathbf{x}_0$ 以一种可操作的方式封闭地转换到到 $\mathbf{x}_t$ 。在数学上，这种后验概率定义如下：
 $$
@@ -55,7 +55,7 @@ $$
 
 [重参数化技巧 (Reparametrization Trick)](https://theaisummer.com/latent-variable-models/#reparameterization-trick) 对此提供了一个魔法般的补救办法。
 
-#### 重参数化技巧：在任何时间步的可操作封闭式采样
+#### 重参数化技巧
 
 如果我们定义 $\alpha_t= 1- \beta_t$, $\bar{\alpha}_t = \prod_{s=0}^t \alpha_s$ ，其中 $\boldsymbol{\epsilon}_{0},..., \epsilon_{t-2}, \epsilon_{t-1} \sim \mathcal{N}(\textbf{0},\mathbf{I})$ ，那么我们可以使用重参数化技巧证明：
 
@@ -92,16 +92,13 @@ $$
 
 ### 反向扩散
 
-当 $T \to \infty$ 时，隐变量的 $\mathbf{x}_T$ 几乎是一个各向同性 (isotropic) 的高斯分布。因此，如果我们设法学习反向分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，我们可以从 $\mathcal{N}(\textbf{0},\mathbf{I})$ 中采样$\mathbf{x}_t$，运行反向过程， 并从 $q(\mathbf{x}_0)$ 中获取一个样本，从而生成原始数据分布中的一个新数据点。
-
-
-问题是，我们如何模拟反向扩散过程。
+当 $T \to \infty$ 时，隐变量的 $\mathbf{x}_T$ 几乎是一个各向同性 (isotropic) 的高斯分布。因此，如果我们知道反向条件分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，然后我们可以反向运行该过程， 通过从随机高斯噪声分布 $\mathcal{N}(\textbf{0},\mathbf{I})$ 中采样一些$\mathbf{x}_t$，然后逐渐对其进行“去噪”， 从而生成原始数据分布中的一个新数据点 $x_{0}$。
 
 #### 用神经网络近似反向过程
 
-在实际情况中，我们不知道 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，由于估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 需要涉及数据分布的计算，因此它是不可行的。
+在实际情况中，我们不知道 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ ，由于估计 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 需要知道所有可能图像的分布才能计算这个条件概率，因此它是不可行的。
 
-相反，我们用一个参数化的模型 $p_{\theta}$ （例如一个神经网络）来近似 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 。由于 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 也将是高斯分布，对于足够小的 $\beta_t$ ，我们可以选择 $p_{\theta}$ 为高斯分布，只需对平均值和方差进行参数化：
+相反，我们用一个参数化的模型 $p_{\theta}$ （例如一个神经网络）来近似条件分布 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 。由于 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 也将是高斯分布，对于足够小的 $\beta_t$ ，我们可以选择 $p_{\theta}$ 为高斯分布，只需对平均值和方差进行参数化：
 
 $$
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
@@ -109,7 +106,7 @@ $$
 
 ![reverse-diffusion](https://theaisummer.com/static/9bb372bb74034360fe7891d546e3c5b4/01dae/reverse-diffusion.png)
 
-> *Reverse diffusion process. Image modified by [Ho et al. 2020](https://arxiv.org/abs/2006.11239)*
+> *Reverse diffusion process. Image modified by [Ho et al. 2020](https://arxiv.org/abs/2006.11239)*， 其中均值和方差也取决于噪声水平
 
 如果我们对所有的时间步数应用反向公式 $p_\theta(\mathbf{x}_{0:T})$ ，我们可以由 $\mathbf{x}_T$ 得到数据分布：
 
@@ -123,7 +120,9 @@ $$
 
 ## 扩散模型训练
 
-如果我们退一步讲，可以注意到， $q$ 和 $p$ 的组合与变分自编码器 (VAE) 非常相似。因此，我们可以通过优化训练数据的负对数似然来训练它。经过一系列的计算（我们在此不做分析），我们可以把证据下界 (ELBO) 写成如下：
+### 定义目标函数
+
+为了推导出逆向扩散过程的目标函数，作者观察到， $q$ 和 $p$ 的组合与变分自编码器 (VAE) [(Kingma et al., 2013)](https://arxiv.org/abs/1312.6114) 非常相似。因此，我们可以通过优化训练数据的负对数似然来训练它。经过一系列的计算（我们在此不做分析），我们可以把证据下界 (ELBO) 写成如下：
 
 $$
 \begin{aligned}
@@ -144,9 +143,7 @@ $$
 
 > 尽管 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_{t})$ 是难以解决的，但 [Sohl-Dickstein et al](https://arxiv.org/abs/1503.03585) 说明，通过对 $\textbf{x}_0$ 的附加条件，可以使它变得容易解决
 
-直观地说，画家（我们的生成模型）需要一个参考图像 ($\textbf{x}_0$) 来慢慢绘制（反向扩散步骤 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$ ）一个图像。因此，当且仅当我们有 $\mathbf{x}_0$ 作为参考时，我们可以向后退一小步，即从噪声中生成一个图像。
-
-换句话说，我们可以在噪声水平 $t$ 的条件下对 $\textbf{x}_t$ 进行采样。由于 $\alpha_t= 1- \beta_t$ 和 $\bar{\alpha}_t = \prod_{s=0}^t \alpha_s$ ，我们可以证明：
+直观地说，画家（我们的生成模型）需要一个参考图像 ($\textbf{x}_0$) 来慢慢绘制（反向扩散步骤 $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$ ）一个图像。因此，当且仅当我们有 $\mathbf{x}_0$ 作为参考时，我们可以向后退一小步，即从噪声中生成一个图像。换句话说，我们可以在噪声水平 $t$ 的条件下对 $\textbf{x}_t$ 进行采样。由于 $\alpha_t= 1- \beta_t$ 和 $\bar{\alpha}_t = \prod_{s=0}^t \alpha_s$ ，我们可以证明：
 
 $$
 \begin{aligned}
@@ -195,6 +192,8 @@ $$
 L_t^\text{simple} = \mathbb{E}_{\mathbf{x}_0, t, \boldsymbol{\epsilon}} \left[\|\boldsymbol{\epsilon}- \boldsymbol{\epsilon}_{\theta}(\sqrt{\bar{a}_t} \mathbf{x}_0 + \sqrt{1-\bar{a}_t} \boldsymbol{\epsilon}, t ) ||^2 \right]
 $$
 
+这里，$ x_0 $ 是初始的（真实的、未被破坏的）图像，我们看到由固定的前向过程给出的直接噪声水平 $ t $ 的样本。$ \epsilon $ 是在时间步 $ t $ 采样的纯噪声，而 $ \epsilon_\theta(x_t, t) $ 是我们的神经网络。神经网络是使用真实和预测的高斯噪声之间的简单均方误差（MSE）进行优化的。
+
 作者发现，优化上述目标比优化原始 ELBO 效果更好。这两个方程的证明可以在 [Lillian Weng](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#reverse-diffusion-process) 的这篇优秀文章或 [Luo et al. 2022](https://arxiv.org/abs/2208.11970) 中找到。
 
 此外，[Ho et. al 2020](https://arxiv.org/abs/2006.11239) 决定保持方差固定，让网络只学习均值。后来 [Nichol et al. 2021](https://arxiv.org/abs/2102.09672) 对此进行了改进，他们让网络学习协方差矩阵 $(\boldsymbol{\Sigma})$ （通过修改 $L_t^\text{simple}$ ），取得了更好的结果。
@@ -205,6 +204,13 @@ $$
 
 > DDPMs 的训练和采样算法 ，
 > 图片来自 [Ho et al. 2020](https://arxiv.org/abs/2006.11239)
+
+训练算法现在看起来如下：
+
+- 首先从真实的未知且可能是复杂的概率分布 $ q(x_0) $ 中随机采样 $ x_0 $；
+- 在 1 到 T 之间均匀地采样一个噪声水平 $ t $（即，一个随机的时间步）；
+- 从高斯分布中采样一些噪声，并通过这个噪声破坏输入；
+- 在水平 $ t $（使用重参数技巧）上，神经网络被训练来基于被破坏的图像 $ x_t $ 预测这个噪声（即，基于已知的时间表 $ \beta_t $ 应用于 $ x_0 $ 上的噪声）；
 
 ## 扩散模型架构
 
