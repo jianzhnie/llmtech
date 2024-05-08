@@ -1,7 +1,5 @@
 # 扩散模型的工作原理：从零开始的数学
 
-> 本文翻译自 AI Summer 的工作人员 Sergios Karagiannakos, Nikolas Adaloglou 等几人发布的一篇文章，原文是 [How diffusion models work: the math from scratch | AI Summer (theaisummer.com)](https://theaisummer.com/diffusion-models/)
-
 <div align=center>
 <img src="https://theaisummer.com/static/ecb7a31540b18a8cbd18eedb446b468e/ee604/diffusion-models.png" alt="扩散模型的工作原理：从零开始的数学" style="zoom:80%;" />
 </div>
@@ -16,11 +14,19 @@
 
 > 扩散模型从根本上不同于所有以前的生成方法。直觉上，他们的目标是通过许多小的“去噪”步骤分解图像生成过程（采样）。
 
+扩散模型是**生成**模型，这意味着它们用于生成与训练数据相似的数据。 从根本上讲，扩散模型的工作原理是通过连续添加高斯噪声来**破坏训练数据，然后学习通过***逆转*该噪声过程**来恢复**数据。训练后，我们可以使用扩散模型来生成数据，只需**将随机采样的噪声传递到学习的去噪过程中**即可。
+
+<div align=center>
+<img src="https://www.assemblyai.com/blog/content/images/2022/05/image-10.png" alt="img" style="zoom:80%;" />
+</div>
+
 背后的直觉是，模型可以通过这些小步骤进行自我修正并逐渐产生一个好的样本。在某种程度上，这种改进表示的想法已经被用于像[alphafold](https://youtu.be/nGVFbPKrRWQ?t=1148)这样的模型中。但是，没有什么是零成本的。这种迭代过程使它们的采样速度变慢，至少与[GAN](https://theaisummer.com/gan-computer-vision/)相比。
+
+
 
 ## 扩散过程
 
-扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列 $T$ 步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用$t<T$噪声步骤后的图像）是必要的。
+扩散模型背后的基本思想相当简单。输入图像 $x_0$ 并通过一系列 $T$ 步逐渐向其添加高斯噪声，我们将其称为前向过程。值得注意的是，这与神经网络的前向传递无关。但是前向过程对于我们的神经网络生成目标（应用 $t<T$ 噪声步骤后的图像）是必要的。
 
 之后，训练一个神经网络通过逆转噪声过程来恢复原始数据。通过能够对逆向过程建模，我们可以生成新数据。这就是所谓的反向扩散过程，或者通俗地说，就是生成模型的采样过程。
 
@@ -186,13 +192,12 @@ $$
 
 这实际上告诉我们，该模型不是预测分布的平均值，而是预测每个时间点 $t$ 的噪声 $\boldsymbol{\epsilon}$
 
-[Ho et.al 2020](https://arxiv.org/abs/2006.11239) 对实际损失项做了一些简化，因为他们忽略了一个加权项。简化后的版本优于完整的目标：
-
+[Ho et.al 2020](https://arxiv.org/abs/2006.11239) 对实际损失项做了一些简化，他们忽略了一个加权项。简化后的版本优于完整的目标：
 $$
 L_t^\text{simple} = \mathbb{E}_{\mathbf{x}_0, t, \boldsymbol{\epsilon}} \left[\|\boldsymbol{\epsilon}- \boldsymbol{\epsilon}_{\theta}(\sqrt{\bar{a}_t} \mathbf{x}_0 + \sqrt{1-\bar{a}_t} \boldsymbol{\epsilon}, t ) ||^2 \right]
 $$
 
-这里，$ x_0 $ 是初始的（真实的、未被破坏的）图像，我们看到由固定的前向过程给出的直接噪声水平 $ t $ 的样本。$ \epsilon $ 是在时间步 $ t $ 采样的纯噪声，而 $ \epsilon_\theta(x_t, t) $ 是我们的神经网络。神经网络是使用真实和预测的高斯噪声之间的简单均方误差（MSE）进行优化的。
+其中，$ x_0 $ 是初始的（真实的、未被破坏的）图像，我们看到由固定的前向过程给出的直接噪声水平 $ t $ 的样本。$ \epsilon $ 是在时间步 $ t $ 采样的纯噪声，而 $ \epsilon_\theta(x_t, t) $ 是我们的神经网络。神经网络是使用真实和预测的高斯噪声之间的简单均方误差（MSE）进行优化的。
 
 作者发现，优化上述目标比优化原始 ELBO 效果更好。这两个方程的证明可以在 [Lillian Weng](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#reverse-diffusion-process) 的这篇优秀文章或 [Luo et al. 2022](https://arxiv.org/abs/2208.11970) 中找到。
 
@@ -474,6 +479,8 @@ $$
 - 扩散过程可以被表述为一个 SDE 。解决反向 SDE 使我们能够生成新的样本。
 
 最后，有关扩散模型和VAE或AE之间联系的更多信息，请查看 [这些很棒的文章](https://benanne.github.io/2022/01/31/diffusion.html) 。
+
+本文翻译自 AI Summer 的工作人员 Sergios Karagiannakos, Nikolas Adaloglou 等几人发布的一篇文章，原文是 [How diffusion models work: the math from scratch | AI Summer (theaisummer.com)](https://theaisummer.com/diffusion-models/)
 
 ## References
 
