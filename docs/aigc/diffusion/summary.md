@@ -366,6 +366,7 @@ $$
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/progressive-distillation.png" alt="img" style="zoom: 33%;" />
 </div>
+
 > 图 9. 渐进蒸馏可以将每次迭代中的扩散采样步骤减少一半。 （图片来源：[Salimans & Ho，2022](https://arxiv.org/abs/2202.00512)）
 
 ### 渐进式蒸馏
@@ -430,6 +431,7 @@ $$
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/consistency-models-exp.png" alt="img" style="zoom:80%;" />
 </div>
+
 > 图12. 在不同配置下的一致性模型性能比较。CD的最佳配置是LPIPS距离度量、Heun ODE求解器和 $ N=18 $。（图片来源：Song等人，2023）
 
 ## 潜在变量空间
@@ -439,6 +441,7 @@ Latent diffusion model ( LDM ; [Rombach & Blattmann, et al. 2022](https://arxiv.
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/image-distortion-rate.png" alt="img" style="zoom:33%;" />
 </div>
+
 >  Fig. 13. The plot for tradeoff between compression rate and distortion, illustrating two-stage compressions - perceptural and semantic comparession. (Image source: [Rombach & Blattmann, et al. 2022](https://arxiv.org/abs/2112.10752))
 
 感知压缩过程依赖于自动编码器模型。编码器$\mathcal{E}$用于压缩输入图像$\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$到更小的 2D 隐变量 $\mathbf{z} = \mathcal{E}(\mathbf{x}) \in \mathbb{R}^{h \times w \times c}$，其中下采样率$f=H/h=W/w=2^m, m \in \mathbb{N}$. 然后是解码器$\mathcal{D}$从隐变量重建图像，$\tilde{\mathbf{x}} = \mathcal{D}(\mathbf{z})$. 该论文探讨了自动编码器训练中的两种正则化，以避免隐空间中的任意高方差。
@@ -473,6 +476,7 @@ $$
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/cascaded-diffusion.png" alt="img" style="zoom:33%;" />
 </div>
+
 > 图15. 逐步增加分辨率的多个扩散模型的级联Pipeline。（图片来源：Ho等人，2021）
 
 他们发现最有效的噪声是在低分辨率时应用高斯噪声，在高分辨率时应用高斯模糊。此外，他们还探索了两种形式的条件增强，这需要对训练过程进行小的修改。请注意，条件噪声仅在训练时应用，而不在推理时应用。
@@ -499,6 +503,7 @@ $$
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/unCLIP.png" alt="img" style="zoom:33%;" />
 </div>
+
 > 图16. unCLIP的架构。（图片来源：Ramesh等人，2022）
 
 unCLIP遵循两阶段图像生成过程：
@@ -538,6 +543,7 @@ Imagen修改了U-Net的几个设计，使其成为高效的U-Net。
 <div align=center>
 <img src="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/U-Net.png" alt="img" style="zoom:33%;" />
 </div>
+
 > 图17. U-Net架构。每个蓝色方块是一个特征图，顶部标记了通道数，左侧底部标记了高度x宽度维度。灰色箭头标记了快捷连接。（图片来源：Ronneberger，2015）
 
 为了使图像生成能够根据额外的图像进行条件组合信息（如Canny边缘、Hough线、用户涂鸦、人类后骨架、分割图、深度和法线）.
