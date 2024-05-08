@@ -1,8 +1,8 @@
-![logo](_media/icon.svg)
+![Hello](_media/icon.svg)
 
-# Artificial Intelligence Developer
+# Artificial General Intelligence
 
->欢迎来到 Artificial Intelligence Developer，这是由 Robin 所维护的 blog site，
+>欢迎来到 Artificial General Intelligence，这是由 Robin 所维护的 blog site，
 >
 >博客主要记录AIGC、Machine Learning、编程以及各种技术的相关内容。
 
