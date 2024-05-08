@@ -61,11 +61,12 @@
 - [ZeRO 技术原理](aigc/llm_engineer/zero-optimizer.md)
 
 
-## [扩散模型](aigc/diffusion/README.md)
+## 扩散模型
 
 - [扩散模型理论第一课](aigc/diffusion/theory.md)
 - [什么是扩散模型: A Review](aigc/diffusion/summary.md)
 - [扩散模型的工作原理：从零开始的数学](aigc/diffusion/math101.md)
+- [深入理解扩散模型](aigc/diffusion/deepdive.md)
 - [扩散模型: 重参数化技巧](aigc/diffusion/reparameterization.md)
 - [基于分数的生成模型](aigc/diffusion/score_model.md)
 - [From Autoencoder to Beta-VAE](aigc/diffusion/vae_model.md)
