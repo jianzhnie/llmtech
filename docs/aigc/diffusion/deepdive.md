@@ -1,4 +1,4 @@
-# 理解扩散模型
+# 深入理解扩散模型
 
 ## 引言：生成模型
 
@@ -268,7 +268,7 @@ $$
 $$
 \begin{align}
 \log p(\boldsymbol{x})
-&\geq \mathbb{E}_{q(\boldsymbol{x}_{1:T}\mid\boldsymbol{x}_0)}\left[\log \frac{p(\boldsymbol{x}_{0:T})}{q(\boldsymbol{x}_{1:T}\mid\boldsymbol{x}_0)}\right] \\
+&\geq \mathbb{E}_{q(\boldsymbol{x}_{1:T}\mid\boldsymbol{x}_0)}\left[\log \frac{p(\boldsymbol{x}_{0:T})}{q(\boldsymbol{x}_{1:T}\mid\boldsymbol{x}_0)}\right]  \\
 &=  \begin{aligned}[t]
       \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{1}\mid\boldsymbol{x}_0)}\left[\log p_{\theta}(\boldsymbol{x}_0\mid\boldsymbol{x}_1)\right]}_\text{reconstruction term} &- \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{T-1}\mid\boldsymbol{x}_0)}\left[\mathcal{D}_{\text{KL}}(q(\boldsymbol{x}_T\mid\boldsymbol{x}_{T-1}) \mid\mid p(\boldsymbol{x}_T))\right]}_\text{prior matching term} \\
       &- \sum_{t=1}^{T-1}\underbrace{\mathbb{E}_{q(\boldsymbol{x}_{t-1}, \boldsymbol{x}_{t+1}\mid\boldsymbol{x}_0)}\left[\mathcal{D}_{\text{KL}}(q(\boldsymbol{x}_t\mid\boldsymbol{x}_{t-1}) \mid\mid p_{\theta}(\boldsymbol{x}_{t}\mid\boldsymbol{x}_{t+1}))\right]}_\text{consistency term}
@@ -512,7 +512,7 @@ $$
 <img src="https://calvinyluo.com/assets/images/diffusion/proofs/snr_deriv.svg" alt="使用 SNR 项导出目标" style="zoom:100%;" />
 </div>
 
-回忆一下方程50 $q(\boldsymbol{x}_t\mid\boldsymbol{x}_0)$ 形式的高斯分布$\mathcal{N}(\boldsymbol{x}_{t} ; \sqrt{\bar\alpha_t}\boldsymbol{x}_0, \left(1 - \bar\alpha_t\right)\textbf{I})$。然后，遵循[信噪比 (SNR)](https://en.wikipedia.org/wiki/Signal-to-noise_ratio#Alternate_definition)的定义：$\frac{\mu^2}{\sigma^2}$，我们可以写出每个时间步的SNR𝑡作为：
+回忆一下方程50 $q(\boldsymbol{x}_t\mid\boldsymbol{x}_0)$ 形式的高斯分布$\mathcal{N}(\boldsymbol{x}_{t} ; \sqrt{\bar\alpha_t}\boldsymbol{x}_0, \left(1 - \bar\alpha_t\right)\textbf{I})$。然后，遵循[信噪比 (SNR)](https://en.wikipedia.org/wiki/Signal-to-noise_ratio#Alternate_definition)的定义：$\frac{\mu^2}{\sigma^2}$，我们可以写出每个时间步的SNR𝑡作为：
 $$
 \begin{align}
     \text{SNR}(t) &= \frac{\bar\alpha_t}{1 -\bar\alpha_{t}}
@@ -560,9 +560,9 @@ $$
 
 #### 第二种常见解释
 
-正如我们之前证明的，可以通过简单地学习一个神经网络来预测原始自然图像 $ x_0 $ , 以任意噪声版本 $ x_t $ 及其时间索引 $t$ 作为输入来训练变分扩散模型。然而，$ x_0 $有两个其他的等效参数化，这导致了变分扩散模型的另外两种解释。
+正如我们之前证明的，可以通过简单地学习一个神经网络来预测原始自然图像 $ x_0 $ , 以任意噪声版本 $ x_t $ 及其时间索引 $t$ 作为输入来训练变分扩散模型。然而，$ x_0 $有两个其他的等效参数化，这导致了变分扩散模型的另外两种解释。
 
-首先，我们可以利用重参数化技巧。在我们推导 $ q(x_t|x_0) $ 的形式时，我们可以重新排列公式(49)：
+首先，我们可以利用重参数化技巧。在我们推导 $ q(x_t|x_0) $ 的形式时，我们可以重新排列公式(49)：
 
 $$
 \begin{align}
