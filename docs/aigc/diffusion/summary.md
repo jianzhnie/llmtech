@@ -15,10 +15,12 @@
 
 ## 前向扩散过程
 
-给定一个从真实分布中采样的数据 $\mathbf{x}_0 \sim q(\mathbf{x})$，我们定义一个前向扩散过程，在这个过程中我们以 $T$ 步向样本中添加少量高斯噪声，产生一系列噪声样本 $\mathbf{x}_1, \dots, \mathbf{x}_T$ , 噪声大小由方差$\{\beta_t \in (0, 1)\}_{t=1}^T$控制 .
+给定一个从真实分布中采样的数据 $\mathbf{x}_0 \sim q(\mathbf{x})$，我们定义一个前向扩散过程，在这个过程中我们以 $T$ 步逐渐向样本中添加少量高斯噪声，产生一系列噪声样本 $\mathbf{x}_1, \dots, \mathbf{x}_T$ , 噪声大小由方差$\{\beta_t \in (0, 1)\}_{t=1}^T$控制 .
 $$
+\begin{equation}
 q(\mathbf{x}_t \vert \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1 - \beta_t} \mathbf{x}_{t-1}, \beta_t\mathbf{I}) \quad
 q(\mathbf{x}_{1:T} \vert \mathbf{x}_0) = \prod^T_{t=1} q(\mathbf{x}_t \vert \mathbf{x}_{t-1})
+\end{equation}
 $$
 当步骤 $t$  逐渐变大, 数据样本 $\mathbf{x}_0$ 逐渐失去其可辨特征。最终当$t$→∞时, $\mathbf{x}_T$ 等价于一个各向同性高斯分布。
 
@@ -38,6 +40,7 @@ $$
 q(\mathbf{x}_t \vert \mathbf{x}_0) &= \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t} \mathbf{x}_0, (1 - \bar{\alpha}_t)\mathbf{I})
 \end{aligned}
 $$
+
 () 回想一下，当我们合并两个具有不同方差的高斯分布，$\mathcal{N}(\mathbf{0}, \sigma_1^2\mathbf{I})$ 和 $\mathcal{N}(\mathbf{0}, \sigma_2^2\mathbf{I})$ 时， 得到的新的分布是 $\mathcal{N}(\mathbf{0}, (\sigma_1^2 + \sigma_2^2)\mathbf{I})$. 这里的合并标准差是 $\sqrt{(1 - \alpha_t) + \alpha_t (1-\alpha_{t-1})} = \sqrt{1 - \alpha_t\alpha_{t-1}}$.
 
 通常，当样本噪声更大时，可以承受更大的更新步长，所以 $\beta_1 < \beta_2 < \dots < \beta_T$ 因此 $\bar{\alpha}_1 > \dots > \bar{\alpha}_T$.
@@ -84,7 +87,7 @@ q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)
 &= \exp\Big( -\frac{1}{2} \big( \color{red}{(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}})} \mathbf{x}_{t-1}^2 - \color{blue}{(\frac{2\sqrt{\alpha_t}}{\beta_t} \mathbf{x}_t + \frac{2\sqrt{\bar{\alpha}_{t-1}}}{1 - \bar{\alpha}_{t-1}} \mathbf{x}_0)} \mathbf{x}_{t-1} \color{black}{ + C(\mathbf{x}_t, \mathbf{x}_0) \big) \Big)}
 \end{aligned}
 $$
-其中 $ C(\mathbf{x}_t, \mathbf{x}_0)$ 是不涉及 $\mathbf{x}_{t-1}$ 的某些函数并且省略了细节。按照标准高斯密度函数，均值和方差可以如下参数化（其中 $\alpha_t = 1 - \beta_t$ 和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$)
+其中 $ C(\mathbf{x}_t, \mathbf{x}_0)$ 是不涉及 $\mathbf{x}_{t-1}$ 的某些函数并且省略了细节。按照标准高斯密度函数，均值和方差可以进行如下参数化（其中 $\alpha_t = 1 - \beta_t$ 和 $\bar{\alpha}_t = \prod_{i=1}^t \alpha_i$)
 $$
 \begin{aligned}
 \tilde{\beta}_t
@@ -109,18 +112,17 @@ $$
 $$
 
 如图 2 所示，这种设置与[VAE](https://lilianweng.github.io/posts/2018-08-12-vae/)非常相似，因此我们可以使用变分下界来优化负对数似然。
-
 $$
 \begin{aligned}
--\log p_\theta(\mathbf{x}_0)
-&\leq - \log p_\theta(\mathbf{x}_0) + D_{KL}(q(\mathbf{x}_{1:T}|\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}|\mathbf{x}_0)) \\
-&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{q(\mathbf{x}_1|\mathbf{x}_0)} \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \right] \\
-&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \right] \\
-&= \mathbb{E}_q \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \right] \\
-Let \ L_{VLB} = \mathbb{E}_{q(\mathbf{x}_{0:T})} \left[ \log \frac{q(\mathbf{x}_{1:T}|\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \right] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
+- \log p_\theta(\mathbf{x}_0)
+&\leq - \log p_\theta(\mathbf{x}_0) + D_\text{KL}(q(\mathbf{x}_{1:T}\vert\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}\vert\mathbf{x}_0) ) \\
+&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_{\mathbf{x}_{1:T}\sim q(\mathbf{x}_{1:T} \vert \mathbf{x}_0)} \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T}) / p_\theta(\mathbf{x}_0)} \Big] \\
+&= -\log p_\theta(\mathbf{x}_0) + \mathbb{E}_q \Big[ \log\frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} + \log p_\theta(\mathbf{x}_0) \Big] \\
+&= \mathbb{E}_q \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \\
+\text{Let }L_\text{VLB}
+&= \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] \geq - \mathbb{E}_{q(\mathbf{x}_0)} \log p_\theta(\mathbf{x}_0)
 \end{aligned}
 $$
-
 
 使用 Jensen 不等式也可以直接得到相同的结果。假设我们以最小化交叉熵作为学习目标，
 
@@ -164,7 +166,7 @@ L_0 &= - \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)
 \end{aligned}
 $$
 
-$L_\text{VLB}$ 中的每个 KL 项（除了$L_0$) 比较了两个高斯分布，因此可以用[封闭形式](https://en.wikipedia.org/wiki/Kullback–Leibler_divergence#Multivariate_normal_distributions)计算它们。$L_T$是常数，在训练期间可以忽略，因为$q$没有可学习的参数并且 $\mathbf{x}_t$ 是高斯噪声。[Ho et al. 2020](https://arxiv.org/abs/2006.11239) 使用从 $\mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_\theta(\mathbf{x}_1, 1), \boldsymbol{\Sigma}_\theta(\mathbf{x}_1, 1))$  d派生的单独的离散解码器建模了 $L_0$。
+$L_\text{VLB}$ 中的每个 KL 项（除了$L_0$) 比较了两个高斯分布，因此可以用[封闭形式](https://en.wikipedia.org/wiki/Kullback–Leibler_divergence#Multivariate_normal_distributions)计算它们。$L_T$是常数，在训练期间可以忽略，因为$q$没有可学习的参数并且 $\mathbf{x}_t$ 是高斯噪声。[Ho et al. 2020](https://arxiv.org/abs/2006.11239) 使用从 $\mathcal{N}(\mathbf{x}_0; \boldsymbol{\mu}_\theta(\mathbf{x}_1, 1), \boldsymbol{\Sigma}_\theta(\mathbf{x}_1, 1))$  派生的单独的离散解码器建模了 $L_0$。
 
 ## 对于训练损失参数化 $L_t$
 
