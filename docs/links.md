@@ -1,11 +1,5 @@
 # Some links
 
-## AI 资源汇总
-
-| Website                                                    | 简介                                                         | 推荐指数 |
-| ---------------------------------------------------------- | ------------------------------------------------------------ | -------- |
-| [**Primo.ai** ](https://primo.ai/index.php?title=PRIMO.ai) | **Primo.ai** provides links to articles and videos on Artificial intelligence (AI) concepts and techniques | 🤗🤗       |
-| [AIgents](https://aigents.co/)                             | We are the largest career community for Data Scientists, Machine Learning Engineers & Developers in 🌍 Europe | 🤗🤗       |
 
 ## Company Or Institution
 
@@ -35,6 +29,29 @@
 | [Lightning.ai](https://lightning.ai/pages/category/tutorial/) |    https://github.com/Lightning-AI     | 综合       |            PyTorch Lightning，让AI模型开发更简单             | 🤗🤗       |
 |         [幻方AI](https://www.high-flyer.cn/blog#ALL)         |                   -                    | 综合       |                                                              |          |
 
+
+## AIGC Blog
+
+|                                             公司/机构                                             |    推荐指数    |
+| :-----------------------------------------------------------------------------------------------: | :------------: |
+|                          [AI Summer](https://theaisummer.com/learn-ai/)                           |      🤗🤗🤗       |
+|                       [syncedreview  \|机器之心](https://syncedreview.com/)                       |      🤗🤗🤗       |
+|                                 [科学空间](https://spaces.ac.cn/)                                 |      🤗🤗🤗       |
+|                             [Chip Huyen](https://huyenchip.com/blog/)                             |     🤗🤗🤗🤗🤗      |
+|                              [Lilian](https://lilianweng.github.io/)                              |     🤗🤗🤗🤗🤗      |
+|                              [Andrej Karpathy](https://karpathy.ai/)                              |      🤗🤗🤗       |
+|                 [DeepLearning Focus](https://cameronrwolfe.substack.com/archive)                  |      🤗🤗🤗🤗      |
+|                            [Jay Alammar](https://jalammar.github.io/)                             |     🤗🤗🤗🤗🤗      |
+|                       [Ahead of AI](https://magazine.sebastianraschka.com/)                       |      🤗🤗🤗🤗      |
+|                          [Nathan Lambert](https://robotic.substack.com/)                          |       🤗🤗       |
+|                                     [int8](https://int8.io/)                                      |      🤗🤗🤗🤗      |
+|                                [Yang Song](https://yang-song.net/)                                |      🤗🤗🤗       |
+|                             [Tim Dettmers](https://timdettmers.com/)                              |      🤗🤗🤗       |
+| Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |      🤗🤗🤗       |
+|                               [Chiyuan Zhang](https://pluskid.org/)                               | 生活，艺术 🤗🤗🤗 |
+|                                  [Yihui Xie](https://yihui.org/)                                  | 生活，艺术 🤗🤗🤗 |
+
+
 ## LLM Courses
 
 |                             课程                             |         机构         |                             简介                             | 推荐指数 |
@@ -47,26 +64,6 @@
 | [COS 597G: Understanding Large Language Models](https://www.cs.princeton.edu/courses/archive/fall22/cos597G/) |     普林斯顿大学     | - 大语言模型基础 <br />- 深入回顾 BERT、T5 和 GPT 3  <br /> - Promoting language models 提示语言模型模型  <br /> - 大型语言模型中的缩放和风险  <br />- 多模态语言模型 | 🤗🤗🤗      |
 | [Large language models](https://rycolab.io/classes/llm-s23/) |  苏黎世联邦理工学院  | - 神经网络建模和推理 <br /> - 训练、微调和推理  <br />-  并行性和扩展  <br />- 安全和滥用 | 🤗🤗🤗      |
 
-## Blog
-
-|                          公司/机构                           |    推荐指数    |
-| :----------------------------------------------------------: | :------------: |
-|        [AI Summer](https://theaisummer.com/learn-ai/)        |      🤗🤗🤗       |
-|    [syncedreview  \|机器之心](https://syncedreview.com/)     |      🤗🤗🤗       |
-|              [科学空间](https://spaces.ac.cn/)               |      🤗🤗🤗       |
-|          [Chip Huyen](https://huyenchip.com/blog/)           |     🤗🤗🤗🤗🤗      |
-|           [Lilian](https://lilianweng.github.io/)            |     🤗🤗🤗🤗🤗      |
-|           [Andrej Karpathy](https://karpathy.ai/)            |      🤗🤗🤗       |
-| [DeepLearning Focus](https://cameronrwolfe.substack.com/archive) |      🤗🤗🤗🤗      |
-|          [Jay Alammar](https://jalammar.github.io/)          |     🤗🤗🤗🤗🤗      |
-|    [Ahead of AI](https://magazine.sebastianraschka.com/)     |      🤗🤗🤗🤗      |
-|       [Nathan Lambert](https://robotic.substack.com/)        |       🤗🤗       |
-|                   [int8](https://int8.io/)                   |      🤗🤗🤗🤗      |
-|             [Yang Song](https://yang-song.net/)              |      🤗🤗🤗       |
-|           [Tim Dettmers](https://timdettmers.com/)           |      🤗🤗🤗       |
-| Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |      🤗🤗🤗       |
-|            [Chiyuan Zhang](https://pluskid.org/)             | 生活，艺术 🤗🤗🤗 |
-|               [Yihui Xie](https://yihui.org/)                | 生活，艺术 🤗🤗🤗 |
 
 ## My projects
 
