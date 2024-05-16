@@ -32,24 +32,25 @@
 
 ## AIGC Blog
 
-|                                             公司/机构                                             |    推荐指数    |
-| :-----------------------------------------------------------------------------------------------: | :------------: |
-|                          [AI Summer](https://theaisummer.com/learn-ai/)                           |      🤗🤗🤗       |
-|                       [syncedreview  \|机器之心](https://syncedreview.com/)                       |      🤗🤗🤗       |
-|                                 [科学空间](https://spaces.ac.cn/)                                 |      🤗🤗🤗       |
-|                             [Chip Huyen](https://huyenchip.com/blog/)                             |     🤗🤗🤗🤗🤗      |
-|                              [Lilian](https://lilianweng.github.io/)                              |     🤗🤗🤗🤗🤗      |
-|                              [Andrej Karpathy](https://karpathy.ai/)                              |      🤗🤗🤗       |
-|                 [DeepLearning Focus](https://cameronrwolfe.substack.com/archive)                  |      🤗🤗🤗🤗      |
-|                            [Jay Alammar](https://jalammar.github.io/)                             |     🤗🤗🤗🤗🤗      |
-|                       [Ahead of AI](https://magazine.sebastianraschka.com/)                       |      🤗🤗🤗🤗      |
-|                          [Nathan Lambert](https://robotic.substack.com/)                          |       🤗🤗       |
-|                                     [int8](https://int8.io/)                                      |      🤗🤗🤗🤗      |
-|                                [Yang Song](https://yang-song.net/)                                |      🤗🤗🤗       |
-|                             [Tim Dettmers](https://timdettmers.com/)                              |      🤗🤗🤗       |
-| Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |      🤗🤗🤗       |
-|                               [Chiyuan Zhang](https://pluskid.org/)                               | 生活，艺术 🤗🤗🤗 |
-|                                  [Yihui Xie](https://yihui.org/)                                  | 生活，艺术 🤗🤗🤗 |
+|                          公司/机构                           | 分类                               |    推荐指数    |
+| :----------------------------------------------------------: | ---------------------------------- | :------------: |
+|        [AI Summer](https://theaisummer.com/learn-ai/)        |                                    |      🤗🤗🤗       |
+|    [syncedreview  \|机器之心](https://syncedreview.com/)     |                                    |      🤗🤗🤗       |
+|              [科学空间](https://spaces.ac.cn/)               |                                    |      🤗🤗🤗       |
+|          [Chip Huyen](https://huyenchip.com/blog/)           |                                    |     🤗🤗🤗🤗🤗      |
+|           [Lilian](https://lilianweng.github.io/)            |                                    |     🤗🤗🤗🤗🤗      |
+|           [Andrej Karpathy](https://karpathy.ai/)            |                                    |      🤗🤗🤗       |
+| [DeepLearning Focus](https://cameronrwolfe.substack.com/archive) |                                    |      🤗🤗🤗🤗      |
+|          [Jay Alammar](https://jalammar.github.io/)          | 图解系列模型                       |     🤗🤗🤗🤗🤗      |
+|    [Ahead of AI](https://magazine.sebastianraschka.com/)     |                                    |      🤗🤗🤗🤗      |
+|       [Nathan Lambert](https://robotic.substack.com/)        |                                    |       🤗🤗       |
+|                   [int8](https://int8.io/)                   | 综合，深度学习，强化学习           |      🤗🤗🤗🤗      |
+|             [Yang Song](https://yang-song.net/)              | 分数生成模型                       |      🤗🤗🤗       |
+|           [Tim Dettmers](https://timdettmers.com/)           | 高性能计算， 量化                  |      🤗🤗🤗       |
+|       [joseph.rocca](https://medium.com/@joseph.rocca)       | Medium： 统计，机器学习，VAE， GAN |                |
+| Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |                                    |      🤗🤗🤗       |
+|            [Chiyuan Zhang](https://pluskid.org/)             | 生活，艺术                         |      🤗🤗🤗       |
+|               [Yihui Xie](https://yihui.org/)                | 生活，艺术                         | 生活，艺术 🤗🤗🤗 |
 
 
 ## LLM Courses
