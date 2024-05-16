@@ -18,7 +18,9 @@
 
 对于许多模态，可以认为观察到的数据由一个相关的不可见潜在变量表示或生成，我们可以通过随机变量 $ z$ 来表示。表达这一想法的最好直觉是通过柏拉图的洞穴寓言来理解。在寓言中，一群人一生中都被锁在一个洞穴里，只能看到投射在他们面前墙上的二维阴影，这些阴影是由在火前经过的不可见的三维物体产生的。对于这些人来说，他们观察到的一切都是由他们永远无法看到的更高维度的抽象概念决定的。
 
-<img src="https：//whbzju.github.io/img/Diffusion/Untitled.png" alt="Untitled" style="zoom：80%;" />
+<div align=center>
+<img src="https://zh.wikipedia.org/wiki/%E5%9C%B0%E7%A9%B4%E5%AF%93%E8%A8%80#/media/File:An_Illustration_of_The_Allegory_of_the_Cave,_from_Plato%E2%80%99s_Republic.jpg" alt="Untitled" style="zoom：80%;" />
+</div>
 
 > 洞穴寓言故事大致描述，把一群人关起来，如图所示，他们永远只能看岩壁上的二维画面，这个二维画面的影像是外部三维世界的物体经过一个固定的火把后在岩壁上的投影。岩壁上二维的画面显然是由外部三维实体决定的。进一步拓展思路，很有可能我们在现实世界中观察到的很多现象（数据）是从更高维度投影过来。
 
@@ -154,11 +156,12 @@ $$
 
 - 第一项测量了解码器从我们的变分分布中重构的似然性；这确保了学习到的分布是模拟有效的潜在变量，原始数据可以从中再生。
 - 第二项测量了学习到的变分分布与我们对潜在变量持有的先验信念的相似性。最小化这个项鼓励编码器实际学习一个分布，而不是塌缩成一个狄拉克δ函数。
-- 通俗来说，第一项要求隐变量尽可能无损的保留原始数据的信息，即 Decoder 的输出尽量接近原图；第二项让 隐变量的分布符合先验分布，即 Encoder 输出的分布要接近真实分布$p(𝑧)$ .
+
+通俗来说，第一项要求隐变量尽可能无损的保留原始数据的信息，即 Decoder 的输出尽量接近原图；第二项让 隐变量的先验分布和后验分布尽可能接近，即 Encoder 输出的分布要接近真实分布 $p(𝑧)$ .
 
 因此，最大化ELBO等同于最大化其第一项并最小化其第二项。
 
-VAE的一个决定性特征是ELBO是如何联合优化参数 $\phi$ 和 $\theta$。VAE的编码器 $ q_{\phi}(z|x)$ 通常选择为具有对角线协方差的多元高斯分布进行建模，而先验 $ p_{\theta}(z)$ 通常选择为标准多元高斯分布：
+VAE的一个决定性特征是ELBO是如何联合优化参数 $\phi$ 和 $\theta$。VAE的编码器 $ q_{\phi}(z|x)$ 通常选择为具有对角线协方差的多元高斯分布进行建模，而先验  $ p_{\theta}(z)$ 通常选择为标准多元高斯分布：
 
 $$
 \begin{align}
@@ -168,7 +171,7 @@ $$
 $$
 
 
-然后，ELBO中的KL散度项能够直接计算解析解，而重建项可以使用蒙特卡洛估计来近似。我们的目标可以被重写为：
+这时，证据下界 ELBO 中的KL散度项能够直接计算解析解，而重建项可以使用蒙特卡洛估计来近似。我们的目标可以被重写为：
 $$
 \begin{align}
 & \quad \,\underset{\boldsymbol{\phi}, \boldsymbol{\theta}}{\arg\max}\, \mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}\mid\boldsymbol{x})}\left[\log p_{\boldsymbol{\theta}}(\boldsymbol{x}\mid\boldsymbol{z})\right] - \mathcal{D}_{\text{KL}}(q_{\boldsymbol{\phi}}(\boldsymbol{z}\mid\boldsymbol{x}) \mid\mid p(\boldsymbol{z})) \nonumber \\
