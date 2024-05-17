@@ -39,17 +39,17 @@ RLHF 是一项涉及多个模型和不同训练阶段的复杂概念，这里我
 
 ### Step2：奖励模型训练
 
-生成一个根据人类偏好校准的奖励模型（RM，也称为偏好模型）是 RLHF 区别于旧范式的开端。这一模型接收一系列文本，并返回一个标量奖励，数值上代表人类偏好。该系统可以用端到端的 方式用LM建模，或使用模块化的奖励系统建模（例如，模型对输出进行排名，并将排名转换为奖励）。这一奖励数值对于稍后在 RLHF 过程中无缝集成的现有 RL 算法至关重要。
+生成一个根据人类偏好校准的奖励模型（RM，也称为偏好模型）是 RLHF 区别于旧范式的开端。这一模型接收一系列文本，并返回一个标量奖励，数值上代表人类偏好。该系统可以用端到端的方式用LM建模，或使用模块化的奖励系统建模（例如，模型对输出进行排名，并将排名转换为奖励）。这一奖励数值对于稍后在 RLHF 过程中无缝集成的现有 RL 算法至关重要。
 
 关于模型选择方面，用于奖励建模的 LM 可以是另一个经过微调的 LM，也可以是根据偏好数据从头开始训练的 LM。例例如 Anthropic 提出了一种特殊的预训练方式，即用偏好模型预训练 (Preference Model Pretraining，PMP) 来替换一般预训练后的微调过程。因为前者被认为对样本数据的利用率更高。但对于哪种 RM 更好尚无定论。
 
-关于训练文本方面，RM 的提示 - 生成对文本是从预定义数据集中采样生成的，并用初始的 LM 给这些提示生成文本。Anthropic 的数据主要是通过 Amazon Mechanical Turk 上的聊天工具生成的，在 Hub 上[可用](https://huggingface.co/datasets/Anthropic/hh-rlhf)。 而 OpenAI 使用了用户提交给 GPT API 的 prompt。
+关于训练文本方面，RM 的提示 - 生成对文本是从预定义数据集中采样生成的，并用初始的 LM 给这些提示生成文本。Anthropic 的数据主要是通过 Amazon Mechanical Turk 上的聊天工具生成的，在 Huggingface Dataset Hub 上[可用](https://huggingface.co/datasets/Anthropic/hh-rlhf)。 而 OpenAI 使用了用户提交给 GPT API 的 prompt。
 
 关于训练奖励数值方面，这里需要人工对 LM 生成的回答进行排名。起初我们可能会认为应该直接对文本标注分数来训练 RM，但是由于标注者的价值观不同导致这些分数未经过校准并且充满噪音。通过排名可以比较多个模型的输出并构建更好的规范数据集。
 
 有多种方法可以对文本进行排名。一种成功的方法是让用户比较基于相同提示的两种语言模型生成的文本。然后使用 [Elo](https://en.wikipedia.org/wiki/Elo_rating_system) 系统建立一个完整的排名。这些不同的排名结果将被归一化为用于训练的标量奖励值。
 
-这个过程中一个有趣的产物是目前成功的 RLHF 系统使用了和生成模型具有 不同 大小的 LM (例如 OpenAI 使用了 175B 的 LM 和 6B 的 RM，Anthropic 使用的 LM 和 RM 从 10B 到 52B 大小不等，DeepMind 使用了 70B 的 Chinchilla 模型分别作为 LM 和 RM) 。一种直觉是，偏好模型和生成模型需要具有类似的能力来理解提供给它们的文本。因为模型需要具有类似的能力才能生成所述文本。
+这个过程中一个有趣的产物是目前成功的 RLHF 系统使用了和生成模型具有不同大小的 LM (例如 OpenAI 使用了 175B 的 LM 和 6B 的 RM，Anthropic 使用的 LM 和 RM 从 10B 到 52B 大小不等，DeepMind 使用了 70B 的 Chinchilla 模型分别作为 LM 和 RM) 。一种直觉是，偏好模型和生成模型需要具有类似的能力来理解提供给它们的文本。因为模型需要具有类似的能力才能生成所述文本。
 
 <div align=center>
 <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/rlhf/reward-model.png" alt="img" style="zoom: 33%;" />
@@ -59,11 +59,11 @@ RLHF 是一项涉及多个模型和不同训练阶段的复杂概念，这里我
 
 ### Step3: 使用 RL 进行微调
 
-长期以来，出于工程和算法原因，人们人为用强化学习训练语言模型是不可能的。而目前多个组织找到的可行方案是使用策略梯度强化学习 (Policy Gradient RL) 算法、近端策略优化 (Proximal Policy Optimization，PPO) 微调初始 LM 的部分或全部参数。因为微调整个 10B 或 100B+ 参数模型的成本过高（有关更多信息，请参阅 LM 的低秩适应 ( [LoRA](https://arxiv.org/abs/2106.09685) ) 或 DeepMind 的[Sparrow](https://arxiv.org/abs/2209.14375) LM）。PPO 已经存在了相对较长的时间——有[大量](https://spinningup.openai.com/en/latest/algorithms/ppo.html)的[指南](https://huggingface.co/blog/deep-rl-ppo)介绍它的原理和使用技巧。因而成为 RLHF 中的有利选择。
+长期以来，出于工程和算法原因，人们人为用强化学习训练语言模型是不可能的。而目前多个组织找到的可行方案是使用策略梯度强化学习 (Policy Gradient RL) 算法、近端策略优化 (Proximal Policy Optimization，PPO) 微调初始 LM 的部分或全部参数。因为微调整个 10B 或 100B+ 参数模型的成本过高（有关更多信息，请参阅 LM 的低秩适应 ( [LoRA](https://arxiv.org/abs/2106.09685) ) 或 DeepMind 的[Sparrow](https://arxiv.org/abs/2209.14375) LM）。PPO 已经存在了相对较长的时间——有[大量](https://spinningup.openai.com/en/latest/algorithms/ppo.html)的[指南](https://huggingface.co/blog/deep-rl-ppo)介绍它的原理和使用技巧，因而成为 RLHF 中的有利选择。
 
 事实证明，RLHF 的许多核心 RL 进步一直在弄清楚如何使用熟悉的算法更新如此大的模型（稍后会详细介绍）。
 
-让我们首先将微调任务表述为 RL 问题。首先，该策略是一个接受提示并返回一系列文本（或文本的概率分布）的LM。这个策略（policy）的行动空间 （action space）是语言模型的词表对应的所有词元（通常在50k tokens数量级），观察空间 （observation space） 是可能的输入词元序列，也比较大（词汇量^输入标记的数量）。奖励函数是偏好模型和策略转变约束(Policy shift constraint)的结合。
+让我们首先将微调任务表述为 RL 问题。首先，该策略是一个接受提示并返回一系列文本（或文本的概率分布）的LM。这个策略（policy）的行动空间 （action space）是语言模型的词表对应的所有词元（通常在50k tokens数量级），观察空间 （observation space） 是可能的输入词元序列，也比较大（词汇量^输入标记的数量）。奖励函数是偏好模型和策略转变约束(Policy shift constraint) 的结合。
 
 PPO 算法确定的奖励函数具体计算如下：将提示 x 输入初始 LM 和当前微调的 LM，分别得到了输出文本 y1, y2，将来自当前策略的文本传递给 RM 得到一个标量的奖励$r_{\theta}$ . 将两个模型的生成文本进行比较计算差异的惩罚项，在 OpenAI、Anthropic 和 DeepMind 的多篇论文中，这种惩罚被设计为这些出词分布序列之间的 Kullback–Leibler (KL) 散度的缩放 $r = r_{\theta} - \lambda r_{KL}$. 这一项被用于惩罚 RL 策略在每个训练批次中生成大幅偏离初始模型，以确保模型输出合理连贯的文本。如果去掉这一惩罚项可能导致模型在优化中生成乱码文本来愚弄奖励模型提供高奖励值。此外，OpenAI 在 InstructGPT 上实验了在 PPO 添加新的预训练梯度，可以预见到奖励函数的公式会随着 RLHF 研究的进展而继续进化。
 
@@ -75,7 +75,7 @@ PPO 算法确定的奖励函数具体计算如下：将提示 x 输入初始 LM 
 
 作为一个可选项，RLHF 可以通过迭代 RM 和策略共同优化。随着策略模型更新，用户可以继续将输出和早期的输出进行合并排名。Anthropic 在他们的论文中讨论了迭代在线 RLHF（请参阅原始[论文](https://arxiv.org/abs/2204.05862)），其中策略的迭代包含在跨模型的 Elo 排名系统中。这样引入策略和 RM 演变的复杂动态，代表了一个复杂和开放的研究问题。
 
-# RLHF 的下一步是什么？
+## RLHF 的下一步是什么？
 
 虽然这些技术非常有前途和影响力，并引起了人工智能领域最大研究实验室的注意，但仍然存在明显的局限性。这些模型依然然会毫无不确定性地输出有害或实际上不真实的文本。这种不完美代表了 RLHF 的长期挑战和动力——在人类固有的问题领域中运行意味着永远不会到达一个完美的标准。
 
@@ -85,7 +85,7 @@ PPO 算法确定的奖励函数具体计算如下：将提示 x 输入初始 LM 
 
 除开数据方面的限制，一些有待开发的设计选项可以让 RLHF 取得长足进步。例如对 RL 优化器的改进方面，PPO 是一种较旧的算法，但目前没有什么结构性原因让其他算法可以在现有 RLHF 工作中更具有优势。另外，微调 LM 策略的一大成本是策略生成的文本都需要在 RM 上进行评估，通过离线 RL 优化策略可以节约这些大模型 RM 的预测成本。最近，出现了新的 RL 算法如隐式语言 Q 学习 (Implicit Language Q-Learning，ILQL) 也适用于当前 RL 的优化。在 RL 训练过程的其他核心权衡，例如探索和开发 (exploration-exploitation) 的平衡也有待尝试和记录。探索这些方向至少能加深我们对 RLHF 的理解，更进一步提升系统的表现。
 
-### 延伸阅读
+## 延伸阅读
 
 首先介绍一些相关的开源工作：
 
