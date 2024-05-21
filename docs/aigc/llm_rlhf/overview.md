@@ -1,10 +1,12 @@
-# RLHF 概述
+# RLHF  Summary
 
-人类反馈强化学习 (RLHF) 是一种机器学习技术，它利用人类的直接反馈来训练“奖励模型”，然后利用该模型通过强化学习来优化智能体的性能。
+## RLHF 概述
 
-RLHF 也称为“基于人类偏好的强化学习”，特别适合处理那些目标复杂、定义不明确或难以精准表述的任务。
+人类反馈强化学习 (RLHF) 是一种机器学习技术，它利用人类的直接反馈来训练“奖励模型”，然后利用奖励模型通过强化学习来优化智能体的性能。
 
-RLHF）是强化学习（RL）的一个扩展分支，当决策问题的优化目标比较抽象，难以形式化定义具体的奖励函数时，RLHF 系列方法可以将人类的反馈信息纳入到训练过程，通过使用这些反馈信息构建一个奖励模型神经网络，以此提供奖励信号来帮助 RL 智能体学习，从而更加自然地将人类的需求，偏好，观念等信息以一种交互式的学习方式传达给智能体，对齐（align）人类和人工智能之间的优化目标，产生行为方式和人类价值观一致的系统。
+RLHF 结合了两个关键的机器学习领域：强化学习和自然语言处理。在传统的强化学习中，一个智能体（Agent）通过与环境交互来学习行为策略，目标是最大化累积奖励。在RLHF中，环境是语言模型的任务，智能体是模型本身，而奖励则来自于人类对模型输出的反馈。
+
+RLHF 是强化学习（RL）的一个扩展分支，当决策问题的优化目标比较抽象，难以形式化定义具体的奖励函数时，RLHF 系列方法可以将人类的反馈信息纳入到训练过程。 通过使用这些反馈信息构建一个奖励模型，以此提供奖励信号来帮助 RL 智能体学习，从而更加自然地将人类的需求，偏好，观念等信息以一种交互式的学习方式传达给智能体，对齐（Align）人类和人工智能之间的优化目标，产生行为方式和人类价值观一致的系统。
 
 ## 研究进程
 
@@ -26,11 +28,8 @@ RLHF 最突出的应用之一是使大语言模型能够与复杂的人类价值
 <img src="https://github.com/opendilab/awesome-RLHF/raw/main/overview_chatgpt.png" alt="image info" style="zoom: 50%;" />
 
 - Step1: 收集示范资料并训练监督式策略（Supervised Policy）。
-
   - 从提示资料集中抽取一个提示。
-
   - 标注者展示了期望的输出行为。
-
   - 利用这些资料对GPT-3.5进行监督学习的微调。
 
 - Step2: 收集比较资料并训练奖励模型（Reward Model）。
@@ -45,19 +44,30 @@ RLHF 最突出的应用之一是使大语言模型能够与复杂的人类价值
   - 奖励模型为输出计算奖励。
   - 使用PPO根据奖励更新策略。
 
+> 强化学习的目标是学习奖励最大化的输出， 因此偏好模型充当了将“人类偏好偏差” 直接引入基础模型的手段，输出符合人类偏好的响应。
+
 ### Step1:  监督微调 (SFT)
 
 SFT 使用监督学习来训练模型，引导模型使其生成的响应符合用户的预期格式。
 
 人类专家按照格式 (提示, 响应) 创建带标签的示例，演示对于不同的用例，例如回答问题、摘要或翻译，如何回应提示。
 
-#### 数据格式：
 
-##### 单轮对话
+<div align=center>
+<img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/rlhf/pretraining.png" alt="img" style="zoom:50%;" />
+</div>
 
-```
+#### 数据格式
 
-```
+OpenAI 的40名标注者为 InstructGPT创建了大约13,000对（提示，响应）对。下面是一些示例：
+
+| Prompt                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Response                                                                                                                                                                                                                                                                               |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Serendipity means the occurrence and development of events by chance in a happy or beneficial way. Use the word in a sentence.                                                                                                                                                                                                                                                                                                                                                       | Running into Margaret and being introduced to Tom was a fortunate stroke of serendipity.                                                                                                                                                                                               |
+| ELI5: What's the cause of the "anxiety lump" in our chest during stressful or disheartening experiences?                                                                                                                                                                                                                                                                                                                                                                             | The anxiety lump in your throat is caused by muscular tension keeping your glottis dilated to maximize airflow. The clenched chest or heartache feeling is caused by the vagus nerve which tells the organs to pump blood faster, stop digesting, and produce adrenaline and cortisol. |
+| Create a shopping list from this recipe:<br>Trim the ends off zucchini. Cut zucchini in half lengthwise; scoop out pulp, leaving 1/2-in. shells. Finely chop pulp. In a skillet, cook beef, zucchini pulp, onion, mushrooms and peppers over medium heat until meat is no longer pink; drain. Remove from the heat. Add 1/2 cup cheese, ketchup, salt and pepper; mix well. Spoon into the zucchini shells. Place in a greased 13x9-in. baking dish. Sprinkle with remaining cheese. | Zucchini, beef, onion, mushroom, peppers, cheese, ketchup, salt, pepper                                                                                                                                                                                                                |
+
+除了 （提示，响应） 类型的数据， 还有一些多轮对话的数据， 这对于 LLM 模型来说，难度更大，需要 LLM 更好的记忆能力， 下面是一些示例。
 
 ##### 多轮对话
 
@@ -116,56 +126,171 @@ SFT 使用监督学习来训练模型，引导模型使其生成的响应符合�
 ]
 ```
 
+#### 数学公式
+
+- **机器学习任务**：因果语言建模（Language Modeling）
+- **训练数据**：高质量数据，格式为（提示，响应）对
+- **数据规模**：10,000 - 100,000 对（提示，响应）对
+  - InstructGPT：约14,500对（13,000对来自标注者 + 1,500对来自客户）
+  - Alpaca：52K ChatGPT指令
+  - Databricks 的Dolly-15k：约15k对，由Databricks员工创建
+  - Open Assistant：10,000次对话中的161,000条消息 -> 大约88,000对
+- **模型输入和输出**
+  - 输入：提示（prompt）
+  - 输出：该提示的响应（response）
+- **训练过程中要最小化的损失函数**：交叉熵损失，但只有响应中的tokens计入损失。
+
 ### Step2:  训练奖励模型（RM）
 
-为了在强化学习中为奖励函数提供人类反馈，需要一个奖励模型来将人类偏好转化为数字奖励信号。设计有效的奖励模型是 RLHF 的关键一步，因为没有简单的数学或逻辑公式可以切实地定义人类的主观价值。
-
-此阶段的主要目的是为奖励模型提供足够的训练数据，包括来自人类评估者的直接反馈，以帮助模型学习模仿人类依据其偏好将奖励分配给不同种类的模型响应的方式。训练可以在没有人工参与的情况下继续离线进行。
+为了在强化学习中为奖励函数提供人类反馈，需要一个奖励模型来将人类偏好转化为数字奖励信号。设计有效的奖励模型是 RLHF 的关键一步，因为没有简单的数学或逻辑公式可以切实地定义人类的主观价值。此阶段的主要目的是为奖励模型提供足够的训练数据，包括来自人类评估者的直接反馈，以帮助模型学习模仿人类依据其偏好将奖励分配给不同种类的模型响应的方式。训练可以在没有人工参与的情况下继续离线进行。
 
 奖励模型接收一段文本序列并输出标量奖励值，该值以数值方式预测人类用户对该文本会给予多少奖励（或惩罚）。标量值输出对于奖励模型的输出与 RL 算法其他组成部分的集成至关重要。
 
-相反，评分系统通常是通过比较人类对不同模型输出的反馈来构建。一种常见方法是以一对一配对方式让用户比较两个相似的文本序列，例如两个不同语言模型对同一提示的响应输出，然后使用 Elo 评分系统产生所有生成的文本相对于彼此的聚合排名。这些排名最终都会标准化为标量奖励信号，为奖励模型训练提供信息。
+第一步是创建反映人类偏好的示例数据集。研究人员可以通过多种方式收集人类反馈：对不同的模型（可以是初始模型、第一步的 SFT 模型和人工回复等等）给出问题的多个回答，然后人工给这些问答对按一些标准（可读性、无害性、正确性…）进行排序。
 
-用多个模型（可以是初始模型、第一步的 SFT 模型和人工回复等等）给出问题的多个回答，然后人工给这些问答对按一些标准（可读性、无害性、正确性…）进行排序，训练一个奖励模型/偏好模型来打分（reward model）。
+有了人类偏好数据集，我们就可以训练一个奖励模型/偏好模型来打分（reward model）。
+
+<div align=center>
+<img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/rlhf/reward-model.png" alt="img" style="zoom: 33%;" />
+</div>
 
 #### 数据格式
+
+| **prompt**                 | **winning_response**                | **losing_response**                                                                                                              |
+| -------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| How can I get my dog high? | I'm not sure what you mean by that. | I don't know that we should get the dog high. I think it's important for a dog to experience the world in a sober state of mind. |
 
 > 注意：
 >
 > 1. 为什么不人工直接打分？
 >
-> 因为打分是主观的需要归一化，而排序一般大家会有共同的结论：对同一个问题，A和B哪个回答更好。
+> 因为打分是主观的，很难归一化，而排序一般大家会有共同的结论：对同一个问题，A和B哪个回答更好。
 >
 > 2. 有了一组一组的偏序（A>B, A>C, C>B）怎么得到每个回答的奖励分数？
 >
-> 这一步在Hug的博客里用了Elo排名系统，打网游排位赛、看足球篮球比赛的可能都知道：
+> 通常选择 Elo 排名系统对生成的回答进行打分，Elo 打分在 网游排位赛、足球篮球比赛排名非常常见。
 >
 > 3. 这个RM用什么模型？
 >
-> 只要用Elo系统打分后归一化，然后直接上个LM做回归就行，可以从零训练也可以用老LM做finetune。这里有个有趣的事情在于，做问答和做评分都需要输入所有的文本，实际上两个模型的容量（或者说理解能力）应该是差不多的，而现有的RLHF模型都使用了两个不同大小的模型。
->
-> 4. 有没有其他方式训练打分的模型？
->
-> 可以对偏序直接用 Pairwise learning to rank 做打分，更符合常规的思路。
+> 由于我们的基础模型和做奖励模型都需要输入所有的文本，实际上两个模型的容量（或者说理解能力）应该是差不多的，但是，现有的RLHF模型都使用了两个不同大小的模型，通常来说 ， RM 模型的参数量相对较小。
+
+#### 数学公式
+
+- 训练数据：（提示，获胜响应，失败响应）格式的高质量数据
+- 数据规模：100K - 1M个示例
+  - InstructGPT：50,000个提示。每个提示有4到9个响应，形成6到36对（获胜响应，失败响应）。这意味着在（提示，获胜响应，失败响应）格式的训练示例之间有300K到1.8M个。
+  - 宪法AI，疑似是Claude（Anthropic）的后盾：318K次比较——135K由人类生成，183K由AI生成。Anthropic已经开源了他们的旧版本数据（hh-rlhf），包含大约170K次比较。
+- $r_\theta$：正在训练的奖励模型，由参数 $\theta$ 参数化。训练过程的目标是找到使得损失最小的 $\theta$。
+- 训练数据格式：
+  - $x$：提示（prompt）
+  - $y_w$：获胜响应（winning response）
+  - $y_l$：失败响应（losing response）
+- 对于每个训练样本 $(x, y_w, y_l)$：
+  - $s_w = r_\theta(x, y_w)$：奖励模型给获胜响应的评分
+  - $s_l = r_\theta(x, y_l)$：奖励模型给失败响应的评分
+- 损失值：$-\log(\sigma(s_w - s_l))$
+- 目标：找到 $\theta$ 以最小化所有训练样本的期望损失。$-E_x \log(\sigma(s_w - s_l))$
+
+为了更直观地理解这个损失函数是如何工作的，我们可以将其可视化。
+
+设 $d = s_w - s_l$。这是 $f(d) = -\log(\sigma(d))$ 的图形。对于负的 $d$，损失值较大，这激励奖励模型不要给获胜响应比失败响应更低的分数。
+
+
+
+<img src="https://huyenchip.com/assets/pics/rlhf/11-graph-rm-loss.png" alt="img" style="zoom: 33%;" />
+
+
+
+#### UI用于收集比较数据
+
+下图展示了OpenAI的标注者用来创建 InstructGPT 的RM训练数据的用户界面。标注者既可以给出1到7的具体分数，也可以根据偏好对响应进行排名，但只有排名用于训练RM。他们的标注者间一致性大约是73%，这意味着如果他们要求10个人对两个响应进行排名，其中7个人会有相同的排名。
+
+为了加快标注过程，他们要求每个标注者对多个响应进行排名。例如，4个排名的响应，如A > B > C > D，将产生6个排名对，例如(A > B)，(A > C)，(A > D)，(B > C)，(B > D)，(C > D)。
+
+
+
+<img src="https://huyenchip.com/assets/pics/rlhf/12-ui.png" alt="3 phases of ChatGPT development" style="zoom:50%;" />
+
+
 
 ### Step3: 强化学习策略优化
 
-RLHF 的最后一步是确定如何使用奖励模型来更新 AI 智能体的策略。用于更新 RL 模型的奖励函数的最成功算法之一是近端策略优化 (PPO)。
+一旦奖励模型准备好，RLHF 的最后一步是使用强化学习来更新微调 SFT 模型。和一般的强化学习目标一样，在这一步中，我们的智能体（基础模型）学习选择动作（对用户输入的响应），以最大化一个分数（奖励）。用于更新 RL 模型的奖励函数的最成功算法之一是近端策略优化 (PPO)。
 
-首先定义强化学习的场景：
+在这个过程中，提示是从分布中随机选择的——例如，我们可能会在客户提示中随机选择。每个提示都被输入到LLM模型中，以得到一个响应，然后由RM给出一个分数。
 
-- 策略（Policy）： 基于该语言模型，接收Prompt作为输入，然后输出一系列文本（或文本的概率分布）。
-- 动作空间（action space）：词表所有token在所有输出位置的排列组合（单个位置通常有50k左右的token候选）。
-- 观测空间 （Observation Space）：是输入文本序列的空间（全词表大小 x 序列长度）；
-- 奖励函数 （Reward function ）：基于奖励模型计算得到初始reward，再叠加上一个约束项。具体而言，把问题分别输入第一步finetune的模型和正在训练的模型得到输出 $y_1$ , $y_2$ ，把 $y_2$ 输入RM得到评分 $r_\theta$ ，然后这里我们期望 $y_1$ , $y_2$  别差太多, 所以加一个KL散度的惩罚项  $r_{KL}$，即：$r = r_{\theta} - \lambda r_{KL}$.
+PPO 算法确定的奖励函数具体计算如下：
 
-然后根据PPO算法进行RL更新。
+- 将提示 x 输入初始 LM 和当前微调的 LM，分别得到了输出文本 y1, y2；
+- 将两个模型的生成文本进行比较计算差异的惩罚项。
+- 将来自当前策略的文本传递给 RM 得到一个标量的奖励 $r_{\theta}$ .
 
-首先，创建初始模型的副本，并冻结其可训练权重。PPO 算法会计算出一个范围 [1- ε , 1+ ε ]，其中 ε 是一个超参数，它大致决定了新的（更新后的）策略可以偏离旧的（已冻结的）策略的程度。然后，算法会计算概率比：旧策略采取给定操作的概率与新策略采取该操作的概率之比。如果概率比大于 1+ ε（或小于 1- ε），则策略更新的幅度可能会被裁剪，以防止剧烈变化导致整个模型不稳定。
-
+在 OpenAI、Anthropic 和 DeepMind 的多篇论文中，这种惩罚被设计为这些出词分布序列之间的 Kullback–Leibler (KL) 散度的缩放 $r = r_{\theta} - \lambda r_{KL}$. 这一项被用于惩罚 RL 策略在每个训练批次中生成大幅偏离初始模型，以确保模型输出合理连贯的文本。如果去掉这一惩罚项可能导致模型在优化中生成乱码文本来愚弄奖励模型提供高奖励值。此外，OpenAI 在 InstructGPT 上实验了在 PPO 添加新的预训练梯度，可以预见到奖励函数的公式会随着 RLHF 研究的进展而继续进化。
 
 
-## RLHF 算法框架
+
+<div align=center>
+<img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/rlhf/rlhf.png" alt="img" style="zoom: 33%;" />
+</div>
+
+#### 数学公式
+
+- 机器学习任务：强化学习
+
+  - 动作空间（Action space）：LLM使用的 tokens 词汇表，采取行动意味着选择一个token来生成。（单个位置通常有50k左右的token候选）。
+
+  - 观测空间 （Observation Space）：输入文本序列的分布（全词表大小 x 序列长度）；
+
+  - 策略（Policy）： 给定观测（Prompt）时所有动作（即所有要生成的tokens）的概率分布。一个LLM构成了一个策略，因为它决定了下一个token生成的可能性。
+
+  - 奖励函数 （Reward function ）：基于奖励模型计算得到 Reward.
+
+    在实际使用时，会基于奖励模型计算得到初始 reward，再叠加上一个约束项。具体而言，把问题分别输入第一步finetune的模型和正在训练的模型得到输出 $y_1$ , $y_2$ ，把 $y_2$ 输入RM得到评分 $r_\theta$ ，然后这里我们期望 $y_1$ , $y_2$  别差太多, 所以加一个KL散度的惩罚项  $r_{KL}$，即：$r = r_{\theta} - \lambda r_{KL}$.
+
+
+
+- 训练数据：随机选择的提示
+
+- 数据规模：10,000 - 100,000个提示
+
+  - InstructGPT：40,000个提示
+
+---
+
+
+
+- $LLM^{SFT}$：从第1阶段获得的监督式微调模型。
+- $RM$：从第2阶段获得的奖励模型。
+  - 在InstructGPT论文中，$LLM^{SFT}$被表示为$\pi^{SFT}$。
+
+  - 给定提示 $x$，输出响应的分布。
+- $LLM^{RL}_\phi$：正在用强化学习训练的模型，参数化为 $\phi$。
+  - 在InstructGPT论文中，$LLM^{RL}_\phi$被表示为$\pi^{RL}_\phi$。
+  - 目标是找到 $\phi$ 以最大化根据 $RM$ 模型计算的得分。
+  - 给定提示 $x$，输出响应的分布。
+- $x$：提示。
+- $D_{RL}$：用于RL模型的提示分布。
+- $D_{pretrain}$：预训练模型的训练数据分布。
+
+对于每个训练步骤，从 $D_{RL}$ 中采样一批 $x_{RL}$，并从 $D_{pretrain}$ 中采样一批 $x_{pretrain}$。
+
+- 对于每个 $x_{RL}$，我们使用 $LLM^{RL}_\phi$ 来采样一个响应：$y \sim LLM^{RL}_\phi(x_{RL})$。目标计算如下。注意，这个目标中的第二项是KL散度，以确保RL模型不会偏离SFT模型太远。
+  $$
+  \text{objective1}(x_{RL},y;\phi) = RM(x_{RL},y) - \beta \log LLM^{RL}_\phi(y|x) LLM^{SFT}(y|x)
+  $$
+
+- 对于每个 $x_{pretrain}$，目标计算如下。直观地说，这个目标是确保RL模型在文本补全——预训练模型优化的任务上——不会表现得更差。
+  $$
+  \text{objective2}(x_{pretrain};\phi) = \gamma \log LLM^{RL}_\phi(x_{pretrain})
+  $$
+
+- 最终目标是上述两个目标期望值之和。在RL设置中，我们最大化下面的目标。
+  $$
+  \text{objective}(\phi) = \mathbb{E}_{x \sim D_{RL}} \mathbb{E}_{y \sim LLM^{RL}_\phi(x)} [RM(x,y) - \beta \log LLM^{RL}_\phi(y|x) LLM^{SFT}(y|x)] + \gamma \mathbb{E}_{x \sim D_{pretrain}} \log LLM^{RL}_\phi(x)
+  $$
+
+
+## RLHF 经典算法
 
 ### PPO
 
@@ -183,6 +308,8 @@ RLHF 的最后一步是确定如何使用奖励模型来更新 AI 智能体的�
 - 稳定性和样品效率： PPO因其稳定性和样品效率而受到青睐。与其他一些强化学习算法相比，它往往提供更平滑的策略更新，使其适合训练文本生成质量至关重要的语言模型。
 
 ### DPO（Direct Preference Optimization）
+
+有一个新算法 ，Direct Preference Optimization（DPO）不使用RLHF 就能微调 LLMs 以对齐人类偏好
 
 直接偏好优化 (DPO) 是一种微调大型语言模型 (LLM)以符合人类偏好的新颖方法。与涉及来自人类反馈的复杂强化学习 (RLHF) 的传统方法不同， DPO简化了流程。它的工作原理是创建人类偏好对的数据集，每个偏好对都包含一个提示和两种可能的完成方式——一种是首选，一种是不受欢迎。然后对LLM进行微调，以最大限度地提高生成首选完成的可能性，并最大限度地减少生成不受欢迎的完成的可能性。 与 RLHF 相比，DPO 具有多项优势：
 
@@ -217,11 +344,11 @@ DPO：DPO 已被证明在各种任务中都很有效，包括情绪控制、摘�
 
 ### Natural Languge Policy Optimization （NLPO）
 
+## RLHF 开源资源
 
+### 开源RLHF算法库
 
-## RLHF 开源算法库
-
-### OpenRLHF
+#### OpenRLHF
 
 OpenRLHF 是一个基于 Ray、DeepSpeed 和 HF Transformers 构建的高性能 RLHF 框架：
 
@@ -229,13 +356,11 @@ OpenRLHF 是一个基于 Ray、DeepSpeed 和 HF Transformers 构建的高性能 
 - 高性能: RLHF 训练的 80% 时间花费在样本生成阶段。得益于使用 Ray 和 Adam Offload（固定内存）可以使用大批量推理，使用 13B LLaMA2 模型的 OpenRLHF 性能是 DeepSpeedChat 的 4 倍。我们还支持 vLLM 生成加速以进一步提高生成性能。
 - 分布式 RLHF: OpenRLHF 使用 Ray 将 Actor、Reward、Reference 和 Critic 模型分布到不同的 GPU 上，同时将 Adam 优化器放在 CPU 上。这使得使用多个 A100 80G GPU 和 vLLM 可以全面微调超过 70B+ 的模型 (见 [architecture](https://github.com/OpenLLMAI/OpenRLHF/blob/main/docs/ray_architecture.png)) 以及在多个 24GB RTX 4090 GPU 上微调 7B 模型。
 
-### TRL
+#### TRL
 
 通常是实现所有新算法的最小实现最快的地方。很多示例通常可以在单个 GPU 上运行。
 
-
-
-### TRLX
+#### TRLX
 
 Github:  https://github.com/CarperAI/trlx
 
@@ -246,7 +371,7 @@ Github:  https://github.com/CarperAI/trlx
 
 - TRLX 通过 Accelerate 支持的Trainer与Hugging Face 模型无缝集成
 
-### RL4LM
+#### RL4LM
 
 Github: https://github.com/allenai/RL4LMs
 
@@ -259,28 +384,26 @@ Github: https://github.com/allenai/RL4LMs
   - 提供20多种不同类型的NLG指标作为奖励函数，例如词汇指标（如ROUGE、BLEU、SacreBLEU、METEOR）、语义指标（如BERTSCORE、BLEURT）和特定任务指标（如PARENT、CIDER、SPICE），来自预训练分类器的分数（例如：情绪分数）
 - 开源模块化库，可以方便的对接 Huggingface，模块可定制。
 
-### DeepSpeed Chat
+#### DeepSpeed Chat
 
 Github: https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat
 
 虽然工程设置非常不同，但最好比较实现相同内容的不同方法。
 
-
-
-## 开源 RLHF 模型
+### 开源 RLHF 模型
 
 - [Zephyr ](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta)（导致了[Tulu 2 ](https://huggingface.co/allenai/tulu-2-dpo-70b)、Stability 模型、Intel 模型等）是推动 DPO 和普遍有用的 RLHF 模型激增的火花。
 - [Starling](https://starling.cs.berkeley.edu/) 是一款性能出色的最新型号，有趣的是它没有使用DPO。
 - [Llama 2 ](https://arxiv.org/abs/2307.09288)在其论文中提供的细节比大多数实验室在 RLHF 方面尝试过的细节还要多。
 
-## 数据集
+### 开源数据集
 
 - [UltraFeedback ](https://arxiv.org/abs/2310.01377)：为我们提供 Zephyr 等人的数据集。甚至还有更多[研究试图改进数据集和 RLHF 性能](https://argilla.io/blog/notus7b/)。
 - [Open Assistant 1 ](https://huggingface.co/datasets/OpenAssistant/oasst1)：社区生成的指导数据，带来了开放式 IFT 培训的第一波进展。
 - [Alpaca ](https://huggingface.co/datasets/tatsu-lab/alpaca)：第一个流行的合成指令数据。
 - [ShareGPT](https://sharegpt.com/)及其变体：人们用来尝试在开放数据中获得类似 ChatGPT 的功能的大型数据集。
 
-## 评价
+### 如何评价
 
 这三个评估是 RLHF 模型相对排名的综合集合。
 
@@ -289,6 +412,30 @@ Github: https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat
 - [AlpacaEval ](https://github.com/tatsu-lab/alpaca_eval)：第一个 GPT4 作为法官的工具，用于推广 LLM 作为法官的实践。
 
 ## RLHF vs SFT
+
+### RLHF 优点
+
+RLHF微调的效果可以概括为以下几点：
+
+1. **提高一致性**：模型在不同情境下生成的文本更加一致，减少了随机性。
+2. **增强质量**：通过优先考虑人类偏好的响应，模型生成的文本质量得到提升。
+3. **减少不适当内容**：模型更能够识别并避免生成可能被认为是不适当或冒犯的内容。
+4. **更好的对齐人类价值观**：模型的响应更符合人类的道德、文化和社会价值观。
+5. **提升用户满意度**：最终，这些改进可以导致用户对模型的输出更加满意，因为它们更有可能符合用户的期望和偏好。
+
+### RLHF 的局限性
+
+尽管 RLHF 模型在训练 AI 代理执行从机器人、视频游戏到 NLP 等复杂任务方面取得了令人印象深刻的成果，但使用 RLHF 并非没有局限性。
+
+- 人类偏好数据成本高昂。收集第一手人类反馈的需求可能会造成一个代价高昂的瓶颈，限制 RLHF 流程的可扩展性。Anthropic 和 Google 都提出了 AI 反馈强化学习 (RLAIF) 的方法，即让另一个 LLM 评估模型响应来取代部分或全部人类反馈，其结果与 RLHF 相当。
+
+- 人类的输入具有高度主观性。要就“高质量”的输出到底是什么达成坚定的共识，几乎是不可能的，因为人类评估者不仅会对所谓的“事实”产生不同的意见，还会对“适当的”模型行为究竟应该如何理解存在分歧。因此，人类的分歧使得据以判断模型性能的“标准答案”无法形成。
+
+- 人类评估者可能会犯错，甚至故意采取对抗性和恶意行为。人类对模型的引导并不总是出于善意，他们可能怀抱着真诚的反对意见，也可能故意操纵学习过程。Wolf 等人在 2016 年的一篇论文中提出，有毒行为应被视为人机交互中的一个基本预期，并建议需要一种方法来评估人类输入的可信度。2022 年，Meta AI 发布了[一篇关于对抗性人类输入的论文](https://arxiv.org/pdf/2208.03295.pdf)，研究了使用自动化方法“从高质量数据中获得最大学习效率，同时对低质量和对抗性数据具有最大稳健性”。该论文对各种“操纵”行为进行了分类，并确定了它们扭曲反馈数据的不同方式。
+
+- RLHF 存在过度拟合和偏见的风险。如果收集到的反馈来自一个非常有限的群体，那么当模型被其他群体使用，或者被用来处理与评估者持有某些偏见相关的主题时，可能会出现性能问题。
+
+### RLHF vs SFT
 
 1. 监督学习与强化学习的区别：
    - 在监督学习中，模型通过观察人类编写的文本和期望的输出来学习如何回答问题或执行任务，适用于文本基础任务。
@@ -309,17 +456,7 @@ Github: https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat
 8. 无需人类反馈的RL：
    - 尽管RL训练通常需要人类反馈，但使用大型预训练语言模型作为自动评分器， RL训练变得更加实用。
 
-## RLHF 的局限性
-
-尽管 RLHF 模型在训练 AI 代理执行从机器人、视频游戏到 NLP 等复杂任务方面取得了令人印象深刻的成果，但使用 RLHF 并非没有局限性。
-
-- 人类偏好数据成本高昂。收集第一手人类反馈的需求可能会造成一个代价高昂的瓶颈，限制 RLHF 流程的可扩展性。Anthropic 和 Google 都提出了 AI 反馈强化学习 (RLAIF) 的方法，即让另一个 LLM 评估模型响应来取代部分或全部人类反馈，其结果与 RLHF 相当。
-
-- 人类的输入具有高度主观性。要就“高质量”的输出到底是什么达成坚定的共识，几乎是不可能的，因为人类评估者不仅会对所谓的“事实”产生不同的意见，还会对“适当的”模型行为究竟应该如何理解存在分歧。因此，人类的分歧使得据以判断模型性能的“标准答案”无法形成。
-
-- 人类评估者可能会犯错，甚至故意采取对抗性和恶意行为。人类对模型的引导并不总是出于善意，他们可能怀抱着真诚的反对意见，也可能故意操纵学习过程。Wolf 等人在 2016 年的一篇论文中提出，有毒行为应被视为人机交互中的一个基本预期，并建议需要一种方法来评估人类输入的可信度。2022 年，Meta AI 发布了[一篇关于对抗性人类输入的论文](https://arxiv.org/pdf/2208.03295.pdf)，研究了使用自动化方法“从高质量数据中获得最大学习效率，同时对低质量和对抗性数据具有最大稳健性”。该论文对各种“操纵”行为进行了分类，并确定了它们扭曲反馈数据的不同方式。
-
-- RLHF 存在过度拟合和偏见的风险。如果收集到的反馈来自一个非常有限的群体，那么当模型被其他群体使用，或者被用来处理与评估者持有某些偏见相关的主题时，可能会出现性能问题。
+-
 
 ## Reference
 
