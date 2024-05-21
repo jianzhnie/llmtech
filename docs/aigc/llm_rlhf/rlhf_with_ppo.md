@@ -113,8 +113,6 @@ Ref Logprobs的含义是最最原始的LM对于每个时间步的概率预测，
 
 
 
-
-
 ```python
 def generate_experience(self, prompts, mask, step):
     self.eval()
@@ -253,7 +251,7 @@ value = self.critic_model.forward_value(**batch,
 
 Critic Loss通常通过均方误差（Mean Squared Error, MSE）来计算。对于每一个状态，我们都有一个由Critic预测出的预期回报值V（s），以及一个真实的回报值G（returns）。Critic Loss就是这两个值之间差的平方。在一个批量的数据中，Critic Loss是所有状态的这个差的平方的平均值。公式如下： $𝐶𝑟𝑖𝑡𝑖𝑐 𝐿𝑜𝑠𝑠=𝐸[(𝑉(𝑠)−𝐺)^2]$
 
-其中E[.]表示期望值，$ V(s) $ 是Critic对状态s（这个时间步的token）的价值预测New Values，G是真实的回报值Returns。
+其中E[.]表示期望值，$ V(s) $ 是Critic对状态s（这个时间步的token）的价值预测New Values，G是真实的回报值Returns。
 
 通过最小化Critic Loss，Critic的预测能力会逐渐提升。因为Critic的预测结果会被用来估计每个行动的优势（Advantage），这个优势值又会被用来计算策略的更新（Actor Loss）。
 
@@ -296,7 +294,7 @@ PPO的 Actor loss如下：
 $$
 L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; \text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a |s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a) \right)
 $$
-$r_{\theta}=\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $是新旧策略的比率。 $A^ {\pi_{\theta_k}}(s,a)$ 是优势函数，clip 是剪裁函数，它将 $\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $限制在 $ [ 1 - \epsilon, 1+ \epsilon]$  范围内，$\epsilon$  是一个超参数，通常设置为 0.1 或 0.2。
+$r_{\theta}=\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $是新旧策略的比率。 $A^ {\pi_{\theta_k}}(s,a)$ 是优势函数，clip 是剪裁函数，它将 $\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $限制在 $ [ 1 - \epsilon, 1+ \epsilon]$  范围内，$\epsilon$  是一个超参数，通常设置为 0.1 或 0.2。
 
 这个损失函数的目标是最大化策略的期望回报，同时限制新旧策略之间的差异。当新旧策略的比率 $r_{\theta} $超出  $ [ 1 - \epsilon, 1+ \epsilon]$   范围时，剪裁函数会限制其影响，防止策略更新过大。
 
