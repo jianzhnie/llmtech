@@ -292,57 +292,59 @@ PPO 算法确定的奖励函数具体计算如下：
 
 ## RLHF 经典算法
 
-### PPO
+### RLHF with PPO
 
-什么是近端策略优化（PPO）？
+近端策略优化（PPO） 是一种强化学习算法，用于训练语言模型和其他机器学习模型。它旨在优化代理（在本例中为语言模型）的策略函数，以最大化其在给定环境中的预期累积奖励。
 
-近端策略优化（PPO） 是一种强化学习算法，用于训练语言模型和其他机器学习模型。它旨在优化代理（在本例中为语言模型）的策略函数，以最大化其在给定环境中的预期累积奖励。PPO 以其训练复杂模型的稳定性和效率而闻名。
-以下是 PPO 对于语言模型的工作原理：
+PPO 有两个主要变体：PPO-Penalty 和 PPO-Clip。
 
-- 策略和价值函数： PPO 涉及两个关键组成部分：策略函数（通常由神经网络表示）和价值函数。策略函数根据输入数据定义模型的操作或决策，而价值函数则估计遵循特定策略的预期累积奖励。
-- 策略迭代： PPO遵循策略迭代方法。它从初始策略开始，并迭代地完善它以提高性能。在每次迭代期间，模型通过与环境交互来收集数据。对于语言模型，这种交互可能涉及根据输入提示生成文本。
-- 目标函数： PPO旨在通过最大化目标函数来优化策略。该函数结合了两个关键术语：代理目标和正则化项。替代目标使用当前迭代期间收集的数据来衡量新策略与旧策略相比的执行情况。正规化术语阻止政策发生太大变化。
-- 裁剪： PPO 的显着特点之一是使用裁剪来确保策略更新不会过于极端。裁剪将策略更新限制在一定范围内，防止策略发生较大变化而导致训练过程中的不稳定。
-- 多个 Epoch： PPO 通常在每次迭代期间进行多个优化 epoch。在每个时期，它使用收集的数据来更新策略。重复此过程直到找到令人满意的策略。
-- 策略评估： 价值函数在策略评估中起着至关重要的作用。它估计了遵循当前策略的预期回报。这一估计有助于评估策略的质量并指导其完善。
-- 稳定性和样品效率： PPO因其稳定性和样品效率而受到青睐。与其他一些强化学习算法相比，它往往提供更平滑的策略更新，使其适合训练文本生成质量至关重要的语言模型。
+#### PPO-惩罚
+
+PPO-惩罚（PPO-Penalty）用拉格朗日乘数法直接将 KL 散度的限制放进了目标函数中，这就变成了一个无约束的优化问题，在迭代的过程中不断更新 KL 散度前的系数。即：
+$$
+L(s,a,\theta_k,\theta)  =  \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; - \beta D_{KL} \pi_{\theta_{k}}(. | x) || \pi_{\theta}(y. | x)  \right)
+$$
+
+#### PPO-截断
+
+PPO 的另一种形式 PPO-截断（PPO-Clip）更加直接，它在目标函数中进行限制，以保证新的参数和旧的参数的差距不会太大，即：
+$$
+L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; \text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a |s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a) \right)
+$$
+其中 $clip(x, l, r) := max(min(x,r),l) $，即把 $x$ 限制在 $[l, r] $ 内。上式中$\epsilon$ 是一个超参数，表示进行截断（clip）的范围。
+
+PPO-clip 通过以下方式更新政策
+$$
+\theta_{k+1} = \arg \max_{\theta} \underset{s,a \sim \pi_{\theta_k}}{{\mathrm E}}\left[ L(s,a,\ theta_k, \theta)\right]
+$$
+这是一个相当复杂的表达式，乍一看很难看出它在做什么，或者它如何帮助保持新策略接近旧策略。事实证明，这个目标有一个相当简化的版本，它更容易处理：
+$$
+L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; g(\epsilon, A^{\pi_{\theta_k}}(s,a)) \right),
+$$
+其中，
+$$
+g(\epsilon, A) =  \{ \begin{array}{ll} (1 + \epsilon) A & A \geq 0 \\\ (1 - \epsilon) A & A < 0。 \end{array}
+$$
+**优势为正**：假设该状态-动作对的优势为正，在这种情况下，它对目标的贡献减少为
+$$
+L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}, ( 1 + \epsilon) \right) A^{\pi_{\theta_k}}(s,a).
+$$
+因为优势是正的，说明这个动作的价值高于平均，最大化这个式子会增大$\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}$,  但不会让其超过 $ 1+\epsilon$.
+
+**优势为负**：假设该状态-动作对的优势为负，在这种情况下，它对目标的贡献减少为
+$$
+L(s,a,\theta_k,\theta) = \max\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}, ( 1 - \epsilon) \right) A^{\pi_{\theta_k}}(s,a).
+$$
+因为优势是负的，最大化这个式子会减小 $\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}$，但不会让其超过 $ 1 - \epsilon$.
 
 ### DPO（Direct Preference Optimization）
 
-有一个新算法 ，Direct Preference Optimization（DPO）不使用RLHF 就能微调 LLMs 以对齐人类偏好
-
 直接偏好优化 (DPO) 是一种微调大型语言模型 (LLM)以符合人类偏好的新颖方法。与涉及来自人类反馈的复杂强化学习 (RLHF) 的传统方法不同， DPO简化了流程。它的工作原理是创建人类偏好对的数据集，每个偏好对都包含一个提示和两种可能的完成方式——一种是首选，一种是不受欢迎。然后对LLM进行微调，以最大限度地提高生成首选完成的可能性，并最大限度地减少生成不受欢迎的完成的可能性。 与 RLHF 相比，DPO 具有多项优势：
 
-- 简单性： DPO更容易实施和培训，使其更易于使用。
+- 简单性： DPO更容易实施和训练，使其更易于使用。
 - 稳定性： 不易陷入局部最优，保证训练过程更加可靠。
 - 效率：与 RLHF 相比， DPO 需要更少的计算资源和数据，使其计算量轻。
 - 有效性： 实验结果表明，DPO在情感控制、摘要和对话生成等任务中可以优于 RLHF 。
-
->  DPO 的主要特性包括作为单阶段算法、对超参数变化的鲁棒性、效率以及跨各种自然语言处理任务的有效性。如果您的目标是微调 LLM 以满足特定的人类偏好，DPO 可以提供比 RLHF 更简单、更高效的替代方案。
-
-直接偏好优化 (DPO) 和人类反馈强化学习 (RLHF)是两种不同的方法，用于微调大型语言模型 (LLM)以符合人类偏好。
-
-##### 方法
-
-DPO：DPO是一种单阶段算法，可直接优化 LLM以生成首选响应。它将问题表述为使用人类偏好对数据集的分类任务，其中每一对都包含一个提示和两个可能的完成（一个首选，一个不首选）。DPO 最大化生成首选完成的概率并最小化生成非首选完成的概率。它不涉及多轮训练。 RLHF：RLHF 是一个两阶段过程。首先，它符合反映人类偏好的奖励模型。然后，它使用强化学习对LLM 进行微调，以最大化估计奖励，同时保持与原始模型的一致性。RLHF 涉及多轮训练，并且计算量可能很大。
-
-##### 复杂
-
-DPO：与RLHF相比， DPO更易于实施和培训。它不需要创建单独的奖励模型、在微调期间从 LLM 采样或进行广泛的超参数调整。RLHF：由于奖励模型拟合和微调的两阶段过程， RLHF更加复杂，并且计算要求较高。
-
-##### 稳定
-
-DPO：DPO对超参数的变化更加稳定和鲁棒。在训练过程中陷入局部最优的可能性较小。 RLHF：RLHF对超参数选择很敏感，可能需要仔细调整以避免不稳定。
-
-##### 效率
-
-DPO：与RLHF相比， DPO 在计算和数据需求方面更加高效。它可以用更少的资源实现类似或更好的结果。 RLHF：RLHF 可能需要更多的计算资源和大量的数据才能获得类似的结果。
-
-##### 能力
-
-DPO：DPO 已被证明在各种任务中都很有效，包括情绪控制、摘要和对话生成。在一些研究中它的表现优于 RLHF。 RLHF：RLHF在使法学硕士与人类偏好保持一致方面也很有效，但可能需要更广泛的实验和调整。
-
-### Natural Languge Policy Optimization （NLPO）
 
 ## RLHF 开源资源
 
@@ -358,7 +360,9 @@ OpenRLHF 是一个基于 Ray、DeepSpeed 和 HF Transformers 构建的高性能 
 
 #### TRL
 
-通常是实现所有新算法的最小实现最快的地方。很多示例通常可以在单个 GPU 上运行。
+Github： https://github.com/huggingface/trl
+
+`trl`库是一个全栈工具，可使用监督微调步骤 (SFT)、奖励建模 (RM) 和近端策略优化 (PPO) 以及直接偏好优化(DPO)等方法来微调和对齐 Transformer 语言和扩散模型。这是一个基于Hugging Face的transformers库的强化学习库，可以用于训练Transformer语言模型。
 
 #### TRLX
 
@@ -388,20 +392,19 @@ Github: https://github.com/allenai/RL4LMs
 
 Github: https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat
 
-虽然工程设置非常不同，但最好比较实现相同内容的不同方法。
+代码实现相对简洁，可以很方便的修改实现自己的想法。
 
 ### 开源 RLHF 模型
 
-- [Zephyr ](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta)（导致了[Tulu 2 ](https://huggingface.co/allenai/tulu-2-dpo-70b)、Stability 模型、Intel 模型等）是推动 DPO 和普遍有用的 RLHF 模型激增的火花。
-- [Starling](https://starling.cs.berkeley.edu/) 是一款性能出色的最新型号，有趣的是它没有使用DPO。
-- [Llama 2 ](https://arxiv.org/abs/2307.09288)在其论文中提供的细节比大多数实验室在 RLHF 方面尝试过的细节还要多。
+- [Zephyr ](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta) 是推动 DPO 和普遍有用的 RLHF 模型激增的模型。
+- [Llama 2 ](https://arxiv.org/abs/2307.09288) 在其论文中提供了大量的 RLHF 实现细节。
 
 ### 开源数据集
 
-- [UltraFeedback ](https://arxiv.org/abs/2310.01377)：为我们提供 Zephyr 等人的数据集。甚至还有更多[研究试图改进数据集和 RLHF 性能](https://argilla.io/blog/notus7b/)。
-- [Open Assistant 1 ](https://huggingface.co/datasets/OpenAssistant/oasst1)：社区生成的指导数据，带来了开放式 IFT 培训的第一波进展。
-- [Alpaca ](https://huggingface.co/datasets/tatsu-lab/alpaca)：第一个流行的合成指令数据。
-- [ShareGPT](https://sharegpt.com/)及其变体：人们用来尝试在开放数据中获得类似 ChatGPT 的功能的大型数据集。
+- [UltraFeedback ](https://arxiv.org/abs/2310.01377)：提供了训练 Zephyr 模型数据集。
+- [Open Assistant 1 ](https://huggingface.co/datasets/OpenAssistant/oasst1)：社区生成的指导数据。
+- [Alpaca ](https://huggingface.co/datasets/tatsu-lab/alpaca)：第一个流行的合成指令数据， 使用 ChatGPT生成。
+- [ShareGPT](https://sharegpt.com/) ：人们用来尝试在开放数据中获得类似 ChatGPT 的功能的大型数据集。
 
 ### 如何评价
 
@@ -409,7 +412,7 @@ Github: https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat
 
 - [ChatBotArena ](https://chat.lmsys.org/)：众包比较网站，是开放模型和封闭模型的模型质量的首选来源。
 - [MT Bench ](https://huggingface.co/spaces/lmsys/chatbot-arena-leaderboard)：同样由 LMSYS 构建的两回合聊天评估，与大多数 LLM 的实际评估非常相关。
-- [AlpacaEval ](https://github.com/tatsu-lab/alpaca_eval)：第一个 GPT4 作为法官的工具，用于推广 LLM 作为法官的实践。
+- [AlpacaEval ](https://github.com/tatsu-lab/alpaca_eval)：第一个以GPT4 作为法官的工具，用于推广 LLM 作为法官的实践。
 
 ## RLHF vs SFT
 
@@ -455,8 +458,6 @@ RLHF微调的效果可以概括为以下几点：
    - 其他模型可能会尝试其他模型的行为，但这种方法可能不适用于知识寻求型查询，因为它可能会导致模型编造事实。
 8. 无需人类反馈的RL：
    - 尽管RL训练通常需要人类反馈，但使用大型预训练语言模型作为自动评分器， RL训练变得更加实用。
-
--
 
 ## Reference
 

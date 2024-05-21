@@ -37,7 +37,7 @@ $$
 $$
 L = 8 \ln(\frac {\alpha_A} {\alpha_A + \alpha_B}) + 4 \ln(\frac {\alpha_B} {\alpha_A + \alpha_B}) + 3 \ln(\frac {\alpha_A} {\alpha_A + \alpha_C}) + 5 ln(\frac {\alpha_C} {\alpha_A + \alpha_C})
 $$
-计算得到： $\alpha_A = 1 $ ,  $\alpha_B = \frac{1}{2} $ ,  $\alpha_C = \frac{5}{3}  $ ,  从而：  $ P(B > C) = \frac{\alpha_B}{\alpha_C + \alpha_c} \approx 0.23 $ ，根据现有数据， B	和C 对战，获胜的几率大概为 0.23.
+计算得到： $\alpha_A = 1 $ ,  $\alpha_B = \frac{1}{2} $ ,  $\alpha_C = \frac{5}{3}  $ ,  从而：  $ P(B > C) = \frac{\alpha_B}{\alpha_C + \alpha_c} \approx 0.23 $ ，根据现有数据， B	和C 对战，获胜的几率大概为 0.23.
 
 不使用 MLE， 我们也可以使用机器学习的方式通过迭代优化的方式来进行求解， 上述问题的一般的Loss 函数可表示成：
 $$
@@ -50,8 +50,6 @@ $$
 现有的 RLHF 流程通常包括三个阶段：1）监督微调（SFT）；2）偏好采样和奖励学习；3）RL优化。
 
 <img src="https://miro.medium.com/v2/resize:fit:700/1*GiEF7F3n-1TlL7_HRJD_OA.png" alt="img" style="zoom:150%;" />
-
-
 
 ### SFT
 
@@ -67,7 +65,7 @@ $$
 $$
 p(y_w \succ y_l | x) = \frac{\exp(r(x, y_w))}{\exp(r(x, y_w)) + \exp(r(x, y_l))}
 $$
-假设我们可以访问来自 $ p $ 的比较静态数据集$ D = \{x(i), y(i)_w, y(i)_l\}^{N}_{i=1} $ 的样本，我们可以通过最大似然估计参数化奖励模型$ r_\phi(x, y) $。将问题框架为二元分类，我们得到了优化Reward 模型的负对数似然损失函数：
+假设我们可以访问来自 $ p $ 的比较静态数据集$ D = \{x(i), y(i)_w, y(i)_l\}^{N}_{i=1} $ 的样本，我们可以通过最大似然估计参数化奖励模型$ r_\phi(x, y) $。将问题框架为二元分类，我们得到了优化Reward 模型的负对数似然损失函数：
 $$
 L_{R}(r_{\theta}; D) = - \mathbb{E}_{(x,y_w,y_l) \sim D} \left[ log \sigma\left( r_{\theta}(x, y_l) - r_{\theta}(x, y_w) \right)  \right]
 $$
@@ -105,8 +103,6 @@ DPO 完全消除了对奖励模型的需要.
 
 <img src="https://miro.medium.com/v2/resize:fit:648/1*f1LfCLncMIyhQiorWSKf7A.png" alt="img" style="zoom:150%;" />
 
-
-
 DPO 的策略目标为：
 
 $$
@@ -135,7 +131,7 @@ $$
 
 其中 $ \hat{r}_{\theta}(x, y) = \beta \log \frac{\pi_{\theta}(y | x)}{\pi_{ref}(y | x)} $ 是由语言模型 $ \pi_{\theta} $ 和参考模型 $ \pi_{ref} $ 隐式定义的奖励（更多内容见第5节）。
 
-当 $ \hat{r}_{\theta}(x, y)  >  \hat{r}_{\theta}(x, y) $,  算式 $\sigma \left( \hat{r}_{\theta}(x, y_l) - \hat{r}_{\theta}(x, y_w) \right) $ 越接近1，反之接近0，若两者趋近则该权重接近0.5。
+当 $ \hat{r}_{\theta}(x, y)  >  \hat{r}_{\theta}(x, y) $,  算式 $\sigma \left( \hat{r}_{\theta}(x, y_l) - \hat{r}_{\theta}(x, y_w) \right) $ 越接近1，反之接近0，若两者趋近则该权重接近0.5。
 
 直观上，损失函数 $ L_{DPO} $ 的梯度增加了首选回答 $ y_w $ 的可能性，并减少了非首选回答 $ y_l $ 的可能性。
 
