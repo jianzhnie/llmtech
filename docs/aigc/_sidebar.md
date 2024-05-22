@@ -21,8 +21,13 @@
 
 - LLM RLHF
 
-  - [RLHF Basic](aigc/llm_rlhf/rlhf_basic.md)
-  - [RLHF Advanced](aigc/llm_rlhf/rlhf_advance.md)
+  - [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
+  - [Chip Huyen 对 RLHF的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
+  - [RLHF 相关知识整理](aigc/llm_rlhf/rlhf_overview.md)
+  - [RLHF 中的 PPO 代码拆解](aigc/llm_rlhf/rlhf_with_ppo.md)
+  - [直接偏好优化 DPO](aigc/llm_rlhf/dpo.md)
+  - [直接偏好优化 DPO 推导](aigc/llm_rlhf/dpo_notes.md)
+  - [Kahneman-Tversky optimization (KTO)](aigc/llm_rlhf/kto.md)
 
 
 - LLM Agent

@@ -1,4 +1,4 @@
-
+# RLHF 中的 PPO 代码拆解
 
 ## RLHF 三阶段
 
@@ -36,6 +36,8 @@ PPO 是一种用于训练强化学习模型的算法。它可以用于调整语�
   - 在这个阶段，我们使用收集到的经验来更新模型的参数。具体来说，我们使用PPO算法来调整模型的参数，使得模型生成的 response的奖励得分能够增加。PPO算法的一个关键特性是它尝试保持模型的行为不会发生太大的改变，这有助于保证模型的稳定性。
 
 通过这三个阶段的微调，我们可以使得语言模型的输出更符合我们的期望，例如更有创造性，更符合人类的偏好等。
+
+![强化学习从零到RLHF（八）一图拆解RLHF中的PPO](https://picx.zhimg.com/70/v2-cb8ab5ee946a105aab6a563e92682ffa_1440w.image?source=172ae18b&biz_tag=Post)
 
 ## 代码拆解
 
@@ -110,8 +112,6 @@ Old Values的含义是旧策略中每个时间步（每个token的预测结果�
 #### **Ref Logprobs**
 
 Ref Logprobs的含义是最最原始的LM对于每个时间步的概率预测，计算这个值的目的是限制actor的更新，防止其偏离原始模型太远。
-
-
 
 
 
@@ -253,7 +253,7 @@ value = self.critic_model.forward_value(**batch,
 
 Critic Loss通常通过均方误差（Mean Squared Error, MSE）来计算。对于每一个状态，我们都有一个由Critic预测出的预期回报值V（s），以及一个真实的回报值G（returns）。Critic Loss就是这两个值之间差的平方。在一个批量的数据中，Critic Loss是所有状态的这个差的平方的平均值。公式如下： $𝐶𝑟𝑖𝑡𝑖𝑐 𝐿𝑜𝑠𝑠=𝐸[(𝑉(𝑠)−𝐺)^2]$
 
-其中E[.]表示期望值，$ V(s) $ 是Critic对状态s（这个时间步的token）的价值预测New Values，G是真实的回报值Returns。
+其中E[.]表示期望值，$ V(s) $ 是Critic对状态s（这个时间步的token）的价值预测New Values，G是真实的回报值Returns。
 
 通过最小化Critic Loss，Critic的预测能力会逐渐提升。因为Critic的预测结果会被用来估计每个行动的优势（Advantage），这个优势值又会被用来计算策略的更新（Actor Loss）。
 
@@ -296,7 +296,7 @@ PPO的 Actor loss如下：
 $$
 L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; \text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a |s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a) \right)
 $$
-$r_{\theta}=\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $是新旧策略的比率。 $A^ {\pi_{\theta_k}}(s,a)$ 是优势函数，clip 是剪裁函数，它将 $\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $限制在 $ [ 1 - \epsilon, 1+ \epsilon]$  范围内，$\epsilon$  是一个超参数，通常设置为 0.1 或 0.2。
+$r_{\theta}=\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $是新旧策略的比率。 $A^ {\pi_{\theta_k}}(s,a)$ 是优势函数，clip 是剪裁函数，它将 $\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $限制在 $ [ 1 - \epsilon, 1+ \epsilon]$  范围内，$\epsilon$  是一个超参数，通常设置为 0.1 或 0.2。
 
 这个损失函数的目标是最大化策略的期望回报，同时限制新旧策略之间的差异。当新旧策略的比率 $r_{\theta} $超出  $ [ 1 - \epsilon, 1+ \epsilon]$   范围时，剪裁函数会限制其影响，防止策略更新过大。
 

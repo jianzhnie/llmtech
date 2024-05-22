@@ -1,4 +1,4 @@
-# RLHF  Summary
+# RLHF  相关知识整理
 
 ## RLHF 概述
 
@@ -67,65 +67,6 @@ OpenAI 的40名标注者为 InstructGPT创建了大约13,000对（提示，响�
 | ELI5: What's the cause of the "anxiety lump" in our chest during stressful or disheartening experiences?                                                                                                                                                                                                                                                                                                                                                                             | The anxiety lump in your throat is caused by muscular tension keeping your glottis dilated to maximize airflow. The clenched chest or heartache feeling is caused by the vagus nerve which tells the organs to pump blood faster, stop digesting, and produce adrenaline and cortisol. |
 | Create a shopping list from this recipe:<br>Trim the ends off zucchini. Cut zucchini in half lengthwise; scoop out pulp, leaving 1/2-in. shells. Finely chop pulp. In a skillet, cook beef, zucchini pulp, onion, mushrooms and peppers over medium heat until meat is no longer pink; drain. Remove from the heat. Add 1/2 cup cheese, ketchup, salt and pepper; mix well. Spoon into the zucchini shells. Place in a greased 13x9-in. baking dish. Sprinkle with remaining cheese. | Zucchini, beef, onion, mushroom, peppers, cheese, ketchup, salt, pepper                                                                                                                                                                                                                |
 
-除了 （提示，响应） 类型的数据， 还有一些多轮对话的数据， 这对于 LLM 模型来说，难度更大，需要 LLM 更好的记忆能力， 下面是一些示例。
-
-##### 多轮对话
-
-```json
-[
-  {
-    "id": "identity_0",
-    "conversations": [
-      {
-        "from": "human",
-        "value": "Who are you?"
-      },
-      {
-        "from": "gpt",
-        "value": "I am Vicuna, a language model trained by researchers from Large Model Systems Organization (LMSYS)."
-      },
-      {
-        "from": "human",
-        "value": "What can you do?"
-      },
-      {
-        "from": "gpt",
-        "value": "I can chat with you."
-      }
-    ]
-  },
-  {
-    "id": "identity_1",
-    "conversations": [
-      {
-        "from": "human",
-        "value": "What is up?"
-      },
-      {
-        "from": "gpt",
-        "value": "Hello! How can I help you today?"
-      },
-      {
-        "from": "human",
-        "value": "Who are you?"
-      },
-      {
-        "from": "gpt",
-        "value": "You can call me Vicuna, and I was trained by Large Model Systems Organization (LMSYS) researchers as a language model."
-      },
-      {
-        "from": "human",
-        "value": "Goodbye"
-      },
-      {
-        "from": "gpt",
-        "value": "Goodbye! If you have any more questions in the future, don't hesitate to ask."
-      }
-    ]
-  }
-]
-```
-
 #### 数学公式
 
 - **机器学习任务**：因果语言建模（Language Modeling）
@@ -164,15 +105,15 @@ OpenAI 的40名标注者为 InstructGPT创建了大约13,000对（提示，响�
 >
 > 1. 为什么不人工直接打分？
 >
-> 因为打分是主观的，很难归一化，而排序一般大家会有共同的结论：对同一个问题，A和B哪个回答更好。
+> 因为打分是主观的，很难归一化，而排序一般大家会有共同的结论：对同一个问题，A和B 哪个回答更好。
 >
 > 2. 有了一组一组的偏序（A>B, A>C, C>B）怎么得到每个回答的奖励分数？
 >
 > 通常选择 Elo 排名系统对生成的回答进行打分，Elo 打分在 网游排位赛、足球篮球比赛排名非常常见。
 >
-> 3. 这个RM用什么模型？
+> 3. RM用什么模型？
 >
-> 由于我们的基础模型和做奖励模型都需要输入所有的文本，实际上两个模型的容量（或者说理解能力）应该是差不多的，但是，现有的RLHF模型都使用了两个不同大小的模型，通常来说 ， RM 模型的参数量相对较小。
+> 由于我们的基础模型和做奖励模型都需要输入所有的文本，实际上两个模型的容量（或者说理解能力）应该是差不多的，但是，现有的RLHF模型都使用了两个不同大小的模型，通常来说 ，RM 模型的参数量相对较小。
 
 #### 数学公式
 
@@ -311,7 +252,7 @@ PPO 的另一种形式 PPO-截断（PPO-Clip）更加直接，它在目标函数
 $$
 L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^ {\pi_{\theta_k}}(s,a), \;\; \text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a |s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a) \right)
 $$
-其中 $clip(x, l, r) := max(min(x,r),l) $，即把 $x$ 限制在 $[l, r] $ 内。上式中$\epsilon$ 是一个超参数，表示进行截断（clip）的范围。
+其中 $clip(x, l, r) := max(min(x,r),l) $，即把 $x$ 限制在 $[l, r] $ 内。上式中$\epsilon$ 是一个超参数，表示进行截断（clip）的范围。
 
 PPO-clip 通过以下方式更新政策
 $$
@@ -329,7 +270,7 @@ $$
 $$
 L(s,a,\theta_k,\theta) = \min\left( \frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}, ( 1 + \epsilon) \right) A^{\pi_{\theta_k}}(s,a).
 $$
-因为优势是正的，说明这个动作的价值高于平均，最大化这个式子会增大$\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}$,  但不会让其超过 $ 1+\epsilon$.
+因为优势是正的，说明这个动作的价值高于平均，最大化这个式子会增大$\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}$,  但不会让其超过 $ 1+\epsilon$.
 
 **优势为负**：假设该状态-动作对的优势为负，在这种情况下，它对目标的贡献减少为
 $$
@@ -387,6 +328,19 @@ Github: https://github.com/allenai/RL4LMs
   - 支持7种不同的自然语言处理（NLP）任务，包括摘要生成、生成常识推理、基于情感的文本续写、表格到文本生成、抽象问题回答、机器翻译和对话生成
   - 提供20多种不同类型的NLG指标作为奖励函数，例如词汇指标（如ROUGE、BLEU、SacreBLEU、METEOR）、语义指标（如BERTSCORE、BLEURT）和特定任务指标（如PARENT、CIDER、SPICE），来自预训练分类器的分数（例如：情绪分数）
 - 开源模块化库，可以方便的对接 Huggingface，模块可定制。
+
+#### HALOs
+
+Github：https://github.com/ContextualAI/HALOs
+
+该库很方便设计新的**人类感知损失函数 (HALO)**，以将 LLM 与大规模离线人类反馈保持一致（请阅读我们的[技术报告](https://github.com/ContextualAI/HALOs/blob/main/assets/report.pdf)或[全文](https://arxiv.org/abs/2402.01306)）。
+
+该存储库借鉴了编写出色的[DPO 存储库](https://github.com/eric-mitchell/direct-preference-optimization)，并保留了原始版本的许多设计选择。我们引入的一些关键更改是：
+
+- 使数据加载更加模块化，以便您可以轻松编写自己的数据加载器
+- 使训练器更加模块化，以便每个模块都有自己的训练器子类
+- 添加以 GPT-4 作为法官进行开放式评估的代码
+- 支持不止 SFT 和 DPO 的损失（包括 KTO、PPOPPO (offline, off-policy variant) 和 SLiC）
 
 #### DeepSpeed Chat
 

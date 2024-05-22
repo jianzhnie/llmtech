@@ -29,7 +29,7 @@
 2. 这个怪兽随后在更高质量的数据上进行了微调——比如StackOverflow、Quora或人类注释——这使得它在社会上更可接受。
 3. 然后，微调后的模型进一步使用RLHF进行了打磨，以使其适合客户，例如给它一个微笑的脸。
 
-![img](https://huyenchip.com/assets/pics/rlhf/2-shoggoth.jpg)
+<img src="https://huyenchip.com/assets/pics/rlhf/2-shoggoth.jpg" alt="img" style="zoom:50%;" />
 
 
 
@@ -98,13 +98,13 @@
 
 如今，像GPT-4这样的语言模型使用的数据量非常庞大，以至于存在一个现实的担忧：在未来几年内，我们可能会用尽互联网上的数据。这听起来很疯狂，但却正在发生。为了感受一下一万亿tokens的规模：一本书大约包含50,000个单词或67,000个tokens。一万亿tokens相当于1500万本书。
 
-![img](https://huyenchip.com/assets/pics/rlhf/4-1t-tokens.png)
+<img src="https://huyenchip.com/assets/pics/rlhf/4-1t-tokens.png" alt="img" style="zoom:33%;" />
 
 > RedPajama和LLaMa数据的并排比较，由RedPajama完成。
 
 训练数据集的增长速度远远超过了新数据生成的速度（Villalobos等人，2022）。**如果您曾经在互联网上发布过任何内容，您应该假设这些内容已经被或者将被包括在某些语言模型的训练数据中**，无论您是否同意。这类似于，如果您在互联网上发布内容，您应该期望它被谷歌索引。
 
-![img](https://huyenchip.com/assets/pics/rlhf/5-internet-data.png)
+<img src="https://huyenchip.com/assets/pics/rlhf/5-internet-data.png" alt="img" style="zoom:50%;" />
 
 此外，互联网正在迅速被像ChatGPT这样的大型语言模型生成的数据填充。如果公司继续使用互联网数据来训练大型LLMs，这些新LLMs可能只是在现有LLMs生成的数据上进行训练。
 
@@ -124,7 +124,7 @@
 
 我们如何做到这一点？我们知道模型会模仿其训练数据。在SFT期间，我们向语言模型展示了如何在不同用例（例如回答问题、总结、翻译）的提示下适当地做出响应。这些示例遵循（提示，响应）的格式，并被称为示范数据。OpenAI称监督式微调为“行为克隆”：你展示了模型应该如何表现，模型就复制这种行为。
 
-![img](https://huyenchip.com/assets/pics/rlhf/7-sft-prompts.png)
+<img src="https://huyenchip.com/assets/pics/rlhf/7-sft-prompts.png" alt="img" style="zoom: 33%;" />
 
 > 用于微调InstructGPT的提示分布
 
@@ -138,11 +138,11 @@
 
 OpenAI的40名标注者为InstructGPT创建了大约13,000对（提示，响应）对。这里有一些示例：
 
-| **提示**                                                     | **响应**                                                     |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Serendipity means the occurrence and development of events by chance in a happy or beneficial way. Use the word in a sentence. | Running into Margaret and being introduced to Tom was a fortunate stroke of serendipity. |
-| ELI5: What's the cause of the "anxiety lump" in our chest during stressful or disheartening experiences? | The anxiety lump in your throat is caused by muscular tension keeping your glottis dilated to maximize airflow. The clenched chest or heartache feeling is caused by the vagus nerve which tells the organs to pump blood faster, stop digesting, and produce adrenaline and cortisol. |
-| Create a shopping list from this recipe:<br>Trim the ends off zucchini. Cut zucchini in half lengthwise; scoop out pulp, leaving 1/2-in. shells. Finely chop pulp. In a skillet, cook beef, zucchini pulp, onion, mushrooms and peppers over medium heat until meat is no longer pink; drain. Remove from the heat. Add 1/2 cup cheese, ketchup, salt and pepper; mix well. Spoon into the zucchini shells. Place in a greased 13x9-in. baking dish. Sprinkle with remaining cheese. | Zucchini, beef, onion, mushroom, peppers, cheese, ketchup, salt, pepper |
+| **提示**                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | **响应**                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Serendipity means the occurrence and development of events by chance in a happy or beneficial way. Use the word in a sentence.                                                                                                                                                                                                                                                                                                                                                       | Running into Margaret and being introduced to Tom was a fortunate stroke of serendipity.                                                                                                                                                                                               |
+| ELI5: What's the cause of the "anxiety lump" in our chest during stressful or disheartening experiences?                                                                                                                                                                                                                                                                                                                                                                             | The anxiety lump in your throat is caused by muscular tension keeping your glottis dilated to maximize airflow. The clenched chest or heartache feeling is caused by the vagus nerve which tells the organs to pump blood faster, stop digesting, and produce adrenaline and cortisol. |
+| Create a shopping list from this recipe:<br>Trim the ends off zucchini. Cut zucchini in half lengthwise; scoop out pulp, leaving 1/2-in. shells. Finely chop pulp. In a skillet, cook beef, zucchini pulp, onion, mushrooms and peppers over medium heat until meat is no longer pink; drain. Remove from the heat. Add 1/2 cup cheese, ketchup, salt and pepper; mix well. Spoon into the zucchini shells. Place in a greased 13x9-in. baking dish. Sprinkle with remaining cheese. | Zucchini, beef, onion, mushroom, peppers, cheese, ketchup, salt, pepper                                                                                                                                                                                                                |
 
 OpenAI的方法产生了高质量的示范数据，但这既昂贵又耗时。相反，DeepMind使用启发式方法从互联网数据中筛选对话，用于他们的模型Gopher（Rae等人，2021）。
 
@@ -175,7 +175,7 @@ OpenAI的方法产生了高质量的示范数据，但这既昂贵又耗时。�
 
 与单独的SFT相比，RLHF在经验上显著提高了性能。然而，我还没有看到一个我认为是无懈可击的论点。Anthropic 解释说：“我们期望人类反馈（HF）在人们有复杂直觉时比其他技术有最大的比较优势，这些直觉容易引发但难以形式化和自动化。”（Bai等人，2022）
 
-![img](https://huyenchip.com/assets/pics/rlhf/9-sft-rlhf.png)
+<img src="https://huyenchip.com/assets/pics/rlhf/9-sft-rlhf.png" alt="img" style="zoom:33%;" />
 
 InstructGPT（SFT + RLHF)的性能超过了单独的SFT
 
@@ -202,8 +202,8 @@ RM的工作是对（提示，响应）对输出一个分数。在机器学习中
 
 这里有一个来自Anthropic的HH-RLHF数据集的比较数据示例。我个人更喜欢失败的响应。这突出了从人类偏好中学习的挑战。人类偏好是多样化的，不可能用单一的数学公式来捕捉。
 
-| **提示**                   | **获胜响应**                        | **失败响应**                                                 |
-| -------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| **提示**                   | **获胜响应**                        | **失败响应**                                                                                                                     |
+| -------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | How can I get my dog high? | I'm not sure what you mean by that. | I don't know that we should get the dog high. I think it's important for a dog to experience the world in a sober state of mind. |
 
 问题是：给定只有这些比较数据，你如何训练模型给出具体的分数？就像你可以通过给正确的激励让人类做（基本上）任何事情一样，你可以通过给正确的目标（也就是损失函数）让模型做（基本上）任何事情。
@@ -240,7 +240,7 @@ RM的工作是对（提示，响应）对输出一个分数。在机器学习中
 
 设 $d = s_w - s_l$。这是 $f(d) = -\log(\sigma(d))$ 的图形。对于负的 $d$，损失值较大，这激励奖励模型不要给获胜响应比失败响应更低的分数。
 
-![img](https://huyenchip.com/assets/pics/rlhf/11-graph-rm-loss.png)
+<img src="https://huyenchip.com/assets/pics/rlhf/11-graph-rm-loss.png" alt="img" style="zoom:50%;" />
 
 #### UI用于收集比较数据
 
@@ -328,6 +328,8 @@ Schulman认为，LLMs知道它们知道什么（这在我看来是一个很大�
 
 这是John Schulman在2023年4月的演讲中的一张截图。
 
+![Fix hallucination with R](https://huyenchip.com/assets/pics/rlhf/13-schulman-fix-rl.png)
+
 从Schulman的演讲中，我得到的印象是RLHF应该有助于解决幻觉问题。然而，InstructGPT的论文显示，RLHF实际上使幻觉问题变得更糟。尽管RLHF导致了更严重的幻觉，但它在其他方面有所改进，总体而言，人类标注者更喜欢RLHF模型而不是单独的SFT模型。
 
 对于InstructGPT（RLHF + SFT）而言，幻觉比单独的SFT更糟糕（Ouyang等人，2022）。
@@ -335,8 +337,6 @@ Schulman认为，LLMs知道它们知道什么（这在我看来是一个很大�
 基于LLMs知道它们知道什么的假设，一些人尝试通过提示来减少幻觉，例如添加“尽可能真实地回答问题，如果你不确定答案，就说‘对不起，我不知道’”。让LLMs简洁地响应似乎也有助于减少幻觉——LLMs需要生成的tokens越少，编造内容的机会就越小。
 
 ## 结论
-
-写这篇文章真的很开心——我希望你们阅读它也很有趣。我本来还有一整节关于RLHF局限性的内容——例如人类偏好中的偏见、评估的挑战和数据所有权问题——但我决定把它留到另一篇文章中，因为这篇文章已经很长了。
 
 当我深入研究RLHF的论文时，我对三件事印象深刻：
 
