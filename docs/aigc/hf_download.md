@@ -48,19 +48,19 @@ aria2 是一个命令行工具，允许通过各种协议下载文件，如 HTTP
 
 确保软件包列表是最新的：
 
-```plaintext
+```shell
 sudo apt update
 ```
 
 安装 aria2:
 
-```plaintext
+```shell
 sudo apt install -y aria2
 ```
 
 安装完成后，aria2 将作为 `aria2c` 命令可用。我们可以检查版本：
 
-```plaintext
+```shell
 aria2c --version
 ```
 
@@ -95,13 +95,13 @@ bash hfd.sh bigscience/bloom-560m
 
 首先登录 [huggingface 网站](https://huggingface.co/settings/tokens)，获取 token  , 然后
 
-```
+```shell
 hfd meta-llama/Llama-2-7b --hf_username YOUR_HF_USERNAME_NOT_EMAIL --hf_token YOUR_HF_TOKEN
 ```
 
 Download a model and exclude certain files (e.g., .safetensors):
 
-```
+```shell
 hfd bigscience/bloom-560m --exclude *.safetensors
 ```
 
