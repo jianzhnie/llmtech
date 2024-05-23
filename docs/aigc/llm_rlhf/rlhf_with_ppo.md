@@ -22,22 +22,65 @@ RLHF 通过引入奖励信号来调整模型的行为，使模型生成的内容
 
 在这个阶段中，我们首先使用在第一阶段训练的有监督微调模型和第二阶段训练的奖励模型来生成一个初始的策略。然后，我们使用PPO算法来调整这个策略，使模型在生成内容时更考虑人类的偏好。通过这个阶段的训练，模型不仅可以理解人类的语言，还可以理解人类的偏好，并生成更符合人类偏好的内容。
 
+## Reward 模型训练
+
+在强化学习阶段，用到的Reward Model和Critic Model都使用同一个模型初始化，因此在训练reward模型的过程中，也是在训练Critic Model。
+
+Reward Model 相较于原始的SFT Model，在后面加上了一个value head，value head是一个Linear，输入维度为模型的hidden_dim，输出维度为1，输出表示模型预测每一字符获取的得分。
+
+奖励模型的输入是Prompt+Answer的形式，让模型学会对Prompt+Answer进行打分。奖励模型最后一层隐藏层的输出维度为(B,L,D)，通过一个D x 1的全连接层将维度变为(B, L)，在L这个维度上，第i个位置的数据表示：从第i个位置到最后一个位置输出所能获得的奖励分值的累加和（和DQN里边的Q值一个意义）。
+
+```python
+# huggingface 模型返回值是个list，第0位是模型最后输出的hideen state
+hidden_states = transformer_outputs[0]
+# v_head为Dx1的全连接网络对最后一维压缩
+rewards = self.v_head(hidden_states).squeeze(-1)
+```
+
+对于奖励模型来说，目标是给一个句子进行打分，按理说每个句子对应一个分值就行了，但是目前对于长度为L的句子，奖励模型输出了L个值。DeepSpeed-Chat 中使用最后一个字符的得分作为整个Response的得分（当然也可以使用整个句子中每个字符的平均分作为整体的得分）。
+
+奖励模型训练优化采用 Pair Wiss Loss，即同时输入模型关于同一个问题的两个回答，让模型学会这两个句子哪个分高哪个分低。之所以如此训练是因为，在给奖励模型进行数据标注的过程中，给同一个问题的不同回答量化的打分比较难，但是对他们进行排序相对简单，代码如下：
+
+```python
+# 同一个batch里边的句子需要等长，短句后边会被padding
+# [divergence_ind:end_ind] 索引了padding前一个位置的输出分值
+# chosen_reward 是同一个句子pair里分数高的句子，r_truncated_reward是句子pair里分数低的句子
+c_truncated_reward = chosen_reward[divergence_ind:end_ind]
+r_truncated_reward = rejected_reward[divergence_ind:end_ind]
+```
+
+Pair wise loss代码如下，如果给pair里边好的句子打分高（c_truncated_reward），坏的句子（r_truncated_reward）打分低，loss就会小。
+
+```python
+loss += -torch.log(torch.sigmoid(c_truncated_reward - r_truncated_reward)).mean()
+```
+
+在训练强化学习的过程中，会用到Reward Model（Critic Model，再次提醒，Critic Model和Reward Model是同一个模型的两个副本）的推理过程，通过调用Forward_value 实现，具体代码如下，返回的值中有两种值，values表示每个位置i，从第i个位置到最后一个位置的奖励累加值，供强化学习过程中Critic Model使用；“chosen_end_scores”指的是对每个Prompt+Answer的打分，供Reward Model使用。
+
 ##  RLHF 的整体架构
 
 PPO 是一种用于训练强化学习模型的算法。它可以用于调整语言模型，使得模型生成的结果更符合人类的偏好。具体来说，过程可以分为三个阶段：
 
 - Rollout and Evaluation：
-  - 在这个阶段，我们从 Prompt 库里抽样，使用语言模型生成response，然后使用奖励模型（Reward Model, RM）给出奖励得分。
+  - 在这个阶段，我们从 Prompt 库里抽样，使用语言模型生成Response. 将Prompt 和 Response 一起输入奖励模型（Reward Model, RM）得到奖励得分。
 
 - Make experience：
   - 在这个阶段，我们收集了一系列的“经验”，即模型的行为和对应的奖励。这些经验包括了模型生成的response 以及对应的奖励得分。这些经验将被用于下一步的优化过程。
 
 - Optimization：
-  - 在这个阶段，我们使用收集到的经验来更新模型的参数。具体来说，我们使用PPO算法来调整模型的参数，使得模型生成的 response的奖励得分能够增加。PPO算法的一个关键特性是它尝试保持模型的行为不会发生太大的改变，这有助于保证模型的稳定性。
+  - 在这个阶段，我们使用收集到的经验来更新模型的参数。具体来说，我们使用PPO算法来调整模型的参数，使得模型生成的 Response的奖励得分能够增加。PPO算法的一个关键特性是它尝试保持模型的行为不会发生太大的改变，这有助于保证模型的稳定性。
 
 通过这三个阶段的微调，我们可以使得语言模型的输出更符合我们的期望，例如更有创造性，更符合人类的偏好等。
 
-![强化学习从零到RLHF（八）一图拆解RLHF中的PPO](https://picx.zhimg.com/70/v2-cb8ab5ee946a105aab6a563e92682ffa_1440w.image?source=172ae18b&biz_tag=Post)
+RLHF基于A2C方法，这一步包含了四个模型: Actor Model， Ref Model，Reward Model和Critic Model。
+
+- Actor Model：由SFT之后的模型初始化而来。作为策略（policy）模型，用于接收上文，做出动作，预测下一个字符。学习完毕之后，我们最终使用的就是这个模型。
+
+- Reference Model：和Actor Model同样初始化自SFT Model，训练过程中冻结参数，用于和Actor Model做对比，保证模型不要偏离原始SFT Model太多。
+- Reward Model：作为环境（Env），训练过程中冻结参数，针对每一个状态，给出奖励分数。
+- Critic Model：由Reward Model初始化而来，用于近似价值函数，输入为状态S，估计当前状态的价值V。
+
+![img](https://huggingface.co/datasets/trl-internal-testing/example-images/resolve/main/images/trl_overview.png)
 
 ## 代码拆解
 
@@ -80,7 +123,7 @@ def _generate_sequence(self, prompts, mask, step):
 
 Evaluate是在强化学习中对生成的轨迹（在我们的例子中就是文本）进行评估的步骤。在PPO中，这个评估过程由一个RM模型来完成，来为每一对Prompt+Response产生一个标量奖励值，这个值表示生成的轨迹的好坏，优化过程会试图最大化这个值。
 
-**输入输出**
+输入输出
 
 输入：Prompt+Response、RM
 
@@ -93,11 +136,11 @@ reward_score = self.reward_model.forward_value(
 )
 ```
 
-### **Old Policy Sampling**
+### Old Policy Sampling
 
 这个步骤是make experience的过程，计算并存储旧策略的概率、价值等值，来为后面更新的过程服务。
 
-#### **Old Logprobs**
+#### Old Logprobs
 
 这个步骤中，我们从“旧的”策略，即在这个batch数据中初始的LM（initial actor）中计算每个token在旧的策略下的概率Old Logprobs。
 
@@ -105,11 +148,11 @@ reward_score = self.reward_model.forward_value(
 
 之所以要比较这个概率是为了算一个叫ratio的值，用这个值更新策略梯度，能限制更新率、
 
-#### **Old Values**
+#### Old Values
 
 Old Values的含义是旧策略中每个时间步（每个token的预测结果）的价值，这个值由critic网络进行预测，critic网络就是actor上加几个线性层能够给每个token预测一个值。需要这个值的原因是advantage的计算依赖于Old Values。
 
-#### **Ref Logprobs**
+#### Ref Logprobs
 
 Ref Logprobs的含义是最最原始的LM对于每个时间步的概率预测，计算这个值的目的是限制actor的更新，防止其偏离原始模型太远。
 
@@ -124,7 +167,7 @@ def generate_experience(self, prompts, mask, step):
     attention_mask = seq.not_equal(pad_token_id).long()
     with torch.no_grad():
         output = self.actor_model(seq, attention_mask=attention_mask)
-        output_ref = self.ref_model(seq, attention_mask=attention_mask)
+        output_ref = self.Ref Model(seq, attention_mask=attention_mask)
         reward_score = self.reward_model.forward_value(
             seq, attention_mask,
             prompt_length=self.prompt_length)['chosen_end_scores'].detach(
@@ -160,9 +203,9 @@ def gather_log_probs(logits, labels):
 
 在图中的KL Penalty步骤中，我们会在reward上增加这个kl惩罚项来实现这个过程。
 
-**输入：**Ref Logprobs、Old Logprobs、Reward
+输入：Ref Logprobs、Old Logprobs、Reward
 
-**输出：**Token Reward
+输出：Token Reward
 
 ```python
 def compute_rewards(self, prompts, log_probs, ref_log_probs, reward_score,
@@ -195,9 +238,9 @@ def compute_rewards(self, prompts, log_probs, ref_log_probs, reward_score,
 
 GAE的主要目标是希望找到一种策略，使得从当前状态开始，采取该策略能够获得的未来奖励最大，GAE使用了一种名为TD误差的概念，这是一种预测未来奖励的方法。然后，GAE将这些TD误差组合成一个加权和，权重由一个衰减因子λ决定。当λ=0时，GAE就退化为普通的优势函数估计；当λ=1时，GAE就变成了一种名为"蒙特卡洛"的方法。总的来说，GAE的本质就是把优势估计为后续时间步TD误差的加权和。
 
-**输入：**Token Reward、Old Values
+输入：Token Reward、Old Values
 
-**输出：**Advantages、Returns
+输出：Advantages、Returns
 
 ```python
 def get_advantages_and_returns(self, values, rewards, start):
@@ -230,11 +273,11 @@ New Policy Sampling就是在新的策略（更新后的actor）下对轨迹（�
 
 此外这个步骤还会输出New Values和Logits分别用于critic loss和entropy loss的计算。
 
-**输入输出**
+输入输出
 
-**输入：**Ref_model、Actor、Critic
+输入：Ref Model、Actor、Critic
 
-**输出：**New Logprobs、New Values、Logits
+输出：New Logprobs、New Values、Logits
 
 ```python
 ### process the new outputs
@@ -251,15 +294,15 @@ value = self.critic_model.forward_value(**batch,
 
 在Actor-Critic 强化学习算法框架中，Critic 模型的任务是估计状态的价值函数，也就是预测从当前状态开始，通过遵循某个策略，期望能得到的总回报。Critic的训练目标是最小化它的预测价值与实际回报之间的差距。
 
-Critic Loss通常通过均方误差（Mean Squared Error, MSE）来计算。对于每一个状态，我们都有一个由Critic预测出的预期回报值V（s），以及一个真实的回报值G（returns）。Critic Loss就是这两个值之间差的平方。在一个批量的数据中，Critic Loss是所有状态的这个差的平方的平均值。公式如下： $𝐶𝑟𝑖𝑡𝑖𝑐 𝐿𝑜𝑠𝑠=𝐸[(𝑉(𝑠)−𝐺)^2]$
+Critic Loss通常通过均方误差（Mean Squared Error, MSE）来计算。对于每一个状态，我们都有一个由Critic预测出的预期回报值 V（s），以及一个真实的回报值G（returns）。Critic Loss就是这两个值之间差的平方。在一个批量的数据中，Critic Loss是所有状态的这个差的平方的平均值。公式如下： $𝐶𝑟𝑖𝑡𝑖𝑐 𝐿𝑜𝑠𝑠=𝐸[(𝑉(𝑠)−𝐺)^2]$
 
 其中E[.]表示期望值，$ V(s) $ 是Critic对状态s（这个时间步的token）的价值预测New Values，G是真实的回报值Returns。
 
 通过最小化Critic Loss，Critic的预测能力会逐渐提升。因为Critic的预测结果会被用来估计每个行动的优势（Advantage），这个优势值又会被用来计算策略的更新（Actor Loss）。
 
-**输入：**New Values、Old_values、Returns
+输入：New Values、Old_values、Returns
 
-**输出：**梯度更新
+输出：梯度更新
 
 ```python
 def critic_loss_fn(self, values, old_values, returns, mask):
@@ -302,9 +345,9 @@ $r_{\theta}=\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} $是新旧策略的比
 
 
 
-**输入：**Old Logprobs，New Logprobs、Advantages
+输入：Old Logprobs，New Logprobs、Advantages
 
-**输出：**梯度更新
+输出：梯度更新
 
 ```python
 def actor_loss_fn(self, logprobs, old_logprobs, advantages, mask):
@@ -321,3 +364,9 @@ def actor_loss_fn(self, logprobs, old_logprobs, advantages, mask):
     pg_loss = torch.sum(torch.max(pg_loss1, pg_loss2) * mask) / mask.sum()
     return pg_loss
 ```
+
+
+
+Reference:
+
+- 图解大模型RLHF系列之：人人都能看懂的PPO原理与源码解读
