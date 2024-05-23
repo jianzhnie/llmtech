@@ -48,19 +48,19 @@ aria2 是一个命令行工具，允许通过各种协议下载文件，如 HTTP
 
 确保软件包列表是最新的：
 
-```plaintext
+```shell
 sudo apt update
 ```
 
 安装 aria2:
 
-```plaintext
+```shell
 sudo apt install -y aria2
 ```
 
 安装完成后，aria2 将作为 `aria2c` 命令可用。我们可以检查版本：
 
-```plaintext
+```shell
 aria2c --version
 ```
 
@@ -95,13 +95,13 @@ bash hfd.sh bigscience/bloom-560m
 
 首先登录 [huggingface 网站](https://huggingface.co/settings/tokens)，获取 token  , 然后
 
-```
+```shell
 hfd meta-llama/Llama-2-7b --hf_username YOUR_HF_USERNAME_NOT_EMAIL --hf_token YOUR_HF_TOKEN
 ```
 
 Download a model and exclude certain files (e.g., .safetensors):
 
-```
+```shell
 hfd bigscience/bloom-560m --exclude *.safetensors
 ```
 
@@ -273,7 +273,7 @@ os.environ['HF_ENDPOINT'] = 'http://link.zhihu.com/'
 
 此步骤必须在 huggingface 官网注册登录后申请，由于网络安全原因，镜像站一般不支持。
 
-![Gated Model申请](https://padeoe.com/wp-content/uploads/2023/09/gated_model_apply.png)
+<img src="https://padeoe.com/wp-content/uploads/2023/09/gated_model_apply.png" alt="Gated Model申请" style="zoom:50%;" />
 
 申请后一般等待几分钟到几天不等（一般几分钟就行），会发邮件通知你审批结果。
 
@@ -375,3 +375,9 @@ os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 - 不推荐 `Git clone`（可以被 `huggingface-cli` 替代），但如确有需要，小模型、小数据集可以 Git clone，建议文件大不要直接 clone，设置环境变量 `GIT_LFS_SKIP_SMUDGE=1` 再 clone，大文件单独用别的工具下载。
 
 最后，使用问题、建议和技术交流可加群.
+
+## 参考
+
+本文参考：https://padeoe.com/huggingface-large-models-downloader/
+
+hfd tool :  https://gist.github.com/padeoe/697678ab8e528b85a2a7bddafea1fa4f
