@@ -30,8 +30,6 @@
 - [直接偏好优化 DPO 推导](aigc/llm_rlhf/dpo_notes.md)
 - [Kahneman-Tversky optimization (KTO)](aigc/llm_rlhf/kto.md)
 
-
-
 ## LLM Agent
 
 - [Autonomous AI Agents](aigc/llm_agent/llm_agent0.md)
@@ -89,3 +87,7 @@
 ## AI News and Blogs
 
 - [Top AI Blogs and Websites](aigc/ai-news.md)
+
+## Tools
+
+[如何快速下载huggingface模型](aigc/hf_download.md)
