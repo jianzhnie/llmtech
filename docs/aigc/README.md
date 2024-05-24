@@ -91,3 +91,10 @@
 ## Tools
 
 [如何快速下载huggingface模型](aigc/hf_download.md)
+
+## 从 GPU 到华为 NPU
+
+- [从0开始安装Ascend Pytorch](aigc/ascend/从0开始安装Ascend Pytorch.md)
+
+- [Ascend_Pytorch适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
+- [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
