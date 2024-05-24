@@ -254,7 +254,7 @@ huggingface_hub.login("HF_TOKEN") # token 从 https://huggingface.co/settings/to
 
 ```python
 import os
-os.environ['HF_ENDPOINT'] = 'http://link.zhihu.com/'
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 ```
 
 ## 7. hf_hub_download
