@@ -81,6 +81,12 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 - 数据规模：
   - **385K**
 
+## [ultrafeedback_binarized](https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized)
+
+- huggingfaceHub: https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized
+- 摘要：英文偏好数据集，可用于DPO训练
+- 规模：
+
 ## UltraFeedback
 
 - Github: https://github.com/OpenBMB/UltraFeedback
