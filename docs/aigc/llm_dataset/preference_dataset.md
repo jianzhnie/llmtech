@@ -84,8 +84,11 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 ## [ultrafeedback_binarized](https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized)
 
 - huggingfaceHub: https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized
+- HuggingfaceHub: https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences
 - 摘要：英文偏好数据集，可用于DPO训练
 - 规模：
+
+
 
 ## UltraFeedback
 
@@ -135,6 +138,12 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 - 摘要： Data set used in WebGPT paper. Used for training reward model in RLHF.
 
 数据规模： 19,578 pairs
+
+## Intel/orca_dpo_pairs
+
+HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
+
+
 
 ## Pangu RLhf
 
