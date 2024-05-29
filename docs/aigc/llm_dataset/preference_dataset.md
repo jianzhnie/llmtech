@@ -1,23 +1,5 @@
 # Preference Datasets
 
-## nvidia/HelpSteer
-
-- HuggingFace Hub : https://huggingface.co/datasets/nvidia/HelpSteer
-
-- 摘要：NVIDIA/HelpSteer 是一个开源的多属性有用性数据集，旨在支持模型对齐，使其变得更加有用、事实正确且连贯，同时在响应的复杂性和冗长性方面可调3。该数据集包含 37,120 个样本，每个样本都包含一个提示、一个响应以及五个人类标注的属性，每个属性的评分范围在 0 到 4 之间，分数越高代表属性越好。这些属性包括：
-
-  - **帮助性**（Helpfulness）：评估响应对用户的有用性。
-
-  - **正确性**（Correctness）：检查响应的准确性。
-
-  - **连贯性**（Coherence）：评估响应的逻辑清晰度和条理。
-
-  - **复杂性**（Complexity）：衡量响应的复杂程度。
-
-  - **冗长性**（Verbosity）：评估响应是否过于冗长。
-
-- 数据规模： 37k
-
 ## Anthropic/hh-rlhf
 
 Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
@@ -36,6 +18,29 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 
 - 数据规模：train 42.5k + test 2.3k
 
+
+## allenai/FineGrainedRLHF
+
+- Github: https://github.com/allenai/FineGrainedRLHF
+- 摘要： 旨在开发新框架以收集人类反馈的存储库。收集的数据目的是提高大型语言模型的事实正确性、话题相关性和其他能力。
+- 数据规模： 5K
+
+## cohere-zh
+
+- HuggingFace Hub: https://huggingface.co/datasets/Cohere/miracl-zh-queries-22-12
+
+- 摘要： cohere-zh 里面对于每条query包含了positive_passages和negative_passages两个部分，positive部分可以视为chosen，negative部分视为rejected.
+- 数据规模：
+
+## HuggingFaceH4/stack-exchange-preferences
+
+- 摘要：该数据集包含来自 Stack Overflow Data Dump 的问题和答案，用于偏好模型训练。
+- 数据规模：10.8 M
+
+## Intel/orca_dpo_pairs
+
+HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
+
 ## lmsys/chatbot_arena_conversations
 
 - HuggingfaceHub: https://huggingface.co/datasets/lmsys/chatbot_arena_conversations
@@ -48,17 +53,45 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
   - **安全性打分**：安全性打分是由 GPT 完成的，包括多个方面，如骚扰、威胁、仇恨、自残、性内容、暴力等。
 - 数据规模：33k
 
-## allenai/FineGrainedRLHF
+## nvidia/HelpSteer
 
-- Github: https://github.com/allenai/FineGrainedRLHF
-- 摘要： 旨在开发新框架以收集人类反馈的存储库。收集的数据目的是提高大型语言模型的事实正确性、话题相关性和其他能力。
-- 数据规模： 5K
+- HuggingFace Hub : https://huggingface.co/datasets/nvidia/HelpSteer
+
+- 摘要：NVIDIA/HelpSteer 是一个开源的多属性有用性数据集，旨在支持模型对齐，使其变得更加有用、事实正确且连贯，同时在响应的复杂性和冗长性方面可调3。该数据集包含 37,120 个样本，每个样本都包含一个提示、一个响应以及五个人类标注的属性，每个属性的评分范围在 0 到 4 之间，分数越高代表属性越好。这些属性包括：
+
+  - **帮助性**（Helpfulness）：评估响应对用户的有用性。
+
+  - **正确性**（Correctness）：检查响应的准确性。
+
+  - **连贯性**（Coherence）：评估响应的逻辑清晰度和条理。
+
+  - **复杂性**（Complexity）：衡量响应的复杂程度。
+
+  - **冗长性**（Verbosity）：评估响应是否过于冗长。
+
+- 数据规模： 37k
 
 ## OpenAssistant/oasst1
 
 - Huggingface Hub : https://huggingface.co/datasets/OpenAssistant/oasst1
 
 - 摘要：OpenAssistant Conversations (OASST1)，是一个人工生成、人工注释的对话语料库，由 35 种不同语言的 161,443 条消息组成，注释有 461,292 个质量评级，从而超过 10,000 个带完整注释的对话树。该语料库是全球众包努力的成果，涉及超过 13,500 名志愿者。
+
+
+## OpenAI Summarize
+
+- HuggingFace Hub： https://huggingface.co/datasets/openai/summarize_from_feedback
+
+- 摘要：该数据集是一个包含人类反馈的集合，这些反馈被用来训练一个奖励模型（reward model）。在自然语言处理（NLP）任务，如文本摘要（summarization）中，奖励模型可以帮助模型学习如何生成更符合人类偏好的输出。
+- 数据规模： 93K
+
+## OpenAI WebGPT
+
+- HuggingFace Hub：https://huggingface.co/datasets/openai/webgpt_comparisons
+
+- 摘要： Data set used in WebGPT paper. Used for training reward model in RLHF.
+
+数据规模： 19,578 pairs
 
 ## PKU-Safety-Prompts
 
@@ -68,11 +101,6 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 
 - 数据生成模型：`GPT-3.5`
 
-## HuggingFaceH4/stack-exchange-preferences
-
-- 摘要：该数据集包含来自 Stack Overflow Data Dump 的问题和答案，用于偏好模型训练。
-- 数据规模：10.8 M
-
 ## stanfordnlp/SHP
 
 - Huggingface Hub： https://huggingface.co/datasets/stanfordnlp/SHP
@@ -81,9 +109,10 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 - 数据规模：
   - **385K**
 
-## [ultrafeedback_binarized](https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized)
+## ultrafeedback_binarized
 
 - huggingfaceHub: https://huggingface.co/datasets/YeungNLP/ultrafeedback_binarized
+- HuggingfaceHub: https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences
 - 摘要：英文偏好数据集，可用于DPO训练
 - 规模：
 
@@ -113,31 +142,3 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
     "ultrachat": 9929
 }
 ```
-
-## cohere-zh
-
-- HuggingFace Hub: https://huggingface.co/datasets/Cohere/miracl-zh-queries-22-12
-
-- 摘要： cohere-zh 里面对于每条query包含了positive_passages和negative_passages两个部分，positive部分可以视为chosen，negative部分视为rejected.
-- 数据规模：
-
-## OpenAI Summarize
-
-- HuggingFace Hub： https://huggingface.co/datasets/openai/summarize_from_feedback
-
-- 摘要：该数据集是一个包含人类反馈的集合，这些反馈被用来训练一个奖励模型（reward model）。在自然语言处理（NLP）任务，如文本摘要（summarization）中，奖励模型可以帮助模型学习如何生成更符合人类偏好的输出。
-- 数据规模： 93K
-
-## OpenAI WebGPT
-
-- HuggingFace Hub：https://huggingface.co/datasets/openai/webgpt_comparisons
-
-- 摘要： Data set used in WebGPT paper. Used for training reward model in RLHF.
-
-数据规模： 19,578 pairs
-
-## Pangu RLhf
-
-Github : https://github.com/sunzeyeah/RLHF
-
-支持 RLHF 3大流程: SFT、Reward Model和RLHF， 在Pangu 和 ChatGLM 上进行了训练实验。
