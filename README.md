@@ -10,7 +10,7 @@
 
 
 - 🚀 [AIGC](aigc/)
-- 👑 [强化学习](deep-rl/)
+- 👑 [强化学习](rlwiki/)
 - 🚀 [深度学习](deeplearning/)
 - 🔥 [机器学习](machine-learning)
 - 🦖 [计算机视觉](deeplearning/)
