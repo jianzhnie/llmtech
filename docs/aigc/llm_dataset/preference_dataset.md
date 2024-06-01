@@ -1,5 +1,9 @@
 # Preference Datasets
 
+## [AI4Chem/ChemPref-DPO-for-Chemistry-data-en](https://huggingface.co/datasets/AI4Chem/ChemPref-DPO-for-Chemistry-data-en)
+
+- https://huggingface.co/datasets/AI4Chem/ChemPref-DPO-for-Chemistry-data-en
+
 ## Anthropic/hh-rlhf
 
 Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
@@ -25,7 +29,40 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 - 摘要： 旨在开发新框架以收集人类反馈的存储库。收集的数据目的是提高大型语言模型的事实正确性、话题相关性和其他能力。
 - 数据规模： 5K
 
-## cohere-zh
+## [allenai/reward-bench](https://huggingface.co/datasets/allenai/reward-bench)
+
+- https://huggingface.co/datasets/allenai/reward-bench
+
+## [allenai/preference-test-sets](https://huggingface.co/datasets/allenai/preference-test-sets)
+
+- https://huggingface.co/datasets/allenai/preference-test-sets
+
+## [argilla/dpo-mix-7k](https://huggingface.co/datasets/argilla/dpo-mix-7k)
+
+- https://huggingface.co/datasets/argilla/dpo-mix-7k
+
+## [argilla/Capybara-Preferences](https://huggingface.co/datasets/argilla/Capybara-Preferences)
+
+- https://huggingface.co/datasets/argilla/Capybara-Preferences
+
+## [argilla/OpenHermesPreferences](https://huggingface.co/datasets/argilla/OpenHermesPreferences)
+
+- https://huggingface.co/datasets/argilla/OpenHermesPreferences
+- 摘要：
+
+## [argilla/distilabel-capybara-kto-15k-binarized](https://huggingface.co/datasets/argilla/distilabel-capybara-kto-15k-binarized)
+
+- https://huggingface.co/datasets/argilla/distilabel-capybara-kto-15k-binarized
+
+## [argilla/distilabel-capybara-dpo-7k-binarized](https://huggingface.co/datasets/argilla/distilabel-capybara-dpo-7k-binarized)
+
+- https://huggingface.co/datasets/argilla/distilabel-capybara-dpo-7k-binarized
+
+## [argilla/ultrafeedback-binarized-preferences-cleaned](https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned)
+
+- https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned
+
+## [Cohere/miracl-zh-queries-22-12](https://huggingface.co/datasets/Cohere/miracl-zh-queries-22-12)
 
 - HuggingFace Hub: https://huggingface.co/datasets/Cohere/miracl-zh-queries-22-12
 
@@ -36,6 +73,14 @@ Huggingface Hub : https://huggingface.co/datasets/Anthropic/hh-rlhf
 
 - 摘要：该数据集包含来自 Stack Overflow Data Dump 的问题和答案，用于偏好模型训练。
 - 数据规模：10.8 M
+
+## [HuggingFaceH4/ultrafeedback_binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized)
+
+- https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized
+
+## [HuggingFaceH4/orca_dpo_pairs](https://huggingface.co/datasets/HuggingFaceH4/orca_dpo_pairs)
+
+- https://huggingface.co/datasets/HuggingFaceH4/orca_dpo_pairs
 
 ## Intel/orca_dpo_pairs
 
@@ -52,6 +97,18 @@ HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
   - **有用性评价**：对话内容是否有帮助是由用户完成的，包含在 `winner` 字段里面。
   - **安全性打分**：安全性打分是由 GPT 完成的，包括多个方面，如骚扰、威胁、仇恨、自残、性内容、暴力等。
 - 数据规模：33k
+
+## [lmsys/lmsys-arena-human-preference-55k](https://huggingface.co/datasets/lmsys/lmsys-arena-human-preference-55k)
+
+- https://huggingface.co/datasets/lmsys/lmsys-arena-human-preference-55k
+
+## [lmsys/mt_bench_human_judgments](https://huggingface.co/datasets/lmsys/mt_bench_human_judgments)
+
+- https://huggingface.co/datasets/lmsys/mt_bench_human_judgments
+
+## [mlabonne/orpo-dpo-mix-40k](https://huggingface.co/datasets/mlabonne/orpo-dpo-mix-40k)
+
+- https://huggingface.co/datasets/mlabonne/orpo-dpo-mix-40k
 
 ## nvidia/HelpSteer
 
@@ -93,6 +150,15 @@ HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
 
 数据规模： 19,578 pairs
 
+## [OfirArviv/mt_bench_pairwise_comparison_gpt4_judgments](https://huggingface.co/datasets/OfirArviv/mt_bench_pairwise_comparison_gpt4_judgments)
+
+- https://huggingface.co/datasets/OfirArviv/mt_bench_pairwise_comparison_gpt4_judgments
+
+## [PKU-Alignment/PKU-SafeRLHF](https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF)
+
+- https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF
+- 摘要：
+
 ## PKU-Safety-Prompts
 
 - Github: https://github.com/thu-coai/Safety-Prompts
@@ -108,6 +174,22 @@ HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
 - 摘要：每个示例都是一个 Reddit 帖子，其中包含一个问题/说明以及该帖子的一对顶级评论，其中一条评论更受到 Reddit 用户（集体）的青睐。
 - 数据规模：
   - **385K**
+
+## [snorkelai/Snorkel-Mistral-PairRM-DPO-Dataset](https://huggingface.co/datasets/snorkelai/Snorkel-Mistral-PairRM-DPO-Dataset)
+
+- https://huggingface.co/datasets/snorkelai/Snorkel-Mistral-PairRM-DPO-Dataset
+
+## [tasksource/oasst1_pairwise_rlhf_reward](https://huggingface.co/datasets/tasksource/oasst1_pairwise_rlhf_reward)
+
+- https://huggingface.co/datasets/tasksource/oasst1_pairwise_rlhf_reward
+
+## [trl-internal-testing/tldr-preference-sft-trl-style](https://huggingface.co/datasets/trl-internal-testing/tldr-preference-sft-trl-style)
+
+- https://huggingface.co/datasets/trl-internal-testing/tldr-preference-sft-trl-style
+
+## [tlc4418/1.4b-policy_preference_data_gold_labelled](https://huggingface.co/datasets/tlc4418/1.4b-policy_preference_data_gold_labelled)
+
+- https://huggingface.co/datasets/tlc4418/1.4b-policy_preference_data_gold_labelled
 
 ## ultrafeedback_binarized
 
@@ -142,3 +224,7 @@ HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
     "ultrachat": 9929
 }
 ```
+
+## [weqweasdas/preference_dataset_mix2](https://huggingface.co/datasets/weqweasdas/preference_dataset_mix2)
+
+- https://huggingface.co/datasets/weqweasdas/preference_dataset_mix2
