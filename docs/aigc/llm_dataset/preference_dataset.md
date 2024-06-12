@@ -154,6 +154,10 @@ HuggingfaceHub: https://huggingface.co/datasets/Intel/orca_dpo_pairs
 
 - https://huggingface.co/datasets/OfirArviv/mt_bench_pairwise_comparison_gpt4_judgments
 
+## [prometheus-eval/Feedback-Collection](https://huggingface.co/datasets/prometheus-eval/Feedback-Collection)
+
+- https://huggingface.co/datasets/prometheus-eval/Feedback-Collection
+
 ## [PKU-Alignment/PKU-SafeRLHF](https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF)
 
 - https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF
