@@ -4,7 +4,7 @@
 
 语言模型一直在变大。在撰写本文时，PaLM 有 540B 个参数，OPT、GPT-3 和 BLOOM 有大约 176B 个参数，而且我们正朝着更大的模型发展。下图显示了一些最近的语言模型的大小。
 
-![法学硕士](https://huggingface.co/blog/assets/96_hf_bitsandbytes_integration/LLM3.png)
+![LLM](https://huggingface.co/blog/assets/96_hf_bitsandbytes_integration/LLM3.png)
 
 因此，这些模型很难在易于访问的设备上运行。例如，仅在 BLOOM-176B 上进行推理，您就需要 8 个 80GB A100 GPU（每个约 15,000 美元）。要微调 BLOOM-176B，您需要 72 个这样的 GPU！更大的模型，如 PaLM，将需要更多的资源。
 
