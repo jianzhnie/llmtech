@@ -21,6 +21,12 @@
 - [Low-Rank Adaptation (LoRA)](aigc/llm_finetune/lora_llm.md)
 
 
+## LLM Datasets
+
+- [LLM Instruction 数据集](aigc/llm_dataset/instruction_dataset.md)
+- [LLM Preference 数据集](aigc/llm_dataset/preference_dataset.md)
+- [LLM 行业数据集](/aigc/llm_dataset/prompt_dataset.md)
+
 ## LLM RLHF
 
 - [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
@@ -38,6 +44,12 @@
 - [AutoGPT与LLM Agent解析](aigc/llm_agent/llm_agent2.md)
 - [Agent应用:MarkAgent](aigc/llm_agent/market_agent.md)
 - [Agent应用:SightPro](aigc/llm_agent/sightpro.md)
+
+## LLM Evaluation
+
+- [LLM 评测体系](aigc/llm_eval/LLM评测体系.md)
+- [LLM 评估工具](aigc/llm_eval/LLM评估工具.md)
+- [LLM 评估指标](aigc/llm_eval/LLM评估指标.md)
 
 
 ## 多模态
@@ -95,7 +107,6 @@
 
 ## 从 GPU 到华为 NPU
 
-- [从0开始安装Ascend Pytorch](aigc/ascend/从0开始安装Ascend Pytorch.md)
-
+- [从0开始安装Ascend Pytorch](aigc/ascend/从0开始安装AscendPytorch.md)
 - [Ascend_Pytorch适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
 - [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
