@@ -5,7 +5,7 @@
 1. 代码纠错
 
 ```python
-Please help me check the following code, correct the code errors, and then rewrite the code, add documentation, comments and Typing type checks to make the code more beautiful and easy to understand, thank you very much.
+Please help me check the code, correct the code errors, and then rewrite the code, add documentation, comments and Typing type checks to make the code more beautiful and easy to understand, thank you very much.
 ```
 
 2. 代码规范
