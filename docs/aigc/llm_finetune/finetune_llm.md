@@ -254,7 +254,7 @@ Prompt Tuning的一种特殊方法是Prefix Tuning（[Li 和 Liang](https://arxi
 而对于喜欢（Python）伪代码的读者，Adapters 层可以这样写：
 
 
-![法学硕士Adapters 代码](https://lightningaidev.wpengine.com/wp-content/uploads/2023/04/adapter.png)
+![LLMAdapters 代码](https://lightningaidev.wpengine.com/wp-content/uploads/2023/04/adapter.png)
 
 > 使用Adapter层修改的Transformer Block的插图。
 
