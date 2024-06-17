@@ -31,35 +31,31 @@
 
 评估 LLM 以衡量其在不同应用中的质量和有效性至关重要。已经设计了许多专门用于评估 LLM 的框架。下面，我们重点介绍一些最广为人知的框架，例如 Microsoft Azure AI 工作室中的 Prompt Flow、与 LangChain 结合的 Weights & Biases、LangChain 的 LangSmith、confidence-ai 的 DeepEval、TruEra 等。
 
-|                         框架名称                         |                        |                             描述                             | Reference                                                    | 开源 |
-| :------------------------------------------------------: | ---------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ | ---- |
-|                        LangSmith                         | LangChain              | 帮助用户追踪和评估语言模型应用和智能代理，以帮助用户从原型阶段过渡到生产阶段。 | https://www.langchain.com/langsmith                          |      |
-|                     Vertex AI Studio                     | Google                 | 您可以在 Vertex AI 上评估基础模型和您调整后的生成式人工智能模型的性能。这些模型会使用您提供的评估数据集，并根据一组指标进行评估。 | https://cloud.google.com/vertex-ai?hl=en                     |      |
-|                      Amazon Bedrock                      | Amazon                 | 亚马逊基础服务（Amazon Bedrock）支持模型评估作业。模型评估作业的结果使您能够评估和比较模型的输出，然后选择最适合您下游生成式人工智能应用的模型。模型评估作业支持大型语言模型（LLMs）的常见用例，如文本生成、文本分类、问答以及文本摘要。 | https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html |      |
-|                       Prompt Flow                        | Microsoft              | 这是一套开发工具，旨在简化基于LLM（大型语言模型）的人工智能应用的端到端开发周期，包括从构思、原型设计、测试、评估到生产、部署和监控的各个环节。 | https://github.com/microsoft/promptflow                      |      |
-|                         TruLens                          | TruEra                 | TruLens 提供了一套用于开发和监控神经网络的工具，包括大型语言模型（LLMs）。这包括用于评估大型语言模型及其基于LLM的应用的工具 TruLens-Eval，以及用于深度学习可解释性的 TruLens-Explain。 | https://github.com/truera/trulens                            |      |
-|                         DeepEval                         | Confident AI           |         一个用于LLM应用的开源大型语言模型评估框架。          | https://github.com/confident-ai/deepeval                     |      |
-|                         Parea AI                         | Parea AI               | Parea 帮助人工智能工程师构建可靠、准备投入生产的LLM应用。Parea 提供了用于调试、测试、评估和监控由LLM驱动的应用的工具。 | https://docs.parea.ai/evaluation/overview                    |      |
-|                    EleutherAI LM Eval                    | EleutherAI             |    通过最少的微调在广泛的任务中进行小样本评估和性能测试。    | https://github.com/EleutherAI/lm-evaluation-harness          |      |
-|                       PromptBench                        | Microsoft              |      PromptBench：用于评估和理解大型语言模型的统一库。       | https://github.com/microsoft/promptbench                     |      |
-|                       OpenAI Evals                       | OpenAI                 | Evals是 OpenAI 评估 LLM 的标准框架，也是基准的开源注册表。该框架用于测试 LLM 模型以确保其准确性。 | https://github.com/openai/evals                              |      |
-|                        Promptfoo                         |                        | promptfoo是一个用于评估 LLM 输出质量和性能的 CLI 和库，它使您能够使用预定义的测试系统地测试提示和模型。 | https://github.com/promptfoo/promptfoo                       |      |
-|                        AlpacaEval                        | Stanford               | [AlpacaEval](https://tatsu-lab.github.io/alpaca_eval/)：指令遵循语言模型的自动评估器 | https://github.com/tatsu-lab/alpaca_eval                     |      |
-|                       ChatbotArena                       | Lmsystem               | ChatbotArena以众包方式让不同的大模型产品进行匿名、随机的对抗测评，其评级基于国际象棋等竞技游戏中广泛使用的Elo评分系统，Elo是一种计算玩家相对技能水平的方法，通过两名玩家之间的评分差异可以预测比赛的结果。评分结果通过用户投票产生，系统每次会随机选择两个不同的大模型机器人和用户聊天，并让用户在匿名的情况下选择哪款大模型产品的表现更好一些。 | https://chat.lmsys.org/                                      |      |
-|                   Open LLM Leaderboard                   | HuggingFace            | Open LLM Leaderboard是最大的大模型和数据集社区HuggingFace推出的开源大模型排行榜单，基于EleutherAI Language Model Evaluation Harness（EleutherAI语言模型评估框架）封装。 | https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard |      |
-|                          C-Eval                          | 北大、上交、港大       | C-Eval 是一套全面的中文基础模型评估套件。它覆盖人文，社科，理工，其他专业四个大方向，52 个学科（微积分，线代 …），从中学到大学研究生以及职业考试，一共 13948 道题目的中文知识和推理型测试集，来帮助中文社区研发大模型。 | https://github.com/SJTU-LIT/ceval                            |      |
-|                         LLMEval                          |                        | LLMEval-3聚焦于专业知识能力评测，涵盖哲学、经济学、法学、教育学、文学、历史学、理学、工学、农学、医学、军事学、管理学、艺术学等教育部划定的13个学科门类、50余个二级学科，共计约20W道标准生成式问答题目。 | https://github.com/llmeval/llmeval-3                         |      |
-|                        SuperCLUE                         |                        | 中文通用大模型综合性基准，SuperCLUE，是针对中文可用的通用大模型的一个测评基准。着眼于综合评价大模型的能力，使其能全面地测试大模型的效果，又能考察模型在中文特有任务上的理解和积累，SuperCLUE从三个不同的维度评价模型的能力：基础能力、专业能力和中文特性能力。SuperCLUE的特点包括：多个维度能力考察（3大类，70+子能力）、 | https://github.com/CLUEbenchmark/SuperCLUE                   |      |
-|                         FlagEval                         | 北京智源人工智能研究院 | FlagEval（天秤）由智源研究院将联合多个高校团队打造，是一种采用“能力—任务—指标”三维评测框架的大模型评测平台，旨在提供全面、细致的评测结果。该平台已提供了 30 多种能力、5 种任务和 4 大类指标，共 600 多个维度的全面评测，任务维度包括 22 个主客观评测数据集和 84433 道题目。 | https://github.com/FlagOpen/FlagEval                         |      |
-|                          CMMLU                           |                        | CMMLU是一个综合性的中文评估基准，专门用于评估语言模型在中文语境下的知识和推理能力。CMMLU涵盖了从基础学科到高级专业水平的67个主题。它包括：需要计算和推理的自然科学，需要知识的人文科学和社会科学,以及需要生活常识的中国驾驶规则等。此外，CMMLU中的许多任务具有中国特定的答案，可能在其他地区或语言中并不普遍适用。因此是一个完全中国化的中文测试基准。 | https://github.com/haonan-li/CMMLU                           |      |
-|                           CMB                            |                        |                    CMB: 中文综合医学基准                     | https://github.com/FreedomIntelligence/CMB                   |      |
-|                       OpenCompass                        | 上海人工智能研究院     | OpenCompass 是一个大型语言模型（LLM）评估平台，支持超过100个数据集上的多种模型（如 Llama3、Mistral、InternLM2、GPT-4、LLaMa2、Qwen、GLM、Claude 等）。 | https://github.com/open-compass/opencompass                  |      |
-| [VLMEvalKit](https://github.com/open-compass/VLMEvalKit) | 上海人工智能研究院     | 开源的大型视觉-语言模型（LVLMs）评估工具包，支持 GPT-4v、Gemini、QwenVLPlus 以及50多个 Hugging Face 模型和20多个基准测试。 | https://github.com/open-compass/VLMEvalKit                   |      |
-|                        AgentBench                        | 清华                   | AgentBench是第一个旨在评估LLM-as-Agent在各种不同环境中的表现的基准测试。它涵盖 8 个不同的环境，以更全面地评估 LLM 在各种场景中作为自主代理运行的能力。 | https://github.com/THUDM/AgentBench                          |      |
-
-
-
-
+|                         框架名称                         |                        |                             描述                             | Reference                                                    |
+| :------------------------------------------------------: | ---------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ |
+|                        LangSmith                         | LangChain              | 帮助用户追踪和评估语言模型应用和智能代理，以帮助用户从原型阶段过渡到生产阶段。 | https://www.langchain.com/langsmith                          |
+|                     Vertex AI Studio                     | Google                 | 您可以在 Vertex AI 上评估基础模型和您调整后的生成式人工智能模型的性能。这些模型会使用您提供的评估数据集，并根据一组指标进行评估。 | https://cloud.google.com/vertex-ai?hl=en                     |
+|                      Amazon Bedrock                      | Amazon                 | 亚马逊基础服务（Amazon Bedrock）支持模型评估作业。模型评估作业的结果使您能够评估和比较模型的输出，然后选择最适合您下游生成式人工智能应用的模型。模型评估作业支持大型语言模型（LLMs）的常见用例，如文本生成、文本分类、问答以及文本摘要。 | https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html |
+|                       Prompt Flow                        | Microsoft              | 这是一套开发工具，旨在简化基于LLM（大型语言模型）的人工智能应用的端到端开发周期，包括从构思、原型设计、测试、评估到生产、部署和监控的各个环节。 | https://github.com/microsoft/promptflow                      |
+|                         TruLens                          | TruEra                 | TruLens 提供了一套用于开发和监控神经网络的工具，包括大型语言模型（LLMs）。这包括用于评估大型语言模型及其基于LLM的应用的工具 TruLens-Eval，以及用于深度学习可解释性的 TruLens-Explain。 | https://github.com/truera/trulens                            |
+|                         DeepEval                         | Confident AI           |         一个用于LLM应用的开源大型语言模型评估框架。          | https://github.com/confident-ai/deepeval                     |
+|                         Parea AI                         | Parea AI               | Parea 帮助人工智能工程师构建可靠、准备投入生产的LLM应用。Parea 提供了用于调试、测试、评估和监控由LLM驱动的应用的工具。 | https://docs.parea.ai/evaluation/overview                    |
+|                    EleutherAI LM Eval                    | EleutherAI             |    通过最少的微调在广泛的任务中进行小样本评估和性能测试。    | https://github.com/EleutherAI/lm-evaluation-harness          |
+|                       PromptBench                        | Microsoft              |      PromptBench：用于评估和理解大型语言模型的统一库。       | https://github.com/microsoft/promptbench                     |
+|                       OpenAI Evals                       | OpenAI                 | Evals是 OpenAI 评估 LLM 的标准框架，也是基准的开源注册表。该框架用于测试 LLM 模型以确保其准确性。 | https://github.com/openai/evals                              |
+|                        Promptfoo                         |                        | promptfoo是一个用于评估 LLM 输出质量和性能的 CLI 和库，它使您能够使用预定义的测试系统地测试提示和模型。 | https://github.com/promptfoo/promptfoo                       |
+|                        AlpacaEval                        | Stanford               | [AlpacaEval](https://tatsu-lab.github.io/alpaca_eval/)：指令遵循语言模型的自动评估器 | https://github.com/tatsu-lab/alpaca_eval                     |
+|                       ChatbotArena                       | Lmsystem               | ChatbotArena以众包方式让不同的大模型产品进行匿名、随机的对抗测评，其评级基于国际象棋等竞技游戏中广泛使用的Elo评分系统，Elo是一种计算玩家相对技能水平的方法，通过两名玩家之间的评分差异可以预测比赛的结果。评分结果通过用户投票产生，系统每次会随机选择两个不同的大模型机器人和用户聊天，并让用户在匿名的情况下选择哪款大模型产品的表现更好一些。 | https://chat.lmsys.org/                                      |
+|                   Open LLM Leaderboard                   | HuggingFace            | Open LLM Leaderboard是最大的大模型和数据集社区HuggingFace推出的开源大模型排行榜单，基于EleutherAI Language Model Evaluation Harness（EleutherAI语言模型评估框架）封装。 | https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard |
+|                          C-Eval                          | 北大、上交、港大       | C-Eval 是一套全面的中文基础模型评估套件。它覆盖人文，社科，理工，其他专业四个大方向，52 个学科（微积分，线代 …），从中学到大学研究生以及职业考试，一共 13948 道题目的中文知识和推理型测试集，来帮助中文社区研发大模型。 | https://github.com/SJTU-LIT/ceval                            |
+|                         LLMEval                          |                        | LLMEval-3聚焦于专业知识能力评测，涵盖哲学、经济学、法学、教育学、文学、历史学、理学、工学、农学、医学、军事学、管理学、艺术学等教育部划定的13个学科门类、50余个二级学科，共计约20W道标准生成式问答题目。 | https://github.com/llmeval/llmeval-3                         |
+|                        SuperCLUE                         |                        | 中文通用大模型综合性基准，SuperCLUE，是针对中文可用的通用大模型的一个测评基准。着眼于综合评价大模型的能力，使其能全面地测试大模型的效果，又能考察模型在中文特有任务上的理解和积累，SuperCLUE从三个不同的维度评价模型的能力：基础能力、专业能力和中文特性能力。SuperCLUE的特点包括：多个维度能力考察（3大类，70+子能力）、 | https://github.com/CLUEbenchmark/SuperCLUE                   |
+|                         FlagEval                         | 北京智源人工智能研究院 | FlagEval（天秤）由智源研究院将联合多个高校团队打造，是一种采用“能力—任务—指标”三维评测框架的大模型评测平台，旨在提供全面、细致的评测结果。该平台已提供了 30 多种能力、5 种任务和 4 大类指标，共 600 多个维度的全面评测，任务维度包括 22 个主客观评测数据集和 84433 道题目。 | https://github.com/FlagOpen/FlagEval                         |
+|                          CMMLU                           |                        | CMMLU是一个综合性的中文评估基准，专门用于评估语言模型在中文语境下的知识和推理能力。CMMLU涵盖了从基础学科到高级专业水平的67个主题。它包括：需要计算和推理的自然科学，需要知识的人文科学和社会科学,以及需要生活常识的中国驾驶规则等。此外，CMMLU中的许多任务具有中国特定的答案，可能在其他地区或语言中并不普遍适用。因此是一个完全中国化的中文测试基准。 | https://github.com/haonan-li/CMMLU                           |
+|                           CMB                            |                        |                    CMB: 中文综合医学基准                     | https://github.com/FreedomIntelligence/CMB                   |
+|                       OpenCompass                        | 上海人工智能研究院     | OpenCompass 是一个大型语言模型（LLM）评估平台，支持超过100个数据集上的多种模型（如 Llama3、Mistral、InternLM2、GPT-4、LLaMa2、Qwen、GLM、Claude 等）。 | https://github.com/open-compass/opencompass                  |
+| [VLMEvalKit](https://github.com/open-compass/VLMEvalKit) | 上海人工智能研究院     | 开源的大型视觉-语言模型（LVLMs）评估工具包，支持 GPT-4v、Gemini、QwenVLPlus 以及50多个 Hugging Face 模型和20多个基准测试。 | https://github.com/open-compass/VLMEvalKit                   |
+|                        AgentBench                        | 清华                   | AgentBench是第一个旨在评估LLM-as-Agent在各种不同环境中的表现的基准测试。它涵盖 8 个不同的环境，以更全面地评估 LLM 在各种场景中作为自主代理运行的能力。 | https://github.com/THUDM/AgentBench                          |
 
 ## 按应用场景评估指标
 
@@ -139,7 +135,7 @@ Evaluation frameworks for retrieval system
 | ARES                  | An Automated Evaluation Framework for Retrieval-Augmented Generation Systems | [Link](https://github.com/stanford-futuredata/ARES)          |
 | RAG Triad of metrics  | RAG Triad of metrics RAG triad: Answer Relevance (Is the final response useful), Context Relevance (How good is the retrieval), and Groundedness (Is the response supported by the context). Trulens and LLMA index work together for the evaluation. | [DeepLearning.AI Course](https://learn.deeplearning.ai/building-evaluating-advanced-rag) |
 
- Sample evaluation metrics for retrieval system
+ Sample evaluation metrics for retrieval system
 
 | Metrics                    | Details                                                      | Reference                                                    |
 | -------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
