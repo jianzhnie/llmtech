@@ -1,10 +1,10 @@
-# LeRobot，一种用于机器人的开源机器学习模型
+#
+
+LeRobot，一种用于机器人的开源机器学习模型
 
 [Hugging Face](https://huggingface.co/) 推出了[LeRobot](https://huggingface.co/lerobot)，这是一种针对现实世界的机器人应用进行训练的新型机器学习模型库。LeRobot 作为一个平台，为数据共享、可视化和高级模型训练提供了一个多功能库。
 
-[LeRobot 旨在通过PyTorch](https://pytorch.org/)为现实世界的机器人技术提供模型、数据episode和工具。目标是降低机器人技术的准入门槛，以便每个人都能从共享数据episode和预训练模型中做出贡献并受益。
-
-LeRobot 通过提供预训练模型和与物理模拟器的无缝episode成简化了项目启动。
+[LeRobot 旨在通过PyTorch](https://pytorch.org/)为现实世界的机器人技术提供模型、数据集和工具。目标是降低机器人技术的准入门槛，以便每个人都能从共享数据集和预训练模型中做出贡献并受益。
 
 ##  [AlohaTransferCube](https://huggingface.co/lerobot/act_aloha_sim_transfer_cube_human)
 
@@ -12,7 +12,7 @@ LeRobot 通过提供预训练模型和与物理模拟器的无缝episode成简�
 
 ### 模型训练
 
-该模型是使用 [LeRobot的训练脚本](https://github.com/huggingface/lerobot/blob/d747195c5733c4f68d4bfbe62632d6fc1b605712/lerobot/scripts/train.py)，以及 [aloha_sim_transfer_cube_human](https://huggingface.co/datasets/lerobot/aloha_sim_transfer_cube_human/tree/v1.3) 数据episode进行训练的，使用的命令如下：
+该模型是使用 [LeRobot的训练脚本](https://github.com/huggingface/lerobot/blob/d747195c5733c4f68d4bfbe62632d6fc1b605712/lerobot/scripts/train.py)，以及 [aloha_sim_transfer_cube_human](https://huggingface.co/datasets/lerobot/aloha_sim_transfer_cube_human/tree/v1.3) 数据集进行训练的，使用的命令如下：
 
 ```python
 python lerobot/scripts/train.py \
@@ -62,7 +62,7 @@ LeRobot 在[PushT](https://huggingface.co/lerobot/diffusion_pusht)环境中进�
 
 ### 模型训练
 
-该模型是使用 [LeRobot的训练脚本](https://github.com/huggingface/lerobot/blob/d747195c5733c4f68d4bfbe62632d6fc1b605712/lerobot/scripts/train.py)，以及 [pusht](https://huggingface.co/datasets/lerobot/pusht/tree/v1.3) 数据集进行训练的，使用的命令如下：
+该模型是使用 [LeRobot的训练脚本](https://github.com/huggingface/lerobot/blob/d747195c5733c4f68d4bfbe62632d6fc1b605712/lerobot/scripts/train.py)，以及 [pusht](https://huggingface.co/datasets/lerobot/pusht/tree/v1.3) 数据集进行训练的，使用的命令如下：
 
 ```python
 python lerobot/scripts/train.py \
@@ -81,7 +81,7 @@ python lerobot/scripts/train.py \
   device=cuda
 ```
 
-训练曲线可以在https://wandb.ai/alexander-soare/Alexander-LeRobot/runs/508luayd 找到。
+训练曲线可以在https://wandb.ai/alexander-soare/Alexander-LeRobot/runs/508luayd 找到。
 
 在 Nvida RTX 3090 上训练大约需要 7 个小时。
 
@@ -89,21 +89,21 @@ LeRobot 旨在适应各种机器人硬件，从基本的教育手臂到研究环
 
 ## 开源数据
 
-LeRobot 提供的数据episode涵盖了机器人领域的各种场景和任务。这些数据episode包括用于物体插入和传输、移动挑战和各种物体操纵等任务的模拟环境。
+LeRobot 提供的数据集涵盖了机器人领域的各种场景和任务。这些数据集包括用于物体插入和传输、移动挑战和各种物体操纵等任务的模拟环境。
 
-- 专注于人类引导的动作和脚本传输的数据episode：
+- 专注于人类引导的动作和脚本传输的数据集：
 
   - [aloha_sim_insertion_human_image](https://huggingface.co/datasets/lerobot/aloha_sim_insertion_human_image)
 
   - [aloha_sim_transfer_cube_scripted_image](https://huggingface.co/datasets/lerobot/aloha_sim_transfer_cube_scripted_image)
 
-- 涉及静态物体的数据episode：
+- 涉及静态物体的数据集：
 
   - [aloha_static_battery](https://huggingface.co/datasets/lerobot/aloha_static_battery)
 
   - [aloha_static_candy](https://huggingface.co/datasets/lerobot/aloha_static_candy)
 
-- 与手臂运动和操纵相关的数据episode：
+- 与手臂运动和操纵相关的数据集：
 
   - [xarm_push_medium_replay_image](https://huggingface.co/datasets/lerobot/xarm_push_medium_replay_image)
 
