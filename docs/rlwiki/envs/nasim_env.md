@@ -2,9 +2,9 @@
 
 ## 	介绍
 
-网络攻击模拟器（NASim）是一个轻量级的网络攻击模拟器，用Python编写。它被设计用来快速测试使用强化学习和规划的自主渗透测试 Agent。它是一个模拟器，因此没有复制攻击真实系统的所有细节，而是旨在捕捉一些网络渗透测试的更显著特征，如状态和动作空间的规模变化、部分可观察性和多样化的网络拓扑。
+网络攻击模拟器 (NASim) 是一个模拟计算机网络，具有漏洞、扫描和漏洞利用，旨在用作 AI 智能体的测试环境和应用于网络渗透测试的规划技术。它是一个模拟器，因此没有复制攻击真实系统的所有细节，而是旨在捕捉一些网络渗透测试的更显著特征，如状态和动作空间的规模变化、部分可观察性和多样化的网络拓扑。
 
-环境是模仿 [gymnasium ](https://github.com/Farama-Foundation/Gymnasium/)（以前称为Open AI Gym）接口建模的。
+环境是基于 [gymnasium ](https://github.com/Farama-Foundation/Gymnasium/)建模的
 
 Github：https://github.com/Jjschwartz/NetworkAttackSimulator
 
