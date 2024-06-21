@@ -1,5 +1,7 @@
 # CyberBattleSim： 网络攻防模拟工具
 
+Github: https://github.com/microsoft/CyberBattleSim.git
+
 ## CyberBattleSim 是什么
 
 CyberBattleSim是一款微软365 Defender团队开源的人工智能攻防对抗模拟工具，来源于微软的一个实验性研究项目。该项目专注于对网络攻击入侵后横向移动阶段进行威胁建模，用于研究在模拟抽象企业网络环境中运行的自动化智能体的交互。
