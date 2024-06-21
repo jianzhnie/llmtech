@@ -2,7 +2,7 @@
 
 ## 	介绍
 
-网络攻击模拟器（NASim）是一个轻量级的网络攻击模拟器，用Python编写。它被设计用来快速测试使用强化学习和规划的自主渗透测试Agent。它是一个模拟器，因此没有复制攻击真实系统的所有细节，而是旨在捕捉一些网络渗透测试的更显著特征，如状态和动作空间的规模变化、部分可观察性和多样化的网络拓扑。
+网络攻击模拟器（NASim）是一个轻量级的网络攻击模拟器，用Python编写。它被设计用来快速测试使用强化学习和规划的自主渗透测试 Agent。它是一个模拟器，因此没有复制攻击真实系统的所有细节，而是旨在捕捉一些网络渗透测试的更显著特征，如状态和动作空间的规模变化、部分可观察性和多样化的网络拓扑。
 
 环境是模仿 [gymnasium ](https://github.com/Farama-Foundation/Gymnasium/)（以前称为Open AI Gym）接口建模的。
 
@@ -35,7 +35,7 @@ pip install nasim
 
 ## 启动 NASim 环境
 
-与 NASim 的交互主要通过类 [`NASimEnv`](https://networkattacksimulator.readthedocs.io/en/latest/reference/envs/environment.html#nasim.envs.environment.NASimEnv) 完成，该类处理所选scenario定义的模拟网络环境。
+与 NASim 的交互主要通过类 [`NASimEnv`](https://networkattacksimulator.readthedocs.io/en/latest/reference/envs/environment.html#nasim.envs.environment.NASimEnv) 完成，该类处理所选scenario定义的模拟网络环境。
 
 有两种方法可以启动新环境：
 
@@ -60,9 +60,9 @@ scenario定义了网络属性和渗透测试人员的特定信息（例如可用
 
 环境是否完全或部分可观察对动作和观察空间的大小和形状或Agent与环境的交互方式没有影响。
 
-使用`flat_actions=True`意味着我们的操作空间由 N 个离散操作组成，其中 N 基于网络中的主机数量以及可用的漏洞和扫描数量。对于我们的示例，有 3 个主机、1 个漏洞和 3 个扫描（操作系统、服务和子网），总共有 3  (1 + 3) = 12 个操作。如果`flat_actions=False `每个操作都是一个向量，向量的每个元素都指定了操作的一个参数。
+使用`flat_actions=True`意味着我们的操作空间由 N 个离散操作组成，其中 N 基于网络中的主机数量以及可用的漏洞和扫描数量。对于我们的示例，有 3 个主机、1 个漏洞和 3 个扫描（操作系统、服务和子网），总共有 3  (1 + 3) = 12 个操作。如果`flat_actions=False `每个操作都是一个向量，向量的每个元素都指定了操作的一个参数。
 
-使用 `flat_obs=True` 意味着返回的观测值将是一个一维向量。否则，`flat_obs=False`观测值将是一个二维矩阵。
+使用 `flat_obs=True` 意味着返回的观测值将是一个一维向量。否则，`flat_obs=False`观测值将是一个二维矩阵。
 
 ### 从 scenario 加载环境
 
@@ -109,7 +109,7 @@ env = nasim.generate(5, 3, num_os=3)
 
 启动时，NASim 将每个基准测试 scenario注册为[Gymnasium](https://github.com/Farama-Foundation/Gymnasium/) 环境，从而允许使用 加载 NASim 基准测试环境 `gymnasium.make()`。
 
-所有基准测试 scenario都可以使用 `gymnasium.make()` 加载。
+所有基准测试 scenario都可以使用 `gymnasium.make()` 加载。
 
 ```python
 import gymnasium as gym
