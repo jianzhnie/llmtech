@@ -1,6 +1,6 @@
 ## Yawning-Titan 是什么？
 
-Yawning-Titan 是一组抽象的、基于图形的网络安全模拟环境，支持基于 OpenAI Gym 的自主网络操作智能智能体的训练。Yawning-Titan 专注于提供快速模拟，以支持对抗概率红方智能体的防御性自主智能体的开发。
+Yawning-Titan 是一组抽象的、基于图形的网络安全模拟环境，支持基于 OpenAI Gym 的自主网络操作智能体的训练。Yawning-Titan 专注于提供快速模拟，以支持对抗概率红方智能体的防御性自主智能体的开发。
 
 Yawning-Titan 包含少量特定的、独立的 OpenAI Gym 环境，用于自主网络防御研究，非常适合学习和调试，以及灵活、高度可配置的通用环境，可用于表示一系列复杂性和规模不断增加的场景。通用环境只需要一个网络拓扑和一个设置文件，即可创建符合 OpenAI Gym 的环境，该环境还可以实现开放研究和增强的可重复性。
 
@@ -42,8 +42,6 @@ from yawning_titan.networks.network import Network
 要创建一个网络，首先我们必须实例化一个的实例[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)。
 
 虽然[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)可以通过调用直接实例化`Network()`，但是您可以设置一些可配置参数（我们将在下文中讨论这些参数）。
-
-网络 = 网络()
 
 #### 节点实例
 
