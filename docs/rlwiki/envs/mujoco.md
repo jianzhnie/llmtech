@@ -34,7 +34,7 @@
 
 ## MuJoCo  简介
 
-MuJoCo 全称为Multi-Joint dynamics with Contact，它是一个通用的物理引擎,  旨在促进机器人、生物力学、图形和动画、机器学习和其他需要快速准确地模拟与其环境相互作用的铰接结构(如多指灵巧手操作)的领域。 它最初主要由华盛顿大学的Emo Todorov 教授开发，后成立商业公司 Roboti LLC 来进行开发维护，于 2021 年 2022 月被 DeepMind 收购并免费提供，并于2022 年 5 月开源。MuJoCo 代码库可在GitHub上的deepmind/mujoco存储库中找到。
+MuJoCo 全称为Multi-Joint dynamics with Contact (代表接触式多关节动力学)，它是一个通用的物理引擎,  旨在促进机器人、生物力学、图形和动画、机器学习和其他需要快速准确地模拟与其环境相互作用的铰接结构(如多指灵巧手操作)的领域研究和开发。 它最初主要由华盛顿大学的Emo Todorov 教授开发，后成立商业公司 Roboti LLC 来进行开发维护，于 2021 年 2022 月被 DeepMind 收购并免费提供，并于2022 年 5 月开源。MuJoCo 代码库可在GitHub上的deepmind/mujoco存储库中找到。
 
 MuJoCo是一个带有C API的C / C++库，面向研究人员和开发人员。运行时模拟模块被调整为以最大限度地提高性能，并对由内置 XML 解析器和编译器预先分配的低级数据结构进行操作。不同于其他引擎采用 urdf 或者 sdf 等机器人模型， MuJoCo 引擎团队自己开发了一种机器人的建模格式MJCF （一种方便人们读写的XML 文件格式的语言），来支持更多的环境参数配置。该库包括用 OpenGL 呈现的带有本地 GUI 的交互式可视化界面。同时MuJoCo 进一步公开了大量用于计算物理相关量的高效函数。
 
@@ -407,29 +407,29 @@ with physics.reset_context():
 
 ###  Mujoco-py
 
-OpenAI的 Mujoco-py 其实是openai的一个对接mujoco接口的项目, 目前最新版本支持MuJoCo2.1的开源版本，代码库已经很久没有更新，而且mujoco_py 不支持mujoco2.1.0以上版本了。今后使用建议直接使用deepMind 官方给的python使用方案。
+OpenAI的 Mujoco-py 其实是openai的一个对接mujoco接口的项目, 目前最新版本支持 MuJoCo 2.1 的开源版本，代码库已经很久没有更新，而且mujoco_py 不支持 mujoco2.1.0 以上版本了。今后使用建议直接使用deepMind 官方给的python使用方案。
 
 Mujoco-py的主要特点是支持实时GUI显示，GUI里有些现成的功能例如仿真加减速、接触力、逐帧播放和输出视频等功能，基本能涵盖仿真过程的基本要求。Mujoco-py早期还有并行运算API(MjSimPool)，后面项目人员觉得还是多进程做并行优势更大就给砍掉了。
 
 ### Mujoco Gym
 
-大家一定都非常了解这段入门代码：
+Gym 提供了一套包含多种仿真环境的强化学习 API 标准接口，界面简单、Python 化，能够表示一般的 RL 问题，非常方便强化学习算法和仿真环境的对接。大家一定都非常了解下面这段强化学习入门代码：
 
 ```python
 import gym
 env = gym.make('Hopper-v4')
-_ = env.reset()
+obs, info = env.reset()
 for _ in range(100):
     action = env.action_space.sample()
     obs, reward, terminal, truncated, info = env.step()
     done =  terminal or truncated
     env.render()
     if done:
-        break
+        obs, info = env.reset()
 env.close()
 ```
 
-但作为一个RL新手会非常好奇，这些状态、动作每个维度都是什么含义？reward、terminal 这些信息都是怎么定义的。这里有部分环境的说明文档，但是不全。因此我阅读了gym以及 mujoco-py 的相关源码，在这里分享一下。
+但作为一个RL新手会非常好奇，这些状态、动作每个维度都是什么含义？reward、terminal 这些信息都是怎么定义的。想要深入了解如何在 Gym 中添加 Mujoco 模型，我们需要阅读 Gym 和Mujoco的说明文档以及 gym 以及 mujoco-py 的相关源码，下面介绍这背后的运行逻辑。
 
 #### 状态
 
@@ -500,6 +500,36 @@ class HopperEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return observation, reward, terminated, False, info
 ```
 
+#### Step
+
+可以看到 HopperEnv 中的 Step 函数实际上是调用了`Mujoco` 中的 `mj_step ` 函数来完成的， 如下面的代码所示：
+
+```python
+class MujocoEnv(gym.Env):
+    """Superclass for all MuJoCo environments.
+    """
+    def do_simulation(self, ctrl, n_frames) -> None:
+        """
+        Step the simulation n number of frames and applying a control action.
+        """
+        # Check control input is contained in the action space
+        if np.array(ctrl).shape != (self.model.nu,):
+            raise ValueError(
+                f"Action dimension mismatch. Expected {(self.model.nu,)}, found {np.array(ctrl).shape}"
+            )
+        self._step_mujoco_simulation(ctrl, n_frames)
+
+    def _step_mujoco_simulation(self, ctrl, n_frames):
+        self.data.ctrl[:] = ctrl
+
+        mujoco.mj_step(self.model, self.data, nstep=n_frames)
+
+        # As of MuJoCo 2.0, force-related quantities like cacc are not computed
+        # unless there's a force sensor in the model.
+        # See https://github.com/openai/gym/issues/1541
+        mujoco.mj_rnePostConstraint(self.model, self.data)
+```
+
 #### MuJoCo模型
 
 前面直接给出了查看状态、动作等信息的方法，但是为什么使用这些接口去查看？我们需要了解Gym是如何封装MuJoCo的，以及MuJoCo内部的信息是如何组成的。这里引用知乎一篇文章中的介绍：
@@ -509,7 +539,7 @@ class HopperEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 > XML 文件，用于定义运动学和动力学关系；
 > 模拟器构建py文件，使用mujoco-py将XML model创建成可交互的环境，供强化学习算 法调用。
 
-其中，xml文件对应PyMjModel，模拟器对应mujoco_py.  MjSim，模拟器数据对应PyMjData，此处的描述见[mujoco-py文档](https://openai.github.io/mujoco-py/build/html/reference.html%23)。在Gym中将这三者封装到`self.model`、以及`self.data`中。
+其中，xml文件对应PyMjModel，模拟器对应 mujoco_py.  MjSim，模拟器数据对应PyMjData，此处的描述见[mujoco-py文档](https://openai.github.io/mujoco-py/build/html/reference.html%23)。在Gym中将这三者封装到`self.model`、以及`self.data`中。
 
 ```python
 class MujocoEnv(gym.Env):
@@ -529,3 +559,7 @@ class MujocoEnv(gym.Env):
 ```
 
 `self.model`中包含模型相关的信息，`self.data`包含了模拟器运行过程中的相关数据，如状态等信息，可从[mujoco-py文档](https://openai.github.io/mujoco-py/build/html/reference.html%23)中查阅。
+
+## MuJoCo 官方模型库
+
+[mujoco_menagerie ](https://github.com/google-deepmind/mujoco_menagerie)是一个由 DeepMind MuJoCo 团队开发维护的存储库。该集合拥有一系列为 MuJoCo 物理引擎量身定制的高质量模型。
