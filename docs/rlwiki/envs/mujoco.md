@@ -413,7 +413,11 @@ Mujoco-py的主要特点是支持实时GUI显示，GUI里有些现成的功能�
 
 ### Mujoco Gym
 
-Gym 提供了一套包含多种仿真环境的强化学习 API 标准接口，界面简单、Python 化，能够表示一般的 RL 问题，非常方便强化学习算法和仿真环境的对接。Gym 中支持的 Mujoco 环境有 11 种：Ant、HalfCheetah、Hopper、Humanoid、HumanoidStandup、InvertedDoublePendulum、InvertedPendulum、Pusher、Reacher、Swimmer 和 Walker2d。下面给出了在环境`Hopper`上，Gym API 交互的强化学习入门代码：
+Gym 提供了一套包含多种仿真环境的强化学习 API 标准接口，界面简单、Python 化，能够表示一般的 RL 问题，非常方便强化学习算法和仿真环境的对接。
+
+Gym 中支持的 Mujoco 环境有 11 种：Ant（蚂蚁）、HalfCheetah（半猎豹）、Hopper（跳跃者）、Humanoid（类人）、HumanoidStandup（类人起立）、InvertedDoublePendulum（倒立双摆）、InvertedPendulum（倒立摆）、Pusher（推手）、Reacher（抓取者）、Swimmer（游泳者）和Walker2d（二维步行者）。所有这些环境在其初始状态上都是随机性的，通过在固定的初始状态上添加高斯噪声来增加随机性。在Gymnasium中，MuJoCo 环境的状态空间由两部分组成，这两部分被展平和连接在一起：一个身体部位（'mujoco-py.mjsim.qpos'）或关节的位置及其相应的速度（'mujoco-py.mjsim.qvel'）。通常，由于奖励是基于它们的值计算的，所以会从状态空间中省略一些初始位置元素，让算法间接推断这些隐藏的值。在Gymnasium环境中，这组环境可以被视为策略更难解决的环境。环境可以通过更改XML文件或调整其类的参数来进行配置。
+
+下面给出了在环境`Hopper`上，Gym API 交互的强化学习入门代码：
 
 ```python
 import gym
