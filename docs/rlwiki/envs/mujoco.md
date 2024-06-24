@@ -4,7 +4,7 @@
 
 机器人仿真是机器人学科的一大核心内容。通过仿真可以快速、低成本地验证结构、控制等方面，是机械结构设计优化、研究控制算法的有效手段。机器人仿真器主要由两个引擎组成:物理引擎和渲染引擎。其中物理引擎负责对物理系统、物理规律的模拟，如物体受力加减速、碰撞接触摩擦、柔性物体变形等物理现象的建模；渲染引擎则将物理引擎模拟的结果在2D屏幕(或者3D的VR设备)尽可能逼真地展示出来。
 
-事实上，机器人仿真器跟游戏引擎有很密切的关系。许多最初应用于游戏的物理引擎/渲染引擎后来也被广泛应用于机器人仿真领域，如 [Bullet](https://github.com/bulletphysics/bullet3.git) 物理引擎，基于虚幻游戏引擎的无人驾驶仿真器 [AirSim](https://github.com/microsoft/AirSim) 等。不过游戏中的物理实现逻辑跟机器人领域还是有本质区别。游戏中更多追求视觉上的真实，前沿成果主要集中在柔性材料视觉效果、[海量粒子的运动模拟](http://github.com/taichi-dev/taichi)上；机器人仿真目前大部分还处于刚体系统模拟，除了视觉效果还追求其他物理效果的精确仿真：
+事实上，机器人仿真器跟游戏引擎有很密切的关系。许多最初应用于游戏的物理引擎/渲染引擎后来也被广泛应用于机器人仿真领域，如 [Bullet](https://github.com/bulletphysics/bullet3.git) 物理引擎，基于虚幻游戏引擎的无人驾驶仿真器 [AirSim](https://github.com/microsoft/AirSim) 等。不过游戏中的物理实现逻辑跟机器人领域还是有本质区别。游戏中更多追求视觉上的真实，前沿成果主要集中在柔性材料视觉效果、[海量粒子的运动模拟](http://github.com/taichi-dev/taichi)上；机器人仿真目前大部分还处于刚体系统模拟，除了视觉效果还追求其他物理效果的精确仿真：
 
 1. **传感器**: 可以认为现有传感器的精确仿真都是机器人物理引擎的目标，如多维力/力矩传感器、IMU、拉力、触觉传感器、激光、立体相机。
 2. **驱动器**: 机器人的动力单元如电机、气缸、液压元件、人工肌肉。
@@ -20,11 +20,11 @@
 
 机器人物理引擎狭义上仅对刚体前向动力学的模拟器,如[ODE](http://www.ode.org)。这种物理引擎输入用户端控制量(如关节电机力矩、空间作用力)，对刚体系统碰撞、接触和力学进行解算，输出整个系统的加速度，再通过积分器得到下一个系统状态，相关算法可参考前向动力学。如[Gazebo](https://github.com/gazebosim/gz-sim.git)、[V-rep](https://github.com/robocomp)这些仿真器内置了多种常见物理引擎，可以让用户自行选择。
 
-广义上的物理引擎还需要上述传感器、驱动器、视觉渲染等模块，此时物理引擎更倾向于一种轻量的仿真器。今天介绍的 [MuJoCo](https://github.com/google-deepmind/mujoco.git) 即属于这种广义物理引擎，可以将引擎模块用于其他仿真器中(如集成在[Unity](http://www.mujoco.org/book/unity.html))，也可以直接用物理引擎来做仿真，如[pybullet](http://pybullet.org/wordpress/)。
+广义上的物理引擎还需要上述传感器、驱动器、视觉渲染等模块，此时物理引擎更倾向于一种轻量的仿真器。今天介绍的 [MuJoCo](https://github.com/google-deepmind/mujoco.git) 即属于这种广义物理引擎，可以将引擎模块用于其他仿真器中(如集成在[Unity](http://www.mujoco.org/book/unity.html))，也可以直接用物理引擎来做仿真，如[pybullet](http://pybullet.org/wordpress/)。
 
 游戏市场对机器人仿真领域冲击很大。积极上说，游戏产业的发展加速了对物理现象仿真的研究，并且随着游戏物理引擎逼真度的提升，越来越多的功能被应用在机器人仿真领域。不过机器人仿真跟游戏还是有上述本质区别，最基本的从底层力学工具就已经完全区分开:正经的游戏物理引擎一般不过多考虑刚体系统的性能优化，采用简单的牛顿力学工具，有助于游戏开发者理解原理；机器人物理引擎则倾向于采用Featherstone的空间向量方法，保证尽可能高效的刚体动力学算法实现(如MuJoCo、[RaiSim](https://github.com/raisimTech/raisimLib.git))。
 
-下图中展示了常见的物理引擎，关于其性能分析可见文献。其中ODE、Bullet、[DART](https://github.com/dartsim/dart.git) 消费级机器人仿真中应用广泛，[OpenSim](https://github.com/opensim-org/opensim-core.git) 用于人体肌肉组织仿真，MuJoCo主要应用于强化学习和最优化控制领域，RaiSim是ETH Robotic Systems Lab 开发的目前最新的物理引擎，应用于他们实验室开发的四足机器人ANYmal。Bullet、[PhysX](https://github.com/NVIDIA-Omniverse/PhysX.git)、Havok应用于游戏，Bullet 由于版权优势在一些机器人领域有替代 MuJoCo 趋势。[Flex](https://github.com/NVIDIAGameWorks/FleX.git)是NVIDIA开发的引擎,在流体模拟、NVIDIA自家的GPU加速方面有优势，NVIDIA内部研究机构也有尝试应用于机器人[2]。
+下图中展示了常见的物理引擎，关于其性能分析可见文献。其中ODE、Bullet、[DART](https://github.com/dartsim/dart.git) 消费级机器人仿真中应用广泛，[OpenSim](https://github.com/opensim-org/opensim-core.git) 用于人体肌肉组织仿真，MuJoCo主要应用于强化学习和最优化控制领域，RaiSim是ETH Robotic Systems Lab 开发的目前最新的物理引擎，应用于他们实验室开发的四足机器人ANYmal。Bullet、[PhysX](https://github.com/NVIDIA-Omniverse/PhysX.git)、Havok应用于游戏，Bullet 由于版权优势在一些机器人领域有替代 MuJoCo 趋势。[Flex](https://github.com/NVIDIAGameWorks/FleX.git)是NVIDIA开发的引擎,在流体模拟、NVIDIA自家的GPU加速方面有优势，NVIDIA内部研究机构也有尝试应用于机器人[2]。
 
 <img src="https://picx.zhimg.com/80/v2-8e84d7e9d97b291681f5de4775f630c2_1440w.webp?source=d16d100b" alt="img" style="zoom: 33%;" />
 
