@@ -10,7 +10,7 @@
 2. **驱动器**: 机器人的动力单元如电机、气缸、液压元件、人工肌肉。
 3. **非视觉的物理量**: 如摩擦力(静摩擦、滑动摩擦、滚动摩擦、扭转摩擦)、局部接触变形、弹簧/阻尼等。
 
-<video class="ztext-gif GifPlayer-gif2mp4 css-1xeqk96" src="https://vdn6.vzuu.com/SD/be90ac5a-c8e9-11eb-966b-da79cbcd4089.mp4?pkey=AAVEM2pFO96clk4pD3C4NoAhw8kyGba5uTXXpnnWcpqKRO7zL3ITM6bohAIY21IdxqVFqNLRrUoxlhRYQCzXnoGC&amp;c=avc.0.0&amp;f=mp4&amp;pu=078babd7&amp;bu=078babd7&amp;expiration=1719147872&amp;v=ks6" data-thumbnail="https://pic1.zhimg.com/v2-f865580bd1c10065fab0e7a1ed2869ff_720w.jpg?source=d16d100b" poster="https://pic1.zhimg.com/v2-f865580bd1c10065fab0e7a1ed2869ff_720w.jpg?source=d16d100b" data-size="normal" preload="metadata" loop="" playsinline=""></video>
+<video class="ztext-gif GifPlayer-gif2mp4 css-1xeqk96" src="https://vdn6.vzuu.com/SD/be90ac5a-c8e9-11eb-966b-da79cbcd4089.mp4?pkey=AAX8uS9dcm8OUMQFx7fetj3kFv27kd1dv6wBR4MUFTrwfsuJEVxSbzvEF_IAc31no5cblF6o5EHlQ9d4CEiXBTZ9&amp;c=avc.0.0&amp;f=mp4&amp;pu=078babd7&amp;bu=078babd7&amp;expiration=1719211653&amp;v=ks6" data-thumbnail="https://pic4.zhimg.com/v2-f865580bd1c10065fab0e7a1ed2869ff_b.jpg" poster="https://pic4.zhimg.com/v2-f865580bd1c10065fab0e7a1ed2869ff_b.jpg" data-size="normal" preload="metadata" loop="" playsinline=""></video>
 
 > 基于虚幻引擎的AirSim仿真器
 
@@ -255,9 +255,7 @@ sites是light geom。它们具有相同的外观特征，但不能参与碰撞�
 </mujoco>
 ```
 
-
-
-## Mujoco环境建模
+## Mujoco 环境建模
 
 ### 模型实例
 
@@ -372,9 +370,9 @@ XML主要分为以下三个部分：
 
 MJCF 文件包含指定模型所需的最少信息。胶囊由空间中的线段定义——在这种情况下，只需要胶囊的半径。从所属的geoms中推断出机体的位置和方向。在均匀密度假设下，从geom形状推导出惯性性质。这两个站点被命名是因为肌腱定义需要引用它们，但是没有其他名称。关节轴仅定义为铰链关节，而不定义为球关节。冲突规则是自动定义的。摩擦特性、重力、模拟时间步长等设置为缺省值。顶部指定的默认 geom 颜色适用于所有 geom。
 
-除了以二进制 MJB 格式保存编译后的模型之外，我们还可以将其保存为 MJCF 或人类可读的文本。请分别参见 [example_saved.xml](https://mujoco.readthedocs.io/en/stable/_static/example_saved.xml) 和 [example_saved.txt](https://mujoco.readthedocs.io/en/stable/_static/example_saved.txt)。XML 版本与原始版本相似，而文本版本包含来自 mjModel 的所有信息。将文本版本与 XML 版本进行比较，可以看出模型编译器]为我们做了多少工作。
+用于动力学计算的刚体坐标系位姿、惯量从geoms几何形状中推算得到。site用于虚拟的定位点，这里被用来连接绳子的两端。default、asset分别定义了默认属性和背景属性等。可以看到MJCF格式相对URDF格式的建模文件可读性有了很大的提升。
 
-<video class="ztext-gif GifPlayer-gif2mp4 css-1xeqk96" src="https://vdn6.vzuu.com/SD/5fff494c-cd82-11eb-a42f-960b3f24cc0e.mp4?pkey=AAUr6YNeHnccfuZg-8834gUL2n02qAU2GeH65h8QKNyQLfXPMNrbpboxnEne58NVUJ5LPn90vR49QgTwRwAjBgrd&amp;c=avc.0.0&amp;f=mp4&amp;pu=078babd7&amp;bu=078babd7&amp;expiration=1719148644&amp;v=ks6" data-thumbnail="https://picx.zhimg.com/v2-907bcebad7cc20cb1668b1f9e4a06251_720w.jpg?source=d16d100b" poster="https://picx.zhimg.com/v2-907bcebad7cc20cb1668b1f9e4a06251_720w.jpg?source=d16d100b" data-size="normal" preload="metadata" loop="" playsinline=""></video>
+<img src="https://pic2.zhimg.com/v2-907bcebad7cc20cb1668b1f9e4a06251_b.jpg" alt="动图封面" style="zoom:50%;" />
 
 ## Mujoco Python 接口
 
