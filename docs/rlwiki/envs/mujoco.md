@@ -413,7 +413,7 @@ Mujoco-py的主要特点是支持实时GUI显示，GUI里有些现成的功能�
 
 ### Mujoco Gym
 
-Gym 提供了一套包含多种仿真环境的强化学习 API 标准接口，界面简单、Python 化，能够表示一般的 RL 问题，非常方便强化学习算法和仿真环境的对接。大家一定都非常了解下面这段强化学习入门代码：
+Gym 提供了一套包含多种仿真环境的强化学习 API 标准接口，界面简单、Python 化，能够表示一般的 RL 问题，非常方便强化学习算法和仿真环境的对接。Gym 中支持的 Mujoco 环境有 11 种：Ant、HalfCheetah、Hopper、Humanoid、HumanoidStandup、InvertedDoublePendulum、InvertedPendulum、Pusher、Reacher、Swimmer 和 Walker2d。下面给出了在环境`Hopper`上，Gym API 交互的强化学习入门代码：
 
 ```python
 import gym
@@ -502,7 +502,7 @@ class HopperEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 #### Step
 
-可以看到 HopperEnv 中的 Step 函数实际上是调用了`Mujoco` 中的 `mj_step ` 函数来完成的， 如下面的代码所示：
+可以看到 HopperEnv 中的 Step 函数实际上是调用了`Mujoco` 中的 `mj_step ` 函数来完成的， 如下面的代码所示：
 
 ```python
 class MujocoEnv(gym.Env):
