@@ -1,6 +1,4 @@
-#
-
-LeRobot，一种用于机器人的开源机器学习模型
+# LeRobot，一种用于机器人的开源机器学习模型
 
 [Hugging Face](https://huggingface.co/) 推出了[LeRobot](https://huggingface.co/lerobot)，这是一种针对现实世界的机器人应用进行训练的新型机器学习模型库。LeRobot 作为一个平台，为数据共享、可视化和高级模型训练提供了一个多功能库。
 

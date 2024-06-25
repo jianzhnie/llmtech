@@ -25,15 +25,28 @@
 
 - [Awesome RL Envs](rlwiki/envs/awesome_envs.md)
 - [OpenAI Gym](rlwiki/envs/gym.md)
+- [Mujoco](rlwiki/envs/mujoco.md)
 - [SMAC](rlwiki/envs/smac.md)
 - [MARL Envs](rlwiki/envs/marl_env.md)
 - [PettingZoo](rlwiki/envs/pettingzoo.md)
+- [CyberBattleSim](rlwiki/envs/cyberbattlesim_env.md)
+- [nasim](rlwiki/envs/nasim_env.md)
+- [csle](rlwiki/envs/csle_env.md)
+- [YarningTitan](rlwiki/envs/yawningtitan_env.md)
+
 
 ### 强化学习工具篇
 
 - [强化学习代表人物/机构](rlwiki/rltools/awesome_rl.md)
 - [EnvPool: 并行环境模拟器](rlwiki/rltools/envpool.md)
 - [多智能体强化学习代码汇总](rlwiki/rltools/marltool.md)
+
+
+### 具身智能
+
+- [具身智能简单介绍](rlwiki/robots/embodyai.md)
+- [具身智能训练平台](rlwiki/robots/lerobot.md)
+
 
 ### AlphaZero & MuZero & 蒙特卡洛树搜索
 
@@ -97,20 +110,33 @@
 
 #### MCTS 的前沿动态
 
-[MCTS + RL 系列技术科普博客（1）：AlphaZero](https://zhuanlan.zhihu.com/p/650009275)
+[MCTS + RL 系列技术博客（1）：AlphaZero](https://zhuanlan.zhihu.com/p/650009275)
 
-[MCTS + RL 系列技术科普博客（2）：MuZero](https://zhuanlan.zhihu.com/p/654059774)
+[MCTS + RL 系列技术博客（2）：MuZero](https://zhuanlan.zhihu.com/p/654059774)
 
-[MCTS + RL 系列技术科普博客（3）：Sampled MuZero](https://zhuanlan.zhihu.com/p/657484426)
+[MCTS + RL 系列技术博客（3）：Sampled MuZero](https://zhuanlan.zhihu.com/p/657484426)
 
-[MCTS + RL 系列技术科普博客（4）：EfficientZero](https://zhuanlan.zhihu.com/p/662943334)
+[MCTS + RL 系列技术博客（4）：EfficientZero](https://zhuanlan.zhihu.com/p/662943334)
 
 [MCTS + RL 系列技术博客（5）：Stochastic MuZero](https://zhuanlan.zhihu.com/p/664542805)
 
-[如何追踪 MCTS 的前沿动态？（4）](https://zhuanlan.zhihu.com/p/643382412)
+[MCTS + RL 系列技术博客（6）：浅析 MCTS 算法原理演进史](https://zhuanlan.zhihu.com/p/670885213)
 
-[如何追踪 MCTS 的前沿动态？（3）](https://zhuanlan.zhihu.com/p/641713866)
+[MCTS + RL 系列技术博客（7）：Gumbel MuZero](https://zhuanlan.zhihu.com/p/675867274)
+
+[MCTS + RL 系列技术博客（8）：MuZero Unplugged](https://zhuanlan.zhihu.com/p/678489535)
+
+[MCTS + RL 系列技术博客（9）：可视化分析 AlphaZero/MuZero 中的表征、策略和知识](https://zhuanlan.zhihu.com/p/681839624)
+
+[MCTS + RL 系列技术博客（10）：使用多方面的先验知识强化 MCTS Agent](https://zhuanlan.zhihu.com/p/684528177)
+
+[MCTS + RL 系列技术博客（11）：MCTS 效率优化前沿进展](https://zhuanlan.zhihu.com/p/688093451)
+
+
+[如何追踪 MCTS 的前沿动态？（1）](https://zhuanlan.zhihu.com/p/633462726)
 
 [如何追踪 MCTS 的前沿动态？（2）](https://zhuanlan.zhihu.com/p/635570518)
 
-[如何追踪 MCTS 的前沿动态？（1）](https://zhuanlan.zhihu.com/p/633462726)
+[如何追踪 MCTS 的前沿动态？（3）](https://zhuanlan.zhihu.com/p/641713866)
+
+[如何追踪 MCTS 的前沿动态？（4）](https://zhuanlan.zhihu.com/p/643382412)

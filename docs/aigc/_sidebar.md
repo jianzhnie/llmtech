@@ -93,7 +93,7 @@
 
 - 从 GPU 到华为 NPU
 
-  - [从0开始安装Ascend Pytorch](aigc/ascend/从0开始安装Ascend Pytorch.md)
+  - [从0开始安装AscendPytorch](aigc/ascend/从0开始安装Ascend Pytorch.md)
 
   - [Ascend_Pytorch适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
 
