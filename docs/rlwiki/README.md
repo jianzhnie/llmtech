@@ -25,9 +25,15 @@
 
 - [Awesome RL Envs](rlwiki/envs/awesome_envs.md)
 - [OpenAI Gym](rlwiki/envs/gym.md)
+- [Mujoco](rlwiki/envs/mujoco.md)
 - [SMAC](rlwiki/envs/smac.md)
 - [MARL Envs](rlwiki/envs/marl_env.md)
 - [PettingZoo](rlwiki/envs/pettingzoo.md)
+- [CyberBattleSim](rlwiki/envs/cyberbattlesim.md)
+- [nasim](rlwiki/envs/nasim_env.md)
+- [csle](rlwiki/envs/csle_env.md)
+- [YarningTitan](rlwiki/envs/yarnings_titan.md)
+
 
 ### 强化学习工具篇
 
