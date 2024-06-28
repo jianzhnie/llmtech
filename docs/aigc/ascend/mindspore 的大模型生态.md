@@ -1,5 +1,7 @@
 # 鹏城·脑海
 
+- https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PengCheng.Mind
+
 PengCheng.Mind 又称鹏城·脑海，是鹏城实验室基于[鹏程·盘古α](https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PanGu-Alpha)开发、开源、开放的基于Transformer架构的自回归式语言模型，目前包含7B、200B两个版本。模型全流程基于中国算力网的全自主安全可控国产软硬件平台进行开发和训练，采用MindSpore框架实现在大规模集群上长期稳定的多维分布式并行训练。鹏城·脑海模型主要聚焦中文核心能力，兼顾英文和部分多语言能力。当前模型已完成训练1.5T Tokens数据量，仍在持续训练迭代中。
 
 #  MindFormers
