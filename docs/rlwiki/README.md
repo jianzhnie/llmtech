@@ -24,15 +24,15 @@
 ### 强化学习环境
 
 - [Awesome RL Envs](rlwiki/envs/awesome_envs.md)
-- [OpenAI Gym](rlwiki/envs/gym.md)
-- [Mujoco](rlwiki/envs/mujoco.md)
-- [SMAC](rlwiki/envs/smac.md)
 - [MARL Envs](rlwiki/envs/marl_env.md)
-- [PettingZoo](rlwiki/envs/pettingzoo.md)
-- [CyberBattleSim](rlwiki/envs/cyberbattlesim_env.md)
-- [nasim](rlwiki/envs/nasim_env.md)
-- [csle](rlwiki/envs/csle_env.md)
-- [YarningTitan](rlwiki/envs/yawningtitan_env.md)
+- [星际微操 SMAC](rlwiki/envs/smac.md)
+- [OpenAI Gym](rlwiki/envs/gym.md)
+- [机器人仿真 Mujoco](rlwiki/envs/mujoco.md)
+- [多智能体仿真 PettingZoo](rlwiki/envs/pettingzoo.md)
+- [网络安全模拟 nasim](rlwiki/envs/nasim_env.md)
+- [网络安全模拟 csle](rlwiki/envs/csle_env.md)
+- [网络安全模拟 CyberBattleSim](rlwiki/envs/cyberbattlesim_env.md)
+- [网络安全模拟 YarningTitan](rlwiki/envs/yawningtitan_env.md)
 
 
 ### 强化学习工具篇
