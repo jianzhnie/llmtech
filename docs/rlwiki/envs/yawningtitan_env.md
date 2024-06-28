@@ -12,9 +12,14 @@ Yawning-Titan 可通过 CLI 应用程序或 GUI 使用。这样做的目的是�
 
 - Yawning-Titan 的设计遵循了以下关键原则：
 
-  简单胜过复杂最低硬件要求操作系统无关支持多种算法增强智能体/策略评估支持灵活的环境和游戏规则配置
+  - 简单胜过复杂
+  - 最低硬件要求
+  - 操作系统无关
+  - 支持多种算法
+  - 增强智能体/策略评估
+  - 支持灵活的环境和游戏规则配置
 
-###  是用什么构建的
+### 基于什么构建的
 
 Yawning-Titan 建立在巨人的肩膀上，并且严重依赖于以下库：
 
@@ -39,15 +44,15 @@ from yawning_titan.networks.network import Network
 
 #### 网络
 
-要创建一个网络，首先我们必须实例化一个的实例[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)。
+要创建一个网络，首先我们必须实例化一个[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)的实例。
 
-虽然[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)可以通过调用直接实例化`Network()`，但是您可以设置一些可配置参数（我们将在下文中讨论这些参数）。
+虽然[`Network`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.network.Network.html#yawning_titan.networks.network.Network)可以通过调用`Network()`直接实例化，但是您可以设置一些可配置参数（我们将在下文中讨论这些参数）。
 
 #### 节点实例
 
 接下来我们实例化一些[`Node`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.node.Node.html#yawning_titan.networks.node.Node)。
 
-再次，虽然[`Node`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.node.Node.html#yawning_titan.networks.node.Node)可以通过调用直接实例化`Node()`，但您可以设置一些可配置参数（我们将在下文中讨论这些参数）。
+再次，虽然[`Node`](https://dstl.github.io/YAWNING-TITAN/source/_autosummary/yawning_titan.networks.node.Node.html#yawning_titan.networks.node.Node)可以通过调用`Node()`直接实例化，但您可以设置一些可配置参数（我们将在下文中讨论这些参数）。
 
 ```
 node_1 = Node()
