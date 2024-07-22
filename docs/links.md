@@ -57,6 +57,7 @@
 
 |                             课程                             |         机构         |                             简介                             | 推荐指数 |
 | :----------------------------------------------------------: | :------------------: | :----------------------------------------------------------: | -------- |
+|     [LLm-Course](https://github.com/mlabonne/llm-course)     |        Github        |  通过路线图和 Colab 笔记本来了解大型语言模型 (LLM) 的课程。  | 🤗🤗🤗      |
 | [CS224n:Deep learning for NLP](https://web.stanford.edu/class/cs224n/) \| [ShowMeAI 笔记](https://www.showmeai.tech/tutorials/36) |      斯坦福大学      |    从传统的 NLP 和语言学概念一直到大型语言模型和伦理挑战     | 🤗🤗🤗      |
 | [Applied Deep Learning 2020](https://www.csie.ntu.edu.tw/~miulab/s108-adl/syllabus) \|[Applied Deep Learning 2022](https://www.csie.ntu.edu.tw/~miulab/f111-adl/) |  台湾大学（陈蕴侬）  |                - BERT及其相关的内容和NLP任务                 | 🤗🤗       |
 |              [动手学深度学习](https://d2l.ai/)               |         李沐         |                        -从理论到实践                         | 🤗🤗       |
