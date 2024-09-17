@@ -171,7 +171,7 @@ tensor([[-0.6066,  6.3385,  0.0379,  3.3356],
 
   CANN软件提供进程级环境变量设置脚本，供用户在进程中引用，以自动完成环境变量设置。用户进程结束后自动失效。示例如下（以root用户默认安装路径为例）：
 
-  ```
+  ```shell
   . /usr/local/Ascend/ascend-toolkit/set_env.sh
   ```
 
@@ -185,7 +185,7 @@ tensor([[-0.6066,  6.3385,  0.0379,  3.3356],
 
   执行如下命令安装torchvision，以0.12.0版本为例：
 
-  ```
+  ```shell
   pip3 install torchvision==0.12.0
   ```
 
@@ -193,7 +193,7 @@ tensor([[-0.6066,  6.3385,  0.0379,  3.3356],
 
   执行如下命令安装。如果使用非root用户安装，需要在命令后加**--user**，例如：**pip3 install pyyaml --user**。
 
-  ```
+  ```shell
   pip3 install pyyaml
   pip3 install wheel
   pip3 install setuptools
@@ -328,7 +328,7 @@ pip3 install torch_npu-2.2.0.post2-cp310-cp310-manylinux_2_17_x86_64.manylinux20
 
 1. 在训练脚本中导入库代码。
 
-   ```
+   ```shell
    import torch
    import torch_npu
    .....
@@ -488,7 +488,7 @@ dist.init_process_group(backend='hccl',init_method = "tcp://127.0.0.1:**", .....
 
 2. 进入迁移工具所在路径。
 
-   ```
+   ```shell
    cd Ascend-cann-toolkit安装目录/ascend-toolkit/latest/tools/ms_fmk_transplt/
    ```
 
@@ -703,7 +703,7 @@ python3 main.py   --batch-size 128 \                          # 训练批次大�
 
    - 在AI Server0上配置device IP，以下IP为示例。
 
-   ```
+   ```shell
       hccn_tool -i 0 -ip -s address 192.***.***.001 netmask 255.255.255.0
       hccn_tool -i 1 -ip -s address 192.***.***.001 netmask 255.255.255.0
       hccn_tool -i 2 -ip -s address 192.***.***.001 netmask 255.255.255.0
@@ -716,7 +716,7 @@ python3 main.py   --batch-size 128 \                          # 训练批次大�
 
    - 在AI Server1上配置device IP，以下IP为示例。
 
-   ```
+   ```shell
       hccn_tool -i 0 -ip -s address 192.***.***.002 netmask 255.255.255.0
       hccn_tool -i 1 -ip -s address 192.***.***.002 netmask 255.255.255.0
       hccn_tool -i 2 -ip -s address 192.***.***.002 netmask 255.255.255.0
@@ -835,25 +835,25 @@ sysctl -w net.ipv4.ip_local_reserved_ports=60000-60015
 
    3. 初始化，将通信方式设置为hccl。
 
-      ```
+      ```shell
       torch.distributed.init_process_group(backend="hccl",rank=local_rank)
       ```
 
 2. 在获取训练数据集后，设置train_sampler。
 
-   ```
+   ```shell
    train_sampler = torch.utils.data.distributed.DistributedSampler(train_data)
    ```
 
 3. 定义模型后，开启DDP模式。
 
-   ```
+   ```shell
    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
    ```
 
 4. 将数据加载器train_dataloader与train_sampler相结合。
 
-   ```
+   ```shell
    train_dataloader = DataLoader(dataset = train_data, batch_size=batch_size, sampler = train_sampler)
    ```
 
@@ -1204,37 +1204,40 @@ def test(dataloader, model, loss_fn):
           train(train_loader, model, criterion, optimizer, epoch, args.gpu)
 
 
-  def train(train_loader, model, criterion, optimizer, epoch, gpu):
-      size = len(train_loader.dataset)
-      model.train()
+
+
+```shell
+def train(train_loader, model, criterion, optimizer, epoch, gpu):
+		size = len(train_loader.dataset)
+    model.train()
+    end = time.time()
+    for i, (images, target) in enumerate(train_loader):
+        # measure data loading time
+
+        loc = 'npu:{}'.format(gpu)
+        target = target.to(torch.int32)
+        images, target = images.to(loc, non_blocking=False), target.to(loc, non_blocking=False)
+
+        # compute output
+        output = model(images)
+        loss = criterion(output, target)
+```
+
+
+```shell
+      # compute gradient and do SGD step
+      optimizer.zero_grad()
+      loss.backward()
+      optimizer.step()
 
       end = time.time()
-      for i, (images, target) in enumerate(train_loader):
-          # measure data loading time
-
-          loc = 'npu:{}'.format(gpu)
-          target = target.to(torch.int32)
-          images, target = images.to(loc, non_blocking=False), target.to(loc, non_blocking=False)
-
-          # compute output
-          output = model(images)
-          loss = criterion(output, target)
+      if i % 100 == 0:
+          loss, current = loss.item(), i * len(target)
+          print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+```
+  ```shell
 
 
-          # compute gradient and do SGD step
-          optimizer.zero_grad()
-          loss.backward()
-          optimizer.step()
-
-          end = time.time()
-          if i % 100 == 0:
-              loss, current = loss.item(), i * len(target)
-              print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-  ```
-
-- mp.spawn方式
-
-  不需要专门设置args.gpu，将shell脚本方式中main_worker里的args.gpu均替换为gpu。
 
   ```python
   def main_worker(gpu, ngpus_per_node, args):

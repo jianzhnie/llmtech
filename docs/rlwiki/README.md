@@ -24,15 +24,14 @@
 ### 强化学习环境
 
 - [Awesome RL Envs](rlwiki/envs/awesome_envs.md)
-- [MARL Envs](rlwiki/envs/marl_env.md)
-- [星际微操 SMAC](rlwiki/envs/smac.md)
 - [OpenAI Gym](rlwiki/envs/gym.md)
 - [机器人仿真 Mujoco](rlwiki/envs/mujoco.md)
+- [星际微操 SMAC](rlwiki/envs/smac.md)
+- [MARL Envs](rlwiki/envs/marl_env.md)
 - [多智能体仿真 PettingZoo](rlwiki/envs/pettingzoo.md)
-- [网络安全模拟 nasim](rlwiki/envs/nasim_env.md)
-- [网络安全模拟 csle](rlwiki/envs/csle_env.md)
-- [网络安全模拟 CyberBattleSim](rlwiki/envs/cyberbattlesim_env.md)
-- [网络安全模拟 YarningTitan](rlwiki/envs/yawningtitan_env.md)
+- [网络安全模拟 Awesome Cyber Env](rlwiki/envs/cyberbattlesim_env.md)
+- [网络安全模拟 CyberWheel](rlwiki/envs/cyberwheel_env.md)
+- [网络安全模拟 YarwningTitan](rlwiki/envs/cyber_yawningtitan_env.md)
 
 
 ### 强化学习工具篇
@@ -67,6 +66,7 @@
 - [QMIX](rlwiki/papers/QMIX.md)
 - [MADDPG](rlwiki/papers/MADDPG.md)
 - [MAT](rlwiki/papers/MAT.md)
+- [Self-Play](rlwiki/papers/self-play.md)
 
 ### OpenDILab
 
@@ -131,7 +131,6 @@
 [MCTS + RL 系列技术博客（10）：使用多方面的先验知识强化 MCTS Agent](https://zhuanlan.zhihu.com/p/684528177)
 
 [MCTS + RL 系列技术博客（11）：MCTS 效率优化前沿进展](https://zhuanlan.zhihu.com/p/688093451)
-
 
 [如何追踪 MCTS 的前沿动态？（1）](https://zhuanlan.zhihu.com/p/633462726)
 
