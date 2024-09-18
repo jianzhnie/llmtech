@@ -29,7 +29,7 @@
 - [星际微操 SMAC](rlwiki/envs/smac.md)
 - [MARL Envs](rlwiki/envs/marl_env.md)
 - [多智能体仿真 PettingZoo](rlwiki/envs/pettingzoo.md)
-- [网络安全模拟 Awesome Cyber Env](rlwiki/envs/cyberbattlesim_env.md)
+- [网络安全模拟 Awesome Cyber Env](rlwiki/envs/cyber_env_summary.md)
 - [网络安全模拟 CyberWheel](rlwiki/envs/cyberwheel_env.md)
 - [网络安全模拟 YarwningTitan](rlwiki/envs/cyber_yawningtitan_env.md)
 
@@ -66,7 +66,9 @@
 - [QMIX](rlwiki/papers/QMIX.md)
 - [MADDPG](rlwiki/papers/MADDPG.md)
 - [MAT](rlwiki/papers/MAT.md)
+- [零和博弈](rlwiki/papers/league.md)
 - [Self-Play](rlwiki/papers/self-play.md)
+- [Douzero](rlwiki/papers/Douzero.md)
 
 ### OpenDILab
 
