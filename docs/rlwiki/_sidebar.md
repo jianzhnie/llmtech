@@ -23,15 +23,24 @@
 - 强化学习环境
   - [Awesome RL Envs](rlwiki/envs/awesome_envs.md)
   - [OpenAI Gym](rlwiki/envs/gym.md)
-  - [SMAC](rlwiki/envs/smac.md)
+  - [机器人仿真 Mujoco](rlwiki/envs/mujoco.md)
+  - [星际微操 SMAC](rlwiki/envs/smac.md)
   - [MARL Envs](rlwiki/envs/marl_env.md)
-  - [PettingZoo](rlwiki/envs/pettingzoo.md)
+  - [多智能体仿真 PettingZoo](rlwiki/envs/pettingzoo.md)
+  - [网络安全模拟 Awesome Cyber Env](rlwiki/envs/cyber_env_summary.md)
+  - [网络安全模拟 CyberWheel](rlwiki/envs/cyberwheel_env.md)
+  - [网络安全模拟 YarwningTitan](rlwiki/envs/cyber_yawningtitan_env.md)
 
 
 - 强化学习工具篇
   - [强化学习代表人物/机构](rlwiki/rltools/awesome_rl.md)
   - [EnvPool: 并行环境模拟器](rlwiki/rltools/envpool.md)
   - [多智能体强化学习代码汇总](rlwiki/rltools/marltool.md)
+
+- 具身智能
+  - [具身智能简单介绍](rlwiki/robots/embodyai.md)
+  - [具身智能训练平台](rlwiki/robots/lerobot.md)
+
 
 - AlphaZero & MuZero & 蒙特卡洛树搜索
   - [蒙特卡洛树搜索入门指南](rlwiki/muzero/mcts_guide.md)
@@ -51,3 +60,6 @@
   - [QMIX](rlwiki/papers/QMIX.md)
   - [MADDPG](rlwiki/papers/MADDPG.md)
   - [MAT](rlwiki/papers/MAT.md)
+  - [零和博弈](rlwiki/papers/league.md)
+  - [Self-Play](rlwiki/papers/self-play.md)
+  - [Douzero](rlwiki/papers/Douzero.md)
