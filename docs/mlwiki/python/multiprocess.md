@@ -1027,6 +1027,8 @@ with ThreadPoolExecutor() as executor:
 
 这里，`ThreadPoolExecutor`用于管理线程，`as_completed()`用于异步等待所有任务完成。这样，尽管 I/O 操作是异步的，但整个进程池的其他任务仍可以并行执行。
 
+##### `ProcessPoolExecutor`  实例
+
 好的,我来为您提供一个使用c oncurrent.futures实现多进程异步I/O的示例:
 
 ```python
@@ -1089,9 +1091,9 @@ Task 4 completed
 Total time: 2.27 seconds
 ```
 
+#####  `ThreadPoolExecutor` 实例
 
-
-
+好的,我来为您提供一个使用concurrent.futures模块的完整示例,展示如何利用线程池和进程池执行并行任务:
 
 ```python
 import concurrent.futures
@@ -1476,272 +1478,429 @@ if __name__ == '__main__':
 
 ### concurrent.futures模块的使用
 
-`concurrent.futures`提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor`是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
+#### 简介
+
+concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures`提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor`是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
+
+主要组件:
+
+- ThreadPoolExecutor: 使用线程池执行异步调用。
+
+- ProcessPoolExecutor: 使用进程池执行异步调用。
+
+- Future: 表示异步计算的结果。
+
+主要特点:
+
+- 提供了统一的API来处理线程和进程。
+
+- 支持异步执行和结果获取。
+
+- 可以轻松地在线程池和进程池之间切换。
+
+常用方法:
+
+- submit(fn, *args, **kwargs): 提交一个可调用对象到执行器。
+
+- map(func, *iterables, timeout=None, chunksize=1): 并行执行映射。
+
+- shutdown(wait=True): 关闭执行器。
+
+Future对象的方法:
+
+- cancel(): 尝试取消调用。
+
+- cancelled(): 如果调用被成功取消返回True。
+
+- running(): 如果调用正在执行且不能被取消返回True。
+
+- done(): 如果调用已被取消或完成执行返回True。
+
+- result(timeout=None): 返回调用的结果。
+
+- exception(timeout=None): 返回由调用引发的异常。
+
+- add_done_callback(fn): 添加一个在未来完成时要调用的函数。
+
+####  实例一
+
+好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
+
+```python
+import concurrent.futures
+import time
+
+import requests
+
+
+def download_image(url):
+    response = requests.get(url)
+    print(f"下载完成: {url}")
+    return len(response.content)
+
+
+def cpu_bound_task(n):
+    count = 0
+    for i in range(n):
+        count += i * i
+    return count
+
+
+if __name__ == "__main__":
+    image_urls = [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg",
+        "https://example.com/image4.jpg",
+        "https://example.com/image5.jpg",
+    ]
+
+    numbers = [1000, 2000, 3000, 4000, 5000]
+
+    start_time = time.time()
+
+    # 使用ThreadPoolExecutor处理I/O密集型任务
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        image_sizes = list(executor.map(download_image, image_urls))
+
+    print(f"图片大小: {image_sizes}")
+
+    # 使用ProcessPoolExecutor处理CPU密集型任务
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = list(executor.map(cpu_bound_task, numbers))
+
+    print(f"计算结果: {results}")
+
+    end_time = time.time()
+    print(f"总耗时: {end_time - start_time:.2f} 秒")
+
+```
+
+这个例子展示了如何使用concurrent.futures模块来处理I/O密集型和CPU密集型任务:
+
+1. 我们定义了两个函数:
+
+- download_image: 一个I/O密集型任务,用于下载图片。
+
+- cpu_bound_task: 一个CPU密集型任务,进行大量计算。
+
+2. 对于I/O密集型任务(下载图片),我们使用ThreadPoolExecutor:
+
+```python
+  with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    image_sizes = list(executor.map(download_image, image_urls))
+```
+
+这里我们使用executor.map()方法,它会并行执行任务并按输入顺序返回结果。
+
+3. 对于CPU密集型任务,我们使用ProcessPoolExecutor:
+
+```python
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+​    results = list(executor.map(cpu_bound_task, numbers))
+```
+
+ProcessPoolExecutor利用多个Python进程来并行执行任务,适合CPU密集型操作。
+
+4. 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
+5. 最后,我们计算并打印了总执行时间。
+
+这个例子展示了concurrent.futures如何简化并行编程。它提供了一个统一的接口来处理线程和进程,使得切换between线程和进程变得非常容易。
+
+#### 实例二
+
+与multiprocessing.Pool相比,concurrent.futures提供了更现代和更灵活的API。例如,你可以使用submit()方法来提交单个任务,然后使用as_completed()来处理结果,这在处理动态生成的任务时特别有用。
+
+```python
+import concurrent.futures
+import time
+
+def task(n):
+    print(f"开始执行任务 {n}")
+    time.sleep(n)
+    return f"任务 {n} 完成"
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    futures = [executor.submit(task, i) for i in range(5)]
+
+    for future in concurrent.futures.as_completed(futures):
+        result = future.result()
+        print(result)
+```
+
+这个例子展示了以下几点:
+
+1. 我们使用submit()方法来提交每个任务。这比map()更灵活,因为我们可以提交不同的函数或参数。
+2. as_completed()方法返回一个迭代器,按照任务完成的顺序产生Future对象。这允许我们在任务完成时立即处理结果,而不是等待所有任务完成。
+3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
+
+这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
 
 ## 高级并发技巧
 
 这一章将深入探讨Python中进行多进程同步与协调的高级技巧，以及如何避免全局解释器锁（GIL）的影响，还有资源管理和任务调度。
 
-### 多进程同步与协调（Semaphore, Lock, Event, Condition）
+### 多进程同步与协调
 
-- **Semaphore（信号量）** ：用于限制可以同时访问某个资源的进程数。在进程间同步对共享资源的访问非常有用。
+多进程同步与协调是并发编程中的重要概念,用于管理多个进程之间的交互和资源共享。 选择合适的同步机制:
+
+- 如果需要限制访问资源的进程数量,使用Semaphore。
+- 如果需要确保对共享资源的互斥访问,使用Lock。
+- 如果需要简单的进程间信号传递,使用Event。
+- 如果需要基于某个条件的复杂协调,使用Condition。
+
+#### Semaphore (信号量)
+
+**Semaphore（信号量）** ：用于限制可以同时访问某个资源的进程数。在进程间同步对共享资源的访问非常有用。
+
+特点:
+
+- 可以限制同时访问某个资源的进程数。
+
+- 有一个内部计数器,每次acquire()减1,release()加1。当计数器为0时,acquire()会阻塞。
+
+使用场景:
+
+- 限制同时访问数据库连接池的进程数。
+- 控制并发下载的数量。
+
+实例：
 
 ```python
-import multiprocessing
-semaphore = multiprocessing.Semaphore(2)  # 允许两个进程同时访问资源
-def worker(semaphore):
-    semaphore.acquire()
-    try:
-        # 执行任务
-        pass
-    finally:
-        semaphore.release()
+import time
+from multiprocessing import Process, Semaphore
+
+
+def worker(sem, num) -> None:
+    sem.acquire()
+    print(f'工作进程 {num} 开始')
+    time.sleep(2)  # 模拟工作
+    print(f'工作进程 {num} 结束')
+    sem.release()
+
+
+if __name__ == '__main__':
+    semaphore = Semaphore(3)  # 最多允许3个进程同时运行
+    processes = []
+    for i in range(5):
+        p = Process(target=worker, args=(semaphore, i))
+        processes.append(p)
+        p.start()
+
+    for p in processes:
+        p.join()
 ```
 
-- **Lock（互斥锁）** ：用于确保一次只有一个进程可以访问共享资源。
+运行结果：
 
-```python
-import multiprocessing
-
-lock = multiprocessing.Lock()
-def worker(lock):
-    lock.acquire()
-    try:
-        # 执行任务
-        pass
-    finally:
-        lock.release()
+```
+工作进程 1 开始
+工作进程 0 开始
+工作进程 4 开始
+工作进程 1 结束
+工作进程 2 开始
+工作进程 0 结束
+工作进程 3 开始
+工作进程 4 结束
+工作进程 2 结束
+工作进程 3 结束
 ```
 
-- **Event（事件）** ：用于在进程间同步操作，一个进程可以设置或等待事件。
+#### Lock (锁)
+
+**Lock（互斥锁）** ：用于确保一次只有一个进程可以访问共享资源。
+
+特点：
+
+- 只有两种状态:锁定和未锁定。
+
+- 一个进程获得锁后,其他试图获取该锁的进程将被阻塞。
+
+使用场景:
+
+- 保护共享变量的访问。
+- 确保文件的互斥写入。
 
 ```python
-import multiprocessing
+import time
+from multiprocessing import Lock, Process, Value
 
-event = multiprocessing.Event()
-def setter(event):
-    event.set()  # 设置事件
+
+def increment(lock, shared_value):
+    for _ in range(100):
+        time.sleep(0.01)
+        with lock:
+            shared_value.value += 1
+
+
+if __name__ == '__main__':
+    lock = Lock()
+    shared_value = Value('i', 0)
+    processes = [
+        Process(target=increment, args=(lock, shared_value)) for _ in range(4)
+    ]
+
+    for p in processes:
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    print(f'最终值: {shared_value.value}')
+
+```
+
+运行结果：`最终值: 400`
+
+#### Event (事件)
+
+**Event（事件）** ：是一个简单的同步对象，用于在进程间同步操作，一个进程可以设置或等待事件。
+
+特点:
+
+- 有两种状态: set和clear。
+
+- 进程可以等待事件被设置。
+- 一个进程可以设置事件来通知其他等待的进程。
+
+使用场景:
+
+- 通知其他进程某个操作已完成。
+- 实现简单的进程间通信。
+
+实例：
+
+```python
+import time
+from multiprocessing import Event, Process
+
+
 def waiter(event):
-    event.wait()  # 等待事件被设置
+    print('等待事件...')
+    event.wait()
+    print('事件被设置,继续执行')
+
+
+def setter(event):
+    print('准备设置事件')
+    time.sleep(3)
+    event.set()
+    print('事件已设置')
+
+
+if __name__ == '__main__':
+    event = Event()
+
+    processes = [
+        Process(target=waiter, args=(event, )),
+        Process(target=setter, args=(event, )),
+    ]
+
+    for p in processes:
+        p.start()
+
+    for p in processes:
+        p.join()
 ```
 
-- **Condition（条件变量）** ：与Lock类似，但允许进程在某些条件下等待或通知其他进程。
+运行结果：
+
+```shell
+等待事件...
+准备设置事件
+事件已设置
+事件被设置,继续执行
+```
+
+#### Condition (条件变量)
+
+**Condition（条件变量）** ：与Lock类似，但允许进程在某些条件下等待或通知其他进程。
+
+特点:
+
+- 总是与一个锁关联。
+- 允许进程等待特定条件并在条件满足时被通知。
+- 提供了wait(), notify()和notify_all()方法。
+
+使用场景:
+
+- 实现生产者-消费者模式。
+- 在复杂的多进程协作中同步进程状态。
 
 ```python
-import multiprocessing
+import time
+from multiprocessing import Condition, Process, Value
 
-condition = multiprocessing.Condition()
-def worker_with_condition(condition):
-    with condition:
-        condition.wait()  # 等待通知
-        # 执行任务
+
+def consumer(cond, shared_queue):
+    while True:
+        with cond:
+            while shared_queue.value == 0:
+                print('消费者: 队列为空,等待...')
+                cond.wait()
+            item = shared_queue.value
+            shared_queue.value = 0
+            print(f'消费者: 消费了项目 {item}')
+            cond.notify()  # 通知生产者队列有空间了
+        time.sleep(1)  # 模拟消费过程
+
+
+def producer(cond, shared_queue):
+    for i in range(5):  # 生产5个项目
+        with cond:
+            while shared_queue.value != 0:
+                print('生产者: 队列满了,等待...')
+                cond.wait()
+            shared_queue.value = i + 1
+            print(f'生产者: 生产了项目 {i+1}')
+            cond.notify()  # 通知消费者有新项目可消费
+        time.sleep(0.5)  # 模拟生产过程
+
+
+if __name__ == '__main__':
+    condition = Condition()
+    shared_queue = Value('i', 0)  # 共享的"队列",这里简化为一个整数
+
+    cons = Process(target=consumer, args=(condition, shared_queue))
+    prod = Process(target=producer, args=(condition, shared_queue))
+
+    cons.start()
+    prod.start()
+
+    prod.join()  # 等待生产者完成
+    cons.terminate()  # 终止消费者进程
+    cons.join()
+
 ```
 
-#### Lock （互斥锁）
+这个例子展示了一个简单的生产者-消费者模型,使用 Condition 来协调它们的行为:
 
-多线程和多进程最大的不同在于，多进程中，同一个变量，各自有一份拷贝存在于每个进程中，互不影响，而多线程中，所有变量都由所有线程共享，所以，任何一个变量都可以被任何一个线程修改，因此，线程之间共享数据最大的危险在于多个线程同时改一个变量，把内容给改乱了。
+1. 我们使用一个共享的 Value 对象来模拟一个单项队列。
+2. 生产者在队列满时等待,生产后通知消费者。
+3. 消费者在队列空时等待,消费后通知生产者。
 
-来看看多个线程同时操作一个变量怎么把内容给改乱了：
+4. 两个进程都使用 with cond: 来获取和释放条件变量的底层锁。
+5. cond.wait() 释放锁并等待通知,收到通知后重新获取锁。
+6. cond.notify() 通知等待的进程。
 
-```python
-# multithread
-import time, threading
+7. 我们使用 while 循环来检查条件,因为 wait() 可能会被虚假唤醒。
 
-# 假定这是你的银行存款:
-balance = 0
+生产者完成后,我们手动终止消费者进程,因为它是一个无限循环。
 
-def change_it(n):
-    # 先存后取，结果应该为0:
-    global balance
-    balance = balance + n
-    balance = balance - n
-
-def run_thread(n):
-    for i in range(10000000):
-        change_it(n)
-
-t1 = threading.Thread(target=run_thread, args=(5,))
-t2 = threading.Thread(target=run_thread, args=(8,))
-t1.start()
-t2.start()
-t1.join()
-t2.join()
-print(balance)
+```shell
+消费者: 队列为空,等待...
+生产者: 生产了项目 1
+消费者: 消费了项目 1
+生产者: 生产了项目 2
+消费者: 消费了项目 2
+生产者: 生产了项目 3
+生产者: 队列满了,等待...
+消费者: 消费了项目 3
+生产者: 生产了项目 4
+生产者: 队列满了,等待...
+消费者: 消费了项目 4
+生产者: 生产了项目 5
 ```
-
-我们定义了一个共享变量`balance`，初始值为`0`，并且启动两个线程，先存后取，理论上结果应该为`0`，但是，由于线程的调度是由操作系统决定的，当`t1`、`t2`交替执行时，只要循环次数足够多，`balance`的结果就不一定是`0`了。
-
-原因是因为高级语言的一条语句在CPU执行时是若干条语句，即使一个简单的计算：
-
-```python
-balance = balance + n
-```
-
-也分两步：
-
-1. 计算`balance + n`，存入临时变量中；
-2. 将临时变量的值赋给`balance`。
-
-也就是可以看成：
-
-```python
-x = balance + n
-balance = x
-```
-
-由于x是局部变量，两个线程各自都有自己的x，当代码正常执行时：
-
-```plain
-初始值 balance = 0
-
-t1: x1 = balance + 5 # x1 = 0 + 5 = 5
-t1: balance = x1     # balance = 5
-t1: x1 = balance - 5 # x1 = 5 - 5 = 0
-t1: balance = x1     # balance = 0
-
-t2: x2 = balance + 8 # x2 = 0 + 8 = 8
-t2: balance = x2     # balance = 8
-t2: x2 = balance - 8 # x2 = 8 - 8 = 0
-t2: balance = x2     # balance = 0
-
-结果 balance = 0
-```
-
-但是t1和t2是交替运行的，如果操作系统以下面的顺序执行t1、t2：
-
-```plain
-初始值 balance = 0
-
-t1: x1 = balance + 5  # x1 = 0 + 5 = 5
-
-t2: x2 = balance + 8  # x2 = 0 + 8 = 8
-t2: balance = x2      # balance = 8
-
-t1: balance = x1      # balance = 5
-t1: x1 = balance - 5  # x1 = 5 - 5 = 0
-t1: balance = x1      # balance = 0
-
-t2: x2 = balance - 8  # x2 = 0 - 8 = -8
-t2: balance = x2      # balance = -8
-
-结果 balance = -8
-```
-
-究其原因，是因为修改`balance`需要多条语句，而执行这几条语句时，线程可能中断，从而导致多个线程把同一个对象的内容改乱了。
-
-两个线程同时一存一取，就可能导致余额不对，你肯定不希望你的银行存款莫名其妙地变成了负数，所以，我们必须确保一个线程在修改`balance`的时候，别的线程一定不能改。
-
-如果我们要确保`balance`计算正确，就要给`change_it()`上一把锁，当某个线程开始执行`change_it()`时，我们说，该线程因为获得了锁，因此其他线程不能同时执行`change_it()`，只能等待，直到锁被释放后，获得该锁以后才能改。由于锁只有一个，无论多少线程，同一时刻最多只有一个线程持有该锁，所以，不会造成修改的冲突。创建一个锁就是通过`threading.Lock()`来实现：
-
-```python
-balance = 0
-lock = threading.Lock()
-
-def run_thread(n):
-    for i in range(100000):
-        # 先要获取锁:
-        lock.acquire()
-        try:
-            # 放心地改吧:
-            change_it(n)
-        finally:
-            # 改完了一定要释放锁:
-            lock.release()
-```
-
-当多个线程同时执行`lock.acquire()`时，只有一个线程能成功地获取锁，然后继续执行代码，其他线程就继续等待直到获得锁为止。
-
-获得锁的线程用完后一定要释放锁，否则那些苦苦等待锁的线程将永远等待下去，成为死线程。所以我们用`try...finally`来确保锁一定会被释放。
-
-锁的好处就是确保了某段关键代码只能由一个线程从头到尾完整地执行，坏处当然也很多，首先是阻止了多线程并发执行，包含锁的某段代码实际上只能以单线程模式执行，效率就大大地下降了。其次，由于可以存在多个锁，不同的线程持有不同的锁，并试图获取对方持有的锁时，可能会造成死锁，导致多个线程全部挂起，既不能执行，也无法结束，只能靠操作系统强制终止。
-
-#### ThreadLocal
-
-在多线程环境下，每个线程都有自己的数据。一个线程使用自己的局部变量比使用全局变量好，因为局部变量只有线程自己能看见，不会影响其他线程，而全局变量的修改必须加锁。
-
-但是局部变量也有问题，就是在函数调用的时候，传递起来很麻烦：
-
-```python
-def process_student(name):
-    std = Student(name)
-    # std是局部变量，但是每个函数都要用它，因此必须传进去：
-    do_task_1(std)
-    do_task_2(std)
-
-def do_task_1(std):
-    do_subtask_1(std)
-    do_subtask_2(std)
-
-def do_task_2(std):
-    do_subtask_2(std)
-    do_subtask_2(std)
-```
-
-每个函数一层一层调用都这么传参数那还得了？用全局变量？也不行，因为每个线程处理不同的`Student`对象，不能共享。
-
-如果用一个全局`dict`存放所有的`Student`对象，然后以`thread`自身作为`key`获得线程对应的`Student`对象如何？
-
-```python
-global_dict = {}
-
-def std_thread(name):
-    std = Student(name)
-    # 把std放到全局变量global_dict中：
-    global_dict[threading.current_thread()] = std
-    do_task_1()
-    do_task_2()
-
-def do_task_1():
-    # 不传入std，而是根据当前线程查找：
-    std = global_dict[threading.current_thread()]
-    ...
-
-def do_task_2():
-    # 任何函数都可以查找出当前线程的std变量：
-    std = global_dict[threading.current_thread()]
-    ...
-```
-
-这种方式理论上是可行的，它最大的优点是消除了`std`对象在每层函数中的传递问题，但是，每个函数获取`std`的代码有点丑。有没有更简单的方式？
-
-`ThreadLocal`应运而生，不用查找`dict`，`ThreadLocal`帮你自动做这件事：
-
-```python
-import threading
-
-# 创建全局ThreadLocal对象:
-local_school = threading.local()
-
-def process_student():
-    # 获取当前线程关联的student:
-    std = local_school.student
-    print('Hello, %s (in %s)' % (std, threading.current_thread().name))
-
-def process_thread(name):
-    # 绑定ThreadLocal的student:
-    local_school.student = name
-    process_student()
-
-t1 = threading.Thread(target= process_thread, args=('Alice',), name='Thread-A')
-t2 = threading.Thread(target= process_thread, args=('Bob',), name='Thread-B')
-t1.start()
-t2.start()
-t1.join()
-t2.join()
-```
-
-执行结果：
-
-```plain
-Hello, Alice (in Thread-A)
-Hello, Bob (in Thread-B)
-```
-
-全局变量`local_school`就是一个`ThreadLocal`对象，每个`Thread`对它都可以读写`student`属性，但互不影响。你可以把`local_school`看成全局变量，但每个属性如`local_school.student`都是线程的局部变量，可以任意读写而互不干扰，也不用管理锁的问题，`ThreadLocal`内部会处理。
-
-可以理解为全局变量`local_school`是一个`dict`，不但可以用`local_school.student`，还可以绑定其他变量，如`local_school.teacher`等等。
-
-`ThreadLocal`最常用的地方就是为每个线程绑定一个数据库连接，HTTP请求，用户身份信息等，这样一个线程的所有调用到的处理函数都可以非常方便地访问这些资源。
 
 ### 避免全局解释器锁（GIL）的影响
 
