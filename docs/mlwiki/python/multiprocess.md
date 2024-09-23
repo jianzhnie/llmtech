@@ -50,7 +50,7 @@ I am child process (877) and my parent is 876.
 
 `multiprocessing` 是 Python 中用于支持多进程编程的内置模块，可以实现并行处理任务，充分利用多核处理器。通过`Process`类可以创建新的进程，通过`Pool` 类可以创建进程池，实现并行处理任务。多进程之间可以通过队列（`Queue`）、管道（`Pipe`）等方式进行通信，从而实现数据共享和协作。
 
-### 启动子进程
+### 启动方式
 
 python3中支持三种方式启动多进程：`spawn`、`fork`、`forkserver`。
 
@@ -58,7 +58,7 @@ python3中支持三种方式启动多进程：`spawn`、`fork`、`forkserver`。
 2. fork是使用`os.fork()`系统调用启动一个python解释器进程，因为是fork调用，这个启动的进程可以继承父进程中的资源。fork出的子进程虽然与父进程是不同的内存空间，但在linux下它是的copy-on-write方式实现的，因此即使创建了很多子进程，实际上看子进程并不会消耗多少内存。看起来fork方式创建子进程很好，但实际上还是存在一些问题的。如果父进程是一个多线程程序，用fork系统调用是很危险的，很容易造成死锁，详见[这里](https://pythonspeed.com/articles/python-multiprocessing/)。
 3. 但fork系统调用又确实是启动子进程最高效的方法，于是官方又提供`forkserver`。当父进程需要启动子进程时，实际上是向一个`Fork Server`进程发指令，由它调用`os.fork()`产生子进程的。这个`Fork Server`进程是一个单线程进程，因此调用fork不会产生风险。`forkserver`的实现方式也挺有意思的，代码不长，源码在这里，[multiprocessing/forkserver.py](https://github.com/python/cpython/blob/master/Lib/multiprocessing/forkserver.py)。
 
-不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。目前有两种方式改变使用的启动子进程方式。
+不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。目前有两种启动子进程方式。
 
 1. 通过`multiprocessing.set_start_method`方法全局改变。
 
@@ -119,9 +119,7 @@ Run child process test (929)...
 Process end.
 ```
 
-创建子进程时，只需要传入一个执行函数和函数的参数，创建一个`Process`实例，用`start()`方法启动，这样创建进程比`fork()`还要简单。
-
-`join()`方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。
+创建子进程时，只需要传入一个执行函数和函数的参数，创建一个`Process`实例，用`start()`方法启动，这样创建进程比`fork()`还要简单。`join()`方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。
 
 #### Python多进程实现方法二
 
@@ -932,6 +930,83 @@ Queue对象存储在哪？注意到`task_worker.py`中根本没有创建Queue的
   - 适当设置进程数：根据机器的核数和任务的特性，设置合适的进程数，避免过多的进程导致上下文切换开销。
   - 避免频繁的进程间通信：尽量减少进程间的通信，例如，如果任务可以并行处理，尽量一次性提交大量任务。
 
+下面提供一个优化的multiprocessing.Pool使用示例,展示如何高效地使用进程池处理大量任务:
+
+```python
+import multiprocessing
+import os
+import time
+
+
+def cpu_bound_task(n):
+    """模拟一个CPU密集型任务"""
+    count = 0
+    for i in range(n):
+        count += i * i
+    return count
+
+
+def process_chunk(chunk):
+    """处理一个数据块"""
+    results = []
+    for item in chunk:
+        results.append(cpu_bound_task(item))
+    return results
+
+
+def main():
+    # 获取CPU核心数
+    num_cores = os.cpu_count()
+    print(f'本机有 {num_cores} 个CPU核心')
+
+    # 创建大量任务
+    num_tasks = 10000
+    tasks = list(range(0, num_tasks))
+
+    # 将任务分成多个块
+    chunk_size = len(tasks) // num_cores
+    chunks = [
+        tasks[i:i + chunk_size] for i in range(0, len(tasks), chunk_size)
+    ]
+
+    start_time = time.time()
+
+    # 创建进程池
+    with multiprocessing.Pool(processes=num_cores) as pool:
+        # 使用map将任务块分配给进程池
+        results = pool.map(process_chunk, chunks)
+
+    # 合并结果
+    final_results = [item for sublist in results for item in sublist]
+
+    end_time = time.time()
+    print(f'处理 {num_tasks} 个任务耗时: {end_time - start_time:.2f} 秒')
+    print(f'结果数量: {len(final_results)}')
+
+
+if __name__ == '__main__':
+    main()
+
+```
+
+这个示例展示了以下几个优化点:
+
+1. 适当设置进程数: 我们使用os.cpu_count()获取CPU核心数,并以此作为进程池的大小。这样可以充分利用多核CPU的优势,同时避免创建过多进程导致的开销。
+2. 减少进程间通信: 我们将大量任务分成几个大块,每个进程处理一个大块的任务,而不是每个任务都单独提交给进程池。这样可以显著减少进程间的通信开销。
+3. 使用map()方法: 对于并行处理大量同质任务,map()方法通常是最简单高效的选择。它会自动处理任务的分配和结果的收集。
+4. 使用上下文管理器: 我们使用with语句来管理进程池,这确保了进程池在使用完毕后被正确关闭,避免了资源泄露。
+5. 批量处理结果: 我们在每个进程中处理一个任务块,并返回该块的所有结果。这比每个任务单独返回结果更高效。
+
+通过这些优化,我们可以高效地处理大量CPU密集型任务,充分利用多核CPU的优势。根据具体的任务特性和数据量,你可能需要调整chunk_size来获得最佳性能。
+
+上面实例的运行结果：
+
+```
+本机有 8 个CPU核心
+处理 10000 个任务耗时: 1.82 秒
+结果数量: 10000
+```
+
 ### **多进程中的异步I/O处理**
 
 - 在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
@@ -951,6 +1026,179 @@ with ThreadPoolExecutor() as executor:
 ```
 
 这里，`ThreadPoolExecutor`用于管理线程，`as_completed()`用于异步等待所有任务完成。这样，尽管 I/O 操作是异步的，但整个进程池的其他任务仍可以并行执行。
+
+好的,我来为您提供一个使用c oncurrent.futures实现多进程异步I/O的示例:
+
+```python
+import asyncio
+import concurrent.futures
+import time
+
+
+def io_bound_task(n):
+    # 模拟I/O密集型任务
+    time.sleep(1)
+    return f'Task {n} completed'
+
+
+async def main():
+    # 创建ProcessPoolExecutor
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        loop = asyncio.get_event_loop()
+        # 创建任务列表
+        tasks = [
+            loop.run_in_executor(executor, io_bound_task, i) for i in range(10)
+        ]
+        # 并发执行所有任务
+        completed, _ = await asyncio.wait(tasks)
+        for task in completed:
+            print(task.result())
+
+
+if __name__ == '__main__':
+    start = time.time()
+    asyncio.run(main())
+    end = time.time()
+    print(f'Total time: {end - start:.2f} seconds')
+
+```
+
+这个示例展示了以下几点:
+
+1. 我们定义了一个io_bound_task函数来模拟I/O密集型任务。
+2. 在main协程中,我们创建了一个ProcessPoolExecutor。
+3. 我们使用loop.run_in_executor()方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
+
+4. 我们使用asyncio.wait()来并发等待所有任务完成。
+
+5. 最后,我们打印每个任务的结果和总执行时间。
+
+这种方法结合了多进程的优势(利用多核CPU)和异步I/O的优势(在等待I/O操作时不阻塞)。它特别适合I/O密集型任务,因为它允许在等待一个进程的I/O操作时切换到另一个进程。
+
+```python
+Task 8 completed
+Task 5 completed
+Task 2 completed
+Task 9 completed
+Task 6 completed
+Task 3 completed
+Task 1 completed
+Task 0 completed
+Task 7 completed
+Task 4 completed
+Total time: 2.27 seconds
+```
+
+
+
+
+
+```python
+import concurrent.futures
+import time
+
+import requests
+
+
+# 模拟耗时的网络请求任务
+def fetch_url(url):
+    print(f'开始下载 {url}')
+    response = requests.get(url)
+    return f'{url}: 状态码 {response.status_code}, 内容长度 {len(response.text)} 字节'
+
+
+# 要下载的URL列表
+urls = [
+    'https://www.python.org',
+    'https://www.github.com',
+    'https://www.stackoverflow.com',
+    'https://www.google.com',
+    'https://www.bing.com',
+]
+
+
+def run_with_threadpool():
+    print('使用线程池执行:')
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        future_to_url = {executor.submit(fetch_url, url): url for url in urls}
+        for future in concurrent.futures.as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                data = future.result()
+                print(data)
+            except Exception as exc:
+                print(f'{url} 生成了一个异常: {exc}')
+
+
+def run_with_processpool():
+    print('\n使用进程池执行:')
+    with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
+        results = executor.map(fetch_url, urls)
+        for result in results:
+            print(result)
+
+
+if __name__ == '__main__':
+    start_time = time.time()
+
+    run_with_threadpool()
+    run_with_processpool()
+
+    end_time = time.time()
+    print(f'\n总执行时间: {end_time - start_time:.2f} 秒')
+
+```
+
+好的,我来为您提供一个使用concurrent.futures模块的完整示例,展示如何利用线程池和进程池执行并行任务:
+
+```
+使用线程池执行:
+开始下载 https://www.python.org
+开始下载 https://www.github.com
+开始下载 https://www.stackoverflow.com
+开始下载 https://www.google.com
+https://www.python.org: 状态码 200, 内容长度 50321 字节
+开始下载 https://www.bing.com
+https://www.github.com: 状态码 200, 内容长度 253693 字节
+https://www.google.com: 状态码 429, 内容长度 3067 字节
+https://www.stackoverflow.com: 状态码 200, 内容长度 126896 字节
+https://www.bing.com: 状态码 200, 内容长度 130703 字节
+
+使用进程池执行:
+开始下载 https://www.python.org
+开始下载 https://www.github.com
+开始下载 https://www.stackoverflow.com
+开始下载 https://www.google.com
+https://www.python.org: 状态码 200, 内容长度 50321 字节
+开始下载 https://www.bing.com
+https://www.github.com: 状态码 200, 内容长度 253694 字节
+https://www.stackoverflow.com: 状态码 200, 内容长度 126895 字节
+https://www.google.com: 状态码 429, 内容长度 3067 字节
+https://www.bing.com: 状态码 200, 内容长度 137397 字节
+
+总执行时间: 3.75 秒
+```
+
+这个示例展示了以下几个要点:
+
+1. 我们定义了一个fetch_url函数来模拟耗时的网络请求任务。
+
+2. 使用ThreadPoolExecutor执行并行任务:
+
+3. 我们使用executor.submit()方法提交任务。
+
+   - 使用concurrent.futures.as_completed()来获取已完成的任务结果。
+   - 使用ProcessPoolExecutor执行并行任务:
+
+4. 我们使用executor.map()方法来并行执行任务。
+
+   - 这种方法更简洁,但对于异常处理不如submit()方法灵活。
+
+   - 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
+
+5. 最后,我们计算并打印了总执行时间。
+
+这个示例展示了如何使用concurrent.futures模块来实现并行任务执行,既可以使用线程池,也可以使用进程池。线程池适合I/O密集型任务(如网络请求),而进程池适合CPU密集型任务。需要注意的是,这个示例中使用的requests库需要单独安装(pip install requests)。
 
 ### 多进程间共享状态
 
