@@ -1012,7 +1012,6 @@ if __name__ == '__main__':
 
 ### 多进程中的异步I/O处理
 
-<<<<<<< Updated upstream
 在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
 
 #### concurrent.futures 简介
@@ -1063,13 +1062,8 @@ Future对象的方法:
 
 #####  实例一
 
-好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
-=======
-- 在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
->>>>>>> Stashed changes
+下面给出concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
 
-
-#### 使用`concurrent.futures`
 ```python
 import concurrent.futures
 import time
@@ -1184,11 +1178,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
 
 ##### 实例三
 
-<<<<<<< Updated upstream
-好的,我来为您提供一个使用concurrent.futures实现多进程异步I/O的示例:
-=======
 好的,下面给出使用concurrent.futures实现多进程异步I/O的示例:
->>>>>>> Stashed changes
 
 ```python
 import asyncio
@@ -1226,17 +1216,10 @@ if __name__ == '__main__':
 
 这个示例展示了以下几点:
 
-<<<<<<< Updated upstream
-1. 我们定义了一个io_bound_task函数来模拟I/O密集型任务。
-2. 在main协程中,我们创建了一个ProcessPoolExecutor。
-3. 我们使用loop.run_in_executor()方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
-4. 我们使用asyncio.wait()来并发等待所有任务完成。
-=======
 1. 我们定义了一个`io_bound_task`函数来模拟I/O密集型任务。
 2. 在main协程中,我们创建了一个`ProcessPoolExecutor`。
 3. 我们使用`loop.run_in_executor()`方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
 4. 我们使用`asyncio.wait()` 来并发等待所有任务完成。
->>>>>>> Stashed changes
 5. 最后,我们打印每个任务的结果和总执行时间。
 
 这种方法结合了多进程的优势(利用多核CPU)和异步I/O的优势(在等待I/O操作时不阻塞)。它特别适合I/O密集型任务,因为它允许在等待一个进程的I/O操作时切换到另一个进程。
@@ -1626,9 +1609,6 @@ if __name__ == '__main__':
 共享字典: {1: '进程1的值', 2: '进程2的值'}
 ```
 
-<<<<<<< Updated upstream
-
-=======
 这个示例展示如何使用multiprocessing模块创建和管理多个进程,以及如何在进程间共享数据。
 
 1. 我们定义了两个工作函数worker1和worker2,它们将在不同的进程中运行。
@@ -1711,7 +1691,7 @@ def cpu_bound_task(n):
 if __name__ == "__main__":
     image_urls = [
         "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg",
+        "https://example.com/image2.jpg", 
         "https://example.com/image3.jpg",
         "https://example.com/image4.jpg",
         "https://example.com/image5.jpg",
@@ -1797,7 +1777,6 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
 3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
 
 这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
->>>>>>> Stashed changes
 
 ## 高级并发技巧
 
