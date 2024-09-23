@@ -69,6 +69,7 @@
 - [零和博弈](rlwiki/papers/league.md)
 - [Self-Play](rlwiki/papers/self-play.md)
 - [Douzero](rlwiki/papers/Douzero.md)
+- [Distributed RL](rlwiki/papers/Distributed_RL.md)
 
 ### OpenDILab
 

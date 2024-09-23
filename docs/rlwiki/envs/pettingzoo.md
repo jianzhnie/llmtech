@@ -8,7 +8,14 @@ PetingZoo 是一个多智能体环境库，具有通用、优雅的 Python API�
 
 在 PettingZoo 之前，许多单个用途的 MARL API 几乎完全继承了他们在 MARL 文献中最突出的游戏数学模型的设计——部分可观察的随机游戏（ Partially Observable Stochastic Games ("POSGs") ）和广泛的形式游戏Extensive Form Games (（“EFG”））。在开发过程中，我们发现这些常见的游戏模型在概念上对于代码中实现的多智能体游戏来说并不清楚，并且不能形成干净处理所有类型的多智能体环境的 API 的基础。
 
-为了解决这个问题，我们引入了一种新的游戏形式模型，即（ Agent Environment Cycle ("AEC") ）智能体环境循环游戏，作为 PettingZoo API 的基础。我们认为该模型更适合代码中实现的游戏的概念拟合。并且唯一地适用于一般的MARL API。然后，我们证明了任何 AEC 游戏都可以用标准的 POSG 模型表示，并且任何 POSG 都可以用 AEC 游戏表示。为了说明AEC博弈模型的重要性，本文进一步涵盖了流行的MARL实现中有意义的bug的两个案例研究。在这两种情况下，这些错误都会长时间被忽视。两者都源于使用令人困惑的游戏模型，并且通过使用基于 AEC 游戏的 API 是不可能的。‘
+为了解决这个问题，我们引入了一种新的游戏形式模型，即（ Agent Environment Cycle ("AEC") ）智能体环境循环游戏，作为 PettingZoo API 的基础。我们认为该模型更适合代码中实现的游戏的概念拟合。并且唯一地适用于一般的MARL API。然后，我们证明了任何 AEC 游戏都可以用标准的 POSG 模型表示，并且任何 POSG 都可以用 AEC 游戏表示。为了说明AEC博弈模型的重要性，本文进一步涵盖了流行的MARL实现中有意义的bug的两个案例研究。在这两种情况下，这些错误都会长时间被忽视。两者都源于使用令人困惑的游戏模型，并且通过使用基于 AEC 游戏的 API 是不可能的。
+
+但是当前大多数单智能体环境库存在一些问题。
+
+- 基于POSG（partially observable stochastic game）的环境库，例如Gym，所有的智能体一起行动、一起观察、一起得到奖励。但是这种库对回合制游戏支持不好，且无法更改智能体的数量。这类库由于难以处理智能体回合顺序、智能体死亡和创建这类数量上的变化，难以扩展到超过两个智能体的范畴。
+- 基于扩展式博弈（EFG）的环境库，由于模型复杂、当前应用面不广。当前基于EFG的库只有OpenSpiel API3，这个库的局限性在于无法处理连续动作。且EFG游戏结束时才有奖励，而强化学习通常需要频繁的奖励。
+
+因此，为了解决上述问题，PettingZoo引入了AEG（Agent Environment Cycle games）作为PettingZoo API的基础。在AEG模型中，智能体依次看到他们的观察结果、采取行动，从其他智能体发出奖励，并选择下一个要采取行动的智能体。这实际上是POSG模型的一个顺序步进形式。
 
 ## 相关工作
 
@@ -73,7 +80,8 @@ while not state.is_terminal():
     legal_actions = state.legal_actions()
     observations = state.observation_tensor()
     action = policies(state.current_agent(), legal_actions, observations)
-    state.apply_action(action) rewards = state.rewards()
+    state.apply_action(action)
+    rewards = state.rewards()
 ```
 
 > 图 3：OpenSpiel 的基本用法示例
@@ -133,25 +141,21 @@ env.close()
 - `agent_iter(max_iter=2**63)`返回一个迭代器，该迭代器产生环境的当前智能体。当环境中的所有智能体完成或`max_iter`（步骤已执行）时，它终止。
 
 - `last(observe=True)`返回当前能够采取行动的智能体的 `observation, reward, done, info`。返回的奖励是智能体自上次行动以来收到的累积奖励。如果`observe`设置为 False，则不会计算观测值，并且将返回 None 来代替它。请注意，完成单个智能体并不意味着环境已完成。
-- `reset()`重置环境, 并设置它以供第一次调用时使用。只有在调用此函数后，对象才会agents变得可用。
+- `reset()`重置环境, 并设置它以供第一次调用时使用。只有在调用此函数后，agents 对象才会变得可用。
 - `step(action)`接受并执行环境中智能体的操作，自动将控制权切换到下一个智能体。
 - `agent_selection` 显示当前选择的智能体。
 
 ### 其他特性
 
-PettingZoo 将游戏建模为*智能体环境循环*(AEC) 游戏，因此可以支持多智能体 RL 可以考虑的任何游戏。因此，我们的 API 包含您可能不需要但在您需要时非常重要的较低级别的函数和属性。不过，它们的功能用于实现上面的高级函数，因此包含它们只是代码分解的问题。
+PettingZoo 将游戏建模为智能体环境循环(AEC) 游戏，因此可以支持多智能体 RL 可以考虑的任何游戏。因此，我们的 API 包含您可能不需要但在您需要时非常重要的较低级别的函数和属性。不过，它们的功能用于实现上面的高级函数，因此包含它们只是代码分解的问题。
 
 `agents`：所有当前智能体的名称列表，通常为整数。这些可能会随着环境的进展而改变（即可以添加或删除智能体）。
 
-`num_agents`：智能体列表的长度。
-
-`agent_selection`与当前选择的智能体相对应的环境属性，可以对其采取操作。
-
-`observation_space(agent)`检索特定智能体的观察空间的函数。对于特定的智能体 ID，此空间不应更改。
-
-`action_space(agent)`检索特定智能体的操作空间的函数。对于特定的智能体 ID，此空间不应更改。
-
-`terminations`：调用时每个当前智能体的终止状态的字典，按名称键入。`last()`访问该属性。请注意，可以在此字典中添加或删除智能体。返回的字典如下所示：
+- `num_agents`：智能体列表的长度。
+- `agent_selection`与当前选择的智能体相对应的环境属性，可以对其采取操作。
+- `observation_space(agent)`检索特定智能体的观察空间的函数。对于特定的智能体 ID，此空间不应更改。
+- `action_space(agent)`检索特定智能体的操作空间的函数。对于特定的智能体 ID，此空间不应更改。
+- `terminations`：调用时每个当前智能体的终止状态的字典，按名称键入。`last()`访问该属性。请注意，可以在此字典中添加或删除智能体。返回的字典如下所示：
 
 ```python
 terminations = {0:[first agent's termination state], 1:[second agent's termination state] ... n-1:[nth agent's termination state]}
@@ -163,32 +167,32 @@ terminations = {0:[first agent's termination state], 1:[second agent's terminati
 truncations = {0:[first agent's truncation state], 1:[second agent's truncation state] ... n-1:[nth agent's truncation state]}
 ```
 
-`infos`：每个当前智能体的信息字典，按名称键入。每个智能体的信息也是一个字典。请注意，可以在此属性中添加或删除智能体。`last()`访问该属性。返回的字典如下所示：
+- `infos`：每个当前智能体的信息字典，按名称键入。每个智能体的信息也是一个字典。请注意，可以在此属性中添加或删除智能体。`last()`访问该属性。返回的字典如下所示：
 
 ```python
 infos = {0:[first agent's info], 1:[second agent's info] ... n-1:[nth agent's info]}
 ```
 
-`observe(agent)`：返回智能体当前可以进行的观察。`last()`调用这个函数。
+- `observe(agent)`：返回智能体当前可以进行的观察。`last()`调用这个函数。
 
-`rewards`：当时呼叫的每个当前智能体的奖励的字典，按名称键入。奖励上一步后产生的瞬时奖励。请注意，可以在此属性中添加或删除智能体。`last()`不直接访问此属性，而是将返回的奖励存储在内部变量中。奖励结构如下：
+- `rewards`：当时呼叫的每个当前智能体的奖励的字典，按名称键入。奖励上一步后产生的瞬时奖励。请注意，可以在此属性中添加或删除智能体。`last()`不直接访问此属性，而是将返回的奖励存储在内部变量中。奖励结构如下：
 
 ```python
 {0:[first agent's reward], 1:[second agent's reward] ... n-1:[nth agent's reward]}
 seed(seed=None)`：重新播种环境。必须在之后和之前`reset()`调用。`seed()``step()
 ```
 
-`render()`：使用初始化时指定的渲染模式从环境返回渲染帧。在渲染模式为 的情况下`'rgb_array'`，返回一个 numpy 数组，而 with`'ansi'`返回打印的字符串。无需使用`render()`模式调用`human`。
+- `render()`：使用初始化时指定的渲染模式从环境返回渲染帧。在渲染模式为 的情况下`'rgb_array'`，返回一个 numpy 数组，而 with`'ansi'`返回打印的字符串。无需使用`render()`模式调用`human`。
 
-`close()`：关闭渲染窗口。
+- `close()`：关闭渲染窗口。
 
 ### AEC API
 
-默认情况下，PettingZoo 将游戏建模为[*智能体环境循环*](https://arxiv.org/abs/2009.13051)(AEC) 环境。这使得 PettingZoo 能够代表多智能体 RL 可以考虑的任何类型的游戏。
+默认情况下，PettingZoo 将游戏建模为[智能体环境循环](https://arxiv.org/abs/2009.13051)(AEC) 环境。这使得 PettingZoo 能够代表多智能体 RL 可以考虑的任何类型的游戏。
 
 #### 关于 AEC
 
-Agent[*环境循环*](https://arxiv.org/abs/2009.13051)(AEC) 模型被设计为MARL 的类似[Gym](https://github.com/openai/gym)的 API，支持所有可能的用例和环境类型。
+[Agent环境循环](https://arxiv.org/abs/2009.13051)(AEC) 模型被设计为MARL 的类似[Gym](https://github.com/openai/gym)的 API，支持所有可能的用例和环境类型。
 
 在 AEC 环境中，智能体按顺序采取行动，在采取行动之前接收更新的观察结果和奖励。环境在每个智能体执行完一步后更新，使其成为表示连续游戏（例如国际象棋）的自然方式。AEC 模型足够灵活，可以处理多智能体 RL 可以考虑的任何类型的游戏。
 
@@ -198,9 +202,9 @@ Agent[*环境循环*](https://arxiv.org/abs/2009.13051)(AEC) 模型被设计为M
 
 
 
-[这与我们的Parallel API中表示的](https://pettingzoo.farama.org/api/parallel/)[*部分可观察随机博弈*](https://en.wikipedia.org/wiki/Game_theory#Stochastic_outcomes_(and_relation_to_other_fields))(POSG) 模型形成鲜明对比，在该模型中，智能体同时行动，并且只能在周期结束时接收观察和奖励。这使得表示顺序博弈变得困难，并导致竞争条件——智能体选择采取互斥的行动。这会导致环境行为根据智能体顺序的内部解析而有所不同，如果环境没有捕获和处理单个竞争条件（例如，通过打破平局），则会导致难以检测的错误。
+[这与我们的Parallel API中表示的](https://pettingzoo.farama.org/api/parallel/)[部分可观察随机博弈](https://en.wikipedia.org/wiki/Game_theory#Stochastic_outcomes_(and_relation_to_other_fields))(POSG) 模型形成鲜明对比，在该模型中，智能体同时行动，并且只能在周期结束时接收观察和奖励。这使得表示顺序博弈变得困难，并导致竞争条件——智能体选择采取互斥的行动。这会导致环境行为根据智能体顺序的内部解析而有所不同，如果环境没有捕获和处理单个竞争条件（例如，通过打破平局），则会导致难以检测的错误。
 
-AEC 模型类似于DeepMind 的[OpenSpiel中使用的](https://github.com/deepmind/open_spiel)[*扩展形式游戏*](https://en.wikipedia.org/wiki/Extensive-form_game)(EFG) 模型。EFG 将顺序游戏表示为树，明确地将每个可能的动作序列表示为树中从根到叶的路径。EFG 的局限性在于，正式定义是特定于博弈论的，并且只允许在游戏结束时进行奖励，而在 RL 中，学习通常需要频繁的奖励。
+AEC 模型类似于DeepMind 的[OpenSpiel中使用的](https://github.com/deepmind/open_spiel)[扩展形式游戏](https://en.wikipedia.org/wiki/Extensive-form_game)(EFG) 模型。EFG 将顺序游戏表示为树，明确地将每个可能的动作序列表示为树中从根到叶的路径。EFG 的局限性在于，正式定义是特定于博弈论的，并且只允许在游戏结束时进行奖励，而在 RL 中，学习通常需要频繁的奖励。
 
 [通过添加代表环境的玩家（例如 OpenSpiel 中的机会节点](https://openspiel.readthedocs.io/en/latest/concepts.html#the-tree-representation)），可以将 EFG 扩展为代表随机游戏，该玩家根据给定的概率分布采取行动。然而，这需要用户在与环境交互时手动采样和应用机会节点操作，从而为用户错误和潜在的随机播种问题留下空间。
 
@@ -261,14 +265,14 @@ env.close()
 
 注意：动作掩码是可选的，可以使用 或 来`observation`实现`info`。
 
-- [PettingZoo Classic](https://pettingzoo.farama.org/environments/classic/)环境将动作蒙版存储在`observation`字典中：
+- [PettingZoo Classic](https://pettingzoo.farama.org/environments/classic/)环境将动作掩码存储在`observation`字典中：
   - `mask = observation["action_mask"]`
-- [Shimmy](https://shimmy.farama.org/)的[OpenSpiel 环境](https://shimmy.farama.org/environments/open_spiel/)将动作蒙版存储在`info`字典中：
+- [Shimmy](https://shimmy.farama.org/)的[OpenSpiel 环境](https://shimmy.farama.org/environments/open_spiel/)将动作掩码存储在`info`字典中：
   - `mask = info["action_mask"]`
 
 ### Parallel API
 
-除了主 API 之外，我们还有一个辅助并行 API，适用于所有智能体同时执行操作和观察的环境。可以通过创建具有并行 API 支持的环境`<game>.parallel_env()`。该 API 基于*部分可观察随机博弈*(POSG) 范式，详细信息类似于[RLlib 的 MultiAgent 环境规范](https://docs.ray.io/en/latest/rllib-env.html#multi-agent-and-hierarchical)，只是我们允许智能体之间有不同的观察和操作空间。
+除了主 API 之外，我们还有一个辅助并行 API，适用于所有智能体同时执行操作和观察的环境。可以通过创建具有并行 API 支持的环境`<game>.parallel_env()`。该 API 基于部分可观察随机博弈 (POSG) 范式，详细信息类似于[RLlib 的 MultiAgent 环境规范](https://docs.ray.io/en/latest/rllib-env.html#multi-agent-and-hierarchical)，只是我们允许智能体之间有不同的观察和操作空间。
 
 #### 例子
 
@@ -299,7 +303,7 @@ Wrappers是一种环境转换，它将环境作为输入，并输出与输入环
 
 以下Wrappers可与 PettingZoo 环境一起使用：
 
-[PettingZoo Wrappers](https://pettingzoo.farama.org/api/wrappers/pz_wrappers/)包括[用于在AEC](https://pettingzoo.farama.org/api/aec/)和[并行](https://pettingzoo.farama.org/api/parallel/)API之间进行转换[转换Wrappers](https://pettingzoo.farama.org/api/wrappers/#/api/wrappers/pz_wrappers#conversion-wrappers)，以及一组提供输入验证和其他方便的可重用逻辑的[简单实用程序Wrappers。](https://pettingzoo.farama.org/api/wrappers/#/api/wrappers/pz_wrappers#utility-wrappers)
+[PettingZoo Wrappers](https://pettingzoo.farama.org/api/wrappers/pz_wrappers/) 包括用于在 [AEC ](https://pettingzoo.farama.org/api/aec/)和 [Parallel](https://pettingzoo.farama.org/api/parallel/) API之间进行转换[Wrappers](https://pettingzoo.farama.org/api/wrappers/#/api/wrappers/pz_wrappers#conversion-wrappers)，以及一组提供输入验证和其他方便的可重用逻辑的[简单实用程序Wrappers。](https://pettingzoo.farama.org/api/wrappers/#/api/wrappers/pz_wrappers#utility-wrappers)
 
 [Supersuit Wrappers](https://pettingzoo.farama.org/api/wrappers/supersuit_wrappers/) 包括常用的预处理功能，例如帧堆叠和色彩还原，与 PettingZoo 和 Gymnasium 兼容。
 
@@ -395,7 +399,7 @@ for agent in env.agent_iter():
 env.close()
 ```
 
-##### 并行环境
+##### Parallel 环境
 
 加载环境：
 
@@ -414,7 +418,7 @@ while env.agents:
 env.close()
 ```
 
-##### 转换
+##### ACE 和 Parallel 相互转换
 
 加载的环境[`ParallelEnv`](https://pettingzoo.farama.org/api/parallel/)可以使用[`parallel_to_aec`](https://pettingzoo.farama.org/api/pz_wrappers/#parallel-to-aec).转换为[`AECEnv`](https://pettingzoo.farama.org/api/aec/)
 
@@ -423,8 +427,6 @@ env.close()
 - 注意：此转换对底层环境做出以下假设：
   1. 环境按循环步进，即它按顺序遍历每个活动智能体。
   2. 除周期结束外，环境不会更新智能体的观察结果。
-
-
 
 ### [DeepMind 控制：足球](https://github.com/deepmind/dm_control/blob/main/dm_control/locomotion/soccer/README.md)
 
@@ -485,11 +487,11 @@ env.close()
 
 它支持n人（单智能体和多智能体）零和、合作和一般和、单发和顺序、严格轮流和同时移动、完美和不完美信息博弈。
 
-[Shimmy 提供了兼容性包装器，将所有OpenSpiel](https://github.com/deepmind/open_spiel)环境转换为[PettingZoo](https://pettingzoo.farama.org/)。
+[Shimmy 提供了兼容性包装器，将所有OpenSpiel](https://github.com/deepmind/open_spiel) 环境转换为[PettingZoo](https://pettingzoo.farama.org/)。
 
 <img src="https://shimmy.farama.org/_images/openspiel.png" alt="开放演讲" style="zoom:50%;" />
 
-注意：[PettingZoo](https://pettingzoo.farama.org/)还提供流行的棋盘和纸牌游戏环境：[PettingZoo Classic](https://pettingzoo.farama.org/environments/classic/)。
+注意：[PettingZoo](https://pettingzoo.farama.org/) 还提供流行的棋盘和纸牌游戏环境：[PettingZoo Classic](https://pettingzoo.farama.org/environments/classic/)。
 
 #### 安装
 

@@ -48,5 +48,3 @@ PFSP( Prioritised Fictious Self-Play)是在 FSP的基础上，依照训练智能
 [[5](https://opendilab.github.io/DI-engine/02_algo/league_zh.html#id9)]Muller, Paul, et al. “A generalized training approach for multiagent learning.” arXiv preprint arXiv:1909.12823 (2019).
 
 [[6](https://opendilab.github.io/DI-engine/02_algo/league_zh.html#id10)]Omidshafiei, Shayegan, et al. “α-rank: Multi-agent evaluation by evolution.” Scientific reports 9.1 (2019): 1-29.
-
-[Next ![img](https://opendilab.github.io/DI-engine/_static/images/chevron-right-blue.svg)](https://opendilab.github.io/DI-engine/03_system/index_zh.html)[![img](https://opendilab.github.io/DI-engine/_static/images/chevron-right-blue.svg) Previous](https://opendilab.github.io/DI-engine/02_algo/distributed_rl_zh.html)
