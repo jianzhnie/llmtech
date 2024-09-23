@@ -1009,27 +1009,173 @@ if __name__ == '__main__':
 
 ### 多进程中的异步I/O处理
 
-- 在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
-- 使用`concurrent.futures`：
+在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
+
+#### concurrent.futures 简介
+
+concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures` 提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor` 是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
+
+主要组件:
+
+- ThreadPoolExecutor: 使用线程池执行异步调用。
+
+- ProcessPoolExecutor: 使用进程池执行异步调用。
+
+- Future: 表示异步计算的结果。
+
+主要特点:
+
+- 提供了统一的API来处理线程和进程。
+
+- 支持异步执行和结果获取。
+
+- 可以轻松地在线程池和进程池之间切换。
+
+常用方法:
+
+- submit(fn, *args, **kwargs): 提交一个可调用对象到执行器。
+
+- map(func, *iterables, timeout=None, chunksize=1): 并行执行映射。
+
+- shutdown(wait=True): 关闭执行器。
+
+Future对象的方法:
+
+- cancel(): 尝试取消调用。
+
+- cancelled(): 如果调用被成功取消返回True。
+
+- running(): 如果调用正在执行且不能被取消返回True。
+
+- done(): 如果调用已被取消或完成执行返回True。
+
+- result(timeout=None): 返回调用的结果。
+
+- exception(timeout=None): 返回由调用引发的异常。
+
+- add_done_callback(fn): 添加一个在未来完成时要调用的函数。
+
+#### concurrent.futures  模块使用
+
+#####  实例一
+
+好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
 
 ```python
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent.futures
+import time
 
-def async_io_task(i):
-    # 异步 I/O 操作，如网络请求或文件读写
-    pass
-with ThreadPoolExecutor() as executor:
-    futures = {executor.submit(async_io_task, i) for i in range(10)}
-    for future in as_completed(futures):
-        result = future.result()
-        # 处理结果
+import requests
+
+
+def download_image(url):
+    response = requests.get(url)
+    print(f"下载完成: {url}")
+    return len(response.content)
+
+
+def cpu_bound_task(n):
+    count = 0
+    for i in range(n):
+        count += i * i
+    return count
+
+
+if __name__ == "__main__":
+    image_urls = [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg",
+        "https://example.com/image4.jpg",
+        "https://example.com/image5.jpg",
+    ]
+
+    numbers = [1000, 2000, 3000, 4000, 5000]
+
+    start_time = time.time()
+
+    # 使用ThreadPoolExecutor处理I/O密集型任务
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        image_sizes = list(executor.map(download_image, image_urls))
+
+    print(f"图片大小: {image_sizes}")
+
+    # 使用ProcessPoolExecutor处理CPU密集型任务
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = list(executor.map(cpu_bound_task, numbers))
+
+    print(f"计算结果: {results}")
+
+    end_time = time.time()
+    print(f"总耗时: {end_time - start_time:.2f} 秒")
+
 ```
+
+这个例子展示了如何使用concurrent.futures模块来处理I/O密集型和CPU密集型任务:
+
+1. 我们定义了两个函数:
+
+- download_image: 一个I/O密集型任务,用于下载图片。
+
+- cpu_bound_task: 一个CPU密集型任务,进行大量计算。
+
+2. 对于I/O密集型任务(下载图片),我们使用ThreadPoolExecutor:
+
+```python
+  with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    image_sizes = list(executor.map(download_image, image_urls))
+```
+
+这里我们使用executor.map()方法,它会并行执行任务并按输入顺序返回结果。
+
+3. 对于CPU密集型任务,我们使用ProcessPoolExecutor:
+
+```python
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+​    results = list(executor.map(cpu_bound_task, numbers))
+```
+
+ProcessPoolExecutor利用多个Python进程来并行执行任务,适合CPU密集型操作。
+
+4. 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
+5. 最后,我们计算并打印了总执行时间。
+
+这个例子展示了concurrent.futures如何简化并行编程。它提供了一个统一的接口来处理线程和进程,使得切换between线程和进程变得非常容易。
+
+##### 实例二
+
+与multiprocessing.Pool相比,concurrent.futures提供了更现代和更灵活的API。例如,你可以使用submit()方法来提交单个任务,然后使用as_completed()来处理结果,这在处理动态生成的任务时特别有用。
+
+```python
+import concurrent.futures
+import time
+
+def task(n):
+    print(f"开始执行任务 {n}")
+    time.sleep(n)
+    return f"任务 {n} 完成"
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    futures = [executor.submit(task, i) for i in range(5)]
+
+    for future in concurrent.futures.as_completed(futures):
+        result = future.result()
+        print(result)
+```
+
+这个例子展示了以下几点:
+
+1. 我们使用submit()方法来提交每个任务。这比map()更灵活,因为我们可以提交不同的函数或参数。
+2. as_completed()方法返回一个迭代器,按照任务完成的顺序产生Future对象。这允许我们在任务完成时立即处理结果,而不是等待所有任务完成。
+3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
+
+这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
 
 这里，`ThreadPoolExecutor`用于管理线程，`as_completed()`用于异步等待所有任务完成。这样，尽管 I/O 操作是异步的，但整个进程池的其他任务仍可以并行执行。
 
-##### `ProcessPoolExecutor`  实例
+##### 实例三
 
-好的,我来为您提供一个使用c oncurrent.futures实现多进程异步I/O的示例:
+好的,我来为您提供一个使用concurrent.futures实现多进程异步I/O的示例:
 
 ```python
 import asyncio
@@ -1070,9 +1216,7 @@ if __name__ == '__main__':
 1. 我们定义了一个io_bound_task函数来模拟I/O密集型任务。
 2. 在main协程中,我们创建了一个ProcessPoolExecutor。
 3. 我们使用loop.run_in_executor()方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
-
 4. 我们使用asyncio.wait()来并发等待所有任务完成。
-
 5. 最后,我们打印每个任务的结果和总执行时间。
 
 这种方法结合了多进程的优势(利用多核CPU)和异步I/O的优势(在等待I/O操作时不阻塞)。它特别适合I/O密集型任务,因为它允许在等待一个进程的I/O操作时切换到另一个进程。
@@ -1091,7 +1235,7 @@ Task 4 completed
 Total time: 2.27 seconds
 ```
 
-#####  `ThreadPoolExecutor` 实例
+#####  实例四
 
 好的,我来为您提供一个使用concurrent.futures模块的完整示例,展示如何利用线程池和进程池执行并行任务:
 
@@ -1476,165 +1620,7 @@ if __name__ == '__main__':
 共享字典: {1: '进程1的值', 2: '进程2的值'}
 ```
 
-### concurrent.futures模块的使用
 
-#### 简介
-
-concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures`提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor`是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
-
-主要组件:
-
-- ThreadPoolExecutor: 使用线程池执行异步调用。
-
-- ProcessPoolExecutor: 使用进程池执行异步调用。
-
-- Future: 表示异步计算的结果。
-
-主要特点:
-
-- 提供了统一的API来处理线程和进程。
-
-- 支持异步执行和结果获取。
-
-- 可以轻松地在线程池和进程池之间切换。
-
-常用方法:
-
-- submit(fn, *args, **kwargs): 提交一个可调用对象到执行器。
-
-- map(func, *iterables, timeout=None, chunksize=1): 并行执行映射。
-
-- shutdown(wait=True): 关闭执行器。
-
-Future对象的方法:
-
-- cancel(): 尝试取消调用。
-
-- cancelled(): 如果调用被成功取消返回True。
-
-- running(): 如果调用正在执行且不能被取消返回True。
-
-- done(): 如果调用已被取消或完成执行返回True。
-
-- result(timeout=None): 返回调用的结果。
-
-- exception(timeout=None): 返回由调用引发的异常。
-
-- add_done_callback(fn): 添加一个在未来完成时要调用的函数。
-
-####  实例一
-
-好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
-
-```python
-import concurrent.futures
-import time
-
-import requests
-
-
-def download_image(url):
-    response = requests.get(url)
-    print(f"下载完成: {url}")
-    return len(response.content)
-
-
-def cpu_bound_task(n):
-    count = 0
-    for i in range(n):
-        count += i * i
-    return count
-
-
-if __name__ == "__main__":
-    image_urls = [
-        "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg",
-        "https://example.com/image3.jpg",
-        "https://example.com/image4.jpg",
-        "https://example.com/image5.jpg",
-    ]
-
-    numbers = [1000, 2000, 3000, 4000, 5000]
-
-    start_time = time.time()
-
-    # 使用ThreadPoolExecutor处理I/O密集型任务
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        image_sizes = list(executor.map(download_image, image_urls))
-
-    print(f"图片大小: {image_sizes}")
-
-    # 使用ProcessPoolExecutor处理CPU密集型任务
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = list(executor.map(cpu_bound_task, numbers))
-
-    print(f"计算结果: {results}")
-
-    end_time = time.time()
-    print(f"总耗时: {end_time - start_time:.2f} 秒")
-
-```
-
-这个例子展示了如何使用concurrent.futures模块来处理I/O密集型和CPU密集型任务:
-
-1. 我们定义了两个函数:
-
-- download_image: 一个I/O密集型任务,用于下载图片。
-
-- cpu_bound_task: 一个CPU密集型任务,进行大量计算。
-
-2. 对于I/O密集型任务(下载图片),我们使用ThreadPoolExecutor:
-
-```python
-  with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-    image_sizes = list(executor.map(download_image, image_urls))
-```
-
-这里我们使用executor.map()方法,它会并行执行任务并按输入顺序返回结果。
-
-3. 对于CPU密集型任务,我们使用ProcessPoolExecutor:
-
-```python
-  with concurrent.futures.ProcessPoolExecutor() as executor:
-​    results = list(executor.map(cpu_bound_task, numbers))
-```
-
-ProcessPoolExecutor利用多个Python进程来并行执行任务,适合CPU密集型操作。
-
-4. 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
-5. 最后,我们计算并打印了总执行时间。
-
-这个例子展示了concurrent.futures如何简化并行编程。它提供了一个统一的接口来处理线程和进程,使得切换between线程和进程变得非常容易。
-
-#### 实例二
-
-与multiprocessing.Pool相比,concurrent.futures提供了更现代和更灵活的API。例如,你可以使用submit()方法来提交单个任务,然后使用as_completed()来处理结果,这在处理动态生成的任务时特别有用。
-
-```python
-import concurrent.futures
-import time
-
-def task(n):
-    print(f"开始执行任务 {n}")
-    time.sleep(n)
-    return f"任务 {n} 完成"
-
-with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-    futures = [executor.submit(task, i) for i in range(5)]
-
-    for future in concurrent.futures.as_completed(futures):
-        result = future.result()
-        print(result)
-```
-
-这个例子展示了以下几点:
-
-1. 我们使用submit()方法来提交每个任务。这比map()更灵活,因为我们可以提交不同的函数或参数。
-2. as_completed()方法返回一个迭代器,按照任务完成的顺序产生Future对象。这允许我们在任务完成时立即处理结果,而不是等待所有任务完成。
-3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
-
-这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
 
 ## 高级并发技巧
 
