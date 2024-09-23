@@ -52,13 +52,15 @@ I am child process (877) and my parent is 876.
 
 ### 启动方式
 
-python3中支持三种方式启动多进程：`spawn`、`fork`、`forkserver`。
+`Python3` 中支持三种方式启动多进程：`spawn`、`fork`、`forkserver`。
 
-1. spawn是启动一个全新的python解释器进程，这个进程不继承父进程的任何不必要的文件描述符或其它资源。
-2. fork是使用`os.fork()`系统调用启动一个python解释器进程，因为是fork调用，这个启动的进程可以继承父进程中的资源。fork出的子进程虽然与父进程是不同的内存空间，但在linux下它是的copy-on-write方式实现的，因此即使创建了很多子进程，实际上看子进程并不会消耗多少内存。看起来fork方式创建子进程很好，但实际上还是存在一些问题的。如果父进程是一个多线程程序，用fork系统调用是很危险的，很容易造成死锁，详见[这里](https://pythonspeed.com/articles/python-multiprocessing/)。
+1. `spawn` 是启动一个全新的python解释器进程，这个进程不继承父进程的任何不必要的文件描述符或其它资源。
+
+2. `fork` 是使用`os.fork()`系统调用启动一个python解释器进程，因为是fork调用，这个启动的进程可以继承父进程中的资源。 `fork` 出的子进程虽然与父进程是不同的内存空间，但在linux下它是的copy-on-write方式实现的，因此即使创建了很多子进程，实际上看子进程并不会消耗多少内存。看起来 `fork`方式创建子进程很好，但实际上还是存在一些问题的。如果父进程是一个多线程程序，用 `fork`系统调用是很危险的，很容易造成死锁，详见[这里](https://pythonspeed.com/articles/python-multiprocessing/)。
+   
 3. 但fork系统调用又确实是启动子进程最高效的方法，于是官方又提供`forkserver`。当父进程需要启动子进程时，实际上是向一个`Fork Server`进程发指令，由它调用`os.fork()`产生子进程的。这个`Fork Server`进程是一个单线程进程，因此调用fork不会产生风险。`forkserver`的实现方式也挺有意思的，代码不长，源码在这里，[multiprocessing/forkserver.py](https://github.com/python/cpython/blob/master/Lib/multiprocessing/forkserver.py)。
 
-不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。目前有两种启动子进程方式。
+不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是 `pickle` 失败了。目前有两种启动子进程方式。
 
 1. 通过`multiprocessing.set_start_method`方法全局改变。
 
@@ -112,14 +114,14 @@ if __name__ == '__main__':
 
 执行结果如下：
 
-```plain
+```shell
 Parent process 928.
 Child process will start.
 Run child process test (929)...
 Process end.
 ```
 
-创建子进程时，只需要传入一个执行函数和函数的参数，创建一个`Process`实例，用`start()`方法启动，这样创建进程比`fork()`还要简单。`join()`方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。
+创建子进程时，只需要传入一个执行函数和函数的参数，创建一个`Process`实例，用`start()`方法启动。`join()`方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。
 
 #### Python多进程实现方法二
 
@@ -170,11 +172,11 @@ Finished
 
 `multiprocessing.Pool`类用于创建进程池，可以方便地管理多个进程。通过`Pool`类的`map()`、`apply()` 等方法，可以将任务分配给进程池中的多个进程并行执行。进程池会自动管理进程的创建和销毁，提高了并行处理的效率。
 
-Pool 默认大小是CPU的核数，我们也可以通过在Pool中传入processes参数自定义需要的核数量。定义进程池之后，就可以让进程池对应某一个函数，通过向进程池中传入数据从而返回函数值。 Pool和之前的Process的不同点是传入Pool的函数有返回值，而Process的没有返回值。
+`Pool`默认大小是CPU的核数，我们也可以通过在`Pool`中传入`processes`参数自定义需要的核数量。定义进程池之后，就可以让进程池对应某一个函数，通过向进程池中传入数据从而返回函数值。 `Pool`和之前的`Process`的不同点是传入`Pool`的函数有返回值，而`Process`的没有返回值。
 
-- map方法：用map()获取结果，在map()中需要放入函数和需要迭代运算的值，然后它会自动分配给CPU核，返回结果。
-- apply_async方法: apply_async() 中只能传递一个值，它只会放入一个核进行运算，但是传入值时要注意是元组类型，所以在传入值后需要加逗号, 同时需要用get()方法获取返回值。如果要实现map()的效果，需要将apply_async方法做成一个列表的形式。
-- 进程池最后要加join方法，这样进程池运行完毕后才向下进行，如果不加的话可能导致进程池还未运行完程序已经finished。
+- `map`方法：用`map()`获取结果，在`map()`中需要放入函数和需要迭代运算的值，然后它会自动分配给CPU核，返回结果。
+- `apply_async`方法: `apply_async()` 中只能传递一个值，它只会放入一个核进行运算，但是传入值时要注意是元组类型，所以在传入值后需要加逗号, 同时需要用`get()`方法获取返回值。如果要实现`map()`的效果，需要将`apply_async`方法做成一个列表的形式。
+- 进程池最后要加`join`方法，这样进程池运行完毕后才向下进行，如果不加的话可能导致进程池还未运行完程序已经`finished`。
 
 创建`multiprocessing.Pool`对象时，有几个参数有些作用：
 
@@ -211,7 +213,7 @@ if __name__ == '__main__':
 
 执行结果如下：
 
-```plain
+```shell
 Parent process 669.
 Waiting for all subprocesses done...
 Run task 0 (671)...
@@ -257,7 +259,7 @@ if __name__ == '__main__':
 [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 ```
 
-我们创建了一个容许5个进程的进程池 (Process Pool) 。Pool运行的每个进程都执行f()函数。我们利用map()方法，将f()函数作用到表的每个元素上。这与built-in的map()函数类似，只是这里用5个进程并行处理。如果进程运行结束后，还有需要处理的元素，那么的进程会被用于重新运行f()函数。
+我们创建了一个容许5个进程的进程池 `(Process Pool)` 。`Pool`运行的每个进程都执行`f()`函数。我们利用`map()`方法，将`f()`函数作用到列表的每个元素上。这与`built-in`的`map()`函数类似，只是这里用5个进程并行处理。如果进程运行结束后，还有需要处理的元素，那么的进程会被用于重新运行`f()`函数。
 
 下面这个例子的主要工作就是将遍历传入的文件夹中的图片文件，一一生成缩略图，并将这些缩略图保存到特定文件夹中。
 
@@ -321,18 +323,18 @@ Python的`multiprocessing`模块包装了底层的机制，提供了`Queue`、`P
 
 #### 对列 Queue
 
-Queue的功能是将每个核或线程的运算结果放在队里中， 等到每个线程或核运行完毕后再从队列中取出结果， 继续加载运算。多进程调用的函数不能有返回值(不能return), 所以使用Queue存储多个进程运算的结果。
+`Queue` 的功能是将每个进程或线程的运算结果放在队里中， 等到每个进程或线程运行完毕后再从队列中取出结果， 继续加载运算。多进程调用的函数不能有返回值(不能return), 所以使用Queue存储多个进程运算的结果。
 
 - **put**方法：插入数据到队列。
 - **get**方法：从队列中读取并删除一个元素。
 
->  Put方法用以插入数据到队列中，它还有两个可选参数：blocked和timeout。
+>  `Put` 方法用以插入数据到队列中，它还有两个可选参数：`blocked`和`timeout`。
 >
-> 如果blocked为True（默认值），并且timeout为正值，该方法会阻塞timeout指定的时间，直到该队列有剩余的空间。如果超时，会抛出Queue.Full异常。如果blocked为False，但该Queue已满，会立即抛出Queue.Full异常。
+> 如果`blocked`为True（默认值），并且`timeout`为正值，该方法会阻塞`timeout`指定的时间，直到该队列有剩余的空间。如果超时，会抛出`Queue.Full`异常。如果`blocked`为False，但该`Queue`已满，会立即抛出`Queue.Full`异常。
 >
-> ·Get方法可以从队列读取并且删除一个元素。同样，Get方法有两个可选参数：blocked和timeout。
+> `Get`方法可以从队列读取并且删除一个元素。同样，`Get` 方法有两个可选参数：blocked和timeout。
 >
-> 如果blocked为True（默认值），并且timeout为正值，那么在等待时间内没有取到任何元素，会抛出Queue.Empty异常。如果blocked为False，分两种情况：如果Queue有一个值可用，则立即返回该值；否则，如果队列 为空，则立即抛出Queue.Empty异常。
+> 如果`blocke`d为True（默认值），并且`timeout`为正值，那么在等待时间内没有取到任何元素，会抛出`Queue.Empty`异常。如果`blocked`为`False`，分两种情况：如果`Queue`有一个值可用，则立即返回该值；否则，如果队列为空，则立即抛出`Queue.Empty`异常。
 
 我们以`Queue`为例，在父进程中创建两个子进程，一个往`Queue`里写数据，一个从`Queue`里读数据：
 
@@ -400,24 +402,24 @@ if __name__ == '__main__':
 所有进程结束
 ```
 
-这个例子展示了如何使用Queue在生产者进程和消费者进程之间进行通信:
+这个例子展示了如何使用`Queue`在生产者进程和消费者进程之间进行通信:
 
-1. 我们创建一个Queue对象q。
-2. 生产者进程使用queue.put()方法将数据放入队列。
-3. 消费者进程使用queue.get()方法从队列中取出数据。
+1. 我们创建一个`Queue`对象`q`。
+2. 生产者进程使用`queue.put()`方法将数据放入队列。
+3. 消费者进程使用`queue.get()`方法从队列中取出数据。
 4. 生产者在完成后发送一个None作为结束信号。
 5. 消费者在收到None时退出循环。
 6. 主进程等待两个子进程结束后才结束。
 
-需要注意的是,Queue是线程安全和进程安全的。它使用锁和信号量来确保多个进程可以安全地访问队列,而不会发生数据竞争或其他并发问题。
+需要注意的是,`Queue`是线程安全和进程安全的。它使用锁和信号量来确保多个进程可以安全地访问队列，而不会发生数据竞争或其他并发问题。
 
 #### 管道 Pipe
 
-Pipe提供了一种简单而高效的方式来实现进程间的通信。调用`Pipe()`方法会返回一对connection对象， parent_conn, child_conn = Pipe() ，管道的两端可以放在主进程或子进程内，我在实验中没发现主管道口 parent_conn 和子管道口 child_conn 的区别。
+`Pipe`提供了一种简单而高效的方式来实现进程间的通信。调用`Pipe()`方法会返回一对`connection`对象， `parent_conn, child_conn = Pipe()` ，管道的两端可以放在主进程或子进程内，我在实验中没发现主管道口 `parent_conn `和子管道口 `child_conn` 的区别。
 
-> Pipe方法有duplex 参数，如果duplex参数为True（默认值），那么这个管道是全双工模式，也就是说 conn1和conn2均可收发。若duplex为False，conn1只负责接收消息，conn2只负 责发送消息。send和recv方法分别是发送和接收消息的方法。例如，在全双工模式 下，可以调用conn1.send发送消息，conn1.recv接收消息。如果没有消息可接 收，recv方法会一直阻塞。如果管道已经被关闭，那么recv方法会抛出EOFError。
+> Pipe方法有duplex 参数，如果duplex参数为True（默认值），那么这个管道是全双工模式，也就是说 conn1和conn2均可收发。若duplex为False，conn1只负责接收消息，conn2只负 责发送消息。send和recv方法分别是发送和接收消息的方法。例如，在全双工模式 下，可以调用conn1.send发送消息，conn1.recv接收消息。如果没有消息可接收，recv方法会一直阻塞。如果管道已经被关闭，那么recv方法会抛出EOFError。
 
-下面这个例子展示了 Pipe的基本用法,包括如何创建Pipe,如何在不同进程间发送和接收数据。
+下面这个例子展示了 `Pipe`的基本用法,包括如何创建`Pipe`,如何在不同进程间发送和接收数据。
 
 ```python
 from multiprocessing import Process, Pipe
@@ -473,17 +475,17 @@ if __name__ == '__main__':
 
 这个例子展示了如何使用Pipe在父进程和子进程之间进行双向通信:
 
-1. 我们首先创建一个Pipe,它返回两个连接对象(parent_conn和child_conn)。
-2. 我们创建一个子进程,并将child_conn作为参数传递给它。
-3. 在子进程中,我们使用conn.recv()从管道接收数据,处理数据,然后使用conn.send()将结果发送回去。
-4. 在主进程中,我们使用parent_conn.send()发送数据给子进程,然后使用parent_conn.recv()接收子进程返回的结果。
+1. 我们首先创建一个`Pipe`,它返回两个连接对象(`parent_conn`和`child_conn`)。
+2. 我们创建一个子进程,并将`child_conn`作为参数传递给它。
+3. 在子进程中,我们使用`conn.recv()`从管道接收数据,处理数据,然后使用`conn.send()`将结果发送回去。
+4. 在主进程中,我们使用`parent_conn.send()`发送数据给子进程,然后使用`parent_conn.recv()`接收子进程返回的结果。
 5. 最后,我们等待子进程结束并打印完成消息。
 
 #### 序列化 Pickle
 
-Pickle 模块可以序列化大多数Python对象,使其成为多进程通信的强大工具。
+`Pickle` 模块可以序列化大多数Python对象,使其成为多进程通信的强大工具。
 
-下面这个示例展示了如何使用pickle模块在多进程之间传递复杂的Python对象。
+下面这个示例展示了如何使用`pickle`模块在多进程之间传递复杂的Python对象。
 
 ```python
 import multiprocessing
@@ -556,10 +558,10 @@ if __name__ == '__main__':
 
 这个示例与之前的代码类似,但有以下几个关键区别:
 
-1. 我们使用pickle.dumps()将对象序列化,然后将序列化后的数据放入队列。
-2. 消费者使用pickle.loads()反序列化从队列中获取的数据。
-3. 我们使用了更复杂的数据结构(字典)来演示pickle可以处理复杂对象。
-4. 使用multiprocessing.get_context('spawn')来确保跨平台兼容性,特别是在Windows上。
+1. 我们使用`pickle.dumps()`将对象序列化,然后将序列化后的数据放入队列。
+2. 消费者使用`pickle.loads()`反序列化从队列中获取的数据。
+3. 我们使用了更复杂的数据结构(字典)来演示`pickle`可以处理复杂对象。
+4. 使用`multiprocessing.get_context('spawn')`来确保跨平台兼容性,特别是在`Windows`上。
 5. 结束信号仍然是None,但现在它被序列化后发送。
 
 需要注意的是,虽然pickle非常方便,但它也有一些安全隐患。在处理不信任的数据时,应该谨慎使用pickle。在实际应用中,可能需要考虑使用更安全的序列化方法,如JSON(对于简单数据结构)或专门的安全序列化库。
@@ -603,7 +605,7 @@ if __name__ == '__main__':
 
 执行结果如下：
 
-```plain
+```shell
 Thread MainThread is running...
 Thread LoopThread is running...
 Thread LoopThread >>> 1
@@ -837,7 +839,7 @@ print('worker exit.')
 
 现在，可以试试分布式进程的工作效果了。先启动`task_master.py`服务进程：
 
-```plain
+```shell
 $ python3 task_master.py
 Put task 3411...
 Put task 1605...
@@ -854,7 +856,7 @@ Try get results...
 
 `task_master.py`进程发送完任务后，开始等待`result`队列的结果。现在启动`task_worker.py`进程：
 
-```plain
+```shell
 $ python3 task_worker.py
 Connect to server 127.0.0.1...
 run task 3411 * 3411...
@@ -872,7 +874,7 @@ worker exit.
 
 `task_worker.py`进程结束，在`task_master.py`进程中会继续打印出结果：
 
-```plain
+```shell
 Result: 3411 * 3411 = 11634921
 Result: 1605 * 1605 = 2576025
 Result: 1398 * 1398 = 1954404
@@ -895,7 +897,7 @@ Result: 7866 * 7866 = 61873956
 这种方式可以方便地将计算任务分布到多台机器上执行,实现分布式计算。
 
 Queue对象存储在哪？注意到`task_worker.py`中根本没有创建Queue的代码，所以，Queue对象存储在`task_master.py`进程中：
-```
+```shell
                                              │
 ┌─────────────────────────────────────────┐     ┌──────────────────────────────────────┐
 │task_master.py                           │  │  │task_worker.py                        │
@@ -923,7 +925,7 @@ Queue对象存储在哪？注意到`task_worker.py`中根本没有创建Queue的
 
 ## 进程池与异步编程
 
-### Pool类的使用与优化
+### `Pool`类的使用与优化
 
 - **使用**：`multiprocessing.Pool`的主要用法是通过`apply()`、`map()`、`starmap()`等方法将任务提交给进程池，然后通过`Pool` 的`close()`和`join()`方法关闭和等待所有进程完成。
 - **优化**：为了提高效率，可以考虑以下几点：
@@ -989,47 +991,204 @@ if __name__ == '__main__':
 
 ```
 
-这个示例展示了以下几个优化点:
-
-1. 适当设置进程数: 我们使用os.cpu_count()获取CPU核心数,并以此作为进程池的大小。这样可以充分利用多核CPU的优势,同时避免创建过多进程导致的开销。
-2. 减少进程间通信: 我们将大量任务分成几个大块,每个进程处理一个大块的任务,而不是每个任务都单独提交给进程池。这样可以显著减少进程间的通信开销。
-3. 使用map()方法: 对于并行处理大量同质任务,map()方法通常是最简单高效的选择。它会自动处理任务的分配和结果的收集。
-4. 使用上下文管理器: 我们使用with语句来管理进程池,这确保了进程池在使用完毕后被正确关闭,避免了资源泄露。
-5. 批量处理结果: 我们在每个进程中处理一个任务块,并返回该块的所有结果。这比每个任务单独返回结果更高效。
-
-通过这些优化,我们可以高效地处理大量CPU密集型任务,充分利用多核CPU的优势。根据具体的任务特性和数据量,你可能需要调整chunk_size来获得最佳性能。
-
 上面实例的运行结果：
 
-```
+```shell
 本机有 8 个CPU核心
 处理 10000 个任务耗时: 1.82 秒
 结果数量: 10000
 ```
+这个示例展示了以下几个优化点:
+
+1. 适当设置进程数: 我们使用 `os.cpu_count()`获取CPU核心数,并以此作为进程池的大小。这样可以充分利用多核CPU的优势,同时避免创建过多进程导致的开销。
+2. 减少进程间通信: 我们将大量任务分成几个大块,每个进程处理一个大块的任务,而不是每个任务都单独提交给进程池。这样可以显著减少进程间的通信开销。
+3. 使用`map()`方法: 对于并行处理大量同质任务,`map()`方法通常是最简单高效的选择。它会自动处理任务的分配和结果的收集。
+4. 使用上下文管理器: 我们使用`with`语句来管理进程池,这确保了进程池在使用完毕后被正确关闭,避免了资源泄露。
+5. 批量处理结果: 我们在每个进程中处理一个任务块,并返回该块的所有结果。这比每个任务单独返回结果更高效。
+
+通过这些优化,我们可以高效地处理大量CPU密集型任务,充分利用多核CPU的优势。根据具体的任务特性和数据量,你可能需要调整chunk_size来获得最佳性能。
+
+
 
 ### 多进程中的异步I/O处理
 
+<<<<<<< Updated upstream
+在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
+
+#### concurrent.futures 简介
+
+concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures` 提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor` 是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
+
+主要组件:
+
+- ThreadPoolExecutor: 使用线程池执行异步调用。
+
+- ProcessPoolExecutor: 使用进程池执行异步调用。
+
+- Future: 表示异步计算的结果。
+
+主要特点:
+
+- 提供了统一的API来处理线程和进程。
+
+- 支持异步执行和结果获取。
+
+- 可以轻松地在线程池和进程池之间切换。
+
+常用方法:
+
+- submit(fn, *args, **kwargs): 提交一个可调用对象到执行器。
+
+- map(func, *iterables, timeout=None, chunksize=1): 并行执行映射。
+
+- shutdown(wait=True): 关闭执行器。
+
+Future对象的方法:
+
+- cancel(): 尝试取消调用。
+
+- cancelled(): 如果调用被成功取消返回True。
+
+- running(): 如果调用正在执行且不能被取消返回True。
+
+- done(): 如果调用已被取消或完成执行返回True。
+
+- result(timeout=None): 返回调用的结果。
+
+- exception(timeout=None): 返回由调用引发的异常。
+
+- add_done_callback(fn): 添加一个在未来完成时要调用的函数。
+
+#### concurrent.futures  模块使用
+
+#####  实例一
+
+好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
+=======
 - 在多进程环境中，`multiprocessing`模块本身并不直接支持异步 I/O，因为 I/O 操作通常是阻塞的。然而，可以结合其他库（如`asyncio` 或`concurrent.futures`）来实现异步 I/O。例如，`concurrent.futures`提供了`ThreadPoolExecutor`和`ProcessPoolExecutor` ，它们可以配合`asyncio`的`run_in_executor()`方法实现异步 I/O。
-- 使用`concurrent.futures`：
+>>>>>>> Stashed changes
+
+
+#### 使用`concurrent.futures`
+```python
+import concurrent.futures
+import time
+
+import requests
+
+
+def download_image(url):
+    response = requests.get(url)
+    print(f"下载完成: {url}")
+    return len(response.content)
+
+
+def cpu_bound_task(n):
+    count = 0
+    for i in range(n):
+        count += i * i
+    return count
+
+
+if __name__ == "__main__":
+    image_urls = [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg",
+        "https://example.com/image4.jpg",
+        "https://example.com/image5.jpg",
+    ]
+
+    numbers = [1000, 2000, 3000, 4000, 5000]
+
+    start_time = time.time()
+
+    # 使用ThreadPoolExecutor处理I/O密集型任务
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        image_sizes = list(executor.map(download_image, image_urls))
+
+    print(f"图片大小: {image_sizes}")
+
+    # 使用ProcessPoolExecutor处理CPU密集型任务
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = list(executor.map(cpu_bound_task, numbers))
+
+    print(f"计算结果: {results}")
+
+    end_time = time.time()
+    print(f"总耗时: {end_time - start_time:.2f} 秒")
+
+```
+
+这个例子展示了如何使用concurrent.futures模块来处理I/O密集型和CPU密集型任务:
+
+1. 我们定义了两个函数:
+
+- download_image: 一个I/O密集型任务,用于下载图片。
+
+- cpu_bound_task: 一个CPU密集型任务,进行大量计算。
+
+2. 对于I/O密集型任务(下载图片),我们使用ThreadPoolExecutor:
 
 ```python
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-def async_io_task(i):
-    # 异步 I/O 操作，如网络请求或文件读写
-    pass
-with ThreadPoolExecutor() as executor:
-    futures = {executor.submit(async_io_task, i) for i in range(10)}
-    for future in as_completed(futures):
-        result = future.result()
-        # 处理结果
+  with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    image_sizes = list(executor.map(download_image, image_urls))
 ```
+
+这里我们使用executor.map()方法,它会并行执行任务并按输入顺序返回结果。
+
+3. 对于CPU密集型任务,我们使用ProcessPoolExecutor:
+
+```python
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+​    results = list(executor.map(cpu_bound_task, numbers))
+```
+
+ProcessPoolExecutor利用多个Python进程来并行执行任务,适合CPU密集型操作。
+
+4. 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
+5. 最后,我们计算并打印了总执行时间。
+
+这个例子展示了concurrent.futures如何简化并行编程。它提供了一个统一的接口来处理线程和进程,使得切换between线程和进程变得非常容易。
+
+##### 实例二
+
+与multiprocessing.Pool相比,concurrent.futures提供了更现代和更灵活的API。例如,你可以使用submit()方法来提交单个任务,然后使用as_completed()来处理结果,这在处理动态生成的任务时特别有用。
+
+```python
+import concurrent.futures
+import time
+
+def task(n):
+    print(f"开始执行任务 {n}")
+    time.sleep(n)
+    return f"任务 {n} 完成"
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    futures = [executor.submit(task, i) for i in range(5)]
+
+    for future in concurrent.futures.as_completed(futures):
+        result = future.result()
+        print(result)
+```
+
+这个例子展示了以下几点:
+
+1. 我们使用submit()方法来提交每个任务。这比map()更灵活,因为我们可以提交不同的函数或参数。
+2. as_completed()方法返回一个迭代器,按照任务完成的顺序产生Future对象。这允许我们在任务完成时立即处理结果,而不是等待所有任务完成。
+3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
+
+这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
 
 这里，`ThreadPoolExecutor`用于管理线程，`as_completed()`用于异步等待所有任务完成。这样，尽管 I/O 操作是异步的，但整个进程池的其他任务仍可以并行执行。
 
-##### `ProcessPoolExecutor`  实例
+##### 实例三
 
-好的,我来为您提供一个使用c oncurrent.futures实现多进程异步I/O的示例:
+<<<<<<< Updated upstream
+好的,我来为您提供一个使用concurrent.futures实现多进程异步I/O的示例:
+=======
+好的,下面给出使用concurrent.futures实现多进程异步I/O的示例:
+>>>>>>> Stashed changes
 
 ```python
 import asyncio
@@ -1067,12 +1226,17 @@ if __name__ == '__main__':
 
 这个示例展示了以下几点:
 
+<<<<<<< Updated upstream
 1. 我们定义了一个io_bound_task函数来模拟I/O密集型任务。
 2. 在main协程中,我们创建了一个ProcessPoolExecutor。
 3. 我们使用loop.run_in_executor()方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
-
 4. 我们使用asyncio.wait()来并发等待所有任务完成。
-
+=======
+1. 我们定义了一个`io_bound_task`函数来模拟I/O密集型任务。
+2. 在main协程中,我们创建了一个`ProcessPoolExecutor`。
+3. 我们使用`loop.run_in_executor()`方法将每个任务提交给执行器。这允许我们在单独的进程中异步执行I/O密集型任务。
+4. 我们使用`asyncio.wait()` 来并发等待所有任务完成。
+>>>>>>> Stashed changes
 5. 最后,我们打印每个任务的结果和总执行时间。
 
 这种方法结合了多进程的优势(利用多核CPU)和异步I/O的优势(在等待I/O操作时不阻塞)。它特别适合I/O密集型任务,因为它允许在等待一个进程的I/O操作时切换到另一个进程。
@@ -1091,9 +1255,9 @@ Task 4 completed
 Total time: 2.27 seconds
 ```
 
-#####  `ThreadPoolExecutor` 实例
+#####  实例四
 
-好的,我来为您提供一个使用concurrent.futures模块的完整示例,展示如何利用线程池和进程池执行并行任务:
+好的,下面给出使用`concurrent.futures`模块的完整示例,展示如何利用线程池和进程池执行并行任务:
 
 ```python
 import concurrent.futures
@@ -1150,10 +1314,9 @@ if __name__ == '__main__':
     print(f'\n总执行时间: {end_time - start_time:.2f} 秒')
 
 ```
+运行结果：
 
-好的,我来为您提供一个使用concurrent.futures模块的完整示例,展示如何利用线程池和进程池执行并行任务:
-
-```
+```shell
 使用线程池执行:
 开始下载 https://www.python.org
 开始下载 https://www.github.com
@@ -1183,24 +1346,18 @@ https://www.bing.com: 状态码 200, 内容长度 137397 字节
 
 这个示例展示了以下几个要点:
 
-1. 我们定义了一个fetch_url函数来模拟耗时的网络请求任务。
+1. 我们定义了一个`fetch_url`函数来模拟耗时的网络请求任务。
 
-2. 使用ThreadPoolExecutor执行并行任务:
-
-3. 我们使用executor.submit()方法提交任务。
-
-   - 使用concurrent.futures.as_completed()来获取已完成的任务结果。
-   - 使用ProcessPoolExecutor执行并行任务:
-
-4. 我们使用executor.map()方法来并行执行任务。
-
-   - 这种方法更简洁,但对于异常处理不如submit()方法灵活。
-
-   - 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
-
+2. 使用`ThreadPoolExecutor`执行并行任务:
+   - 我们使用`executor.submit()`方法提交任务。
+   - 使用`concurrent.futures.as_completed()`来获取已完成的任务结果。
+3. 使用`ProcessPoolExecutor`执行并行任务:
+   - 我们使用`executor.map()`方法来并行执行任务。
+   - 这种方法更简洁,但对于异常处理不如`submit()`方法灵活。
+4. 我们使用with语句来管理执行器的生命周期,确保资源被正确释放。
 5. 最后,我们计算并打印了总执行时间。
 
-这个示例展示了如何使用concurrent.futures模块来实现并行任务执行,既可以使用线程池,也可以使用进程池。线程池适合I/O密集型任务(如网络请求),而进程池适合CPU密集型任务。需要注意的是,这个示例中使用的requests库需要单独安装(pip install requests)。
+这个示例展示了如何使用`concurrent.futures`模块来实现并行任务执行,既可以使用线程池,也可以使用进程池。线程池适合I/O密集型任务(如网络请求),而进程池适合CPU密集型任务。需要注意的是,这个示例中使用的requests库需要单独安装(pip install requests)。
 
 ### 多进程间共享状态
 
@@ -1208,8 +1365,9 @@ https://www.bing.com: 状态码 200, 内容长度 137397 字节
 
 #### Shared memory
 
-`Shared memory`很好理解，是一种高效的进程间通信方式，它允许向操作系统申请一块共享内存区域，然后多个进程可以操作这块共享内存了。Multiprocessing模块中提供了Value和Array类，可以用来创建共享内存。下面是一个简单的示例：
+`Shared memory`很好理解，是一种高效的进程间通信方式，它允许向操作系统申请一块共享内存区域，然后多个进程可以操作这块共享内存了。Multiprocessing模块中提供了`Value`和`Array`类，可以用来创建共享内存。下面是一个简单的示例：
 
+#####  Value 类
 ```python
 import multiprocessing
 
@@ -1238,9 +1396,11 @@ if __name__ == '__main__':
     p2.join()
 ```
 
-在上面的代码中，首先创建了一个Value对象，用于存储一个整数值。然后创建了两个进程，每个进程都会将共享内存中的值加1，并将其打印出来。最后，等待两个进程结束。
+在上面的代码中，首先创建了一个`Value`对象，用于存储一个整数值。然后创建了两个进程，每个进程都会将共享内存中的值加1，并将其打印出来。最后，等待两个进程结束。
 
-除了Value类之外，multiprocessing模块还提供了Array类，用于创建共享内存数组。下面是一个简单的示例：
+##### Array 类
+
+除了`Value`类之外，multiprocessing模块还提供了`Array`类，用于创建共享内存数组。下面是一个简单的示例：
 
 ```python
 from multiprocessing import Process, Value, Array
@@ -1330,7 +1490,7 @@ if __name__ == "__main__":
 
 运行结果：
 
-```python
+```shell
 工作进程1: 初始共享值 = 0, 共享数组 = [1, 2, 3, 4, 5]
 工作进程2: 初始共享值 = 0, 共享数组 = [1, 2, 3, 4, 5]
 工作进程1: 修改后共享值 = 2, 共享数组 = [4, 6, 8, 10, 12]
@@ -1409,16 +1569,6 @@ if __name__ == "__main__":
 
 接着在各进程中对这些proxy对象的操作即会通过上述连接操作到实际的对象。至此终于知道虽然`multiprocessing.Queue()`与`manager.Queue()`都返回`Queue`对象，但其实两者的底层实现逻辑很不一样。`SyncManager`的实现代码在[这里](https://github.com/python/cpython/blob/master/Lib/multiprocessing/managers.py)，仔细看这里有一些实现逻辑很巧妙。
 
-这个示例展示如何使用multiprocessing模块创建和管理多个进程,以及如何在进程间共享数据。
-
-1. 我们定义了两个工作函数worker1和worker2,它们将在不同的进程中运行。
-2. 使用multiprocessing.Manager()创建了一个manager对象,用于管理进程间共享的数据。
-
-3. 通过manager创建了共享的列表和字典。
-4. 创建并启动了两个进程,每个进程运行一个工作函数。
-
-5. 使用join()方法等待两个进程完成。
-6. 最后,在主进程中打印共享数据,展示了两个进程对共享数据的修改。
 
 ```python
 import multiprocessing
@@ -1476,6 +1626,18 @@ if __name__ == '__main__':
 共享字典: {1: '进程1的值', 2: '进程2的值'}
 ```
 
+<<<<<<< Updated upstream
+
+=======
+这个示例展示如何使用multiprocessing模块创建和管理多个进程,以及如何在进程间共享数据。
+
+1. 我们定义了两个工作函数worker1和worker2,它们将在不同的进程中运行。
+2. 使用multiprocessing.Manager()创建了一个manager对象,用于管理进程间共享的数据。
+3. 通过manager创建了共享的列表和字典。
+4. 创建并启动了两个进程,每个进程运行一个工作函数。
+5. 使用join()方法等待两个进程完成。
+6. 最后,在主进程中打印共享数据,展示了两个进程对共享数据的修改。
+
 ### concurrent.futures模块的使用
 
 #### 简介
@@ -1524,7 +1686,7 @@ Future对象的方法:
 
 ####  实例一
 
-好的,我来为您提供一个使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
+好的,下面给出使用concurrent.futures的应用实例,展示如何利用ProcessPoolExecutor和ThreadPoolExecutor来执行并行任务:
 
 ```python
 import concurrent.futures
@@ -1635,6 +1797,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
 3. 我们可以使用future.result()来获取任务的结果。如果任务抛出异常,这个方法会重新引发该异常。
 
 这种方法特别适用于处理执行时间不同的任务,或者需要立即处理结果的情况。它比map()提供了更多的控制和灵活性。
+>>>>>>> Stashed changes
 
 ## 高级并发技巧
 
@@ -1644,10 +1807,10 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
 
 多进程同步与协调是并发编程中的重要概念,用于管理多个进程之间的交互和资源共享。 选择合适的同步机制:
 
-- 如果需要限制访问资源的进程数量,使用Semaphore。
-- 如果需要确保对共享资源的互斥访问,使用Lock。
-- 如果需要简单的进程间信号传递,使用Event。
-- 如果需要基于某个条件的复杂协调,使用Condition。
+- 如果需要限制访问资源的进程数量,使用`Semaphore`。
+- 如果需要确保对共享资源的互斥访问,使用`Lock`。
+- 如果需要简单的进程间信号传递,使用`Event`。
+- 如果需要基于某个条件的复杂协调,使用`Condition`。
 
 #### Semaphore (信号量)
 
