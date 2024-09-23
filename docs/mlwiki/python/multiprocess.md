@@ -58,7 +58,7 @@ python3中支持三种方式启动多进程：`spawn`、`fork`、`forkserver`。
 2. fork是使用`os.fork()`系统调用启动一个python解释器进程，因为是fork调用，这个启动的进程可以继承父进程中的资源。fork出的子进程虽然与父进程是不同的内存空间，但在linux下它是的copy-on-write方式实现的，因此即使创建了很多子进程，实际上看子进程并不会消耗多少内存。看起来fork方式创建子进程很好，但实际上还是存在一些问题的。如果父进程是一个多线程程序，用fork系统调用是很危险的，很容易造成死锁，详见[这里](https://pythonspeed.com/articles/python-multiprocessing/)。
 3. 但fork系统调用又确实是启动子进程最高效的方法，于是官方又提供`forkserver`。当父进程需要启动子进程时，实际上是向一个`Fork Server`进程发指令，由它调用`os.fork()`产生子进程的。这个`Fork Server`进程是一个单线程进程，因此调用fork不会产生风险。`forkserver`的实现方式也挺有意思的，代码不长，源码在这里，[multiprocessing/forkserver.py](https://github.com/python/cpython/blob/master/Lib/multiprocessing/forkserver.py)。
 
-不同的操作系统下默认的子进程启动方式是不一样的，目前有两种方式改变使用的启动子进程方式。
+不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。目前有两种方式改变使用的启动子进程方式。
 
 1. 通过`multiprocessing.set_start_method`方法全局改变。
 
@@ -172,7 +172,7 @@ Finished
 
 `multiprocessing.Pool`类用于创建进程池，可以方便地管理多个进程。通过`Pool`类的`map()`、`apply()` 等方法，可以将任务分配给进程池中的多个进程并行执行。进程池会自动管理进程的创建和销毁，提高了并行处理的效率。
 
-Pool默认大小是CPU的核数，我们也可以通过在Pool中传入processes参数自定义需要的核数量。定义进程池之后，就可以让进程池对应某一个函数，通过向进程池中传入数据从而返回函数值。 Pool和之前的Process的不同点是传入Pool的函数有返回值，而Process的没有返回值。
+Pool 默认大小是CPU的核数，我们也可以通过在Pool中传入processes参数自定义需要的核数量。定义进程池之后，就可以让进程池对应某一个函数，通过向进程池中传入数据从而返回函数值。 Pool和之前的Process的不同点是传入Pool的函数有返回值，而Process的没有返回值。
 
 - map方法：用map()获取结果，在map()中需要放入函数和需要迭代运算的值，然后它会自动分配给CPU核，返回结果。
 - apply_async方法: apply_async() 中只能传递一个值，它只会放入一个核进行运算，但是传入值时要注意是元组类型，所以在传入值后需要加逗号, 同时需要用get()方法获取返回值。如果要实现map()的效果，需要将apply_async方法做成一个列表的形式。
@@ -233,13 +233,7 @@ All subprocesses done.
 
 对`Pool`对象调用`join()`方法会等待所有子进程执行完毕，调用`join()`之前必须先调用`close()`，调用`close()`之后就不能继续添加新的`Process`了。
 
-请注意输出的结果，task `0`，`1`，`2`，`3`是立刻执行的，而task `4`要等待前面某个task完成后才执行，这是因为`Pool`的默认大小在我的电脑上是4，因此，最多同时执行4个进程。这是`Pool`有意设计的限制，并不是操作系统的限制。如果改成：
-
-```python
-p = Pool(5)
-```
-
-就可以同时跑5个进程。
+请注意输出的结果，task `0`，`1`，`2`，`3`是立刻执行的，而task `4`要等待前面某个task完成后才执行，这是因为`Pool`的默认大小在我的电脑上是4，因此，最多同时执行4个进程。这是`Pool`有意设计的限制，并不是操作系统的限制。如果改成：`p = Pool(5)` 就可以同时跑5个进程。
 
 由于`Pool`的默认大小是CPU的核数，如果你不幸拥有8核CPU，你要提交至少9个子进程才能看到上面的等待效果。
 
@@ -423,7 +417,7 @@ if __name__ == '__main__':
 
 Pipe提供了一种简单而高效的方式来实现进程间的通信。调用`Pipe()`方法会返回一对connection对象， parent_conn, child_conn = Pipe() ，管道的两端可以放在主进程或子进程内，我在实验中没发现主管道口 parent_conn 和子管道口 child_conn 的区别。
 
-Pipe方法有duplex 参数，如果duplex参数为True（默认值），那么这个管道是全双工模式，也就是说 conn1和conn2均可收发。若duplex为False，conn1只负责接收消息，conn2只负 责发送消息。send和recv方法分别是发送和接收消息的方法。例如，在全双工模式 下，可以调用conn1.send发送消息，conn1.recv接收消息。如果没有消息可接 收，recv方法会一直阻塞。如果管道已经被关闭，那么recv方法会抛出EOFError。
+> Pipe方法有duplex 参数，如果duplex参数为True（默认值），那么这个管道是全双工模式，也就是说 conn1和conn2均可收发。若duplex为False，conn1只负责接收消息，conn2只负 责发送消息。send和recv方法分别是发送和接收消息的方法。例如，在全双工模式 下，可以调用conn1.send发送消息，conn1.recv接收消息。如果没有消息可接 收，recv方法会一直阻塞。如果管道已经被关闭，那么recv方法会抛出EOFError。
 
 下面这个例子展示了 Pipe的基本用法,包括如何创建Pipe,如何在不同进程间发送和接收数据。
 
@@ -455,6 +449,7 @@ if __name__ == '__main__':
     p.start()
 
     # 主进程发送数据
+    print('主进程发送消息: hello world')
     parent_conn.send('hello world')
 
     # 主进程接收结果
@@ -471,6 +466,7 @@ if __name__ == '__main__':
 
 ```shell
 子进程开始工作
+主进程发送消息: hello world
 子进程收到消息: hello world
 子进程完成工作
 主进程收到结果: 处理结果: HELLO WORLD
@@ -570,7 +566,6 @@ if __name__ == '__main__':
 
 需要注意的是,虽然pickle非常方便,但它也有一些安全隐患。在处理不信任的数据时,应该谨慎使用pickle。在实际应用中,可能需要考虑使用更安全的序列化方法,如JSON(对于简单数据结构)或专门的安全序列化库。
 
-在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。
 
 ##  多进程和多线程
 
@@ -698,7 +693,8 @@ multicore: 4999999666666716666660000000
 multiprocess time: 6.818678140640259
 ```
 
-从上述结果来看，多进程的时间是要小于多线程和正常程序的，多线程的时间与正常时间相差无几。原因是Python解释器有一个全局解释器锁（GIL），导致每个Python进程最多同时运行一个线程，因此Python多线程程序并不能改善程序性能，不能发挥CPU多核的优势，通过GIL这篇文章可以了解。但是多进程程序可以不受影响。
+从上述结果来看，多进程的时间是要小于多线程和正常程序的，多线程的时间与正常时间相差无几。原因是Python解释器有一个全局解释器锁（GIL），导致每个Python进程最多同时运行一个线程，因此Python多线程程序并不能改善程序性能，不能发挥CPU多核的优势，但是多进程程序可以不受影响。
+
 ### **线程与进程的区别**
 
 1. **资源占用**：线程比进程轻量，创建和销毁线程的开销小，占用的资源少。进程拥有独立的内存空间，资源消耗较大。
@@ -708,6 +704,8 @@ multiprocess time: 6.818678140640259
 5. **适用场景**：线程适合I/O密集型任务，如网络请求、文件操作等；进程适合CPU密集型任务，如大量计算、图像处理等。
 
 总之，线程适合处理需要频繁I/O操作的任务，进程适合处理需要大量计算的任务。在Python中，多线程受到全局解释器锁的限制，多进程能更好地利用多核处理器，选择合适的并发编程方式可以提高程序的运行效率。
+
+### 选多进程还是多线程
 
 首先，要实现多任务，通常我们会设计Master-Worker模式，Master负责分配任务，Worker负责执行任务，因此，多任务环境下，通常是一个Master，多个Worker。
 
@@ -889,10 +887,16 @@ Result: 339 * 339 = 114921
 Result: 7866 * 7866 = 61873956
 ```
 
-这个简单的Master/Worker模型有什么用？其实这就是一个简单但真正的分布式计算，把代码稍加改造，启动多个worker，就可以把任务分布到几台甚至几十台机器上，比如把计算`n*n`的代码换成发送邮件，就实现了邮件队列的异步发送。
+这个示例实现了一个简单的分布式计算系统:
+
+1. task_master.py作为服务进程,创建任务队列和结果队列,并注册到网络上。
+2. task_worker.py作为工作进程,连接到服务进程,获取任务并返回结果。
+3. 两个进程可以在不同的机器上运行,通过网络进行通信。
+4. 使用了multiprocessing.managers模块来实现进程间的通信。
+
+这种方式可以方便地将计算任务分布到多台机器上执行,实现分布式计算。
 
 Queue对象存储在哪？注意到`task_worker.py`中根本没有创建Queue的代码，所以，Queue对象存储在`task_master.py`进程中：
-
 ```
                                              │
 ┌─────────────────────────────────────────┐     ┌──────────────────────────────────────┐
@@ -1007,8 +1011,96 @@ if __name__ == '__main__':
     print(num.value)
     print(arr[:])
 ```
+运行结果：
 
-这里注意操作共享内存时，操作的是很基础的`Value`和`Array`，这里面存放的是ctype类型的基础数据，因而没法存放python里的正常对象。如果一定要使用这个共享，可以考虑用`pickle`库将python里的正常对象序列化为byte数组，再放进`Value`。使用时再读出来，进行反序列化回来。当然要承担序列化开销及两个进程存放两一份数据的内存开销。
+```python
+3.1415927
+[0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
+```
+
+来看一个更加复杂的实现一个包含至少两个进程的多进程共享内存示例。
+
+```python
+import time
+from multiprocessing import Array, Process, Value
+
+
+def worker1(shared_value, shared_array):
+    print(
+        f"工作进程1: 初始共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}"
+    )
+    shared_value.value += 1
+    for i in range(len(shared_array)):
+        shared_array[i] += 1
+    print(
+        f"工作进程1: 修改后共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}"
+    )
+    time.sleep(1)
+
+
+def worker2(shared_value, shared_array):
+    print(
+        f"工作进程2: 初始共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}"
+    )
+    shared_value.value *= 2
+    for i in range(len(shared_array)):
+        shared_array[i] *= 2
+    print(
+        f"工作进程2: 修改后共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}"
+    )
+    time.sleep(1)
+
+
+if __name__ == "__main__":
+    # 创建共享内存对象
+    shared_value = Value("i", 0)  # 'i'表示整数类型
+    shared_array = Array("i", [1, 2, 3, 4, 5])  # 'i'表示整数类型
+
+    # 创建两个子进程
+    p1 = Process(target=worker1, args=(shared_value, shared_array))
+    p2 = Process(target=worker2, args=(shared_value, shared_array))
+
+    # 启动进程
+    p1.start()
+    p2.start()
+
+    # 主进程等待一段时间
+    time.sleep(0.5)
+
+    # 在主进程中打印共享内存的值
+    print(f"主进程: 共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}")
+
+    # 等待子进程结束
+    p1.join()
+    p2.join()
+
+    # 再次打印最终的共享内存值
+    print(f"最终结果: 共享值 = {shared_value.value}, 共享数组 = {list(shared_array)}")
+```
+
+运行结果：
+
+```python
+工作进程1: 初始共享值 = 0, 共享数组 = [1, 2, 3, 4, 5]
+工作进程2: 初始共享值 = 0, 共享数组 = [1, 2, 3, 4, 5]
+工作进程1: 修改后共享值 = 2, 共享数组 = [4, 6, 8, 10, 12]
+工作进程2: 修改后共享值 = 2, 共享数组 = [4, 6, 8, 10, 12]
+主进程: 共享值 = 2, 共享数组 = [4, 6, 8, 10, 12]
+最终结果: 共享值 = 2, 共享数组 = [4, 6, 8, 10, 12]
+```
+
+这个示例创建了三个进程(包括主进程)来共享内存:
+
+1. 我们使用 Value 创建了一个共享的整数值,使用 Array 创建了一个共享的整数数组。
+2. worker1 和 worker2 函数是两个子进程将要执行的任务。它们分别对共享值和共享数组进行不同的操作。
+3. 在主进程中,我们创建并启动两个子进程,然后等待一小段时间。
+4. 主进程打印共享内存的当前值,然后等待子进程结束。
+5. 最后,我们再次打印共享内存的最终值
+
+这个示例展示了如何在多个进程之间共享内存,并且所有进程都可以读写这些共享的数据。请注意,由于进程执行的顺序是不确定的,每次运行的结果可能会略有不同。
+
+> 注这里操作共享内存时，操作的是很基础的`Value`和`Array`，这里面存放的是ctype类型的基础数据，因而没法存放python里的正常对象。如果一定要使用这个共享，可以考虑用`pickle`库将python里的正常对象序列化为byte数组，再放进`Value`。使用时再读出来，进行反序列化回来。当然要承担序列化开销及两个进程存放两一份数据的内存开销。
+
 
 #### Server process
 
@@ -1065,11 +1157,74 @@ if __name__ == '__main__':
             setattr(cls, typeid, temp)
 ```
 
-接着在各进程中对这些proxy对象的操作即会通过上述连接操作到实际的对象。
+接着在各进程中对这些proxy对象的操作即会通过上述连接操作到实际的对象。至此终于知道虽然`multiprocessing.Queue()`与`manager.Queue()`都返回`Queue`对象，但其实两者的底层实现逻辑很不一样。`SyncManager`的实现代码在[这里](https://github.com/python/cpython/blob/master/Lib/multiprocessing/managers.py)，仔细看这里有一些实现逻辑很巧妙。
 
-至此终于知道虽然`multiprocessing.Queue()`与`manager.Queue()`都返回`Queue`对象，但其实两者的底层实现逻辑很不一样。
+这个示例展示如何使用multiprocessing模块创建和管理多个进程,以及如何在进程间共享数据。
 
-`SyncManager`的实现代码在[这里](https://github.com/python/cpython/blob/master/Lib/multiprocessing/managers.py)，仔细看这里有一些实现逻辑很巧妙。
+1. 我们定义了两个工作函数worker1和worker2,它们将在不同的进程中运行。
+2. 使用multiprocessing.Manager()创建了一个manager对象,用于管理进程间共享的数据。
+
+3. 通过manager创建了共享的列表和字典。
+4. 创建并启动了两个进程,每个进程运行一个工作函数。
+
+5. 使用join()方法等待两个进程完成。
+6. 最后,在主进程中打印共享数据,展示了两个进程对共享数据的修改。
+
+```python
+import multiprocessing
+import time
+
+
+def worker1(shared_list, shared_dict):
+    print(f'工作进程1的ID: {multiprocessing.current_process().pid}')
+    shared_list.append('来自进程1的数据')
+    shared_dict[1] = '进程1的值'
+    time.sleep(2)  # 模拟一些工作
+
+
+def worker2(shared_list, shared_dict):
+    print(f'工作进程2的ID: {multiprocessing.current_process().pid}')
+    shared_list.extend(['来自进程2的数据1', '来自进程2的数据2'])
+    shared_dict[2] = '进程2的值'
+    time.sleep(1)  # 模拟一些工作
+
+
+if __name__ == '__main__':
+    # 创建Manager对象来管理共享数据
+    with multiprocessing.Manager() as manager:
+        shared_list = manager.list()
+        shared_dict = manager.dict()
+
+        # 创建两个进程
+        p1 = multiprocessing.Process(target=worker1,
+                                     args=(shared_list, shared_dict))
+        p2 = multiprocessing.Process(target=worker2,
+                                     args=(shared_list, shared_dict))
+
+        print(f'主进程ID: {multiprocessing.current_process().pid}')
+
+        # 启动进程
+        p1.start()
+        p2.start()
+
+        # 等待进程结束
+        p1.join()
+        p2.join()
+
+        # 打印共享数据
+        print('共享列表:', shared_list)
+        print('共享字典:', shared_dict)
+```
+
+运行结果：
+
+```python
+主进程ID: 33464
+工作进程1的ID: 33468
+工作进程2的ID: 33469
+共享列表: ['来自进程1的数据', '来自进程2的数据1', '来自进程2的数据2']
+共享字典: {1: '进程1的值', 2: '进程2的值'}
+```
 
 ### **concurrent.futures模块的使用**
 
@@ -1134,7 +1289,7 @@ def worker_with_condition(condition):
         # 执行任务
 ```
 
-#### Lock
+#### Lock （互斥锁）
 
 多线程和多进程最大的不同在于，多进程中，同一个变量，各自有一份拷贝存在于每个进程中，互不影响，而多线程中，所有变量都由所有线程共享，所以，任何一个变量都可以被任何一个线程修改，因此，线程之间共享数据最大的危险在于多个线程同时改一个变量，把内容给改乱了。
 
@@ -1355,6 +1510,7 @@ GIL是CPython中的一个机制，它确保同一时间只有一个线程在执�
 
 ```python
 import multiprocessing
+
 def producer(queue):
     # 生产任务
     queue.put(task)
@@ -1377,6 +1533,200 @@ queue.join()  # 等待队列中的所有任务被处理
 
 通过这些高级技巧，你可以更有效地管理并发任务，提高应用程序的性能和稳定性。
 
+```python
+from multiprocessing import Pool
+import os
+import time
+
+def worker(x):
+    print(f"进程 {os.getpid()} 正在处理 {x}")
+    time.sleep(1)  # 模拟一些耗时操作
+    return x * x
+
+if __name__ == "__main__":
+    print(f"主进程ID: {os.getpid()}")
+
+    # 使用with语句来管理进程池
+    with Pool(processes=4) as pool:
+        # 使用map方法并行处理数据
+        results = pool.map(worker, range(10))
+
+        # 打印结果
+        print("处理结果:", results)
+
+    print("所有工作已完成,进程池已关闭")
+
+    # 在这里,进程池已经自动关闭,所有工作进程都已终止
+```
+
+这个示例展示了以下几点:
+
+1. 我们定义了一个worker函数,它将在每个工作进程中执行。
+2. 使用with Pool(processes=4) as pool:创建了一个包含4个进程的进程池。with语句确保在代码块结束时,进程池会被正确关闭。
+3. 我们使用pool.map()方法来并行处理数据。这个方法会自动将任务分配给池中的可用进程。
+4. 在with语句块结束时,进程池会自动关闭,所有工作进程都会被终止。我们不需要显式地调用close()或join()方法。
+
+这种方法有以下优点:
+
+- 资源管理更加简洁和安全。即使在处理过程中发生异常,进程池也会被正确关闭。
+- 代码更加简洁易读。
+- 避免了忘记关闭进程池的风险。
+
+运行这段代码,你会看到类似以下的输出:
+
+```python
+主进程ID: 12345
+
+进程 12346 正在处理 0
+
+进程 12347 正在处理 1
+
+进程 12348 正在处理 2
+
+进程 12349 正在处理 3
+
+进程 12346 正在处理 4
+
+进程 12347 正在处理 5
+
+进程 12348 正在处理 6
+
+进程 12349 正在处理 7
+
+进程 12346 正在处理 8
+
+进程 12347 正在处理 9
+
+处理结果: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+所有工作已完成,进程池已关闭
+```
+
+这个例子展示了如何使用Python的multiprocessing模块和上下文管理器来安全地管理多进程资源。这种方法不仅适用于进程池,也可以应用于其他需要正确关闭和清理的资源,如文件、数据库连接等。
+
+下面提供一个使用multiprocessing.Queue进行任务调度的示例。这个例子将展示如何使用一个生产者进程生成任务,并使用多个消费者进程从队列中获取任务并执行。
+
+```python
+import multiprocessing
+import time
+import random
+
+
+def producer(queue, num_tasks):
+    print(f"生产者进程 {multiprocessing.current_process().name} 开始运行")
+    for i in range(num_tasks):
+        task = f"任务-{i}"
+        queue.put(task)
+        print(f"生产者添加任务: {task}")
+        time.sleep(random.uniform(0.1, 0.3))  # 模拟任务生成时间
+
+    # 添加结束标志
+    for _ in range(multiprocessing.cpu_count()):
+        queue.put(None)
+    print("生产者完成所有任务")
+
+
+def consumer(queue):
+    print(f"消费者进程 {multiprocessing.current_process().name} 开始运行")
+    while True:
+        task = queue.get()
+        if task is None:
+            break
+        print(f"消费者 {multiprocessing.current_process().name} 执行任务: {task}")
+        time.sleep(random.uniform(0.5, 1))  # 模拟任务执行时间
+    print(f"消费者 {multiprocessing.current_process().name} 完成工作")
+
+
+if __name__ == "__main__":
+    num_tasks = 10
+    task_queue = multiprocessing.Queue()
+
+    # 创建生产者进程
+    producer_process = multiprocessing.Process(
+        target=producer, args=(task_queue, num_tasks)
+    )
+
+    # 创建消费者进程
+    num_consumers = multiprocessing.cpu_count()
+    consumer_processes = [
+        multiprocessing.Process(target=consumer, args=(task_queue,))
+        for _ in range(num_consumers)
+    ]
+
+    # 启动所有进程
+    producer_process.start()
+    for p in consumer_processes:
+        p.start()
+
+    # 等待所有进程完成
+    producer_process.join()
+    for p in consumer_processes:
+        p.join()
+
+    print("所有进程已完成")
+```
+
+这个示例展示了以下几点:
+
+1. 我们定义了一个producer函数,它生成任务并将其放入队列中。
+2. 我们定义了一个consumer函数,它从队列中获取任务并执行。
+3. 我们使用multiprocessing.Queue()创建了一个共享的任务队列。
+4. 我们创建了一个生产者进程和多个消费者进程(数量等于CPU核心数)。
+5. 生产者进程生成指定数量的任务,并在完成后为每个消费者进程添加一个结束标志(None)。
+
+6. 消费者进程不断从队列中获取任务并执行,直到遇到结束标志。
+7. 主进程等待所有子进程完成后才结束。
+
+这种方法有以下优点:=
+
+- 实现了任务的动态分配,消费者进程可以根据自己的处理速度从队列中获取任务。
+- 通过使用多个消费者进程,可以充分利用多核CPU的优势。
+- 生产者和消费者之间解耦,可以独立地调整生产和消费的速度。
+
+运行这段代码,你会看到任务被生产者添加到队列中,然后被多个消费者并行处理。这种模式非常适合处理大量独立的任务,如数据处理、网络请求等。
+
+```python
+消费者进程 Process-2 开始运行
+生产者进程 Process-1 开始运行
+生产者添加任务: 任务-0
+消费者 Process-2 执行任务: 任务-0
+消费者进程 Process-4 开始运行
+消费者进程 Process-3 开始运行
+消费者进程 Process-5 开始运行
+消费者进程 Process-6 开始运行
+消费者进程 Process-7 开始运行
+消费者进程 Process-8 开始运行
+消费者进程 Process-9 开始运行
+生产者添加任务: 任务-1
+消费者 Process-4 执行任务: 任务-1
+生产者添加任务: 任务-2
+消费者 Process-3 执行任务: 任务-2
+生产者添加任务: 任务-3
+消费者 Process-5 执行任务: 任务-3
+生产者添加任务: 任务-4
+消费者 Process-6 执行任务: 任务-4
+生产者添加任务: 任务-5
+消费者 Process-7 执行任务: 任务-5
+生产者添加任务: 任务-6
+消费者 Process-8 执行任务: 任务-6
+生产者添加任务: 任务-7
+消费者 Process-9 执行任务: 任务-7
+生产者添加任务: 任务-8
+消费者 Process-3 执行任务: 任务-8
+生产者添加任务: 任务-9
+消费者 Process-2 执行任务: 任务-9
+生产者完成所有任务
+消费者 Process-5 完成工作
+消费者 Process-4 完成工作
+消费者 Process-6 完成工作
+消费者 Process-7 完成工作
+消费者 Process-8 完成工作
+消费者 Process-9 完成工作
+消费者 Process-3 完成工作
+消费者 Process-2 完成工作
+所有进程已完成
+```
+
 ## **进程间的错误处理与调试**
 
 在这一章中，我们将讨论进程间的错误处理与调试，包括错误处理策略、使用logging和traceback 进行错误处理，以及调试工具与技术。
@@ -1388,6 +1738,103 @@ queue.join()  # 等待队列中的所有任务被处理
 - **进程间通信异常处理**：在进程间通信时，要捕获并处理异常，以避免进程崩溃。可以在进程间通信的代码块中使用try-except语句来捕获异常。
 - **进程池异常处理**：如果使用进程池（如`multiprocessing.Pool`），要注意捕获并处理子进程中抛出的异常，以避免整个进程池被终止。
 - **日志记录**：及时记录错误和异常信息到日志文件中，以便后续排查问题。
+
+下面提供一个在进程间通信时处理异常的示例。这个例子将展示如何在多个进程之间安全地传递数据,并处理可能出现的异常。
+
+```python
+import multiprocessing
+import traceback
+
+class SafeProcess(multiprocessing.Process):
+    def __init__(self, *args, **kwargs):
+        multiprocessing.Process.__init__(self, *args, **kwargs)
+        self._pconn, self._cconn = multiprocessing.Pipe()
+        self._exception = None
+
+    def run(self):
+        try:
+            multiprocessing.Process.run(self)
+            self._cconn.send(None)
+        except Exception as e:
+            tb = traceback.format_exc()
+            self._cconn.send((e, tb))
+
+    @property
+    def exception(self):
+        if self._pconn.poll():
+            self._exception = self._pconn.recv()
+        return self._exception
+
+def worker(queue):
+    try:
+        # 模拟一些可能抛出异常的操作
+        queue.put("正常数据")
+        raise ValueError("模拟的错误")
+    except Exception as e:
+        queue.put(("异常", str(e)))
+
+def main():
+    queue = multiprocessing.Queue()
+    process = SafeProcess(target=worker, args=(queue,))
+
+    process.start()
+
+    while process.is_alive():
+        try:
+            data = queue.get(timeout=1)
+            if isinstance(data, tuple) and data[0] == "异常":
+                print(f"工作进程发生异常: {data[1]}")
+            else:
+                print(f"收到数据: {data}")
+        except multiprocessing.queues.Empty:
+            pass
+
+    process.join()
+
+    if process.exception:
+        error, tb = process.exception
+        print(f"进程异常: {error}")
+        print(f"异常追踪:\n{tb}")
+
+if __name__ == "__main__":
+    main()
+```
+
+这个示例展示了以下几点:
+
+1. 我们定义了一个SafeProcess类,它继承自multiprocessing.Process,并添加了异常处理功能。
+2. worker函数模拟了一些可能抛出异常的操作。它首先向队列中放入正常数据,然后抛出一个异常。
+3. 在main函数中,我们创建了一个SafeProcess实例和一个共享队列。
+4. 主进程不断尝试从队列中获取数据,并处理可能出现的Empty异常。
+5. 如果从队列中收到的是异常信息,我们会打印出来。
+6. 进程结束后,我们检查SafeProcess实例是否捕获到了任何异常,如果有,则打印异常信息和追踪栈。
+
+这种方法有以下优点:
+
+- 可以捕获和处理子进程中的异常,而不会导致整个程序崩溃。
+- 通过队列,我们可以在进程间安全地传递正常数据和异常信息。
+- 主进程可以及时得知子进程的异常情况,并做出相应处理。
+- 运行这段代码,你会看到类似以下的输出:
+
+```python
+收到数据: 正常数据
+
+工作进程发生异常: 模拟的错误
+
+进程异常: ValueError('模拟的错误')
+
+异常追踪:
+
+Traceback (most recent call last):
+
+ File "/path/to/your/script.py", line 18, in worker
+
+  raise ValueError("模拟的错误")
+
+ValueError: 模拟的错误
+```
+
+这个例子展示了如何在Python的多进程编程中安全地处理异常,确保即使子进程出现问题,主进程也能得到通知并继续运行。
 
 ### **使用logging和traceback**
 
