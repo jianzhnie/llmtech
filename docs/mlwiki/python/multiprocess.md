@@ -57,7 +57,7 @@ I am child process (877) and my parent is 876.
 1. `spawn` 是启动一个全新的python解释器进程，这个进程不继承父进程的任何不必要的文件描述符或其它资源。
 
 2. `fork` 是使用`os.fork()`系统调用启动一个python解释器进程，因为是fork调用，这个启动的进程可以继承父进程中的资源。 `fork` 出的子进程虽然与父进程是不同的内存空间，但在linux下它是的copy-on-write方式实现的，因此即使创建了很多子进程，实际上看子进程并不会消耗多少内存。看起来 `fork`方式创建子进程很好，但实际上还是存在一些问题的。如果父进程是一个多线程程序，用 `fork`系统调用是很危险的，很容易造成死锁，详见[这里](https://pythonspeed.com/articles/python-multiprocessing/)。
-   
+
 3. 但fork系统调用又确实是启动子进程最高效的方法，于是官方又提供`forkserver`。当父进程需要启动子进程时，实际上是向一个`Fork Server`进程发指令，由它调用`os.fork()`产生子进程的。这个`Fork Server`进程是一个单线程进程，因此调用fork不会产生风险。`forkserver`的实现方式也挺有意思的，代码不长，源码在这里，[multiprocessing/forkserver.py](https://github.com/python/cpython/blob/master/Lib/multiprocessing/forkserver.py)。
 
 不同的操作系统下默认的子进程启动方式是不一样的， 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所以，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是 `pickle` 失败了。目前有两种启动子进程方式。
@@ -1016,7 +1016,7 @@ if __name__ == '__main__':
 
 #### concurrent.futures 简介
 
-concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures` 提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor` 是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
+concurrent.futures是Python标准库中的一个模块,它提供了一个高级接口用于异步执行可调用对象。这个模块主要用于并行编程,可以大大简化多线程和多进程编程的复杂性。`concurrent.futures` 提供了更简洁的接口，它抽象了底层的线程池或进程池，使得异步编程更加方便。`ProcessPoolExecutor` 和`ThreadPoolExecutor` 是两个主要的类，它们都支持`submit()`方法提交任务，然后你可以通过`as_completed()`或`result()` 等方法获取结果。与`multiprocessing.Pool`相比，`concurrent.futures`更加面向异步编程，更适合现代 Python 应用。
 
 主要组件:
 
@@ -1494,7 +1494,6 @@ if __name__ == "__main__":
 
 > 注这里操作共享内存时，操作的是很基础的`Value`和`Array`，这里面存放的是ctype类型的基础数据，因而没法存放python里的正常对象。如果一定要使用这个共享，可以考虑用`pickle`库将python里的正常对象序列化为byte数组，再放进`Value`。使用时再读出来，进行反序列化回来。当然要承担序列化开销及两个进程存放两一份数据的内存开销。
 
-
 #### Server process
 
 `Server process`有点类似于之前的`Fork Server`，调用`manager = multiprocessing.Manager()`方法会启动一个`Server process`进程，接着调用`manager.list()`或`manager.Queue()`，会在这个进程里创建实际的普通对象，并返回一个`Proxy`对象，这个`Proxy`对象里会维持着对`Server process`进程的连接（默认是Socket连接，也可以使用Pipe连接）。
@@ -1551,6 +1550,8 @@ if __name__ == "__main__":
 ```
 
 接着在各进程中对这些proxy对象的操作即会通过上述连接操作到实际的对象。至此终于知道虽然`multiprocessing.Queue()`与`manager.Queue()`都返回`Queue`对象，但其实两者的底层实现逻辑很不一样。`SyncManager`的实现代码在[这里](https://github.com/python/cpython/blob/master/Lib/multiprocessing/managers.py)，仔细看这里有一些实现逻辑很巧妙。
+
+下面通过例子来说明 Server process 的用法。
 
 
 ```python
@@ -1740,7 +1741,7 @@ if __name__ == '__main__':
 
 特点:
 
-- 有两种状态: set和clear。
+- 有两种状态: set 和 clear。
 
 - 进程可以等待事件被设置。
 - 一个进程可以设置事件来通知其他等待的进程。
@@ -1965,29 +1966,18 @@ if __name__ == "__main__":
 
 ```python
 主进程ID: 12345
-
 进程 12346 正在处理 0
-
 进程 12347 正在处理 1
-
 进程 12348 正在处理 2
-
 进程 12349 正在处理 3
-
 进程 12346 正在处理 4
-
 进程 12347 正在处理 5
-
 进程 12348 正在处理 6
-
 进程 12349 正在处理 7
-
 进程 12346 正在处理 8
-
 进程 12347 正在处理 9
 
 处理结果: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
-
 所有工作已完成,进程池已关闭
 ```
 
@@ -2066,7 +2056,7 @@ if __name__ == "__main__":
 6. 消费者进程不断从队列中获取任务并执行,直到遇到结束标志。
 7. 主进程等待所有子进程完成后才结束。
 
-这种方法有以下优点:=
+这种方法有以下优点:
 
 - 实现了任务的动态分配,消费者进程可以根据自己的处理速度从队列中获取任务。
 - 通过使用多个消费者进程,可以充分利用多核CPU的优势。
@@ -2074,7 +2064,7 @@ if __name__ == "__main__":
 
 运行这段代码,你会看到任务被生产者添加到队列中,然后被多个消费者并行处理。这种模式非常适合处理大量独立的任务,如数据处理、网络请求等。
 
-```python
+```shell
 消费者进程 Process-2 开始运行
 生产者进程 Process-1 开始运行
 生产者添加任务: 任务-0
