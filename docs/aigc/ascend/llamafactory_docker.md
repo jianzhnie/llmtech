@@ -1,5 +1,7 @@
 #### LLaMA-Factory-Cann8-Python3.10-Pytorch2.2.0
 
+镜像地址： http://mirrors.cn-central-221.ovaijisuan.com/mirrors.html
+
 版本信息
 
 Python版本：3.10.13
