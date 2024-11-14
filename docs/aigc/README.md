@@ -75,8 +75,8 @@
 
 ## 分布式训练
 
-- [ZeRO 技术原理](aigc/llm_engineer/zero-optimizer.md)
-
+- [ZeRO 技术原理](aigc/llm_recipes/zero-optimizer.md)
+- [大模型训练技巧](aigc/llm_recipes/recipes.md)
 
 ## 扩散模型
 
