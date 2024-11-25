@@ -111,7 +111,7 @@ $$
 
 其中 $ \hat{r}_{\theta}(x, y) = \beta \log \frac{\pi_{\theta}(y | x)}{\pi_{ref}(y | x)} $ 是由语言模型 $ \pi_{\theta} $ 和参考模型 $ \pi_{ref} $ 隐式定义的奖励（更多内容见第5节）。
 
-当 $ \hat{r}_{\theta}(x, y)  >  \hat{r}_{\theta}(x, y) $,  算式 $\sigma \left( \hat{r}_{\theta}(x, y_l) - \hat{r}_{\theta}(x, y_w) \right) $ 越接近1，反之接近0，若两者趋近则该权重接近0.5。
+当 $ \hat{r}_{\theta}(x, y)  >  \hat{r}_{\theta}(x, y) $,  算式 $\sigma \left( \hat{r}_{\theta}(x, y_l) - \hat{r}_{\theta}(x, y_w) \right) $ 越接近1，反之接近0，若两者趋近则该权重接近0.5。
 
 直观上，损失函数 $ L_{DPO} $ 的梯度增加了首选回答 $ y_w $ 的可能性，并减少了非首选回答 $ y_l $ 的可能性。
 
@@ -174,7 +174,7 @@ $$
 
 实验聚焦在两个面向:
 
-1. DPO如何有效的去权衡，最大化奖励和最小化$\pi_{\theta}$ 和$\pi_{ref}$ 的KL散度
+1. DPO如何有效的去权衡，最大化奖励和最小化$\pi_{\theta}$ 和$\pi_{ref}$ 的KL散度
 2. 评估DPO 在更大模型和更困难的RLHF 任务，包括总结和对话。
 
 我们发现在几乎不调整超参数的状况下，DPO的表现等同或超过基线(PPO-based RLHF)。
@@ -209,7 +209,7 @@ $$
 
 ![img](https://media.githubusercontent.com/media/p208p2002/blog/main/public/docs/dpo/exp3.png)
 
-- Preferred-FT: 使用来自通用语言模型偏好的 $y_w$ 进行自监督微调。
+- Preferred-FT: 使用来自通用语言模型偏好的 $y_w$ 进行自监督微调。
 - Best of N: 从Preferred-FT 模型中取样N 个反应，并根据从偏好资料集中学习到的奖励函数传回得分最高的反应。
 - Pythia-2.8B: 2-shot prompting。
 
