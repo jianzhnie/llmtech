@@ -24,3 +24,9 @@ Please help me analyze and improve the code, do following things:
 4. Improve code structure and readability
 5. Follow best practices and coding standards
 ```
+
+4. 将数值特征转为 Text feature
+
+```
+我希望将大模型接入游戏环境，下面是游戏环境中提取特征的函数类， 请你将特征转化为为文本特征，你需要创建一个特征转换器，将数值特征转换为人类可读的文本描述。
+```
