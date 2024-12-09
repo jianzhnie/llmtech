@@ -13,7 +13,7 @@
 
 ## 使权重更新更高效
 
-基于上述想法，论文  [Low-rank adaptation (LoRA) by Hu et al](https://arxiv.org/abs/2106.09685) 建议将权重变化 $ΔW$ 分解为低秩表示。（从技术上讲，LoRA并没有直接分解矩阵，而是通过反向传播学习分解矩阵--这是一个吹毛求疵的细节，这是一个细节问题，我们稍后会讲到）
+基于上述想法，论文  [Low-rank adaptation (LoRA) by Hu et al](https://arxiv.org/abs/2106.09685) 建议将权重变化 $ΔW$ 分解为低秩表示。（从技术上讲，LoRA并没有直接分解矩阵，而是通过反向传播学习分解矩阵--这是一个吹毛求疵的细节，这是一个细节问题，我们稍后会讲到）
 
 在深入了解 LoRA 之前，让我们先简单介绍一下常规模型微调的训练过程。那么，什么是权重变化$ΔW$？假设W代表某个神经网络层中的权重矩阵。那么，使用常规的反向传播，我们可以得到权重更新$ΔW$，它通常被计算为损失的负梯度乘以学习率：
 
@@ -38,7 +38,7 @@ $$
 
 低内在维度意味着数据可以通过低维空间有效地表示或近似，同时保留其大部分基本信息或结构。换句话说，这意味着我们可以将适应任务的新权重矩阵分解为低维（更小）的矩阵，而不会丢失太多重要信息。
 
-例如，假设$ΔW$ 是$A × B$权重矩阵的权重更新。然后，我们可以将权重更新矩阵分解为两个更小的矩阵：$ΔW = W_A W_B$，其中$$W_A$$是一个 A × r 维矩阵，$$W_B$$是一个r × B维矩阵。在这里，我们保持原始权重W不变，只训练新矩阵$$W_A$和$W_B$$。简而言之，这就是 LoRA 方法，如下图所示。
+例如，假设$ΔW$ 是$A × B$权重矩阵的权重更新。然后，我们可以将权重更新矩阵分解为两个更小的矩阵：$ΔW = W_A W_B$，其中$$W_A$$是一个 A × r 维矩阵，$$W_B$$是一个r × B维矩阵。在这里，我们保持原始权重W不变，只训练新矩阵 $W_A$ 和 $W_B$。简而言之，这就是 LoRA 方法，如下图所示。
 
 <img src="https://lightningaidev.wpengine.com/wp-content/uploads/2023/04/lora-4.png" alt="img" style="zoom:50%;" />
 
@@ -58,20 +58,20 @@ output_dim = 768  # 例如，层的输出尺寸
 rank = 8  # 低秩适应的秩'r'
 W = ... # 来自具有形状input_dim x output_dim的预训练网络
 
-$W_A$ = nn.Parameter(torch.empty(input_dim, rank)) # LoRA权重A
-$W_B$ = nn.Parameter(torch.empty(rank, output_dim)) # LoRA权重B
+W_A = nn.Parameter(torch.empty(input_dim, rank)) # LoRA权重A
+W_B = nn.Parameter(torch.empty(rank, output_dim)) # LoRA权重B
 
 # 初始化LoRA权重
-nn.init.kaiming_uniform_($W_A$, a=math.sqrt(5))
-nn.init.zeros_($W_B$)
+nn.init.kaiming_uniform_(W_A, a=math.sqrt(5))
+nn.init.zeros_(W_B)
 
 def regular_forward_matmul(x, W):
     h = x @ W
     return h
 
-def lora_forward_matmul(x, W, $W_A$, $W_B$):
+def lora_forward_matmul(x, W, W_A, W_B):
     h = x @ W  # 常规矩阵乘法
-    h += x @ ($W_A$ @ $W_B$)alpha # 使用缩放的LoRA权重
+    h += x @ (W_A @ W_B)alpha # 使用缩放的LoRA权重
     return h
 ```
 
@@ -85,7 +85,7 @@ def lora_forward_matmul(x, W, $W_A$, $W_B$):
 
 请注意，在实践中，如果我们在训练后保持原始权重W和矩阵$W_A$和$W_B$分开，如上所示，我们将在推理过程中产生小的效率损失，因为这引入了额外的计算步骤。相反，我们可以在训练后通过$W' = W + W_A$ $W_B$更新权重，这类似于前面提到的$W' = W + ΔW$。
 
-然而，将权重矩阵$W_A$和$W_B$分开可能具有实际优势。例如，假设我们希望将我们的预训练模型作为各种客户的基础模型，并且我们希望从基础模型开始为每个客户创建一个经过微调的 LLM。在这种情况下，我们不需要为每个客户存储完整的权重矩阵W'，存储模型的所有权重W' = W + $W_A$ $W_B$对于 LLM 来说可能非常大，因为 LLM 通常有数十亿到数万亿个权重参数。因此，我们可以保留原始模型W，只需要存储新的轻量级矩阵$W_A$和$W_B$。
+然而，将权重矩阵$W_A$和$W_B$分开可能具有实际优势。例如，假设我们希望将我们的预训练模型作为各种客户的基础模型，并且我们希望从基础模型开始为每个客户创建一个经过微调的 LLM。在这种情况下，我们不需要为每个客户存储完整的权重矩阵W'，存储模型的所有权重 $W' = W + W_A W_B$ 对于 LLM 来说可能非常大，因为 LLM 通常有数十亿到数万亿个权重参数。因此，我们可以保留原始模型W，只需要存储新的轻量级矩阵$W_A$和$W_B$。
 
 为了用具体数字说明这一点，一个完整的7B LLaMA checkpoint 需要23GB的存储容量，而如果我们选择r=8的秩，LoRA权重可以小到8MB。
 

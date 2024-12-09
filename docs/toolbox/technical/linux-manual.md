@@ -8,8 +8,6 @@
 ps -ef | grep python| grep -v grep | awk '{print $2}' | xargs kill -9
 ```
 
-
-
 ## 文件和目录操作
 
 ### Folder Size 查看目录的大小
