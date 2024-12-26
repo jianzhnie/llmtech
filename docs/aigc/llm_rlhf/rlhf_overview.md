@@ -19,6 +19,8 @@ RLHF 是强化学习（RL）的一个扩展分支，当决策问题的优化目�
 - 2022 年末，OpenAI 发布了技惊四座的ChatGPT，使用人类反馈强化学习（RLHF）来训练一个适合作为通用聊天机器人的语言模型（LM）。短短几个月内已经有超过一亿的用户尝试并领略到了这种强大对话系统的通用性和便利性。
 - 此后，RLHF 便广泛用于 OpenAI、DeepMind、Google和 Anthropic 的先进 LLM 的训练。
 
+推荐：RLHF Text book by [Nathan Lambert](https://substack.com/@natolambert):    https://github.com/natolambert/rlhf-book
+
 ## 大语言模型 RLHF
 
 RLHF 最突出的应用之一是使大语言模型能够与复杂的人类价值观对齐， 让大语言模型 (LLM) 变得更靠谱、更精准、更合乎伦理。
@@ -290,6 +292,38 @@ $$
 ## RLHF 开源资源
 
 ### 开源RLHF算法库
+
+#### ChatLearn
+
+Github: https://github.com/alibaba/ChatLearn
+
+ChatLearn 是阿里云 PAI 团队开发的大规模 Alignment 训练框架。ChatLearn 通过对模型计算逻辑的抽象，解耦了模型和计算 backend、分布式策略的绑定，提供灵活的资源调度机制，可以支持灵活的资源分配和并行调度策略。
+
+ChatLearn的特点如下:
+
+1. **易用的编程接口**: ChatLearn提供通用的编程抽象，用户只需要封装几个函数即可完成模型构造。用户只需要专注于单模型的编程，系统负责资源调度、数据流传输、控制流传输、分布式执行等。
+2. **高可扩展的训练方式**: ChatLearn 提供 RLHF、DPO、OnlineDPO、GRPO 等 Alignment 训练，同时也支持用户自定义 model 的执行 flow，使定制化训练流程变得非常便捷。
+3. **多种分布式加速引擎**: 用户可以使用不同的计算 backend 进行模型建模，如 Megatron-LM、DeepSpeed、vLLM 等。用户也可以组合使用不同的 backend，如用 Megatron-LM 来进行加速训练，用 vLLM 来加速推理。
+4. **灵活的并行策略和资源分配**: ChatLearn 支持不同模型配置不同的并行策略，可以结合各模型计算、显存、通信的特点来制定不同的并行策略。同时 ChatLearn 支持灵活的资源调度机制，支持各模型的资源独占或复用，通过系统调度策略支持高效的串行/并行执行和高效的显存共享。
+5. **高性能**: 相较于当前的 SOTA 系统，ChatLearn 在 7B+7B (Policy+Reward) 规模性能提升52%，70B+70B 规模性能提升 137%。同时，ChatLearn 支持更大规模的 Alignment 训练，例如：300B+300B。
+
+#### RLHFlow
+
+Tech Report: [**RLHF Workflow: From Reward Modeling to Online RLHF**](https://arxiv.org/abs/2405.07863)
+
+Code for Reward Modeling: https://github.com/RLHFlow/RLHF-Reward-Modeling
+
+Code for Online RLHF: https://github.com/RLHFlow/Online-RLHF
+
+Blog: https://rlhflow.github.io/
+
+RLHFlow 提供了完整的在线迭代RLHF全流程解决方案，包括有监督学习、奖励函数建模及基于DPO的迭代RLHF.
+
+RLHFlow的特点在于：
+
+1. **全流程开源**：RLHFlow不仅提供了完整的RLHF训练流程，包括有监督学习、奖励函数与偏好函数的建模，以及基于[DPO](https://qianfan.cloud.baidu.com/)的迭代RLHF，还将模型、代码、数据及超参数选择全部开源到GitHub与Hugging Face，供社区人员复现和进一步研究。
+2. **在线迭代优势**：与传统的离线DPO方法相比，RLHFlow采用的在线迭代RLHF算法在性能上通常要明显更优。它不完全依赖于外部专家模型的回复，而是通过当前模型自己生成的回复组成的偏好数据集进行学习，从而更加高效地提升模型性能。
+3. **先进性与可复现性**：基于LLaMA3-8B模型，RLHFlow实现了当前最先进的开源RLHF模型。同时，由于全流程的开源，社区人员可以轻松地复现这一结果，并在此基础上进行进一步的探索和优化。
 
 #### OpenRLHF
 
