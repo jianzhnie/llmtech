@@ -1,5 +1,30 @@
 # Some links
 
+## AI Reasoning
+
+### OpenR
+
+ OpenR，首个集过程奖励模型（PRM）训练、强化学习、多种搜索框架为一身的类 o1 开源框架，旨在增强大型语言模型（LLM）的复杂推理能力。
+
+
+
+
+
+代码链接：https://github.com/openreasoner/openr
+
+教程链接：https://openreasoner.github.io/
+
+论文链接：https://github.com/openreasoner/openr/blob/main/reports/OpenR-Wang.pdf
+
+### O1-Journey
+
+上海交通大学 GAIR 研究组发布首个OpenAI o1复现项目进展报告
+
+Github链接：https://github.com/GAIR-NLP/O1-Journey
+
+o1 讨论资源：https://github.com/GAIR-NLP/O1-Journey/tree/main/resource
+
+技术报告：https://github.com/GAIR-NLP/O1-Journey/blob/main/resource/report.pdf
 
 ## Company Or Institution
 
@@ -65,15 +90,3 @@
 | [COS 484：自然语言处理](https://princeton-nlp.github.io/cos484/) | 普林斯顿大学(陈丹琪) | NLP 的基础知识，涵盖处理自然语言的标准框架以及解决各种 NLP 问题的算法和技术 <br />涵盖的主题包括语言建模、表示学习、文本分类、序列标记、句法解析、机器翻译、问答等。 | 🤗🤗🤗      |
 | [COS 597G: Understanding Large Language Models](https://www.cs.princeton.edu/courses/archive/fall22/cos597G/) |     普林斯顿大学     | - 大语言模型基础 <br />- 深入回顾 BERT、T5 和 GPT 3  <br /> - Promoting language models 提示语言模型模型  <br /> - 大型语言模型中的缩放和风险  <br />- 多模态语言模型 | 🤗🤗🤗      |
 | [Large language models](https://rycolab.io/classes/llm-s23/) |  苏黎世联邦理工学院  | - 神经网络建模和推理 <br /> - 训练、微调和推理  <br />-  并行性和扩展  <br />- 安全和滥用 | 🤗🤗🤗      |
-
-
-## My projects
-
-Below is an incomplete list of git repository and projects I have worked on.
-
-- [Machine-Learning-Wiki](https://jianzhnie.github.io/machine-learning-wiki/): A collection of machine-learning notes.
-- [deep-rl-toolkit](https://github.com/jianzhnie/deep-rl-toolkit): Inclue most of deep reinforcement learning algorithms and examples to show how to use.
-- [deep-marl-toolkit](https://github.com/jianzhnie/deep-marl-toolkit) : Inclue most of multi-agent deep reinforcement learning algorithms and examples to show how to use.
-- [AutoTimm](https://github.com/jianzhnie/AutoTimm): An auto image-classification toolbox based timm.
-- [AutoTabular](https://github.com/jianzhnie/AutoTabular): An automl  toolbox for tabular data.
-- [nlptoolkit](https://github.com/jianzhnie/nlp-toolkit): A natural language processing toolbox.
