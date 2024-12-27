@@ -36,6 +36,12 @@
 - [直接偏好优化(DPO)](aigc/llm_rlhf/rlhf_dpo.md)
 - [直接偏好优化(DPO)推导](aigc/llm_rlhf/rlhf_dpo_notes.md)
 - [Kahneman-Tversky-Optimization(KTO)](aigc/llm_rlhf/rlhf_kto.md)
+- [RLHF训练框架 OpenRLHF](aigc/llm_rlhf/OpenRLHF.md)
+- [RLHF训练框架 NeMo-Aligner](aigc/llm_rlhf/NeMo-Aligner.md)
+- [RLHF训练框架 HybridFlow](aigc/llm_rlhf/hybridflow.md)
+- [RLHF训练框架 DeepSpeedChat](aigc/llm_rlhf/DeepSpeedChat.md)
+- [ChatGPT O1 Reasoning](aigc/llm_rlhf/chatgpt_O1.md)
+- [O1 Reasoning OpenR](aigc/llm_rlhf/OpenR.md)
 
 ## LLM Agent
 
@@ -79,7 +85,9 @@
 
 ## 分布式训练
 
-- [ZeRO 技术原理](aigc/llm_recipes/zero-optimizer.md)
+- [ZeRO 技术原理上](aigc/llm_recipes/zero-optimizer.md)
+- [ZeRO 技术原理下](aigc/llm_recipes/zero-optimizer.md)
+- [Pytorch FSDP介绍](aigc/llm_recipes/zero-optimizer.md)
 - [大模型训练技巧](aigc/llm_recipes/recipes.md)
 
 ## 扩散模型
