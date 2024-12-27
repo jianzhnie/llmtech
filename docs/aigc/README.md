@@ -44,6 +44,10 @@
 - [AutoGPT与LLM Agent解析](aigc/llm_agent/llm_agent2.md)
 - [Agent应用:MarkAgent](aigc/llm_agent/market_agent.md)
 - [Agent应用:SightPro](aigc/llm_agent/sightpro.md)
+- [LLM Playing StarCraftII 1](aigc/llm_agent/llm_starcraft_1.md)
+- [LLM Playing StarCraftII 2](aigc/llm_agent/llm_starcraft_2.md)
+- [LLM Playing StarCraftII 3](aigc/llm_agent/llm_starcraft_3.md)
+
 
 ## LLM Evaluation
 
