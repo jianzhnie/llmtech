@@ -31,7 +31,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 让我们回忆在 Reinforce 中优化的目标：
 
-![加强](https://huggingface.co/blog/assets/93_deep_rl_ppo/lpg.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/lpg.jpg" style="zoom:25%;" />
 
 想法是，通过对该函数采取梯度上升步骤（相当于对该函数的负值进行梯度下降），将 **推动Agent采取导致更高奖励的动作并避免有害动作。**
 
@@ -44,17 +44,17 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 这个新函数设计的目的 **旨在避免破坏性的大的权重更新** ：
 
-![PPO Agent函数](https://huggingface.co/blog/assets/93_deep_rl_ppo/ppo-surrogate.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/ppo-surrogate.jpg" alt="PPO Agent函数" style="zoom:25%;" />
 
 让我们研究每个部分以了解其工作原理。
 
 ### 比率函数
 
-![比率](https://huggingface.co/blog/assets/93_deep_rl_ppo/ratio1.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/ratio1.jpg" alt="比率" style="zoom:25%;" />
 
 这个比率是这样计算的：
 
-![比率](https://huggingface.co/blog/assets/93_deep_rl_ppo/ratio2.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/ratio2.jpg" alt="比率" style="zoom:25%;" />
 
 这是当前的策略在 $s_t$ 下采取动作$a_t$的概率除以以前的策略的概率。
 
@@ -67,11 +67,11 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ### Clipped Surrogate Objective 函数的未裁剪部分
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped1.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped1.jpg" alt="PPO" style="zoom:25%;" />
 
 这个比率**可以代替我们在策略目标函数中使用的对数概率**。这为我们提供了新目标函数的左侧部分：将比率乘以优势。
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped2.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/unclipped2.jpg" alt="PPO" style="zoom:25%;" />
 
 > 近端策略优化算法
 
@@ -79,7 +79,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ### Clipped Surrogate Objective 函数的 Clipped Part
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/clipped.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/clipped.jpg" alt="PPO" style="zoom:25%;" />
 
 因此，我们需要通过惩罚导致比率偏离 1 的变化来约束此目标函数（在本文中，比率只能在 0.8 到 1.2 之间变化）。
 
@@ -90,7 +90,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 - *TRPO（Trust Region Policy Optimization）* 在目标函数之外使用KL散度约束来约束策略更新。但是这种方法 **实现起来比较复杂并且需要更多的计算时间。**
 - *PPO* clip probability ratio直接在目标函数中用它的 **Clipped surrogate objective function。**
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/clipped.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/clipped.jpg" alt="PPO" style="zoom:25%;" />
 
 这个裁剪部分是PPO 的一个实现版本，其中 rt(theta) 被裁剪在 $[1 - \epsilon, 1 + \epsilon]$.
 
@@ -104,7 +104,9 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 不用担心。**如果现在处理起来似乎很复杂，这是正常的**。但我们将看到这个 Clipped Surrogate Objective Function 是什么样子的，这将帮助您更好地想象正在发生的事情。
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg)[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg" alt="PPO" style="zoom: 33%;" />
+
+[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
 
 我们有六种不同的情况。首先请记住，我们采用的是经过裁剪和未裁剪的目标之间的最小值。
 
@@ -122,7 +124,9 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ### 情况 3 和 4：比率低于范围
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg)[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg" alt="PPO" style="zoom: 33%;" />
+
+[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
 
 如果概率比低于 $1 - \epsilon $，在该状态下采取该动作的可能性远低于旧策略。
 
@@ -132,7 +136,9 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 ### 情况 5 和 6：比率超出范围
 
-![PPO](https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg)[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/recap.jpg" alt="PPO" style="zoom:33%;" />
+
+[来自 Daniel Bick 的“Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization”的表格](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)
 
 如果概率比高于 $[1 + \epsilon] $，在当前策略中在该状态下采取该操作的概率**远高于前一个策略。**
 
@@ -157,7 +163,7 @@ RL 的修改版本——近端策略优化 (PPO)，由 Jonathan Hui 解释：htt
 
 PPO Actor-Critic 风格的最终 Clipped Surrogate Objective Loss 看起来像这样，它是 Clipped Surrogate Objective 函数、Value Loss Function 和 Entropy bonus 的组合：
 
-![PPO物镜](https://huggingface.co/blog/assets/93_deep_rl_ppo/ppo-objective.jpg)
+<img src="https://huggingface.co/blog/assets/93_deep_rl_ppo/ppo-objective.jpg" alt="PPO物镜" style="zoom: 25%;" />
 
 那是相当复杂的。花点时间通过查看表格和图表来了解这些情况。**你必须明白为什么这是有道理的。**如果您想深入了解，最好的资源是[Daniel Bick 撰写的文章 Towards Delivering a Coherent Self-Contained Explanation of Proximal Policy Optimization，尤其是第 3.4 部分](https://fse.studenttheses.ub.rug.nl/25709/1/mAI_2021_BickD.pdf)。
 
