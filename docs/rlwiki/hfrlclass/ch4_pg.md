@@ -4,13 +4,13 @@
 
 事实上，截止目前，我们只研究了基于价值的方法， **我们将价值函数估计作为寻找最优策略的中间步骤。**
 
-![链接价值Policy](https://huggingface.co/blog/assets/70_deep_rl_q_part1/link-value-policy.jpg)
+<img src="https://huggingface.co/blog/assets/70_deep_rl_q_part1/link-value-policy.jpg" alt="链接价值Policy" style="zoom: 25%;" />
 
 因为，在基于价值的方法中，策略 **$π$ 仅因为动作价值估计而存在，因为策略只是一个函数** （例如，贪婪策略），它会选择给定状态下具有最高价值的动作。
 
 但是，在基于策略的方法中，我们希望直接优化策略**而无需学习价值函数的中间步骤。**我们将学习基于策略的方法，并研究这些方法的一个子集，称为策略梯度**。然后我们将使用 PyTorch 从头开始实施我们的第一个策略梯度算法，称为 Monte Carlo **Reinforce 。然后，我们将使用 CartPole-v1 和 PixelCopter 环境测试其稳健性。然后，您将能够针对更高级的环境迭代和改进此实现。
 
-![环境](https://huggingface.co/blog/assets/85_policy_gradient/envs.gif)
+<img src="https://huggingface.co/blog/assets/85_policy_gradient/envs.gif" alt="环境" style="zoom:33%;" />
 
 ## 基于策略的方法有哪些？
 
@@ -30,12 +30,12 @@
 
   - 这个想法是**参数化策略**。例如，使用神经网络$π_θ$，该策略将输出动作的概率分布（随机策略）。
 
-  <img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/stochastic_policy.png" alt="随机策略" style="zoom:33%;" />
+  <img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/stochastic_policy.png" alt="随机策略" style="zoom: 25%;" />
 
   - 我们的目标是**使用梯度上升最大化参数化策略**。
   - 为此，我们控制参数 $θ$，这将影响在一个 State 下动作的分配。
 
-![基于策略](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_based.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_based.png" alt="基于策略" style="zoom:25%;" />
 
 - 最后，我们将研究*actor-critic*，它是基于价值和基于策略的方法的结合。
 
@@ -68,7 +68,7 @@
 
 1. 我们**不需要手动实现探索/开发平衡**。由于我们输出动作的概率分布，因此智能体通过采样探索**状态空间而不总是采用相同的轨迹。**
 
-2. 我们摆脱了**感知混叠**的问题。感知混叠是指两个状态看起来（或确实）相同但需要采取不同的动作。
+2. 我们摆脱了**感知混叠** 的问题。感知混叠是指两个状态看起来（或确实）相同但需要采取不同的动作。
 
 #### 3. 策略梯度算法**在高维动作空间和连续动作空间更有效**.
 
@@ -102,15 +102,15 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 强化学习旨在 **找到最佳行为策略（策略）以最大化其期望累积奖励。**
 
-策略是**给定状态、输出、动作分布**的函数（在我们的例子中使用随机策略）。
+策略是**给定状态、输出、动作分布** 的函数（在我们的例子中使用随机策略）。
 
-![随机策略](https://huggingface.co/blog/assets/63_deep_rl_intro/pbm_2.jpg)
+<img src="https://huggingface.co/blog/assets/63_deep_rl_intro/pbm_2.jpg" alt="随机策略" style="zoom: 25%;" />
 
 我们以 CartPole-v1 为例：
 
 - 输入一个状态$S_t$, 输出该状态下动作的概率分布。
 
-![基于策略](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_based.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_based.png" alt="基于策略" style="zoom:25%;" />
 
 我们使用策略梯度的目标是通过调整策略来**控制动作的概率分布，以便在未来更频繁地对好的动作（最大化回报）进行采样。** 每次智能体与环境交互时，我们都会调整参数，以便将来更有可能对好的动作进行采样。
 
@@ -120,7 +120,7 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 策略梯度算法（简化）如下所示：
 
-![策略梯度大图](https://huggingface.co/blog/assets/85_policy_gradient/pg_bigpicture.jpg)
+<img src="https://huggingface.co/blog/assets/85_policy_gradient/pg_bigpicture.jpg" alt="策略梯度大图" style="zoom:25%;" />
 
 现在我们了解了全局，让我们更深入地研究策略梯度方法。
 
@@ -128,7 +128,7 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 我们的策略函数$π$, 参数为 θ。给定一个状态，这个 $π$ **输出该状态下采取动作的概率分布**。
 
-![Policy](https://huggingface.co/blog/assets/85_policy_gradient/policy.jpg)
+<img src="https://huggingface.co/blog/assets/85_policy_gradient/policy.jpg" alt="Policy" style="zoom:25%;" />
 
 其中，$\pi_\theta(a_t|s_t)$ 是根据我们的策略，智能体从状态 $s_t$ 选择动作的概率。
 
@@ -138,23 +138,22 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 目标函数为我们提供了给定轨迹**的智能体的性能**（不考虑奖励的状态动作序列（与情节相反）），并输出期望的累积奖励。
 
-![返回](https://huggingface.co/blog/assets/85_policy_gradient/objective.jpg)
+<img src="https://huggingface.co/blog/assets/85_policy_gradient/objective.jpg" alt="返回" style="zoom:25%;" />
 
 让我们详细地说明这个公式：
 
 - *期望回报*（也称为期望累积奖励）是所有$R( τ )$ 可以采取的可能值的加权平均（其中权重由 $P(τ ;θ)$ 给出）。
 
-
-![返回](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/expected_reward.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/expected_reward.png" alt="返回" style="zoom:25%;" />
 
 - $R(τ)$：任意轨迹的回报。要获取这个值并用它来计算期望回报，我们需要将它乘以每个可能轨迹的概率。
 - $P(τ ;θ)$ ：每个可能轨迹τ的概率（这个概率取决于*θ*因为它定义了它用来选择轨迹动作的策略，作为访问状态的影响）。
 
-![可能性](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png" alt="可能性" style="zoom:25%;" />
 
 - $J(θ)$：期望回报，我们通过对所有轨迹求和来计算，在给定*θ*情况下采用给定的轨迹的概率，以及这条轨迹的回报。
 
-![最大物镜](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/max_objective.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/max_objective.png" alt="最大物镜" style="zoom:25%;" />
 
 ### 梯度上升和策略梯度定理
 
@@ -162,8 +161,9 @@ Policy-Gradient 是 Policy-Based Methods 的一个子类，**旨在直接优化�
 
 我们对梯度上升的更新步骤是：
 
-$θ←θ+α*∇_θ*J(θ)$
-
+$$
+θ←θ+α*∇_θ*J(θ)
+$$
 我们可以重复应用这个更新公式，希望 *θ* 收敛到最大化$J(θ)$的值.
 
 然而，要获得$J(θ)$的导数， 有两个主要问题:
@@ -171,11 +171,11 @@ $θ←θ+α*∇_θ*J(θ)$
 1. 我们无法计算目标函数的真实梯度，因为这意味着计算每个可能轨迹的概率，这在计算上非常昂贵。我们想**用基于样本的估计（收集一些轨迹）来计算梯度估计**。
 2. 我们还有另一个问题，我将在下一个可选部分中详细说明。为了区分这个目标函数，我们需要区分状态分布，称为马尔可夫决策过程动力学。这是依附于环境的。在给定当前状态和智能体采取的操作的情况下，它为我们提供了环境进入下一个状态的概率。问题是我们无法区分它，因为我们可能不知道它。
 
-![Probability](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/probability.png" alt="Probability" style="zoom:25%;" />
 
 幸运的是，我们将使用称为策略梯度定理的解决方案，它将帮助我们将目标函数重新表述为一个不涉及状态分布微分的可微分函数。
 
-![策略梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_theorem.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_theorem.png" alt="策略梯度" style="zoom:25%;" />
 
 ### Reinforce 算法（Monte Carlo Reinforce）
 
@@ -189,7 +189,7 @@ Reinforce 算法的工作原理如下：
 
 - 使用 episode 的数据来估计梯度 $\hat{g} = \nabla_\theta J(\theta)$
 
-  ![策略梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_one.png)
+  <img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_one.png" alt="策略梯度" style="zoom:25%;" />
 
 - 更新策略的权重：$\theta \leftarrow \theta + \alpha \hat{g}$
 
@@ -202,7 +202,7 @@ Reinforce 算法的工作原理如下：
 
 我们还可以**收集多个片段（轨迹）**来估计梯度：
 
-![策略梯度](https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_multiple.png)
+<img src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/unit6/policy_gradient_multiple.png" alt="策略梯度" style="zoom:25%;" />
 
 举一个简单的例子：
 

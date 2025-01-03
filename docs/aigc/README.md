@@ -88,6 +88,7 @@
 - [ZeRO 技术原理上](aigc/llm_recipes/zero-optimizer.md)
 - [ZeRO 技术原理下](aigc/llm_recipes/zero-optimizer.md)
 - [Pytorch FSDP介绍](aigc/llm_recipes/zero-optimizer.md)
+- [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
 - [大模型训练技巧](aigc/llm_recipes/recipes.md)
 
 ## 扩散模型

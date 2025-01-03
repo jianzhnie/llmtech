@@ -17,7 +17,7 @@
 
 在 Reinforce 中，我们希望**增加轨迹中动作的概率与回报的高低成正比**。
 
-![加强](https://huggingface.co/blog/assets/85_policy_gradient/pg.jpg)
+<img src="https://huggingface.co/blog/assets/85_policy_gradient/pg.jpg" alt="加强" style="zoom:25%;" />
 
 - 如果**回报高**，**将推高**（状态，动作）组合的概率。
 - 否则，如果**回报很低**，则**降低**（状态，动作）组合的概率。
@@ -28,7 +28,7 @@
 
 但是由于环境的随机性和策略的随机性，不同**轨迹可能导致不同的回报**， 因此带来的方差很高。因此，相同的起始状态可能导致截然不同的回报。正因为如此，**从同一状态开始的回报在不同的Eposide中可能会有很大差异**。
 
-![方差](https://huggingface.co/blog/assets/89_deep_rl_a2c/variance.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/variance.jpg" alt="方差" style="zoom:25%;" />
 
 **解决方案是通过使用大量轨迹**来减轻方差 ，希望在任何一个轨迹中引入的方差都将总体减少，并提供一个“真实”的回报估计。
 
@@ -41,7 +41,7 @@
 
 ------
 
-## Advantage Actor Critic (A2C)
+## Actor Critic (AC)
 
 ### 使用 Actor-Critic 方法减少方差
 
@@ -49,7 +49,7 @@
 
 要了解 Actor-Critic，请想象您玩电子游戏。你可以和一个朋友一起玩，他会给你一些反馈。你是Actor，你的朋友是Critic。
 
-![ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/ac.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/ac.jpg" alt="ActorCritic" style="zoom: 33%;" />
 
 一开始你不知道怎么玩，**所以你随机尝试一些动作**。Critic 观察您的行为并**提供反馈**。
 
@@ -59,7 +59,7 @@
 
 这就是 Actor-Critic 背后的想法。我们学习了两个函数逼近：
 
-- **控制我们的智能体人行为方式**的*策略函数*：$\pi_{\theta}(s,a)$
+- **控制我们的智能体行为方式**的*策略函数*：$\pi_{\theta}(s,a)$
 - 通过衡量所采取的动作好坏的来协助策略更新的*价值函数：*$\hat{q}_{w}(s,a)$
 
 ### Actor-Critic过程
@@ -76,32 +76,32 @@
 - 在每个时间步 t，我们得到当前的来自环境状态 $S_t$ ，并将**其作为输入传递给我们的 Actor 和 Critic**。
 - 我们的策略获取状态 $S_t$ 并**输出一个动作**  $A_t$.
 
-![Step 1 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step1.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/step1.jpg" alt="Step 1 ActorCritic" style="zoom:25%;" />
 
 - Critic 也将该动作作为输入，并使用$S_t$  和 $A_t$，**计算在该状态下采取该动作的值：Q 值**。
 
-![Step 2 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step2.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/step2.jpg" alt="Step 2 ActorCritic" style="zoom:25%;" />
 
 - 环境执行动作 $A_t$ 并输出一个新的状态 $S_{t+1}$ 和奖励 $R_{t+1}$.
 
-![步骤 3 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step3.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/step3.jpg" alt="步骤 3 ActorCritic" style="zoom:25%;" />
 
 - Actor 使用 Q 值更新其策略参数。
 
-![步骤 4 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step4.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/step4.jpg" alt="步骤 4 ActorCritic" style="zoom:25%;" />
 
 - 更新完参数的 Actor，在给定新状态 $S_{t+1}$下产生了下一步要采取的动作 $A_{t+1}$ 。
 - 然后 Critic 更新它的价值函数的参数。
 
-![步骤 5 ActorCritic](https://huggingface.co/blog/assets/89_deep_rl_a2c/step5.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/step5.jpg" alt="步骤 5 ActorCritic" style="zoom:25%;" />
 
-### 优势 ActorCritic (A2C)
+## Advantage ActorCritic (A2C)
 
-我们可以通过**使用 Advantage function 作为 Critic 而不是 Action value function 来**进一步稳定学习。
+我们可以通过**使用 Advantage function 作为 Critic 而不是 Action value function 来** 进一步稳定学习。
 
 这个想法是 Advantage 函数计算**在一个状态下采取该动作与该状态的平均值的相对优势**。它通过从状态动作对中减去状态的平均值：
 
-![优势功能](https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage1.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage1.jpg" alt="优势功能" style="zoom:25%;" />
 
 换句话说，这个函数计算**的是如果我们在那个状态下采取这个动作，我们得到的额外奖励与我们在那个状态下得到的平均奖励相比**的优势。
 
@@ -110,9 +110,9 @@
 - 如果 A(s,a) > 0：我们的梯度被**推向那个方向**。
 - 如果 A(s,a) < 0（我们的动作价值比那个状态的平均值要差），**我们的梯度被推向相反的方向**。
 
-实现这个优势函数的问题在于它需要两个价值函数—$Q(s,a)$ 和 $V(s)$. 幸运的是， **我们可以使用 TD 误差作为优势函数的良好估计量。**
+实现这个优势函数的问题在于它需要两个价值函数 $Q(s,a)$ 和 $V(s)$. 幸运的是， **我们可以使用 TD 误差作为优势函数的良好估计量。**
 
-![优势功能](https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage2.jpg)
+<img src="https://huggingface.co/blog/assets/89_deep_rl_a2c/advantage2.jpg" alt="优势功能" style="zoom:25%;" />
 
 既然您已经研究了Advantage Actor Critic（A2C）背后的理论，接下来我们将使用Pytorch 从头实现这一算法。
 
