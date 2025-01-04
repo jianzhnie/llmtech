@@ -9,11 +9,11 @@
     <meta name="google-site-verification" content="6t0LoIeFksrjF4c9sqUEsVXiQNxLp2hgoqo0KryT-sE" />
     <meta name="description" content="通用人工智能技术文档,主要收集人工智能相关的算法，论文，技术，笔记等">
     <meta name="keywords" content="人工智能 大语言模型 科技生活 技术文档" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=5.0">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" title="vue" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/light.css" />
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/light.css" /> -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css" />
     <link rel="stylesheet" href="_media/amzn_style.css" />
@@ -24,8 +24,6 @@
             overflow-x: auto;
             overflow-y: hidden;
         }
-    </style>
-    <style>
         nav.app-nav li ul {
             min-width: 100px;
         }
@@ -34,8 +32,6 @@
             box-shadow: none !important;
             width: auto !important;
         }
-    </style>
-    <style>
         figure {
             text-align: center
         }
@@ -122,11 +118,11 @@
                 tabComments: true,
                 tabHeadings: true
             },
-            toc: {
-                tocMaxLevel: 5,
-                target: 'h1, h2, h3, h4, h5, h6',
-                ignoreHeaders: ['<!-- {docsify-ignore} -->', '<!-- {docsify-ignore-all} -->']
-            },
+            // toc: {
+            //     tocMaxLevel: 5,
+            //     target: 'h1, h2, h3, h4, h5, h6',
+            //     ignoreHeaders: ['<!-- {docsify-ignore} -->', '<!-- {docsify-ignore-all} -->']
+            // },
             autoHeaders: {
                 separator: String,          // how numbers should be separated
                 custom: String,          // if `separator` is set to other then specify own here
@@ -344,7 +340,7 @@
     <!-- Markdown 引用样式美化 -->
     <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
     <!-- 文档里的header（也就是目录，Table of Content ）显示在右侧边栏 -->
-    <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script> -->
     <!-- 代码高亮:引入其他语言扩展 -->
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-cpp.min.js"></script>
@@ -389,6 +385,9 @@
             id: location.hash.match(/#(.*?)([?]|$)/)[1],
             // facebook-like distraction free mode
             distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container').catch(err => {
+        console.error('Gitalk error:', err);
         });
         // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
         window.onhashchange = function (event) {
