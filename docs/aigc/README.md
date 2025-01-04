@@ -42,6 +42,7 @@
 - [RLHF训练框架 DeepSpeedChat](aigc/llm_rlhf/DeepSpeedChat.md)
 - [ChatGPT O1 Reasoning](aigc/llm_rlhf/chatgpt_O1.md)
 - [O1 Reasoning OpenR](aigc/llm_rlhf/OpenR.md)
+- [过程奖励模型（Process Reward Model）](aigc/llm_rlhf/prm.md)
 
 ## LLM Agent
 
@@ -85,11 +86,13 @@
 
 ## 分布式训练
 
-- [ZeRO 技术原理上](aigc/llm_recipes/zero-optimizer.md)
-- [ZeRO 技术原理下](aigc/llm_recipes/zero-optimizer.md)
-- [Pytorch FSDP介绍](aigc/llm_recipes/zero-optimizer.md)
-- [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
+- [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
 - [大模型训练技巧](aigc/llm_recipes/recipes.md)
+- [ZeRO 技术原理上](aigc/llm_recipes/zero-optimizer.md)
+- [ZeRO 技术原理下](aigc/llm_recipes/deepspeed_zero.md)
+- [Pytorch FSDP介绍](aigc/llm_recipes/fsdp.md)
+- [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
+
 
 ## 扩散模型
 
