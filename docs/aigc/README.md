@@ -88,6 +88,7 @@
 
 - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
 - [大模型训练技巧](aigc/llm_recipes/recipes.md)
+- [Pytorch 分布式使用教程](aigc/llm_recipes/pytorch_distributed.md)
 - [ZeRO 技术原理上](aigc/llm_recipes/zero-optimizer.md)
 - [ZeRO 技术原理下](aigc/llm_recipes/deepspeed_zero.md)
 - [Pytorch FSDP介绍](aigc/llm_recipes/fsdp.md)
