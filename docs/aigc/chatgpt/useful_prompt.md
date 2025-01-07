@@ -1,20 +1,151 @@
 
 
-## Code checking
+#  常用的 Prompt
 
-1. 代码纠错
+## 代码纠错
+
+```markdown
+请检查以下代码是否存在错误，并指出错误的具体位置、原因以及修复方法。代码是用[编程语言]编写的，涉及[相关技术或框架]。如果代码逻辑有问题或存在潜在的性能问题，也请一并指出并提供优化建议。
+
+**要求：**
+
+1. 逐行或逐段检查代码，指出语法错误、逻辑错误或运行时错误。
+2. 解释每个错误的原因，并提供具体的修复方法。
+3. 如果代码存在潜在的性能问题或可优化之处，请说明并提出改进建议。
+4. 如果代码涉及特定技术或框架，请确保修复方法符合其最佳实践。
+
+**示例输出格式：**
+
+1. **错误1**：
+   - **位置**：第X行。
+   - **错误描述**：具体错误现象（如语法错误、逻辑错误等）。
+   - **原因分析**：解释错误的原因。
+   - **修复方法**：提供具体的修复代码或建议。
+2. **错误2**：
+   - **位置**：第Y行。
+   - **错误描述**：具体错误现象。
+   - **原因分析**：解释错误的原因。
+   - **修复方法**：提供具体的修复代码或建议。
+3. **优化建议**：
+   - 指出代码中可能存在的性能问题或可改进之处，并提供优化方案。
+```
+
+
+
+## 代码规范
+
+````python
+Please help me review, debug, and improve the following code. The code is written in [programming language] and involves [related technologies or frameworks, if any]. Your task includes:
+
+1. **Error Checking and Correction**:
+   - Identify and fix any syntax errors, logical errors, or runtime errors in the code.
+   - Explain the cause of each error and provide the corrected version.
+2. **Code Refactoring**:
+   - Rewrite the code to improve its structure, readability, and maintainability.
+   - Use meaningful variable and function names that reflect their purpose.
+   - Group related functions or logic into classes, modules, or sections as appropriate.
+   - Simplify complex logic or break it into smaller, reusable functions.
+   - Follow best practices for [programming language] and ensure the code adheres to PEP 8 (if Python) or relevant style guidelines.
+3. **Documentation**:
+   - Add clear and concise documentation (e.g., docstrings) to describe the purpose of functions, classes, and modules.
+   - Include details about parameters, return values, and any exceptions raised.
+4. **Comments**:
+   - Include inline comments to explain complex logic or important steps in the code.
+   - Ensure comments are meaningful and not redundant.
+5. **Type Annotations**:
+   - Add type hints (e.g., using `Typing` in Python) to make the code more robust and easier to understand, enable static type checking.
+   - Ensure type annotations are consistent and accurate.
+6. **Optimization Suggestions**:
+   - Identify any potential performance issues or inefficiencies and suggest improvements.
+   - Recommend ways to make the code more Pythonic (if applicable) or idiomatic for the language.
+7. **Final Output**:
+   - Provide the corrected, refactored, and fully documented code with all the above enhancements.
+   - Include a summary of changes made and explanations for key improvements.
+
+
+
+**Example Output Format:**
+
+1. **Error Fixes**:
+
+   - **Error 1**: [Description of the error, location, and fix].
+   - **Error 2**: [Description of the error, location, and fix].
+
+2. **Refactored Code**:
+
+   - Provide the improved code with clear structure, documentation, and type hints.
+
+3. **Documentation**:
+
+   - Include docstrings for functions, classes, and modules.
+
+4. **Comments**：
+
+   ​	- Add inline comments where necessary.
+
+5. **Type Annotations**:
+
+   - Show the code with added type hints.
+
+6. **Optimization Summary**:
+
+   - List key improvements and optimizations made.
+
+**Code:**
 
 ```python
-Please help me check the code, correct the code errors, and then rewrite the code, add documentation, comments and Typing type checks to make the code more beautiful and easy to understand, thank you very much.
+def calculate_average(numbers):
+    total = 0
+    for num in numbers:
+        total += num
+    average = total / len(numbers)
+    return average
 ```
 
-2. 代码规范
+**Example Output:**
 
-```
-Please help me rewrite and  improve the code with better organization, add proper documentation, comments, type hints, and make some enhancements for clarity and readability.
-```
+1. **Error Fixes**:
 
-3. 代码提升
+   - **Error 1**: Division by zero if `numbers` is empty.
+     - **Fix**: Added a check for empty input.
+
+2. **Refactored Code**:
+
+   ```python
+   from typing import List
+
+   def calculate_average(numbers: List[float]) -> float:
+       """
+       Calculate the average of a list of numbers.
+
+       Args:
+           numbers (List[float]): A list of numeric values.
+
+       Returns:
+           float: The average of the numbers. Raises ValueError if the list is empty.
+       """
+       if not numbers:
+           raise ValueError("The input list cannot be empty.")
+       return sum(numbers) / len(numbers)
+   ```
+
+3. **Documentation and Comments**:
+
+   - Added a docstring to describe the function's purpose, arguments, and return value.
+
+4. **Type Annotations**:
+
+   - Added type hints using `List[float]` and `float`.
+
+5. **Optimization Summary**:
+
+   - Simplified the loop using `sum()`.
+   - Added a check for empty input to prevent division by zero.
+   - Improved readability and maintainability.
+
+````
+
+## 代码提升
 
 ```python
 Please help me analyze and improve the code, do following things:
@@ -25,8 +156,29 @@ Please help me analyze and improve the code, do following things:
 5. Follow best practices and coding standards
 ```
 
-4. 将数值特征转为 Text feature
+## 代码解释：
 
-```
-我希望将大模型接入游戏环境，下面是游戏环境中提取特征的函数类， 请你将特征转化为为文本特征，你需要创建一个特征转换器，将数值特征转换为人类可读的文本描述。
+```markdown
+请详细解释以下代码的功能、逻辑和关键部分及潜在的优缺点。请逐步分析代码的执行流程，并说明每个重要函数、变量或模块的作用。如果有优化建议或潜在问题，也请一并指出。
+
+**要求：**
+
+1. 代码的整体逻辑和流程。
+2. 说明代码中使用的关键算法或方法的实现原理。
+3. 指出代码中可能存在的性能瓶颈、潜在错误或改进空间。
+4. 如果代码涉及特定技术或框架，请简要说明其背景和作用。
+5. 逐行或逐段解释代码的功能。
+5. 提供代码的优化建议（如果有）。
+
+**示例输出格式：**
+
+1. **代码功能概述**：简要描述代码的整体功能。
+2. **关键算法/技术**：解释代码中使用的核心算法或技术。
+3. **特定技术或框架**: 对于代码中涉及特定技术或框架，简要说明背景和作用。
+4. **代码逐行/逐段分析**：
+   - 第X行：解释该行代码的作用。
+   - 第Y行：说明该行代码的逻辑。
+   - ...
+5. **潜在问题与优化建议**：指出代码中可能存在的问题，并提供改进建议。
+
 ```
