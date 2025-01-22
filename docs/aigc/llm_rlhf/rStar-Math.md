@@ -1,4 +1,3 @@
-
 # rStar-Math：小型语言模型通过自我进化的深度思考掌握数学推理
 
 **作者**: Xinyu Guan1, Li Lyna Zhang12, Yifei Liu, Ning Shang, Youran Sun, Yi Zhu, Fan Yang, Mao Yang
