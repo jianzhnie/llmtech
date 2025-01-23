@@ -54,7 +54,7 @@
 
 #### 2.2.1 强化学习算法
 
-**组相对策略优化（GRPO）**：为了节省RL的训练成本，我们采用了组相对策略优化（GRPO）（Shao等，2024），它放弃了通常与策略模型大小相同的批评模型，而是从组分数中估计基线。具体来说，对于每个问题$q$，GRPO从旧策略$\pi_{\theta_{old}}$中采样一组输出$\{o_{1},o_{2},\cdots,o_{G}\}$，然后通过最大化以下目标来优化策略模型$\pi_{\theta}$：
+**组相对策略优化（GRPO）**：为了节省RL的训练成本，我们采用了组相对策略优化（GRPO）（Shao等，2024），它放弃了通常与策略模型大小相同的Critic 模型，而是从组分数中估计基线。具体来说，对于每个问题$q$，GRPO从旧策略$\pi_{\theta_{old}}$中采样一组输出$\{o_{1},o_{2},\cdots,o_{G}\}$，然后通过最大化以下目标来优化策略模型$\pi_{\theta}$：
 $$
 \mathcal{J}_{GRPO}(\theta)=\mathbb{E}[q\sim P(Q),\{o_{i}\}_{i=1}^{G} \sim\pi_{\theta_{old}}(O|q)] \frac{1}{G}\sum_{i=1}^{G}\left(\min\left(\frac{\pi_{\theta}(o_{i}|q)}{\pi_{\theta_{old}}(o_{i}|q)}A_{i},\textnormal{clip}\left(\frac{\pi_{\theta}(o_{i}|q)}{\pi_{\theta_{old}}(o_{i}|q)},1-\varepsilon,1+\varepsilon\right)A_{i}\right)-\beta\mathbb{D}_{KL}\left(\pi_{\theta}||\pi_{ref}\right)\right),
 $$
