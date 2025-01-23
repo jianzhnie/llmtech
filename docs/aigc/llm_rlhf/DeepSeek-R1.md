@@ -38,7 +38,7 @@
 
 ## 2 方法
 
-### 概述
+### 2.1 概述
 
 之前的工作严重依赖大量监督数据来提升模型性能。在本研究中，我们展示了即使不使用监督微调（SFT）作为冷启动，通过大规模强化学习（RL）也可以显著提高推理能力。此外，结合少量冷启动数据可以进一步提升性能。在接下来的章节中，我们将介绍：
 
@@ -48,7 +48,7 @@
 
 （3）将DeepSeek-R1的推理能力蒸馏到小型密集模型中。
 
-### DeepSeek-R1-Zero：在基础模型上进行强化学习
+### 2.2 DeepSeek-R1-Zero：在基础模型上进行强化学习
 
 强化学习在推理任务中表现出显著的有效性，正如我们之前的工作（Shao等，2024；Wang等，2023）所证明的那样。然而，这些工作严重依赖监督数据，而这些数据的收集非常耗时。在本节中，我们探索了LLMs在没有监督数据的情况下发展推理能力的潜力，重点关注它们通过纯强化学习过程的自我进化。我们首先简要概述我们的强化学习算法，随后展示一些令人兴奋的结果，并希望为社区提供有价值的见解。
 
@@ -58,11 +58,124 @@
 $$
 \mathcal{J}_{GRPO}(\theta)=\mathbb{E}[q\sim P(Q),\{o_{i}\}_{i=1}^{G} \sim\pi_{\theta_{old}}(O|q)] \frac{1}{G}\sum_{i=1}^{G}\left(\min\left(\frac{\pi_{\theta}(o_{i}|q)}{\pi_{\theta_{old}}(o_{i}|q)}A_{i},\textnormal{clip}\left(\frac{\pi_{\theta}(o_{i}|q)}{\pi_{\theta_{old}}(o_{i}|q)},1-\varepsilon,1+\varepsilon\right)A_{i}\right)-\beta\mathbb{D}_{KL}\left(\pi_{\theta}||\pi_{ref}\right)\right),
 $$
-其中$\varepsilon$和$\beta$是超参数，$A_{i}$是优势，使用组内输出对应的奖励$\{r_{1},r_{2},\ldots,r_{G}\}$计算：
+$$
+\mathbb{D}_{KL} (\pi_{\theta}||\pi_{ref}) = \frac{\pi_{ref}(o_i|q)}{\pi_{\theta}(o_i|q)} - \log \frac{\pi_{ref}(o_i|q)}{\pi_{\theta}(o_i|q)} - 1
+$$
 
+其中$\varepsilon$和$\beta$是超参数，$A_{i}$是优势，使用组内输出对应的奖励$\{r_{1},r_{2},\ldots,r_{G}\}$计算：
 $$
 A_{i}=\frac{r_{i}-\textnormal{mean}(\{r_{1},r_{2},\cdots,r_{G}\})}{\textnormal{std}(\{r_{1},r_{2},\cdots,r_{G}\})}.
 $$
+
+##### Kullback-Leibler 散度
+
+为了衡量同一变量 $x$ 上的两个概率分布之间的差异，数据挖掘文献中广泛使用了一种称为 *Kullback-Leibler 散度*（简称 *KL 散度*）的度量方法。这一概念起源于概率论和信息论。
+
+KL 散度与*相对熵*、*信息散度*和*信息判别*密切相关，它是衡量两个概率分布 $p(x)$ 和 $q(x)$ 之间差异的非对称度量。具体来说，$q(x) $ 相对于 $p(x) $ 的 Kullback-Leibler (KL) 散度，记作 $D_{KL}(p(x),q(x)) $，是当使用 $q(x) $ 来近似 $p(x) $ 时所丢失的信息量。
+
+假设 $p(x) $ 和 $q(x) $ 是离散随机变量 $x $ 的两个概率分布。即，$p(x) $ 和 $q(x) $ 的总和为 1，且对于 $X $ 中的任何 $x $，$p(x) > 0 $ 且 $q(x) > 0 $。$D_{KL}(p(x),q(x)) $ 在下面公式中定义。
+
+$$
+ D_{KL}(p(x)||q(x))=\sum_{x\in X}p(x)\ln\frac{p(x)}{q(x)}
+$$
+KL 散度衡量了当使用基于 $q(x) $ 的编码而不是基于 $p(x) $ 的编码时，编码来自 $p(x) $ 的样本所需的额外比特数的期望值。通常，$p(x) $ 表示数据的“真实”分布、观测值或精确计算的理论分布。而 $q(x) $ 通常表示对 $p(x) $ 的理论、模型、描述或近似。
+
+KL 散度的连续版本为
+
+$$
+D_{KL}(p(x)||q(x))=\int_{-\infty}^{\infty}p(x)\ln\frac{p(x)}{q(x)}dx
+$$
+尽管 KL 散度衡量了两个分布之间的“距离”，但它并不是一个距离度量。这是因为 KL 散度不是度量标准。它不是对称的：从 $p(x) $ 到 $q(x) $ 的 KL 散度通常与从 $q(x) $ 到 $p(x) $ 的 KL 散度不同。此外，它不一定满足三角不等式。然而，$D_{KL}(P||Q) $ 是一个非负的度量。$D_{KL}(P||Q)\geq 0 $ 且 $D_{KL}(P||Q)=0 $ 当且仅当 $P=Q $。
+
+##### GRPO 中的 KL 散度公式推导
+
+该公式是KL散度（Kullback-Leibler Divergence）在特定上下文中的一种近似或变形表达。以下是其推导逻辑的逐步解释：
+
+---
+
+###### **步骤 1：标准KL散度的定义**
+
+对于两个概率分布 $P$和 $Q $，KL散度的定义为：
+$$
+D_{\text{KL}}(P \parallel Q) = \mathbb{E}_{x \sim P} \left[ \log \frac{P(x)}{Q(x)} \right].
+$$
+在强化学习策略优化中，若 $\pi_{\theta}$和 $\pi_{\text{ref}}$分别表示当前策略和参考策略，KL散度可写为：
+$$
+D_{\text{KL}}(\pi_{\theta} \parallel \pi_{\text{ref}}) = \mathbb{E}_{o \sim \pi_{\theta}} \left[ \log \frac{\pi_{\theta}(o|q)}{\pi_{\text{ref}}(o|q)} \right].
+$$
+
+###### **步骤 2：公式变形分析**
+
+GRPO 中的KL散度公式为：
+$$
+\mathbb{D}_{\text{KL}} (\pi_{\theta} \parallel \pi_{\text{ref}}) = \frac{\pi_{\text{ref}}(o_i|q)}{\pi_{\theta}(o_i|q)} - \log \frac{\pi_{\text{ref}}(o_i|q)}{\pi_{\theta}(o_i|q)} - 1.
+$$
+令 $r = \frac{\pi_{\text{ref}}(o_i|q)}{\pi_{\theta}(o_i|q)} $，则公式右侧可简化为：
+$$
+(r -1) + \log r.
+$$
+
+---
+
+###### **步骤 3：泰勒展开近似**
+
+对 $f(r) = (r -1)+ \log r $在 $r=1$处进行二阶泰勒展开：
+$$
+f(r) \approx f(1) + f'(1)(r-1) + \frac{f''(1)}{2}(r-1)^2.
+$$
+计算导数：
+- $f(1) = 1 - 0 -1 = 0 $,
+
+- $f'(r) = 1 - \frac{1}{r} \implies f'(1) = 0 $,
+- $f''(r) = \frac{1}{r^2} \implies f''(1) = 1 $.
+
+代入得：
+$$
+f(r) \approx 0 + 0 + \frac{1}{2}(r-1)^2 = \frac{1}{2}(r-1)^2.
+$$
+这表明当 $r \approx 1$时，GRPO 中的KL散度公式近似为 **均方误差**，与KL散度的二阶展开 $D_{\text{KL}} \approx \frac{1}{2}(r-1)^2$一致。
+
+---
+
+###### **步骤 4： 对 $\log r$ 进行泰勒展开**
+
+在 $ r = 1 $ 处对 $\log r$ 展开至二阶：
+$$
+\log r \approx (r - 1) - \frac{(r - 1)^2}{2}
+$$
+
+将泰勒展开结果代入逐样本公式：
+$$
+r - \log r - 1 \approx r - \left( (r - 1) - \frac{(r - 1)^2}{2} \right) - 1 = \frac{(r - 1)^2}{2}.
+$$
+当 $ r \approx 1 $ 时，$ \frac{(r - 1)^2}{2} $ 是二阶小量，与标准 KL 散度的局部二次近似一致。这表明：
+$$
+\mathbb{D}_{KL} (\pi_{\theta}||\pi_{ref}) \approx \frac{1}{2} \left( \frac{\pi_{ref} - \pi_{\theta}}{\pi_{\theta}} \right)^2.
+$$
+
+
+
+###### **步骤 5：实际应用背景**
+
+该公式常见于 **策略优化算法（如GRPO）** 中，用于约束策略更新的幅度。例如：
+1. **避免策略突变**：通过限制 $\pi_{\theta}$与 $\pi_{\text{ref}}$的差异，确保训练稳定性。
+2. **计算简化**：直接使用概率比 $r$的显式表达式，避免对数的计算开销。
+3. **隐式KL约束**：公式 $r - \log r - 1$在 $r=1$处取得最小值 0，且随着 $r$偏离 1 单调递增，与KL散度的性质一致。
+
+---
+
+###### **总结**
+
+GRPO 中的 KL 散度公式是通过对标准形式的二阶泰勒展开近似得到的，其核心思想是：
+
+1. 假设策略更新幅度小（$ r \approx 1 $），忽略高阶项。
+
+2. 将全局期望转换为逐样本的局部近似，以降低计算复杂度。
+
+3. 通过 $ r - \log r - 1 $ 的形式保留关键的二阶信息，平衡数学合理性与工程效率。
+
+
+
 
 ```python
 A conversation between User and Assistant. The user asks a question, and the Assistant solves it.
@@ -138,7 +251,7 @@ Table 3 | An interesting “aha moment” of an intermediate version of DeepSeek
 
 **DeepSeek-R1-Zero的缺点**：尽管DeepSeek-R1-Zero表现出强大的推理能力，并自主开发出意外且强大的推理行为，但它也面临一些问题。例如，DeepSeek-R1-Zero在可读性差和语言混合等方面存在困难。为了使推理过程更具可读性并与开放社区共享，我们探索了DeepSeek-R1，这是一种利用RL与人类友好的冷启动数据的方法。
 
-### DeepSeek-R1：带冷启动的强化学习
+### 2.3 DeepSeek-R1：带冷启动的强化学习
 
 受到DeepSeek-R1-Zero有希望的结果的启发，两个自然的问题出现了：
 
@@ -176,7 +289,7 @@ Table 3 | An interesting “aha moment” of an intermediate version of DeepSeek
 
 为了进一步使模型与人类偏好对齐，我们实施了第二阶段的强化学习，旨在提高模型的有用性和无害性，同时完善其推理能力。具体来说，我们使用奖励信号和多样化的提示分布来训练模型。对于推理数据，我们遵循DeepSeek-R1-Zero中概述的方法，该方法利用基于规则的奖励来指导数学、代码和逻辑推理领域的学习过程。对于一般数据，我们依靠奖励模型来捕捉复杂和微妙场景中的人类偏好。我们基于DeepSeek-V3流程，并采用了类似的偏好对和训练提示分布。对于有用性，我们仅关注最终摘要，确保评估强调响应对用户的实用性和相关性，同时最小化对底层推理过程的干扰。对于无害性，我们评估模型的整个响应，包括推理过程和摘要，以识别和减轻生成过程中可能出现的任何潜在风险、偏见或有害内容。最终，奖励信号和多样化数据分布的整合使我们能够训练出一个在推理方面表现出色，同时优先考虑有用性和无害性的模型。
 
-### 蒸馏：为小型模型赋予推理能力
+### 2.4 蒸馏：为小型模型赋予推理能力
 
 为了为更高效的小型模型赋予像DeepSeek-R1一样的推理能力，我们直接使用DeepSeek-R1策划的80万条样本对开源模型如Qwen和Llama进行了微调。我们的研究结果表明，这种简单的蒸馏方法显著增强了小型模型的推理能力。我们在这里使用的基础模型是Qwen2.5-Math-1.5B、Qwen2.5-Math-7B、Qwen2.5-14B、Qwen2.5-32B、Llama-3.1-8B和Llama-3.3-70B-Instruct。我们选择Llama-3.3是因为其推理能力略优于Llama-3.1。
 
