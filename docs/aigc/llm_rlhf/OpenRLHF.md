@@ -40,8 +40,6 @@
 |              | Rejection Sampling      | ✓          | ✗           | ✗       |
 |              | 条件SFT                 | ✓          | ✗           | ✗       |
 
-
-
 > OpenRLHF支持使用Ray的多Reward Model，并通过vLLM加速流行的HuggingFace模型。与Hugging Face库的兼容性确保了框架的用户友好性。**有限**: DSChat的HybridEngine仅支持有限范围的模型架构，例如 [https://github.com/microsoft/DeepSpeed/issues/4954](https://github.com/microsoft/DeepSpeed/issues/4954)。相比之下，OpenRLHF支持所有主流架构，包括使用DeepSpeed和vLLM的MoE，详见文档 [https://docs.vllm.ai/en/latest/models/supported_models.html](https://docs.vllm.ai/en/latest/models/supported_models.html)。
 
 ## 2 背景
@@ -99,11 +97,7 @@ DeepSpeed[22]是一个优化库，旨在提高大规模深度学习模型的效�
 
 ![Refer to caption](https://arxiv.org/html/2405.11143v4/extracted/6020964/ppo_gen_openRLHF.png)
 
-
-
 > 图2: RLHF生成阶段的流程图  OpenRLHF的设计支持灵活放置多个模型，并支持多种算法实现。
-
-
 
 ![Refer to caption](https://arxiv.org/html/2405.11143v4/extracted/6020964/ppo_learn_openRLHF.png)
 
