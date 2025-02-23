@@ -22,7 +22,7 @@ $$
 
 一个好的estimator应是无偏的（均值正确）且具有低方差。我们知道，一个无偏estimator（在从 $q$ 中采样的情况下）是 $\log \frac{q(x)}{p(x)}$。然而，它的方差较高，因为对于一半的样本它是负值，而KL散度始终为正。我们称这种朴素estimator为 $k_1 = \log \frac{q(x)}{p(x)} = -\log r$，其中我们定义了比率 $r = \frac{p(x)}{q(x)}$，这个比率将在后续计算中频繁出现。
 
-另一种estimator是 $\frac{1}{2} (\log \frac{p(x)}{q(x)})^2 = \frac{1}{2} (\log r)^2$，它具有较低的方差但有偏。我们称这种estimator为 $k_2$。直观上，$k_2$ 似乎更好，因为每个样本都告诉我们 $p$ 和 $q$ 之间的距离，且始终为正。实验表明，$k_2$ 的方差确实远低于 $k_1$，并且偏差也非常低。（我们将在下面的实验中展示这一点。）
+另一种 estimator是 $\frac{1}{2} (\log \frac{p(x)}{q(x)})^2 = \frac{1}{2} (\log r)^2$，它具有较低的方差但有偏。我们称这种estimator为 $k_2$。直观上，$k_2$ 似乎更好，因为每个样本都告诉我们 $p$ 和 $q$ 之间的距离，且始终为正。实验表明，$k_2$ 的方差确实远低于 $k_1$，并且偏差也非常低。（我们将在下面的实验中展示这一点。）
 
 ## 为什么 $k_2$ 的偏差较低？
 
@@ -58,7 +58,7 @@ $$
 f(r) - f'(1)(r - 1)
 $$
 
-由于 $f$ 位于其切线之上，该estimator始终为正。对于 $KL[p,q]$，$f(x) = x \log x$，其 $f'(1) = 1$，因此我们得到estimator $r \log r - (r - 1)$。
+由于 $f$ 位于其切线之上，该estimator始终为正。对于 $KL[p,q]$，$f(x) = x \log x$，其 $f'(1) = 1$，因此我们得到estimator:  $r \log r - (r - 1)$。
 
 ## 总结
 
@@ -106,3 +106,8 @@ k3 = (logr.exp() - 1) - logr
 for k in (k1, k2, k3):
     print((k.mean() - truekl) / truekl, k.std() / truekl)
 ```
+
+### 参考内容：
+
+- http://joschu.net/blog/kl-approx.html
+- https://zhuanlan.zhihu.com/p/25208314999
