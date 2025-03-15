@@ -14,12 +14,10 @@
 - [Transformer 中的位置编码](aigc/llm_pretrain/pe.md)
 - [旋转式位置编码(Rotary Position Embedding)](aigc/llm_pretrain/rope.md)
 
-
 ## LLM Finetune
 
 - [大型语言模型 (LLM) 微调方法](aigc/llm_finetune/finetune_llm.md)
 - [Low-Rank Adaptation (LoRA)](aigc/llm_finetune/lora_llm.md)
-
 
 ## LLM Datasets
 
@@ -36,13 +34,20 @@
 - [直接偏好优化(DPO)](aigc/llm_rlhf/rlhf_dpo.md)
 - [直接偏好优化(DPO)推导](aigc/llm_rlhf/rlhf_dpo_notes.md)
 - [Kahneman-Tversky-Optimization(KTO)](aigc/llm_rlhf/rlhf_kto.md)
+- [RLOO](aigc/llm_rlhf/RLOO.md)
 - [RLHF训练框架 OpenRLHF](aigc/llm_rlhf/OpenRLHF.md)
 - [RLHF训练框架 NeMo-Aligner](aigc/llm_rlhf/NeMo-Aligner.md)
 - [RLHF训练框架 HybridFlow](aigc/llm_rlhf/hybridflow.md)
 - [RLHF训练框架 DeepSpeedChat](aigc/llm_rlhf/DeepSpeedChat.md)
+- [HybridFlow 框架](hybridflow.md)
+- [HybridFlow 框架](hybridflow.md)
+- [REINFORCE++：一种简单高效的大型语言模型对齐方法](aigc/llm_rlhf/REINFORCE++.md)
 - [ChatGPT O1 Reasoning](aigc/llm_rlhf/chatgpt_O1.md)
 - [O1 Reasoning OpenR](aigc/llm_rlhf/OpenR.md)
 - [过程奖励模型（Process Reward Model）](aigc/llm_rlhf/prm.md)
+- [OpenRLHF源码解读](ai/llm_rlhf/OpenRLHF源码解读.md)
+- [从Ray角度分析OpenRLHF和Verl的工程设计](aigc/llm_rlhf/从Ray角度分析OpenRLHF和Verl的工程设计.md)
+
 
 ## LLM Agent
 
@@ -55,13 +60,11 @@
 - [LLM Playing StarCraftII 2](aigc/llm_agent/llm_starcraft_2.md)
 - [LLM Playing StarCraftII 3](aigc/llm_agent/llm_starcraft_3.md)
 
-
 ## LLM Evaluation
 
 - [LLM 评测体系](aigc/llm_eval/LLM评测体系.md)
 - [LLM 评估工具](aigc/llm_eval/LLM评估工具.md)
 - [LLM 评估指标](aigc/llm_eval/LLM评估指标.md)
-
 
 ## 多模态
 
@@ -83,7 +86,6 @@
 - [Hooks](aigc/train_engine/hooks.md)
 - [Logger](aigc/train_engine/logger.md)
 
-
 ## 分布式训练
 
 - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
@@ -94,7 +96,6 @@
 - [Pytorch FSDP介绍](aigc/llm_recipes/fsdp.md)
 - [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
 
-
 ## 扩散模型
 
 - [扩散模型理论第一课](aigc/diffusion/theory.md)
@@ -104,7 +105,6 @@
 - [扩散模型: 重参数化技巧](aigc/diffusion/reparameterization.md)
 - [基于分数的生成模型](aigc/diffusion/score_model.md)
 - [From Autoencoder to Beta-VAE](aigc/diffusion/vae_model.md)
-
 
 ## 量化压缩
 
