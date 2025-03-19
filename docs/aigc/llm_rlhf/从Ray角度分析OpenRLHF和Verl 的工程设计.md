@@ -359,9 +359,7 @@ remote_ray_worker = ray.remote(
 
 先放一张整体架构图：
 
-![img](https://pic2.zhimg.com/v2-5baa7c95f3f0d668c7c9b674ad6b377f_1440w.jpg)
-
-
+<img src="https://pic2.zhimg.com/v2-5baa7c95f3f0d668c7c9b674ad6b377f_1440w.jpg" alt="img" style="zoom:50%;" />
 
 上图区分了 driver process 和 remote 上存在的实例。在 Driver 上有着各种模块对应的 [PPORayActorGroup](https:github.com/OpenRLHF/OpenRLHF/blob/v0.5.9.post1/openrlhf/trainer/ray/launcher.py%23L143) 实例，每一个 Group 实例代表着逻辑上的一个完整模型，而 Group 中的每个 remote worker 是这个完整模型的 DP 分片。对于 Rollout 模块而言，driver 上存在一个或多个 LLMRayActor 的 [handle](https:github.com/OpenRLHF/OpenRLHF/blob/17bbb313551a3af3cdd213d8b9e7522fe9c6271b/openrlhf/cli/train_ppo_ray.py%23L82-L94)，每个 Actor 代表一个 vLLM engine，也就是一个完整的 DP 模型，每个 engine 内部还会通过 Ray 启动 TP worker Actor（这个 Ray 会 attach 到已有的 cluster，不会新建一个）。
 
@@ -469,7 +467,7 @@ veRL 设计上最好的一点就是模块间充分的解耦，这使得修改和
 
 首先还是从整体来看框架的组成部分：
 
-![img](https://pica.zhimg.com/v2-d945f7a92b123ee67b6287015c1a3600_1440w.jpg)
+<img src="https://pica.zhimg.com/v2-d945f7a92b123ee67b6287015c1a3600_1440w.jpg" alt="img" style="zoom:50%;" />
 
 不同于 OpenRLHF 由多个 Actor 控制一组 workers 的 control flow，veRL 的主体控制逻辑[集中于一个 Ray Actor 中](https:github.com/volcengine/verl/blob/fb532783ad3176b4f2a1acbe4f75a5d695b4e0b4/verl/trainer/main_ppo.py%23L37)（veRL 官方称之为 single controller），这个 single controller 仅运行在 CPU 上，负责管理 data flow、control flow、各类数据结构的初始化，WorkerDict 的 remote 创建和调用，以及数据收发的统一管理。由于 single controller 的负载较大，官方推荐 single controller 尽可能调度在非 head 节点上。
 
@@ -489,7 +487,7 @@ veRL 设计上最好的一点就是模块间充分的解耦，这使得修改和
 
 所以 veRL 主要强调的还是它的 Hybrid Engine 能力，也就是不同模块共享同一个数据结构（WorkerDict）和资源组，并且 WorkerDict 可以灵活地在多种模块、多个 engine 之间切换。这个 Hybrid Engine 的定义与 [Deepspeed-Chat](https:github.com/deepspeedai/DeepSpeed/blob/master/blogs/deepspeed-chat/README.md) 非常接近。
 
-![img](https://pica.zhimg.com/v2-a7ff959f616d22456cd54c93a47ef2a8_1440w.jpg)
+<img src="https://pica.zhimg.com/v2-a7ff959f616d22456cd54c93a47ef2a8_1440w.jpg" alt="img" style="zoom:50%;" />
 
 
 
@@ -587,9 +585,108 @@ veRL 采用的 single control 设计将控制逻辑集中在 `RayPPOTrainer` 里
 
 # 4. OpenRLHF中基于Ray的分布式训练流程
 
-## 4.1 训练入口
+## 4.0 概要-为什么使用Ray
 
-> ppo_ray相关的训练入口在：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/cli/train_ppo_ray.py](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/cli/train_ppo_ray.py)
+对于通常的rlhf框架，在训练时会在单卡上同时部署actor/ref/reward/critic四类模型，这种单一的部署方式可能存在如下问题：
+
+- 难以突破单卡显存的限制。
+- 无法实现更多的并行计算。例如在收集exp阶段，拿到`(prompt, responses)`结果的四类模型其实可以做并行推理；在训练阶段，拿到exp的actor和critic也可以做并行训练。但受到单卡显存等因素影响，通常的rlhf框架中使用更多的是串行。
+- 无法独立优化训练和推理过程。诸如vllm之类的框架，是可以用来提升actor生成`(prompt, responses)`的速度的，而对于其它模型，我们也可能会视算法需要有不同的推理需求。因此我们期望能更加灵活地设计训练、推理过程
+
+而解决以上问题，需要开发者能设计一套较为灵活的分布式计算框架，能够实现资源定制化分配、分布式调度、节点内外通信等目标，同时相关的代码不能太复杂，能够让使用者更专注于算法部分的研发。而Ray天然可以帮我们做这件事：我们只需提供自己的资源分配方案，告诉Ray我想怎么部署这些模型，不管是分开还是合并部署Ray都可以帮我们实现。而复杂的调度策略和通信等事项，就由Ray在后台去做，我们无需关心这个过程。
+
+下面我们提供2个例子，帮助理解使用Ray可以做什么样的“定制化”部署。
+
+### 非共同部署
+
+
+这个例子展示如何完全独立部署各个模型。假设我们有3台node，每台node 8张卡。以下展示其中一种可行的部署方式：
+
+<img src="https://pica.zhimg.com/v2-c46a2e47aa48f3c0a42eecc5003e28ee_1440w.jpg" alt="img" style="zoom:50%;" />
+
+
+
+### （1）部署4类模型
+
+在这个例子中，4类模型分开部署在node0和node1上。以Actor为例，它分布在“node0的gpu0/1 + node1的gpu0/1”上。这一点是由Ray实现的：我们自己定制化资源分配的方案，进而管控模型的分配方式
+
+而当实际训练时，我们还可进一步引入Deepspeed zero做优化：以Actor为例，上图中的4个Actor构成zero中的数据并行组（world_size = 4），根据zero的配置，我们可以在这4张卡间做optimizer/gradients/weights的切片
+
+### （2）部署vllm_engines
+
+前文说过，对于Actor模型，在收集exp阶段我们可以采用vllm之类的框架加速`(prompt, responses)`的生成。在这个例子中：
+
+- 1个vllm_engine维护着一个vllm实例，每个vllm实例下维护一个完整的Actor模型，这里我们还假设一个vllm实例按tp_size = 2的方法切割模型。
+- 在node2中，共有4个vllm_engines（也即4个vllm实例），这种分配方式是通过Ray实现的。而每个vllm实例内的分布式推理则是由vllm自己管控。
+
+###  （3）Actor与vllm_engines之间的通讯
+
+我们称：
+
+- vllm_engines中的actor为vllm_actor
+- node0/1中的actor为ds_actor
+
+在整个训练过程中，vllm_actor需要和ds_actor保持权重一致。我们来看这个一致性是如何维护的：
+
+##### 1. 初始化阶段
+
+假设`pretrain`路径下存储着sft模型，当我们首次开始训练时，ds_actor和vllm_actor都直接从`pretrain`中加载权重，两者互不影响，独立加载。
+
+##### 2. 训练中
+
+在1个step结束后，ds_actor需要把更新后的权重broadcast给vllm_actor，具体步骤如下：
+
+- 首先，对`ds_rank0 + all_vllm_ranks`创建一个通讯组。在本例中:
+
+- - node0/gpu0上的actor是ds_rank0
+  - node2中所有的gpu构成all_vllm_ranks。
+  - 我们就是把这两者纳入一个通讯组内，这个通讯组的world_size = 9。如果我们多一台node3来做vllm_engines，那么这个通讯组的world_size = 17，以此类推。
+
+- 假设我们使用ds_zero1/2，则ds_rank0上维护的是完整的actor权重，我们把ds_rank0上的权重broadcast到每一个vllm_rank，如有设置tp，vllm会自动帮我们完整接下来的模型切割。
+
+- 假设我们使用ds_zero3，则ds_rank0上只维护部分actor权重，那么：
+
+- - ds_rank0先从ds_actor组内all gather回完整的模型权重
+  - 再将完整的模型权重brocast给每一个vllm_rank
+
+##### 3. 从检查点恢复训练（load_checkpoint）
+
+当我们需要从检查点恢复训练时，ds_actor会负责把检查点权重broadcast给vllm_actor，方式同2。
+
+### （4）整体运作流程
+
+结合开头的图例，我们来简述一下整体运作流程。
+
+- 首先明确一些表达。例如，`node0中的Actor0/1 + node1中的Actor0/1`属于相同的数据并行组，所以接下来我们会用它们在dp组中的rank来描述它们，也就是分别改称Actor0/1/2/3。对于其余三类模型也是同理。
+
+- 接着进行分组：
+
+- - `Actor0 / Ref0 / RM0 / Critic0 / vllm_engine0`为一组
+  - `Actor1 / Ref1 / RM1 / Critic1 / vllm_engine1`为一组
+  - `Actor2 / Ref2 / RM2 / Critic2 / vllm_engine2`为一组
+  - `Actor3 / Ref3 / RM3 / Critic3 / vllm_engine3`为一组
+  - 你可以把每一组想象成原来的一张单卡，那么它的作用就是负责一个micro_batch的训练，这样我们就能大致想象到它们之间是如何配合运作的了。需要注意的是，在我们的例子中，这些实例都是一一对应的（各自有4个实例），但在实际操作中，根据不同用户的资源配置，不一定存在这个一一对应的关系。例如你可能用4卡部署Actor，2卡部署Critic，8个vllm_engines...以此类推。不管怎样，我们应该尽量在处理micro_bathes的各个组间均匀分配负载，在代码里相关的操作如下：
+
+  > 为每个actor分配其对应的critic/reward/ref，并启动每个分组的训练：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py#L278-L299](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py%23L278-L299)
+
+  > 为每个actor分配对应的vllm_engine，并使用vllm_engine进行推理：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L627](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L627)
+
+
+
+### 共同部署
+
+
+同样，我们可以按照自己的需求，选择性地在单卡上部署不同种类的模型，例如下面的例子中，actor/ref共部署，critic/reward共部署，图例如下，运作流程和1相似，这里不赘述：
+
+
+
+<img src="https://pic2.zhimg.com/v2-b91c1b4dd04d93e8b06674f47099304f_1440w.jpg" alt="img" style="zoom:50%;" />
+
+
+
+## 4.1 代码实例分析
+
+> ppo_ray相关的训练入口在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/cli/train_ppo_ray.py](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/cli/train_ppo_ray.py)
 
 
 在main中我们启动了driver进程，并执行训练函数`train(args)`，这里主要做了如下几件事：
@@ -605,9 +702,9 @@ veRL 采用的 single control 设计将控制逻辑集中在 `RayPPOTrainer` 里
 
 ###  （1）非共同部署
 
-针对图2.1的情况，我们以PPO-Actor为例，看代码是如何将其部署到Ray集群上的。
+针对图 1的情况，我们以PPO-Actor为例，看代码是如何将其部署到Ray集群上的。
 
-![img](https://pic3.zhimg.com/v2-a7445701e230850618a1a055ad9a8cec_1440w.jpg)
+<img src="https://pic3.zhimg.com/v2-a7445701e230850618a1a055ad9a8cec_1440w.jpg" alt="img" style="zoom:50%;" />
 
 
 
@@ -641,72 +738,61 @@ model = PPORayActorGroup(
 
 - `ActorModelRayActor`：创建在远端worker进程上，是Ray-Actor。它包含了设置ds_zero分布式环境、加载模型权重、数据集准备、optimizer/scheduler准备、训练等一系列操作。
 
-> `PPORayActorGroup`代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/launcher.py#L143](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/launcher.py%23L143)
+> `PPORayActorGroup`代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py#L143](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py%23L143)
 > 根据这份代码，大家可自行去找Actor/Critic/Reward/ReferenceRayActor的相关实现。
 
 ### （2）共同部署
 
-针对图2.2的情况，我们以PPO-Actor为例，看代码是如何将其部署到Ray集群上的。
+针对图2的情况，我们以PPO-Actor为例，看代码是如何将其部署到Ray集群上的。
 
-
-
-![img](https://picx.zhimg.com/v2-2a3d5edb43123bbc99bc04be7c634673_1440w.jpg)
+<img src="https://picx.zhimg.com/v2-2a3d5edb43123bbc99bc04be7c634673_1440w.jpg" alt="img" style="zoom:50%;" />
 
 - `PPORayActorGroup`：在driver进程上创建2个`PPORayActorGroup`，分别管理PPO-Actor，PPO-Ref的部署
+- 使用`actor_model = PPORayActorGroup(..., pg = pg, num_gpus_per_actor=0.75)`创建PPO-Actor部署方案实例；
 
-- 使用`actor_model = PPORayActorGroup(..., pg = pg, num_gpus_per_actor=0.75)`创建PPO-Actor部署方案实例；使用`ref_model = PPORayActorGroup(..., pg = pg, num_gpus_per_actor=0.25)`创建PPO-Ref部署方案实例
-
+  使用`ref_model = PPORayActorGroup(..., pg = pg, num_gpus_per_actor=0.25)`创建PPO-Ref部署方案实例.
 - 这里，两个方案实例使用的pg都是同一个，即这个pg都指向“1台node，每台node 8张卡”这片预留好的资源。
-
 - `num_gpus_per_actor = 0.75/0.25`是一种创建trick，虽然我们的最终目的是为了让PPO-Actor和PPO-Ref对半分一张卡（对半=共享，不是指显存上对半分），但是：
 
-- - 假设设置为0.5，当我们实际部署`ActorModelRayActor`时，Ray先在单卡上部署1个`ActorModelRayActor`实例，当它准备部署第二个`ActorModelRayActor`实例时，它发现由于每个实例只占0.5块卡，因此完全可以把第2个实例接着第1个实例在同一张卡上部署，这样就导致最终无法让PPO-Actor和PPO-Ref共享一张卡
+  - 假设设置为0.5，当我们实际部署`ActorModelRayActor`时，Ray先在单卡上部署1个`ActorModelRayActor`实例，当它准备部署第二个`ActorModelRayActor`实例时，它发现由于每个实例只占0.5块卡，因此完全可以把第2个实例接着第1个实例在同一张卡上部署，这样就导致最终无法让PPO-Actor和PPO-Ref共享一张卡
   - 假设设置0.75，当我们在单卡上部署完1个`ActorModelRayActor`实例后，ray发现单卡剩下的空间不足以部署第2个`ActorModelRayActor`实例，所以就会把第二个实例部署到别的卡上，这样最终实现PPO-Actor和PPO-Ref共享一张卡
   - 所以，这个设置是为了达到不同类型模型的实例共享一张卡的目的，而并非真正指模型实际占据的单卡显存空间。
 
 - 最后，在这一步中，我们对全部`ActorModelRayActor`共创建8个worker进程，对全部`RefenreceModelRayActor`共创建8个worker进程，一共创建16个工作进程。
 
-> 相关代码依然在：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/launcher.py#L143](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/launcher.py%23L143)
+> 相关代码依然在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py#L143](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py%23L143)
 
 ## 4.3 部署vllm_engines实例
 
-![img](https://pic2.zhimg.com/v2-9d6723b6a49bd58460e4cf2d4973dee5_1440w.jpg)
+<img src="https://pic2.zhimg.com/v2-9d6723b6a49bd58460e4cf2d4973dee5_1440w.jpg" alt="img" style="zoom:50%;" />
 
 - `create_vllm_engines`：在driver端，我们通过运行该函数来创建`vllm_engines`，过程相似于4.2节中的介绍，信息都在图中，这里不赘述。
-- `LLMRayActor`：worker端Ray-Actor，它主要是把vllm实例进行了一些包装，包装的目的是为了让ds_rank0和all vllm ranks间可以进行PPO-Actor的权重通讯（参见2.1（3））
+- `LLMRayActor`：worker端Ray-Actor，它主要是把vllm实例进行了一些包装，包装的目的是为了让 ds_rank0 和all vllm ranks间可以进行PPO-Actor的权重通讯（参见2.1（3））
 - 在上面的例子中，我们会创建4个worker进程（不占gpu资源，只占cpu资源），用于运行管理4个vllm_engine。在每个worker进程内，vllm实例还会创建属于自己的worker进程做分布式运行（这些worker进程会实际占据gpu资源）。
 
 > 相关代码参见：
-> [https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_engine.py](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_engine.py)
-> [https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py)
+> [https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_engine.py](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_engine.py)
+> [https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py)
 
-
-
-##  4.4 ds_rank0与vllm_ranks之间的通讯
-
+##  4.4 ds_rank0 与vllm_ranks 之间的通讯
 
 
 在2.2中，我们说过，PPO-Actor的ds_rank0需要和all_vllm_ranks进行通讯，传递最新的PPO-Actor权重，例如以下ds_rank0要把完整的权重broadcast给16个vllm_ranks：
 
-![img](https://picx.zhimg.com/v2-6fe86bb652deb850279d513007e31079_1440w.jpg)
+<img src="https://picx.zhimg.com/v2-6fe86bb652deb850279d513007e31079_1440w.jpg" alt="img" style="zoom:50%;" />
 
 
 我们分成如下几步实现这个目标：
 
 
-
 ### （1）创建通信组
 
-![img](https://pic2.zhimg.com/v2-9b59870d9f77273e7d89154b712b8ac5_1440w.jpg)
-
-
+<img src="https://pic2.zhimg.com/v2-9b59870d9f77273e7d89154b712b8ac5_1440w.jpg" alt="img" style="zoom: 50%;" />
 
 Step1：
 
-> 代码来自：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py#L58](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py%23L58)
+> 代码来自：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L58](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L58)
 > 这段代码执行在PPO-Actor0（ds_rank0）所在的worker进程中。这个worker进程将通过handler引用，触发远端每个vllm_engine上的init_process_group操作，并将ds_rank0纳入通讯组
-
-
 
 ```python3
         # Create torch group with deepspeed rank 0 and all vllm ranks
@@ -766,14 +852,11 @@ Step1：
             ray.get(refs)
 ```
 
-
-
 Step2:
 
-> 代码来自：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py#L11](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py%23L11)
+> 代码来自：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py#L11](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py%23L11)
+>
 > 这段代码实际运行在每个vllm_engine（即每个包装后的vllm实例）下的worker进程内。例如tp_size=2，那么每个vllm实例下就有2个worker进程，这两个worker进程都会运行这段代码。
-
-
 
 ```python3
 class WorkerWrap(Worker):
@@ -805,7 +888,7 @@ class WorkerWrap(Worker):
 
 Step1：PPO-Actor ds_rank0发送权重
 
-> 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py#L146](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py%23L146)
+> 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L146](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L146)
 > 这段代码运行在ds_rank0对应的worker进程中
 
 ```python3
@@ -836,14 +919,10 @@ Step1：PPO-Actor ds_rank0发送权重
 ```
 
 
-
-
 Step2: 各个vllm_ranks接收权重
 
-> 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py#L29](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/vllm_worker_wrap.py%23L29)
+> 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py#L29](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py%23L29)
 > 代码运行在每个vllm_engine(即每个包装后的vllm实例)下的各个worker进程中。例如tp_size = 2，那么每个vllm实例下有2个worker进程，这2个worker进程都会运行这段代码。
-
-
 
 ```python3
     def update_weight(self, name, dtype, shape, empty_cache=False):
@@ -862,31 +941,36 @@ Step2: 各个vllm_ranks接收权重
         del weight
 ```
 
-
-
 ## 4.5 PPO-Actor/Critic Training
 
-![img](https://pic4.zhimg.com/v2-033392dd9d6524b08efac6cc0362a30f_1440w.jpg)
+<img src="https://pic4.zhimg.com/v2-033392dd9d6524b08efac6cc0362a30f_1440w.jpg" alt="img" style="zoom:50%;" />
 
 
-正如2.1（4）中所说，我们将部署在ray集群上的PPO-Actor/Ref/Critic/RM实例们进行分组，每组分别负责一份micro-batch的训练，上图刻画了某个组内的训练流程。一组内的训练流程发起自PPO-Actor实例（fit方法），注意不同颜色的worker0表示的是不同工作进程。共分成如下步骤执行。
+正如2.1（4）中所说，我们将部署在ray集群上的PPO-Actor/Ref/Critic/RM实例们进行分组，每组分别负责一份micro-batch的训练，上图刻画了某个组内的训练流程。一组内的训练流程发起自PPO-Actor实例（fit方法），注意不同颜色的 worker0 表示的是不同工作进程。共分成如下步骤执行。
 
 
 Step1：发送prompts，并从vllm_engine上收集(prompt, response)。
 
-> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py#L627](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py%23L627)
+> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L627](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L627)
 
-Step2：从Ref/Reward/Critic上收集并处理exps。
+Step2：从Ref/Reward/Critic上收集并处理exps
 
-> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py#L492](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py%23L492)
+> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L492](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L492)
 
 Step3: 确保将处理后的exps传送给Critic，并行执行Actor和Critic的训练
 
-> 将exps传送给Critic：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py#L470](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ppo_utils/experience_maker.py%23L470)
-> Actor训练：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py#L125](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py%23L125)
-> Critic训练：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py#L122](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py%23L122)
-> 我们在Actor实例所在的worker进程上出发Actor和Critic的训练。以上代码只给出了训练入口，更多细节需要顺着入口去阅读。
+> 将exps传送给Critic：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L470](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L470)
+>
+> Actor训练：
+>
+> [https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L125](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L125)
+>
+> Critic训练：
+>
+> [https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L122](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L122)
+>
+> 我们在Actor实例所在的worker进程上出发Actor和Critic的训练。
 
 Step4：vllm_engine权重更新。
 
-> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py#L130](https://github.com/OpenRLHF/OpenRLHF/blob/bb46342711a203c457df2fbca5967fd0549557e0/openrlhf/trainer/ray/ppo_actor.py%23L130)
+> 代码参见：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L130](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L130)
