@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
 任务也可以依赖于其他任务。下面，multiply_matrices任务使用两个create_matrix任务的输出，因此它将在前两个任务执行完毕后才开始执行。前两个任务的输出将自动作为参数传递给第三个任务，future将被替换为相应的值）。通过这种方式，任务可以组合在一起，具有任意DAG依赖性。
 
-```python3
+```python
 import ray
 import numpy as np
 from typing import Tuple
@@ -123,7 +123,7 @@ Ray允许您@ray.remote装饰器将Python类进行声明。每当类被实例化
 
 各个actors串行执行（每个单独的方法都是原子的），因此没有竞态条件。可以通过创建多个actors来实现并行性。
 
-```python3
+```python
 import ray
 from typing import Any
 
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
 以下示例创建了一个存储消息的actor。几个 woker 任务反复将消息推送到actor，主Python脚本定期读取消息。
 
-```python3
+```python
 import time
 import ray
 from typing import List
@@ -542,7 +542,7 @@ class WorkerDict(worker_cls):
 
 通过调试，我们可以看到一个 WorkerDict 绑定了哪些方法：
 
-```python3
+```python
 (Pdb) p self.workers
 [Actor(create_colocated_worker_cls.<locals>.WorkerDict, 0beb69e9e6b716d1650b3c4601000000)]
 
@@ -716,7 +716,7 @@ veRL 采用的 single control 设计将控制逻辑集中在 `RayPPOTrainer` 里
 
 - 使用`PPORayActorGroup`部署模型实例的代码如下：
 
-```python3
+```python
 model = PPORayActorGroup(
         # 为部署该模型的全部实例，我们想用多少台node，例如本例中为2
         args.actor_num_nodes,
@@ -794,7 +794,7 @@ Step1：
 > 代码来自：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L58](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L58)
 > 这段代码执行在PPO-Actor0（ds_rank0）所在的worker进程中。这个worker进程将通过handler引用，触发远端每个vllm_engine上的init_process_group操作，并将ds_rank0纳入通讯组
 
-```python3
+```python
         # Create torch group with deepspeed rank 0 and all vllm ranks
         # to update vllm engine's weights after each training stage.
         #
@@ -858,7 +858,7 @@ Step2:
 >
 > 这段代码实际运行在每个vllm_engine（即每个包装后的vllm实例）下的worker进程内。例如tp_size=2，那么每个vllm实例下就有2个worker进程，这两个worker进程都会运行这段代码。
 
-```python3
+```python
 class WorkerWrap(Worker):
     def init_process_group(self, master_address, master_port, rank_offset, world_size, group_name, backend="nccl"):
         """Init torch process group for model weights update"""
@@ -891,7 +891,7 @@ Step1：PPO-Actor ds_rank0发送权重
 > 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py#L146](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/ppo_actor.py%23L146)
 > 这段代码运行在ds_rank0对应的worker进程中
 
-```python3
+```python
       def _broadcast_to_vllm(self):
         # avoid OOM
         torch.cuda.empty_cache()
@@ -924,7 +924,7 @@ Step2: 各个vllm_ranks接收权重
 > 代码在：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py#L29](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/vllm_worker_wrap.py%23L29)
 > 代码运行在每个vllm_engine(即每个包装后的vllm实例)下的各个worker进程中。例如tp_size = 2，那么每个vllm实例下有2个worker进程，这2个worker进程都会运行这段代码。
 
-```python3
+```python
     def update_weight(self, name, dtype, shape, empty_cache=False):
         """Broadcast weight to all vllm workers from source rank 0 (actor model)"""
         if torch.distributed.get_rank() == 0:
