@@ -495,10 +495,10 @@ if __name__ == "__main__":
   - 1. 用于执行多个 Ray Task，
   - 2. 作为专用 Ray actor启动。
 
-- Tasks：当 Ray 在一台机器上启动时，会自动启动多个 Ray 工作进程（默认情况下每个 CPU 一个）。它们将用于执行Tasks（类似于进程池）。如果你执行 8 个Tasks，每个Task使用 `num_cpus=2`，并且总 CPU 数为 16（`ray.cluster_resources()["CPU"] == 16`），你最终会有 8 个工作进程闲置。
+- Tasks：当 Ray 在一台机器上启动时，会自动启动多个 Ray 工作进程（默认情况下每个 CPU 一个）。它们将用于执行Tasks（类似于进程池）。如果你执行 8 个Tasks，每个Task使用 `num_cpus=2`，并且总 CPU 数为 16（`ray.cluster_resources()["CPU"] == 16`），你最终会有 8 个工作进程。
 - Actor:   Ray Actor 也是一个 “Ray Workers”，但在运行时实例化（通过 `actor_cls.remote()`）。它的所有方法都将在同一进程中运行，使用相同的资源（在定义 Actor 时指定）。请注意，与Task不同，运行 Ray Actor 的 Python 进程不会被重用，当 Actor 被删除时，这些进程将被终止。
 
-为了最大限度地利用资源，您希望最大化Worker的工作时间。您需要分配足够的集群资源，以便所有需要的 actors 都能运行，并且您定义的任何其他Task也能运行。这也意味着Task的调度更加灵活，并且如果您不需要 actors 的状态部分，您最好使用Task。
+为了最大限度地利用资源，您希望最大化Worker的工作时间。您需要分配足够的集群资源，以便所有需要的 Actors 都能运行，并且您定义的任何其他Task也能运行。这也意味着Task的调度更加灵活，并且如果您不需要 Actors 的状态部分，您最好使用Task。
 
 ### Actor 的 AsyncIO / 并发性
 
@@ -1565,11 +1565,11 @@ Table:
 
 你也可以使用 `ray status` CLI 命令来验证 `{"CPU": 1, "GPU": 2}` bundles无法被分配。
 
-```
+```shell
 ray status
 ```
 
-```
+```shell
 Resources
 ---------------------------------------------------------------
 Usage:
@@ -1582,11 +1582,11 @@ Demands:
 {'CPU': 1.0} * 1, {'GPU': 2.0} * 1 (PACK): 1+ pending Placement groups <--- 1 Placement group is pending creation.
 ```
 
-当前集群有 `{"CPU": 2, "GPU": 2}`。我们已经创建了一个 `{"CPU": 1, "GPU": 1}` 的bundles，因此集群中只剩下 `{"CPU": 1, "GPU": 1}`。如果我们创建两个bundles `{"CPU": 1}, {"GPU": 2}`，我们可以成功创建第一个bundles，但无法调度第二个bundles。由于我们无法在集群上创建每个bundles，因此不会创建Placement group，包括 `{"CPU": 1}` bundles。
+当前集群有 `{"CPU": 2, "GPU": 2}`。我们已经创建了一个 `{"CPU": 1, "GPU": 1}` 的bundles，因此集群中只剩下 `{"CPU": 1, "GPU": 1}`。如果我们创建两个bundles `{"CPU": 1}, {"GPU": 2}`，我们可以成功创建第一个bundle，但无法调度第二个bundle。由于我们无法在集群上创建每个bundle，因此不会创建Placement group，包括 `{"CPU": 1}` bundles。
 
 <img src="https://docs.ray.io/en/latest/_images/pg_image_2.png" alt="../../_images/pg_image_2.png" style="zoom: 67%;" />
 
-当无法以任何方式调度Placement group时，它被称为“不可行”。想象一下，你调度了 `{"CPU": 4}` 的bundles，但你只有一个拥有2个CPU的节点。在你的集群中无法创建这个bundles。Ray Autoscaler 知道Placement group，并自动扩展集群以确保待处理的组可以根据需要放置。
+当无法以任何方式调度Placement group时，它被称为“不可行”。想象一下，你调度了 `{"CPU": 4}` 的bundles，但你只有一个拥有2个CPU的节点。在你的集群中无法创建这个bundle。Ray Autoscaler 知道Placement group，并自动扩展集群以确保待处理的组可以根据需要放置。
 
 如果 Ray Autoscaler 无法提供资源来调度一个Placement group，Ray 不会打印关于不可行组和使用这些组的Task和Actor的警告。你可以从 [仪表板或状态API](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#ray-placement-group-observability-ref) 观察Placement group的调度状态。
 
@@ -1623,7 +1623,7 @@ ray.get(actor.ready.remote(), timeout=10)
 >
 > 为了避免任何意外，始终为Actor明确指定资源需求。如果资源被明确指定，它们在调度时间和执行时间都是必需的。
 
-actor 现在已调度！一个bundles 可以被多个Task和 Actor使用（即，bundles与Task（或Actor）之间是一对多的关系）。在这种情况下，由于actor使用了1个CPU，bundles中还剩下1个GPU。你可以通过CLI命令``ray status``来验证这一点。你可以看到1个CPU被Placement group保留，并且1.0被使用（由我们创建的actor使用）。
+Actor 现在已调度！一个bundle 可以被多个Task和 Actor使用（即，bundles与Task（或Actor）之间是一对多的关系）。在这种情况下，由于actor使用了1个CPU，bundles中还剩下1个GPU。你可以通过CLI命令``ray status``来验证这一点。你可以看到1个CPU被Placement group 保留，并且1.0 被使用（由我们创建的actor使用）。
 
 ```shell
 ray status
@@ -1667,7 +1667,7 @@ ray list actors --detail
     state: ALIVE
 ```
 
-由于还剩下1个GPU，让我们创建一个需要1个GPU的新actor。这次，我们还指定了``placement_group_bundle_index``。每个bundle在Placement group中都有一个“索引”。例如，一个包含2个bundle的Placement group `[{"CPU": 1}, {"GPU": 1}]` 有索引0的bundle `{"CPU": 1}` 和索引1的bundle `{"GPU": 1}`。由于我们只有一个bundle，所以我们只有索引0。如果你不指定bundle，actor（或Task）会被调度到一个具有未分配保留资源的随机bundle上。
+由于还剩下1个GPU，让我们创建一个需要1个GPU的新actor。这次，我们还指定了``placement_group_bundle_index``。每个bundle在Placement group中都有一个“索引”。例如，一个包含2个bundle的Placement group `[{"CPU": 1}, {"GPU": 1}]` 有索引0的bundle `{"CPU": 1}` 和索引1的bundle `{"GPU": 1}`。由于我们只有一个bundle，所以我们只有索引0。如果你不指定bundle，Actor（或Task）会被调度到一个具有未分配保留资源的随机bundle上。
 
 ```python
 @ray.remote(num_cpus=0, num_gpus=1)
@@ -1713,7 +1713,7 @@ Usage:
 
 ### Placement Strategy
 
-Placement group提供的功能之一是在bundles之间添加放置约束。
+Placement group 提供的功能之一是在 bundles 之间添加放置约束。
 
 例如，您可能希望将您的 bundles 打包到同一个节点，或者尽可能分散到多个节点。您可以通过 `strategy` 参数指定策略。这样，您可以确保您的Actors和Task可以根据某些放置约束进行调度。
 
@@ -1745,21 +1745,21 @@ Ray 支持四种Placement group策略。默认的调度策略是 `PACK`。
 
 #### STRICT_SPREAD
 
-每个bundles必须在单独的节点上调度。
+每个 bundle 必须在单独的节点上调度。
 
 #### **SPREAD**
 
-每个bundles都会尽力分散到不同的节点上。如果严格分散不可行，bundles可以放置在重叠的节点上。
+每个bundles都会尽力分散到不同的节点上。如果严格分散不可行，bundles 可以放置在重叠的节点上。
 
 ### 移除Placement group（释放预留资源）
 
-默认情况下，Placement group的生存期与创建它的驱动程序的作用域相同（除非你将其设为 [分离的Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#placement-group-detached)）。当从 [分离的actor](https://docs.ray.io/en/latest/ray-core/actors/named-actors.html#actor-lifetimes) 创建Placement group时，生存期与分离的actor的作用域相同。在 Ray 中，驱动程序是调用 `ray.init` 的 Python 脚本。
+默认情况下，Placement group 的生存期与创建它的驱动程序的作用域相同（除非你将其设为 [分离的Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#placement-group-detached)）。当从 [分离的actor](https://docs.ray.io/en/latest/ray-core/actors/named-actors.html#actor-lifetimes) 创建Placement group时，生存期与分离的actor的作用域相同。在 Ray 中，驱动程序是调用 `ray.init` 的 Python 脚本。
 
 从Placement group中保留的资源（bundles）在创建Placement group的驱动程序或分离的actors退出时会自动释放。要手动释放保留的资源，请使用 [`remove_placement_group`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.remove_placement_group.html#ray.util.remove_placement_group) API 删除Placement group（这也是一个异步API）。
 
 > 备注
 >
-> 当你移除Placement group时，仍然使用保留资源的Actor或Task将被强制终止。
+> 当你移除 Placement group 时，仍然使用保留资源的Actor或Task将被强制终止。
 
 ```python
 # This API is asynchronous.
@@ -1801,23 +1801,15 @@ Usage:
 0B/2.00GiB object_store_memory
 ```
 
-仪表盘
+#### 仪表盘
 
-The [dashboard job view](https://docs.ray.io/en/latest/ray-observability/getting-started.html#dash-jobs-view) provides the placement group table that displays the scheduling state and metadata of the placement group.
+The [dashboard job view](https://www.aidoczh.com/ray/ray-observability/getting-started.html#dash-jobs-view) 提供了放置组表，显示了放置组的调度状态和元数据。
 
-Note
+#### Ray State API
 
-Ray dashboard is only available when you install Ray is with `pip install "ray[default]"`.
+[Ray 状态 API](https://www.aidoczh.com/ray/ray-observability/user-guides/cli-sdk.html#state-api-overview-ref) 是一个用于检查 Ray 资源（任务、角色、放置组等）状态的 CLI 工具。
 
-Ray State API
-
-[Ray state API](https://docs.ray.io/en/latest/ray-observability/user-guides/cli-sdk.html#state-api-overview-ref) is a CLI tool for inspecting the state of Ray resources (tasks, actors, placement groups, etc.).
-
-`ray list placement-groups` provides the metadata and the scheduling state of the placement group. `ray list placement-groups --detail` provides statistics and scheduling state in a greater detail.
-
-Note
-
-State API is only available when you install Ray is with `pip install "ray[default]"`
+`ray list placement-groups` 提供了放置组的元数据和调度状态。`ray list placement-groups --detail` 提供了更详细的统计信息和调度状态。
 
 ### 检查Placement group调度状态
 
@@ -1826,11 +1818,11 @@ State API is only available when you install Ray is with `pip install "ray[defau
 - [High level state](https://github.com/ray-project/ray/blob/03a9d2166988b16b7cbf51dac0e6e586455b28d8/src/ray/protobuf/gcs.proto#L579)
 - [Details](https://github.com/ray-project/ray/blob/03a9d2166988b16b7cbf51dac0e6e586455b28d8/src/ray/protobuf/gcs.proto#L524)
 
-![../../_images/pg_image_6.png](https://docs.ray.io/en/latest/_images/pg_image_6.png)
+<img src="https://docs.ray.io/en/latest/_images/pg_image_6.png" alt="../../_images/pg_image_6.png" style="zoom: 67%;" />
 
 ### [高级] Child Task 和 Actor
 
-默认情况下，Child actor和Task不共享父actor使用的相同Placement group。要自动将Child actor或Task调度到相同的Placement group，请将 `placement_group_capture_child_tasks` 设置为 True。
+默认情况下，Child actor和Task不共享父Actor使用的相同Placement group。要自动将Child actor或Task调度到相同的Placement group，请将 `placement_group_capture_child_tasks` 设置为 True。
 
 ```python
 import ray
@@ -1869,7 +1861,7 @@ ray.get(
 )
 ```
 
-当 `placement_group_capture_child_tasks` 为 True 时，但你不希望将Child Task和actors调度到同一个Placement group，请指定 `PlacementGroupSchedulingStrategy(placement_group=None)`。
+当 `placement_group_capture_child_tasks` 为 True 时，但你不希望将Child Task和Actor 调度到同一个Placement group，请指定 `PlacementGroupSchedulingStrategy(placement_group=None)`。
 
 ```python
 @ray.remote
