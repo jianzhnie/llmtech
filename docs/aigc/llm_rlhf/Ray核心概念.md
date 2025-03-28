@@ -1,12 +1,12 @@
 # Ray 的核心概念
 
-在传统的编程中，我们经常使用到2个核心概念：function和class。而在分布式系统中，我们希望可以分布式并行执行这些function和class。Ray使用装饰器`@ray.remote`来将function包装成Ray task，将class包装成Ray actor，包装过后的结果可以在远端并行执行。接下来我们就来细看task/actor（注意，这里的actor是ray中的概念，不是rlhf-ppo中actor模型的概念）
+在传统的编程中，我们经常使用到2个核心概念：function 和 class。而在分布式系统中，我们希望可以分布式并行执行这些function和class。Ray使用装饰器`@ray.remote`来将function包装成Ray task，将class包装成Ray actor，包装过后的结果可以在远端并行执行。
 
 ## Ray Task
 
-Ray 允许在独立的 Python Woker上异步执行任意函数。这些异步 Ray 函数被称为“Task”。Ray 使Task能够根据 CPU、GPU 和自定义资源指定其资源需求。这些资源请求由集群调度器用于在集群中分配Task以实现并行执行。``
+Ray 允许在独立的 Python Woker上异步执行任意函数。这些异步 Ray 函数被称为“Task”。Ray 使Task能够根据 CPU、GPU 和自定义资源指定其资源需求。这些资源请求由集群调度器用于在集群中分配Task以实现并行执行。
 
-要将Python函数f转换为“remote function”（可以远程和异步执行的函数），我们使用@ray.remote 装饰器声明该函数。然后通过f.remote()调用该函数， 此远程调用返回一个Future（Future是Ray对最终输出的引用， 然后可以使用`ray.get`来获取它），实际的函数执行将在后台进行（我们称此执行为 Task）。
+要将Python函数f转换为“remote function”（可以远程和异步执行的函数），我们使用@ray.remote 装饰器声明该函数。然后通过f.remote()调用该函数，此远程调用返回一个Future（Future是Ray对最终输出的引用， 然后可以使用`ray.get`来获取它），实际的函数执行将在后台进行（我们称此执行为 Task）。
 
 ```python
 import ray
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
 ```
 
-由于调用f.remote(i)立即返回，可以通过运行该行四次并行执行f的四个副本。
+由于调用 f.remote(i) 立即返回，可以通过运行该行四次并行执行f的四个副本。
 
 ### Specifying required resources
 
@@ -73,9 +73,9 @@ my_function.options(num_cpus=3).remote()
 
 ### Passing object refs to Ray tasks
 
-除了值之外，[对象引用](https://docs.ray.io/en/latest/ray-core/objects.html) 也可以传递到远程函数中。当Task执行时，在函数体内 参数将是底层值。例如，这个函数：
+除了值之外，[对象引用](https://docs.ray.io/en/latest/ray-core/objects.html) 也可以传递到远程函数中。当Task执行时，在函数体内参数将是底层值。例如，这个函数：
 
-```
+```python
 @ray.remote
 def function_with_an_argument(value):
     return value + 1
@@ -89,14 +89,14 @@ obj_ref2 = function_with_an_argument.remote(obj_ref1)
 assert ray.get(obj_ref2) == 2
 ```
 
-注意以下行为：
-
+> 注意：
+>
 > - 由于第二个Task依赖于第一个Task的输出，Ray 将不会执行第二个Task，直到第一个Task完成。
 > - 如果这两个Task被调度在不同的机器上，第一个Task的输出（对应于 `obj_ref1/objRef1` 的值）将通过网络发送到第二个Task被调度的机器上。
 
 ### Task Dependencies
 
-Task也可以依赖于其他Task。下面，multiply_matricesTask使用两个create_matrixTask的输出，因此它将在前两个Task执行完毕后才开始执行。前两个Task的输出将自动作为参数传递给第三个Task，future将被替换为相应的值）。通过这种方式，Task可以组合在一起，具有任意DAG依赖性。
+Task也可以依赖于其他Task。下面，multiply_matrices task使用两个create_matrix task的输出，因此它将在前两个Task执行完毕后才开始执行。前两个Task的输出将自动作为参数传递给第三个Task，future将被替换为相应的值）。通过这种方式，Task可以组合在一起，具有任意DAG依赖性。
 
 ```python3
 import ray
@@ -170,15 +170,19 @@ ready_refs, remaining_refs = ray.wait(object_refs, num_returns=1, timeout=None)
 
 ### Fault Tolerance
 
-默认情况下，Ray 会 [重试](https://docs.ray.io/en/latest/ray-core/fault_tolerance/tasks.html#task-retries) 由于系统故障和指定的应用程序级故障而失败的Task。您可以通过在 [`ray.remote()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote) 和 [`.options()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote_function.RemoteFunction.options.html#ray.remote_function.RemoteFunction.options) 中设置 `max_retries` 和 `retry_exceptions` 选项来更改此行为。更多详情请参见 [Ray 容错](https://docs.ray.io/en/latest/ray-core/fault-tolerance.html#fault-tolerance)。
+默认情况下，Ray 会 [重启](https://docs.ray.io/en/latest/ray-core/fault_tolerance/tasks.html#task-retries) 由于系统故障和指定的应用程序级故障而失败的Task。您可以通过在 [`ray.remote()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote) 和 [`.options()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote_function.RemoteFunction.options.html#ray.remote_function.RemoteFunction.options) 中设置 `max_retries` 和 `retry_exceptions` 选项来更改此行为。更多详情请参见 [Ray 容错](https://docs.ray.io/en/latest/ray-core/fault-tolerance.html#fault-tolerance)。
+
+### Task Events
+
+默认情况下，Ray 跟踪 Task 的执行，报告 task 状态事件和分析事件，这些事件由 Ray 仪表板和 [状态 API](https://docs.ray.io/en/latest/ray-observability/user-guides/cli-sdk.html#state-api-overview-ref) 使用。
+
+你可以通过在 [`ray.remote()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote) 和 [`.options()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote_function.RemoteFunction.options.html#ray.remote_function.RemoteFunction.options) 中设置 `enable_task_events` 选项以禁用任务事件，这减少了任务执行的开销，以及任务发送到 Ray Dashboard 的数据量。嵌套任务不会从父任务继承任务事件设置。你需要分别为每个任务设置任务事件设置。
 
 ## Ray Actor
 
 Actor 将 Ray API 从函数（Task）扩展到类。Actor 本质上是一个有状态的worker（或服务）。当一个新的 Actor 被实例化时，会创建一个新的worker，并且 Actor 的方法会被调度到该特定worker上，并且可以访问和修改该worker的状态。与Task类似，Actor 支持 CPU、GPU 和自定义资源需求。
 
-Ray允许您通过 `@ray.remote` 装饰器将Python类进行声明。每当类被实例化时，Ray会在集群中启动该类的远程实例，然后，此 Actor 可以执行远程方法调用并维护其自己的内部状态.
-
-这是一个运行进程并保存Actor对象的副本。对该Actor的方法调用变成在Actor进程上运行的Task，可以访问和修改Actor的状态。通过这种方式，Actors允许在多个Task之间共享可变状态，而远程函数则不允许。
+Ray允许您通过 `@ray.remote` 装饰器将Python类进行声明。每当类被实例化时，Ray会在集群中启动该类的远程实例，然后，此 Actor 可以执行远程方法调用并维护其自己的内部状态。这是一个运行进程并保存Actor对象的副本。对该Actor的方法调用变成在Actor进程上运行的Task，可以访问和修改Actor的状态。通过这种方式，Actors允许在多个Task之间共享可变状态，而远程函数则不允许。
 
 各个Actors串行执行（每个单独的方法都是原子的），因此没有竞态条件。可以通过创建多个Actors来实现并行性。
 
@@ -256,7 +260,7 @@ if __name__ == "__main__":
 
 ### Specifying required resources
 
-你也可以在 actor  中指定资源需求(see [Specifying Task or Actor Resource Requirements](https://docs.ray.io/en/latest/ray-core/scheduling/resources.html#resource-requirements) for more details.)
+你也可以在 actors  中指定资源需求(see [Specifying Task or Actor Resource Requirements](https://docs.ray.io/en/latest/ray-core/scheduling/resources.html#resource-requirements) for more details.)
 
 ```python
 # Specify required resources for an actor.
@@ -388,6 +392,8 @@ if __name__ == "__main__":
 
 actors非常强大。它们允许您将Python类实例化为可以从其他actors和Task甚至其他应用程序查询的微服务。
 
+### Passing Around Actor Handles
+
 Actor 句柄可以传递到其他Task中。我们可以定义使用actor句柄的远程函数（或actor方法）。
 
 ```python
@@ -412,6 +418,19 @@ counter = Counter.remote()
 for _ in range(10):
     time.sleep(0.1)
     print(ray.get(counter.get_counter.remote()))
+```
+
+```shell
+0
+3
+8
+10
+15
+18
+20
+25
+30
+30
 ```
 
 ### Passing an Object
@@ -465,7 +484,474 @@ if __name__ == "__main__":
 
 ### Fault Tolerance
 
-默认情况下，Ray actor不会被 [重启](https://docs.ray.io/en/latest/ray-core/fault_tolerance/actors.html#fault-tolerance-actors) ，当 actor 意外崩溃时，actor Task不会被重启。可以通过在 [`ray.remote()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote) 和 [`.options()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.actor.ActorClass.options.html#ray.actor.ActorClass.options) 中设置 `max_restarts` 和 `max_task_retries` 选项来改变这种行为。更多详情请参见 [Ray 容错](https://docs.ray.io/en/latest/ray-core/fault-tolerance.html#fault-tolerance)。
+默认情况下，Ray actor不会被 [重启](https://docs.ray.io/en/latest/ray-core/fault_tolerance/actors.html#fault-tolerance-actors) ，当 actor 意外崩溃时，actor task不会被重启。可以通过在 [`ray.remote()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote) 和 [`.options()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.actor.ActorClass.options.html#ray.actor.ActorClass.options) 中设置 `max_restarts` 和 `max_task_retries` 选项来改变这种行为。更多详情请参见 [Ray 容错](https://docs.ray.io/en/latest/ray-core/fault-tolerance.html#fault-tolerance)。
+
+### FAQ：Actor、Worker 和 Resources
+
+#### 1. worker 和 actor 之间有什么区别？
+
+- 每个“Ray worker”是一个Python进程。
+- Workers在 Tasks 和 actors 中受到不同的对待。任何的 “Ray Workers”
+  - 1. 用于执行多个 Ray Task，
+  - 2. 作为专用 Ray actor启动。
+
+- Tasks：当 Ray 在一台机器上启动时，会自动启动多个 Ray 工作进程（默认情况下每个 CPU 一个）。它们将用于执行Tasks（类似于进程池）。如果你执行 8 个Tasks，每个Task使用 `num_cpus=2`，并且总 CPU 数为 16（`ray.cluster_resources()["CPU"] == 16`），你最终会有 8 个工作进程。
+- Actor:   Ray Actor 也是一个 “Ray Workers”，但在运行时实例化（通过 `actor_cls.remote()`）。它的所有方法都将在同一进程中运行，使用相同的资源（在定义 Actor 时指定）。请注意，与Task不同，运行 Ray Actor 的 Python 进程不会被重用，当 Actor 被删除时，这些进程将被终止。
+
+为了最大限度地利用资源，您希望最大化Worker的工作时间。您需要分配足够的集群资源，以便所有需要的 Actors 都能运行，并且您定义的任何其他Task也能运行。这也意味着Task的调度更加灵活，并且如果您不需要 Actors 的状态部分，您最好使用Task。
+
+### Actor 的 AsyncIO / 并发性
+
+在一个单一的actor进程中，可以执行并发线程。
+
+Ray 在 actor 中提供两种类型的并发：
+
+> - [async execution](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors)
+> - [threading](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors)
+
+请记住，Python 的 全局解释器锁 (GIL)  将只允许一个 Python 代码线程同时运行。
+
+这意味着如果你只是并行化 Python 代码，你不会得到真正的并行性。如果你调用 Numpy、Cython、Tensorflow 或 PyTorch 代码，这些库在调用 C/C++ 函数时会释放 GIL。
+
+无论是 [线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors) 还是 [异步Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors) 模型，都无法让你绕过 GIL。
+
+#### Actor 的 AsyncIO
+
+自Python 3.5起，可以使用 `async/await` 语法 编写并发代码。Ray 原生集成了 asyncio。你可以将 ray 与流行的异步框架如 aiohttp、aioredis 等一起使用。
+
+```python
+import ray
+import asyncio
+
+@ray.remote
+class AsyncActor:
+    # multiple invocation of this method can be running in
+    # the event loop at the same time
+    async def run_concurrent(self):
+        print("started")
+        await asyncio.sleep(2) # concurrent workload here
+        print("finished")
+
+actor = AsyncActor.remote()
+
+# regular ray.get
+ray.get([actor.run_concurrent.remote() for _ in range(4)])
+
+# async ray.get
+async def async_get():
+    await actor.run_concurrent.remote()
+asyncio.run(async_get())
+```
+
+```shell
+(AsyncActor pid=40293) started
+(AsyncActor pid=40293) started
+(AsyncActor pid=40293) started
+(AsyncActor pid=40293) started
+(AsyncActor pid=40293) finished
+(AsyncActor pid=40293) finished
+(AsyncActor pid=40293) finished
+(AsyncActor pid=40293) finished
+```
+
+#### ObjectRefs 作为 asyncio.Futures
+
+ObjectRefs 可以转换为 asyncio.Futures。这一特性使得在现有的并发应用程序中可以 `await` ray futures。
+
+而不是：
+
+```python
+import ray
+
+@ray.remote
+def some_task():
+    return 1
+
+ray.get(some_task.remote())
+ray.wait([some_task.remote()])
+```
+
+你可以这样做：
+
+```python
+import ray
+import asyncio
+
+@ray.remote
+def some_task():
+    return 1
+
+async def await_obj_ref():
+    await some_task.remote()
+    await asyncio.wait([some_task.remote()])
+
+asyncio.run(await_obj_ref())
+```
+
+更多关于 `asyncio` 的模式，包括超时和 `asyncio.gather`，请参阅  [asyncio 文档](https://docs.python.org/3/library/asyncio-task.html)。
+
+如果你需要直接访问未来对象，你可以调用：
+
+```python
+import asyncio
+
+async def convert_to_asyncio_future():
+    ref = some_task.remote()
+    fut: asyncio.Future = asyncio.wrap_future(ref.future())
+    print(await fut)
+asyncio.run(convert_to_asyncio_future())
+```
+
+#### ObjectRefs 作为 concurrent.futures.Futures
+
+ObjectRefs 也可以被包装成 `concurrent.futures.Future` 对象。这对于与现有的 `concurrent.futures` API 接口非常有用：
+
+```python
+import concurrent
+
+refs = [some_task.remote() for _ in range(4)]
+futs = [ref.future() for ref in refs]
+for fut in concurrent.futures.as_completed(futs):
+    assert fut.done()
+    print(fut.result())
+```
+
+```
+1
+1
+1
+1
+```
+
+#### 定义一个异步Actor
+
+通过使用 `async` 方法定义，Ray 将自动检测一个 actor 是否支持 `async` 调用。
+
+```python
+import asyncio
+
+@ray.remote
+class AsyncActor:
+    async def run_task(self):
+        print("started")
+        await asyncio.sleep(2) # Network, I/O task here
+        print("ended")
+
+actor = AsyncActor.remote()
+# All 5 tasks should start at once. After 2 second they should all finish.
+# they should finish at the same time
+ray.get([actor.run_task.remote() for _ in range(5)])
+```
+
+```shell
+(AsyncActor pid=3456) started
+(AsyncActor pid=3456) started
+(AsyncActor pid=3456) started
+(AsyncActor pid=3456) started
+(AsyncActor pid=3456) started
+(AsyncActor pid=3456) ended
+(AsyncActor pid=3456) ended
+(AsyncActor pid=3456) ended
+(AsyncActor pid=3456) ended
+(AsyncActor pid=3456) ended
+```
+
+在底层，Ray 在单个 Python 事件循环中运行所有方法。请注意，不允许在异步 actor 方法中运行阻塞的 `ray.get` 或 `ray.wait`，因为 `ray.get` 会阻塞事件循环的执行。
+
+在异步Actors中，任何时候只能运行一个Task（尽管Task可以多路复用）。AsyncActor 中将只有一个线程！如果你想要一个线程池，请参阅 [线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors)。
+
+#### 在异步 Actors 中设置并发
+
+你可以使用 `max_concurrency` 标志设置一次运行的“并发”Task数量。默认情况下，可以同时运行1000个Task。
+
+```python
+import asyncio
+
+@ray.remote
+class AsyncActor:
+    async def run_task(self):
+        print("started")
+        await asyncio.sleep(1) # Network, I/O task here
+        print("ended")
+
+actor = AsyncActor.options(max_concurrency=2).remote()
+
+# Only 2 tasks will be running concurrently. Once 2 finish, the next 2 should run.
+ray.get([actor.run_task.remote() for _ in range(8)])
+```
+
+
+
+```python
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) started
+(AsyncActor pid=5859) ended
+(AsyncActor pid=5859) ended
+```
+
+#### 线程化Actor
+
+有时，asyncio 并不是你Actor的理想解决方案。例如，你可能有一个方法执行一些计算密集型Task，同时阻塞事件循环，不通过 `await` 放弃控制。这会损害异步Actor的性能，因为异步Actor一次只能执行一个Task，并且依赖 `await` 进行上下文切换。
+
+相反，你可以使用 `max_concurrency`  actor 选项，而无需任何异步方法，从而实现线程并发（如线程池）。
+
+> 警告
+>
+> 当actor定义中至少有一个 `async def` 方法时，Ray 会将该actor识别为 AsyncActor 而不是 ThreadedActor。
+
+```python
+@ray.remote
+class ThreadedActor:
+    def task_1(self): print("I'm running in a thread!")
+    def task_2(self): print("I'm running in another thread!")
+
+a = ThreadedActor.options(max_concurrency=2).remote()
+ray.get([a.task_1.remote(), a.task_2.remote()])
+```
+
+```python
+(ThreadedActor pid=4822) I'm running in a thread!
+(ThreadedActor pid=4822) I'm running in another thread!
+```
+
+每个线程化Actor的调用都将在一个线程池中运行。线程池的大小受 `max_concurrency` 值的限制。
+
+#### 远程Task的AsyncIO
+
+我们不支持远程Task的 asyncio。以下代码片段将会失败：
+
+```python
+@ray.remote
+async def f():
+    pass
+```
+
+相反，你可以用一个包装器包裹 `async` 函数来同步运行Task：
+
+```python
+async def f():
+    pass
+
+@ray.remote
+def wrapper():
+    import asyncio
+    asyncio.run(f())
+```
+
+### 使用并发组限制Per-Method 的并发性
+
+除了为actor设置总体的最大并发数外，Ray还允许将方法分离到actor并发组中，每个组都有自己的线程。这使你可以为每个方法限制并发数，例如，允许健康检查方法拥有自己的并发配额，与请求服务方法分开。
+
+> 小技巧
+>
+> 并发组同时适用于 asyncio 和线程化 actor。语法是相同的。
+
+#### 定义并发组
+
+下面定义了两个并发组，”io” 的最大并发数为 2，”compute” 的最大并发数为 4。方法 `f1` 和 `f2` 被放置在 “io” 组中，方法 `f3` 和 `f4` 被放置在 “compute” 组中。请注意，始终存在一个默认的并发组，其默认并发数为 1000 个 AsyncIO actor，否则为 1。
+
+你可以使用 `concurrency_group` 装饰器参数为actors定义并发组：
+
+```python
+import ray
+
+@ray.remote(concurrency_groups={"io": 2, "compute": 4})
+class AsyncIOActor:
+    def __init__(self):
+        pass
+
+    @ray.method(concurrency_group="io")
+    async def f1(self):
+        pass
+
+    @ray.method(concurrency_group="io")
+    async def f2(self):
+        pass
+
+    @ray.method(concurrency_group="compute")
+    async def f3(self):
+        pass
+
+    @ray.method(concurrency_group="compute")
+    async def f4(self):
+        pass
+
+    async def f5(self):
+        pass
+
+a = AsyncIOActor.remote()
+a.f1.remote()  # executed in the "io" group.
+a.f2.remote()  # executed in the "io" group.
+a.f3.remote()  # executed in the "compute" group.
+a.f4.remote()  # executed in the "compute" group.
+a.f5.remote()  # executed in the default group.
+```
+
+#### 默认并发组
+
+默认情况下，方法被放置在一个默认的并发组中，该组的并发限制为 AsyncIO actor的 1000 和 其他情况下的 1。可以通过设置 `max_concurrency` actor选项来更改默认组的并发性。
+
+以下actor有2个并发组：“io”和“default”。“io”的最大并发数是2，“default”的最大并发数是10。
+
+```python
+@ray.remote(concurrency_groups={"io": 2})
+class AsyncIOActor:
+    async def f1(self):
+        pass
+
+actor = AsyncIOActor.options(max_concurrency=10).remote()
+```
+
+#### 在运行时设置并发
+
+你也可以在运行时将actors方法分派到特定的并发组中。以下代码片段展示了在运行时动态设置 `f2` 方法的并发组。
+
+你可以使用 `.options` 方法。
+
+```python
+# Executed in the "io" group (as defined in the actor class).
+a.f2.options().remote()
+
+# Executed in the "compute" group.
+a.f2.options(concurrency_group="compute").remote()
+```
+
+### Actor 执行顺序
+
+#### 同步, 单线程的 Actor
+
+在 Ray 中，一个 actor 从多个提交者（包括驱动程序和 work er线程）接收Task。对于从同一提交者接收的Task，一个同步的单线程 actor 按照提交顺序执行它们。换句话说，在同一提交者提交的先前Task完成执行之前，给定的Task不会被执行。
+
+```python
+import ray
+
+@ray.remote
+class Counter:
+    def __init__(self):
+        self.value = 0
+
+    def add(self, addition):
+        self.value += addition
+        return self.value
+
+counter = Counter.remote()
+
+# For tasks from the same submitter,
+# they are executed according to submission order.
+value0 = counter.add.remote(1)
+value1 = counter.add.remote(2)
+
+# Output: 1. The first submitted task is executed first.
+print(ray.get(value0))
+# Output: 3. The later submitted task is executed later.
+print(ray.get(value1))
+```
+
+```shell
+1
+3
+```
+
+然而，actor 不保证来自不同提交者的Task的执行顺序。例如，假设一个未满足的参数阻塞了一个先前提交的Task。在这种情况下，actor仍然可以执行由不同worker提交的Task。
+
+```python
+import time
+import ray
+
+@ray.remote
+class Counter:
+    def __init__(self):
+        self.value = 0
+
+    def add(self, addition):
+        self.value += addition
+        return self.value
+
+counter = Counter.remote()
+
+# Submit task from a worker
+@ray.remote
+def submitter(value):
+    return ray.get(counter.add.remote(value))
+
+# Simulate delayed result resolution.
+@ray.remote
+def delayed_resolution(value):
+    time.sleep(5)
+    return value
+
+# Submit tasks from different workers, with
+# the first submitted task waiting for
+# dependency resolution.
+value0 = submitter.remote(delayed_resolution.remote(1))
+value1 = submitter.remote(2)
+
+# Output: 3. The first submitted task is executed later.
+print(ray.get(value0))
+# Output: 2. The later submitted task is executed first.
+print(ray.get(value1))
+```
+
+```shell
+3
+2
+```
+
+#### 异步或线程化Actor
+
+[异步或线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors) 不保证Task执行顺序。这意味着系统可能会执行一个Task，即使之前提交的Task尚未执行。
+
+```python
+import time
+import ray
+
+@ray.remote
+class AsyncCounter:
+    def __init__(self):
+        self.value = 0
+
+    async def add(self, addition):
+        self.value += addition
+        return self.value
+
+counter = AsyncCounter.remote()
+
+# Simulate delayed result resolution.
+@ray.remote
+def delayed_resolution(value):
+    time.sleep(5)
+    return value
+
+# Submit tasks from the driver, with
+# the first submitted task waiting for
+# dependency resolution.
+value0 = counter.add.remote(delayed_resolution.remote(1))
+value1 = counter.add.remote(2)
+
+# Output: 3. The first submitted task is executed later.
+print(ray.get(value0))
+# Output: 2. The later submitted task is executed first.
+print(ray.get(value1))
+```
+
+```shell
+3
+2
+```
+
+
 
 ##  Ray Objects
 
@@ -483,7 +969,7 @@ import ray
 
 # Put an object in Ray's object store.
 y = 1
-object_ref = ray.put(y
+object_ref = ray.put(y)
 ```
 
 > 远程对象是不可变的。也就是说，它们的值在创建后不能更改。这使得远程对象可以在多个对象存储中复制，而无需同步副本。
@@ -624,470 +1110,7 @@ print_via_capture.remote()
 # -> prints [1, 2, 3]
 ```
 
-## FAQ：Actor、Worker 和 Resources
 
-### 1. worker 和 actor 之间有什么区别？
-
-- 每个“Ray worker”是一个Python进程。
-- Workers在 Tasks 和 actors 中受到不同的对待。任何的 “Ray Workers”
-  - 1. 用于执行多个 Ray Task，
-  - 2. 作为专用 Ray actor启动。
-
-- Tasks：当 Ray 在一台机器上启动时，会自动启动多个 Ray 工作进程（默认情况下每个 CPU 一个）。它们将用于执行Tasks（类似于进程池）。如果你执行 8 个Tasks，每个Task使用 `num_cpus=2`，并且总 CPU 数为 16（`ray.cluster_resources()["CPU"] == 16`），你最终会有 8 个工作进程闲置。
-- Actor:   Ray Actor 也是一个 “Ray Workers”，但在运行时实例化（通过 `actor_cls.remote()`）。它的所有方法都将在同一进程中运行，使用相同的资源（在定义 Actor 时指定）。请注意，与Task不同，运行 Ray Actor 的 Python 进程不会被重用，当 Actor 被删除时，这些进程将被终止。
-
-为了最大限度地利用资源，您希望最大化Worker的工作时间。您需要分配足够的集群资源，以便所有需要的 actors 都能运行，并且您定义的任何其他Task也能运行。这也意味着Task的调度更加灵活，并且如果您不需要 actors 的状态部分，您最好使用Task。
-
-## Actor 的 AsyncIO / 并发性
-
-在一个单一的actor进程中，可以执行并发线程。
-
-Ray 在 actor 中提供两种类型的并发：
-
-> - [async execution](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors)
-> - [threading](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors)
-
-请记住，Python 的 全局解释器锁 (GIL)  将只允许一个 Python 代码线程同时运行。
-
-这意味着如果你只是并行化 Python 代码，你不会得到真正的并行性。如果你调用 Numpy、Cython、Tensorflow 或 PyTorch 代码，这些库在调用 C/C++ 函数时会释放 GIL。
-
-无论是 [线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors) 还是 [异步Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors) 模型，都无法让你绕过 GIL。
-
-### Actor 的 AsyncIO
-
-自Python 3.5起，可以使用 `async/await` 语法 编写并发代码。Ray 原生集成了 asyncio。你可以将 ray 与流行的异步框架如 aiohttp、aioredis 等一起使用。
-
-```python
-import ray
-import asyncio
-
-@ray.remote
-class AsyncActor:
-    # multiple invocation of this method can be running in
-    # the event loop at the same time
-    async def run_concurrent(self):
-        print("started")
-        await asyncio.sleep(2) # concurrent workload here
-        print("finished")
-
-actor = AsyncActor.remote()
-
-# regular ray.get
-ray.get([actor.run_concurrent.remote() for _ in range(4)])
-
-# async ray.get
-async def async_get():
-    await actor.run_concurrent.remote()
-asyncio.run(async_get())
-```
-
-```shell
-(AsyncActor pid=40293) started
-(AsyncActor pid=40293) started
-(AsyncActor pid=40293) started
-(AsyncActor pid=40293) started
-(AsyncActor pid=40293) finished
-(AsyncActor pid=40293) finished
-(AsyncActor pid=40293) finished
-(AsyncActor pid=40293) finished
-```
-
-### ObjectRefs 作为 asyncio.Futures
-
-ObjectRefs 可以转换为 asyncio.Futures。这一特性使得在现有的并发应用程序中可以 `await` ray futures。
-
-而不是：
-
-```python
-import ray
-
-@ray.remote
-def some_task():
-    return 1
-
-ray.get(some_task.remote())
-ray.wait([some_task.remote()])
-```
-
-你可以这样做：
-
-```python
-import ray
-import asyncio
-
-@ray.remote
-def some_task():
-    return 1
-
-async def await_obj_ref():
-    await some_task.remote()
-    await asyncio.wait([some_task.remote()])
-
-asyncio.run(await_obj_ref())
-```
-
-更多关于 `asyncio` 的模式，包括超时和 `asyncio.gather`，请参阅  [asyncio 文档](https://docs.python.org/3/library/asyncio-task.html)。
-
-如果你需要直接访问未来对象，你可以调用：
-
-```python
-import asyncio
-
-async def convert_to_asyncio_future():
-    ref = some_task.remote()
-    fut: asyncio.Future = asyncio.wrap_future(ref.future())
-    print(await fut)
-asyncio.run(convert_to_asyncio_future())
-```
-
-### ObjectRefs 作为 concurrent.futures.Futures
-
-ObjectRefs 也可以被包装成 `concurrent.futures.Future` 对象。这对于与现有的 `concurrent.futures` API 接口非常有用：
-
-```python
-import concurrent
-
-refs = [some_task.remote() for _ in range(4)]
-futs = [ref.future() for ref in refs]
-for fut in concurrent.futures.as_completed(futs):
-    assert fut.done()
-    print(fut.result())
-```
-
-```
-1
-1
-1
-1
-```
-
-### 定义一个异步Actor
-
-通过使用 `async` 方法定义，Ray 将自动检测一个 actor 是否支持 `async` 调用。
-
-```python
-import asyncio
-
-@ray.remote
-class AsyncActor:
-    async def run_task(self):
-        print("started")
-        await asyncio.sleep(2) # Network, I/O task here
-        print("ended")
-
-actor = AsyncActor.remote()
-# All 5 tasks should start at once. After 2 second they should all finish.
-# they should finish at the same time
-ray.get([actor.run_task.remote() for _ in range(5)])
-```
-
-```shell
-(AsyncActor pid=3456) started
-(AsyncActor pid=3456) started
-(AsyncActor pid=3456) started
-(AsyncActor pid=3456) started
-(AsyncActor pid=3456) started
-(AsyncActor pid=3456) ended
-(AsyncActor pid=3456) ended
-(AsyncActor pid=3456) ended
-(AsyncActor pid=3456) ended
-(AsyncActor pid=3456) ended
-```
-
-在底层，Ray 在单个 Python 事件循环中运行所有方法。请注意，不允许在异步 actor 方法中运行阻塞的 `ray.get` 或 `ray.wait`，因为 `ray.get` 会阻塞事件循环的执行。
-
-在异步Actors中，任何时候只能运行一个Task（尽管Task可以多路复用）。AsyncActor 中将只有一个线程！如果你想要一个线程池，请参阅 [线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#threaded-actors)。
-
-### 在异步 Actors 中设置并发
-
-你可以使用 `max_concurrency` 标志设置一次运行的“并发”Task数量。默认情况下，可以同时运行1000个Task。
-
-```python
-import asyncio
-
-@ray.remote
-class AsyncActor:
-    async def run_task(self):
-        print("started")
-        await asyncio.sleep(1) # Network, I/O task here
-        print("ended")
-
-actor = AsyncActor.options(max_concurrency=2).remote()
-
-# Only 2 tasks will be running concurrently. Once 2 finish, the next 2 should run.
-ray.get([actor.run_task.remote() for _ in range(8)])
-```
-
-
-
-```python
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) started
-(AsyncActor pid=5859) ended
-(AsyncActor pid=5859) ended
-```
-
-### 线程化Actor
-
-有时，asyncio 并不是你Actor的理想解决方案。例如，你可能有一个方法执行一些计算密集型Task，同时阻塞事件循环，不通过 `await` 放弃控制。这会损害异步Actor的性能，因为异步Actor一次只能执行一个Task，并且依赖 `await` 进行上下文切换。
-
-相反，你可以使用 `max_concurrency`  actor 选项，而无需任何异步方法，从而实现线程并发（如线程池）。
-
-> 警告
->
-> 当actor定义中至少有一个 `async def` 方法时，Ray 会将该actor识别为 AsyncActor 而不是 ThreadedActor。
-
-```python
-@ray.remote
-class ThreadedActor:
-    def task_1(self): print("I'm running in a thread!")
-    def task_2(self): print("I'm running in another thread!")
-
-a = ThreadedActor.options(max_concurrency=2).remote()
-ray.get([a.task_1.remote(), a.task_2.remote()])
-```
-
-```python
-(ThreadedActor pid=4822) I'm running in a thread!
-(ThreadedActor pid=4822) I'm running in another thread!
-```
-
-每个线程化Actor的调用都将在一个线程池中运行。线程池的大小受 `max_concurrency` 值的限制。
-
-### 远程Task的AsyncIO
-
-我们不支持远程Task的 asyncio。以下代码片段将会失败：
-
-```python
-@ray.remote
-async def f():
-    pass
-```
-
-相反，你可以用一个包装器包裹 `async` 函数来同步运行Task：
-
-```python
-async def f():
-    pass
-
-@ray.remote
-def wrapper():
-    import asyncio
-    asyncio.run(f())
-```
-
-## 使用并发组限制Per-Method 的并发性
-
-除了为actor设置总体的最大并发数外，Ray还允许将方法分离到actor并发组中，每个组都有自己的线程。这使你可以为每个方法限制并发数，例如，允许健康检查方法拥有自己的并发配额，与请求服务方法分开。
-
-> 小技巧
->
-> 并发组同时适用于 asyncio 和线程化 actor。语法是相同的。
-
-### 定义并发组
-
-下面定义了两个并发组，”io” 的最大并发数为 2，”compute” 的最大并发数为 4。方法 `f1` 和 `f2` 被放置在 “io” 组中，方法 `f3` 和 `f4` 被放置在 “compute” 组中。请注意，始终存在一个默认的并发组，其默认并发数为 1000 个 AsyncIO actor，否则为 1。
-
-你可以使用 `concurrency_group` 装饰器参数为actors定义并发组：
-
-```python
-import ray
-
-@ray.remote(concurrency_groups={"io": 2, "compute": 4})
-class AsyncIOActor:
-    def __init__(self):
-        pass
-
-    @ray.method(concurrency_group="io")
-    async def f1(self):
-        pass
-
-    @ray.method(concurrency_group="io")
-    async def f2(self):
-        pass
-
-    @ray.method(concurrency_group="compute")
-    async def f3(self):
-        pass
-
-    @ray.method(concurrency_group="compute")
-    async def f4(self):
-        pass
-
-    async def f5(self):
-        pass
-
-a = AsyncIOActor.remote()
-a.f1.remote()  # executed in the "io" group.
-a.f2.remote()  # executed in the "io" group.
-a.f3.remote()  # executed in the "compute" group.
-a.f4.remote()  # executed in the "compute" group.
-a.f5.remote()  # executed in the default group.
-```
-
-### 默认并发组
-
-默认情况下，方法被放置在一个默认的并发组中，该组的并发限制为 AsyncIO actor的 1000 和 其他情况下的 1。可以通过设置 `max_concurrency` actor选项来更改默认组的并发性。
-
-以下actor有2个并发组：“io”和“default”。“io”的最大并发数是2，“default”的最大并发数是10。
-
-```python
-@ray.remote(concurrency_groups={"io": 2})
-class AsyncIOActor:
-    async def f1(self):
-        pass
-
-actor = AsyncIOActor.options(max_concurrency=10).remote()
-```
-
-### 在运行时设置并发
-
-你也可以在运行时将actors方法分派到特定的并发组中。以下代码片段展示了在运行时动态设置 `f2` 方法的并发组。
-
-你可以使用 `.options` 方法。
-
-```python
-# Executed in the "io" group (as defined in the actor class).
-a.f2.options().remote()
-
-# Executed in the "compute" group.
-a.f2.options(concurrency_group="compute").remote()
-```
-
-## Actor 执行顺序
-
-### 同步, 单线程的 Actor
-
-在 Ray 中，一个 actor 从多个提交者（包括驱动程序和 work er线程）接收Task。对于从同一提交者接收的Task，一个同步的单线程 actor 按照提交顺序执行它们。换句话说，在同一提交者提交的先前Task完成执行之前，给定的Task不会被执行。
-
-```python
-import ray
-
-@ray.remote
-class Counter:
-    def __init__(self):
-        self.value = 0
-
-    def add(self, addition):
-        self.value += addition
-        return self.value
-
-counter = Counter.remote()
-
-# For tasks from the same submitter,
-# they are executed according to submission order.
-value0 = counter.add.remote(1)
-value1 = counter.add.remote(2)
-
-# Output: 1. The first submitted task is executed first.
-print(ray.get(value0))
-# Output: 3. The later submitted task is executed later.
-print(ray.get(value1))
-```
-
-```shell
-1
-3
-```
-
-然而，actor 不保证来自不同提交者的Task的执行顺序。例如，假设一个未满足的参数阻塞了一个先前提交的Task。在这种情况下，actor仍然可以执行由不同worker提交的Task。
-
-```python
-import time
-import ray
-
-@ray.remote
-class Counter:
-    def __init__(self):
-        self.value = 0
-
-    def add(self, addition):
-        self.value += addition
-        return self.value
-
-counter = Counter.remote()
-
-# Submit task from a worker
-@ray.remote
-def submitter(value):
-    return ray.get(counter.add.remote(value))
-
-# Simulate delayed result resolution.
-@ray.remote
-def delayed_resolution(value):
-    time.sleep(5)
-    return value
-
-# Submit tasks from different workers, with
-# the first submitted task waiting for
-# dependency resolution.
-value0 = submitter.remote(delayed_resolution.remote(1))
-value1 = submitter.remote(2)
-
-# Output: 3. The first submitted task is executed later.
-print(ray.get(value0))
-# Output: 2. The later submitted task is executed first.
-print(ray.get(value1))
-```
-
-```shell
-3
-2
-```
-
-### 异步或线程化Actor
-
-[异步或线程化Actor](https://docs.ray.io/en/latest/ray-core/actors/async_api.html#async-actors) 不保证Task执行顺序。这意味着系统可能会执行一个Task，即使之前提交的Task尚未执行。
-
-```python
-import time
-import ray
-
-@ray.remote
-class AsyncCounter:
-    def __init__(self):
-        self.value = 0
-
-    async def add(self, addition):
-        self.value += addition
-        return self.value
-
-counter = AsyncCounter.remote()
-
-# Simulate delayed result resolution.
-@ray.remote
-def delayed_resolution(value):
-    time.sleep(5)
-    return value
-
-# Submit tasks from the driver, with
-# the first submitted task waiting for
-# dependency resolution.
-value0 = counter.add.remote(delayed_resolution.remote(1))
-value1 = counter.add.remote(2)
-
-# Output: 3. The first submitted task is executed later.
-print(ray.get(value0))
-# Output: 2. The later submitted task is executed first.
-print(ray.get(value1))
-```
-
-```shell
-3
-2
-```
 
 ## Scheduling
 
@@ -1099,7 +1122,7 @@ print(ray.get(value1))
 
 - 可行：节点拥有运行Task或Actor的必要资源。根据这些资源的当前可用性，存在两种子状态：
   - 可用：节点具有所需的资源，并且它们现在空闲。
-  - 不可用：节点具有所需的资源，但它们当前正被其他Task或 actors使用。
+  - 不可用：节点具有所需的资源，但它们当前正被其他Task或 Actors使用。
 - 不可行：节点没有所需的资源。例如，仅CPU的节点对于GPU Task是不可行的。
 
 资源需求是 硬性 要求，这意味着只有可行的节点才有资格运行Task或Actor。如果有可行的节点，Ray 将选择一个可用节点或等待不可用节点变为可用，具体取决于以下讨论的其他因素。如果所有节点都不可行，Task或Actor将无法调度，直到集群中添加了可行的节点。
@@ -1157,11 +1180,11 @@ class SpreadActor:
 actors = [SpreadActor.options(scheduling_strategy="SPREAD").remote() for _ in range(10)]
 ```
 
-#### PlacementGroupSchedulingStrategy
+### PlacementGroupSchedulingStrategy
 
 [`PlacementGroupSchedulingStrategy`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.scheduling_strategies.PlacementGroupSchedulingStrategy.html#ray.util.scheduling_strategies.PlacementGroupSchedulingStrategy) 将会把Task或Actor调度到Placement group 所在的位置。这对于 Actor 群组调度非常有用。更多详情请参见 [Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#ray-placement-group-doc-ref)。
 
-#### NodeAffinitySchedulingStrategy
+### NodeAffinitySchedulingStrategy
 
 [`NodeAffinitySchedulingStrategy`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.scheduling_strategies.NodeAffinitySchedulingStrategy.html#ray.util.scheduling_strategies.NodeAffinitySchedulingStrategy) 是一种低级策略，允许Task或Actor被调度到由其节点ID指定的特定节点上。`soft` 标志指定如果指定的节点不存在（例如，如果节点死亡）或由于没有运行Task或Actor所需的资源而不可行时，是否允许Task或Actor在其他地方运行。在这些情况下，如果 `soft` 为 True，Task或Actor将被调度到另一个可行的节点上。否则，Task或Actor将失败，并出现 [`TaskUnschedulableError`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.exceptions.TaskUnschedulableError.html#ray.exceptions.TaskUnschedulableError) 或 [`ActorUnschedulableError`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.exceptions.ActorUnschedulableError.html#ray.exceptions.ActorUnschedulableError)。只要指定的节点存活且可行，Task或Actor将仅在该节点上运行，无论 `soft` 标志如何。这意味着如果节点当前没有可用资源，Task或Actor将等待直到资源可用。此策略应仅在其他高级调度策略（例如 [Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#ray-placement-group-doc-ref)）无法提供所需的Task或Actor放置时使用。它有以下已知限制：
 
@@ -1307,13 +1330,13 @@ Ray 资源是 逻辑 的，不需要与物理资源有一对一的映射。例�
 ray.init(num_cpus=3, num_gpus=4, resources={"special_hardware": 1, "custom_label": 1}
 ```
 
-If you are using [ray start](https://docs.ray.io/en/latest/cluster/cli.html#ray-start-doc) to start a Ray node, you can run:
+如果你使用 [ray start](https://docs.ray.io/en/latest/cluster/cli.html#ray-start-doc) 来启动一个 Ray 节点，你可以运行：
 
 ```shell
 ray start --head --num-cpus=3 --num-gpus=4 --resources='{"special_hardware": 1, "custom_label": 1}'
 ```
 
-If you are using [ray up](https://docs.ray.io/en/latest/cluster/cli.html#ray-up-doc) to start a Ray cluster, you can set the [resources field](https://docs.ray.io/en/latest/cluster/vms/references/ray-cluster-configuration.html#cluster-configuration-resources-type) in the yaml file:
+如果你使用 [ray up](https://docs.ray.io/en/latest/cluster/cli.html#ray-up-doc) 来启动一个 Ray 集群，你可以在 yaml 文件中设置 [resources 字段](https://docs.ray.io/en/latest/cluster/vms/references/ray-cluster-configuration.html#cluster-configuration-resources-type)：
 
 ```yaml
 available_node_types:
@@ -1326,7 +1349,7 @@ available_node_types:
       custom_label: 1
 ```
 
-If you are using [KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/index.html#kuberay-index) to start a Ray cluster, you can set the [rayStartParams field](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#raystartparams) in the yaml file:
+如果你使用 [KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/index.html#kuberay-index) 来启动一个 Ray 集群，你可以在 yaml 文件中设置 [rayStartParams 字段](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#raystartparams)：
 
 ```yaml
 headGroupSpec:
@@ -1364,7 +1387,7 @@ class Actor:
 actor = Actor.options(num_cpus=1, num_gpus=0).remote()
 ```
 
-Task和actors资源需求对 Ray 的调度并发性有影响。特别是，在给定节点上所有并发执行的Task和actors的逻辑资源需求总和不能超过该节点的总逻辑资源。这一特性可以用来 [限制并发运行的Task或actors的数量，以避免诸如 OOM 等问题](https://docs.ray.io/en/latest/ray-core/patterns/limit-running-tasks.html#core-patterns-limit-running-tasks)。
+Task和 Actors资源需求对 Ray 的调度并发性有影响。特别是，在给定节点上所有并发执行的Task和actors的逻辑资源需求总和不能超过该节点的总逻辑资源。这一特性可以用来 [限制并发运行的Task或actors的数量，以避免诸如 OOM 等问题](https://docs.ray.io/en/latest/ray-core/patterns/limit-running-tasks.html#core-patterns-limit-running-tasks)。
 
 ### 分数资源需求
 
@@ -1400,7 +1423,7 @@ ray.get(io_actor2.ping.remote())
 # (IOActor pid=96329) CUDA_VISIBLE_DEVICES: 1
 ```
 
-> 备注: GPU、TPU 和 neuron_cores 资源需求大于 1 的，需要是整数。例如，`num_gpus=1.5` 是无效的。
+> 备注: GPU、TPU 和 neuron_cores 资源需求大于 1 ，需要是整数。例如，`num_gpus=1.5` 是无效的。
 
 > 小技巧
 >
@@ -1408,7 +1431,7 @@ ray.get(io_actor2.ping.remote())
 
 ## Placement groups
 
-Placement group允许用户在多个节点上原子性地保留一组资源（即，成组调度）。然后，它们可以用于为局部性（PACK）或分散（SPREAD）调度RayTask和Actor。Placement group通常用于成组调度Actor，但也支持Task。
+Placement group允许用户在多个节点上原子性地保留一组资源（即，成组调度）。然后，它们可以用于为局部性（PACK）或分散（SPREAD）调度Ray Task和Actor。Placement group 通常用于成组调度Actor，但也支持Task。
 
 以下是一些实际应用案例：
 
@@ -1429,7 +1452,7 @@ Placement group 从集群中预留资源。预留的资源只能被使用 [Place
 - 然后，根据集群节点上的  [placement strategies](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#pgroup-strategy) 放置bundles。
 - 创建 placement group 后，Task或Actor可以根据 placement group甚至单个bundles进行调度。
 
-### 创建一个Placement group（预留资源）
+### 创建Placement group（预留资源）
 
 你可以使用 [`ray.util.placement_group()`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.placement_group.html#ray.util.placement_group) 创建一个Placement group。Placement group接收一个bundles列表和一个 [placement strategy](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#pgroup-strategy) 。请注意，每个bundle 必须能够适应Ray集群中的单个节点。例如，如果你只有一个8 CPU的节点，并且你有一个需要 `{"CPU": 9}` 的bundles，这个bundles将无法被调度。
 
@@ -1501,7 +1524,7 @@ Table:
 
 Placement group已成功创建。在 `{"CPU": 2, "GPU": 2}` 资源中，Placement group预留了 `{"CPU": 1, "GPU": 1}`。预留的资源只能在您使用Placement group调度Task或Actor时使用。下图展示了Placement group预留的“1 CPU 和 1 GPU”bundles。
 
-<img src="https://docs.ray.io/en/latest/_images/pg_image_1.png" alt="../../_images/pg_image_1.png" style="zoom:50%;" />
+<img src="https://docs.ray.io/en/latest/_images/pg_image_1.png" alt="../../_images/pg_image_1.png" style="zoom: 67%;" />
 
 Placement group是原子性创建的；如果一个bundle 无法适应当前任何节点，整个Placement group将未就绪，并且不会保留任何资源。为了说明，让我们创建另一个需` {“CPU”:1}, {“GPU”: 2}`（2个bundles）的Placement group。
 
@@ -1542,11 +1565,11 @@ Table:
 
 你也可以使用 `ray status` CLI 命令来验证 `{"CPU": 1, "GPU": 2}` bundles无法被分配。
 
-```
+```shell
 ray status
 ```
 
-```
+```shell
 Resources
 ---------------------------------------------------------------
 Usage:
@@ -1559,15 +1582,15 @@ Demands:
 {'CPU': 1.0} * 1, {'GPU': 2.0} * 1 (PACK): 1+ pending Placement groups <--- 1 Placement group is pending creation.
 ```
 
-当前集群有 `{"CPU": 2, "GPU": 2}`。我们已经创建了一个 `{"CPU": 1, "GPU": 1}` 的bundles，因此集群中只剩下 `{"CPU": 1, "GPU": 1}`。如果我们创建两个bundles `{"CPU": 1}, {"GPU": 2}`，我们可以成功创建第一个bundles，但无法调度第二个bundles。由于我们无法在集群上创建每个bundles，因此不会创建Placement group，包括 `{"CPU": 1}` bundles。
+当前集群有 `{"CPU": 2, "GPU": 2}`。我们已经创建了一个 `{"CPU": 1, "GPU": 1}` 的bundles，因此集群中只剩下 `{"CPU": 1, "GPU": 1}`。如果我们创建两个bundles `{"CPU": 1}, {"GPU": 2}`，我们可以成功创建第一个bundle，但无法调度第二个bundle。由于我们无法在集群上创建每个bundle，因此不会创建Placement group，包括 `{"CPU": 1}` bundles。
 
-<img src="https://docs.ray.io/en/latest/_images/pg_image_2.png" alt="../../_images/pg_image_2.png" style="zoom:50%;" />
+<img src="https://docs.ray.io/en/latest/_images/pg_image_2.png" alt="../../_images/pg_image_2.png" style="zoom: 67%;" />
 
-当无法以任何方式调度Placement group时，它被称为“不可行”。想象一下，你调度了 `{"CPU": 4}` 的bundles，但你只有一个拥有2个CPU的节点。在你的集群中无法创建这个bundles。Ray Autoscaler 知道Placement group，并自动扩展集群以确保待处理的组可以根据需要放置。
+当无法以任何方式调度Placement group时，它被称为“不可行”。想象一下，你调度了 `{"CPU": 4}` 的bundles，但你只有一个拥有2个CPU的节点。在你的集群中无法创建这个bundle。Ray Autoscaler 知道Placement group，并自动扩展集群以确保待处理的组可以根据需要放置。
 
 如果 Ray Autoscaler 无法提供资源来调度一个Placement group，Ray 不会打印关于不可行组和使用这些组的Task和Actor的警告。你可以从 [仪表板或状态API](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#ray-placement-group-observability-ref) 观察Placement group的调度状态。
 
-### 将Task和actors调度到Placement group（使用预留资源）
+### 将Task和Actors调度到Placement group（使用预留资源）
 
 在上一节中，我们创建了一个保留了 `{"CPU": 1, "GPU: 1"}` 的Placement group，该Placement group来自一个拥有2个CPU和2个GPU的节点。
 
@@ -1600,13 +1623,13 @@ ray.get(actor.ready.remote(), timeout=10)
 >
 > 为了避免任何意外，始终为Actor明确指定资源需求。如果资源被明确指定，它们在调度时间和执行时间都是必需的。
 
-actor 现在已调度！一个bundles 可以被多个Task和 actor使用（即，bundles与Task（或actor）之间是一对多的关系）。在这种情况下，由于actor使用了1个CPU，bundles中还剩下1个GPU。你可以通过CLI命令``ray status``来验证这一点。你可以看到1个CPU被Placement group保留，并且1.0被使用（由我们创建的actor使用）。
+Actor 现在已调度！一个bundle 可以被多个Task和 Actor使用（即，bundles与Task（或Actor）之间是一对多的关系）。在这种情况下，由于actor使用了1个CPU，bundles中还剩下1个GPU。你可以通过CLI命令``ray status``来验证这一点。你可以看到1个CPU被Placement group 保留，并且1.0 被使用（由我们创建的actor使用）。
 
 ```shell
 ray status
 ```
 
-```
+```shell
 Resources
 ---------------------------------------------------------------
 Usage:
@@ -1626,7 +1649,7 @@ Demands:
 ray list actors --detail
 ```
 
-```
+```shell
 -   actor_id: b5c990f135a7b32bfbb05e1701000000
     class_name: Actor
     death_cause: null
@@ -1644,7 +1667,7 @@ ray list actors --detail
     state: ALIVE
 ```
 
-由于还剩下1个GPU，让我们创建一个需要1个GPU的新actor。这次，我们还指定了``placement_group_bundle_index``。每个bundle在Placement group中都有一个“索引”。例如，一个包含2个bundle的Placement group `[{"CPU": 1}, {"GPU": 1}]` 有索引0的bundle `{"CPU": 1}` 和索引1的bundle `{"GPU": 1}`。由于我们只有一个bundle，所以我们只有索引0。如果你不指定bundle，actor（或Task）会被调度到一个具有未分配保留资源的随机bundle上。
+由于还剩下1个GPU，让我们创建一个需要1个GPU的新actor。这次，我们还指定了``placement_group_bundle_index``。每个bundle在Placement group中都有一个“索引”。例如，一个包含2个bundle的Placement group `[{"CPU": 1}, {"GPU": 1}]` 有索引0的bundle `{"CPU": 1}` 和索引1的bundle `{"GPU": 1}`。由于我们只有一个bundle，所以我们只有索引0。如果你不指定bundle，Actor（或Task）会被调度到一个具有未分配保留资源的随机bundle上。
 
 ```python
 @ray.remote(num_cpus=0, num_gpus=1)
@@ -1674,11 +1697,11 @@ ray.get(actor2.ready.remote(), timeout=10)
 
 你也可以通过 `ray status` 命令来验证所有预留的资源是否都被使用。
 
-```
+```shell
 ray status
 ```
 
-```
+```shell
 Resources
 ---------------------------------------------------------------
 Usage:
@@ -1690,13 +1713,13 @@ Usage:
 
 ### Placement Strategy
 
-Placement group提供的功能之一是在bundles之间添加放置约束。
+Placement group 提供的功能之一是在 bundles 之间添加放置约束。
 
-例如，您可能希望将您的 bundles 打包到同一个节点，或者尽可能分散到多个节点。您可以通过 `strategy` 参数指定策略。这样，您可以确保您的actors和Task可以根据某些放置约束进行调度。
+例如，您可能希望将您的 bundles 打包到同一个节点，或者尽可能分散到多个节点。您可以通过 `strategy` 参数指定策略。这样，您可以确保您的Actors和Task可以根据某些放置约束进行调度。
 
 下面的示例创建了一个包含2个 bundles 的Placement group，使用PACK策略；这两个 bundles 必须创建在同一个节点上。请注意，这是一个软策略。如果 bundles 不能被打包到一个节点中，它们将被分散到其他节点。如果你想避免这个问题，可以使用`STRICT_PACK`策略，如果放置要求不能满足，则无法创建Placement group。
 
-```
+```python
 # Reserve a Placement group of 2 bundles
 # that have to be packed on the same node.
 pg = placement_group([{"CPU": 1}, {"GPU": 1}], strategy="PACK")
@@ -1722,21 +1745,21 @@ Ray 支持四种Placement group策略。默认的调度策略是 `PACK`。
 
 #### STRICT_SPREAD
 
-每个bundles必须在单独的节点上调度。
+每个 bundle 必须在单独的节点上调度。
 
 #### **SPREAD**
 
-每个bundles都会尽力分散到不同的节点上。如果严格分散不可行，bundles可以放置在重叠的节点上。
+每个bundles都会尽力分散到不同的节点上。如果严格分散不可行，bundles 可以放置在重叠的节点上。
 
 ### 移除Placement group（释放预留资源）
 
-默认情况下，Placement group的生存期与创建它的驱动程序的作用域相同（除非你将其设为 [分离的Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#placement-group-detached)）。当从 [分离的actor](https://docs.ray.io/en/latest/ray-core/actors/named-actors.html#actor-lifetimes) 创建Placement group时，生存期与分离的actor的作用域相同。在 Ray 中，驱动程序是调用 `ray.init` 的 Python 脚本。
+默认情况下，Placement group 的生存期与创建它的驱动程序的作用域相同（除非你将其设为 [分离的Placement group](https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html#placement-group-detached)）。当从 [分离的actor](https://docs.ray.io/en/latest/ray-core/actors/named-actors.html#actor-lifetimes) 创建Placement group时，生存期与分离的actor的作用域相同。在 Ray 中，驱动程序是调用 `ray.init` 的 Python 脚本。
 
 从Placement group中保留的资源（bundles）在创建Placement group的驱动程序或分离的actors退出时会自动释放。要手动释放保留的资源，请使用 [`remove_placement_group`](https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.remove_placement_group.html#ray.util.remove_placement_group) API 删除Placement group（这也是一个异步API）。
 
 > 备注
 >
-> 当你移除Placement group时，仍然使用保留资源的Actor或Task将被强制终止。
+> 当你移除 Placement group 时，仍然使用保留资源的Actor或Task将被强制终止。
 
 ```python
 # This API is asynchronous.
@@ -1778,23 +1801,15 @@ Usage:
 0B/2.00GiB object_store_memory
 ```
 
-仪表盘
+#### 仪表盘
 
-The [dashboard job view](https://docs.ray.io/en/latest/ray-observability/getting-started.html#dash-jobs-view) provides the placement group table that displays the scheduling state and metadata of the placement group.
+The [dashboard job view](https://www.aidoczh.com/ray/ray-observability/getting-started.html#dash-jobs-view) 提供了放置组表，显示了放置组的调度状态和元数据。
 
-Note
+#### Ray State API
 
-Ray dashboard is only available when you install Ray is with `pip install "ray[default]"`.
+[Ray 状态 API](https://www.aidoczh.com/ray/ray-observability/user-guides/cli-sdk.html#state-api-overview-ref) 是一个用于检查 Ray 资源（任务、角色、放置组等）状态的 CLI 工具。
 
-Ray State API
-
-[Ray state API](https://docs.ray.io/en/latest/ray-observability/user-guides/cli-sdk.html#state-api-overview-ref) is a CLI tool for inspecting the state of Ray resources (tasks, actors, placement groups, etc.).
-
-`ray list placement-groups` provides the metadata and the scheduling state of the placement group. `ray list placement-groups --detail` provides statistics and scheduling state in a greater detail.
-
-Note
-
-State API is only available when you install Ray is with `pip install "ray[default]"`
+`ray list placement-groups` 提供了放置组的元数据和调度状态。`ray list placement-groups --detail` 提供了更详细的统计信息和调度状态。
 
 ### 检查Placement group调度状态
 
@@ -1803,11 +1818,11 @@ State API is only available when you install Ray is with `pip install "ray[defau
 - [High level state](https://github.com/ray-project/ray/blob/03a9d2166988b16b7cbf51dac0e6e586455b28d8/src/ray/protobuf/gcs.proto#L579)
 - [Details](https://github.com/ray-project/ray/blob/03a9d2166988b16b7cbf51dac0e6e586455b28d8/src/ray/protobuf/gcs.proto#L524)
 
-![../../_images/pg_image_6.png](https://docs.ray.io/en/latest/_images/pg_image_6.png)
+<img src="https://docs.ray.io/en/latest/_images/pg_image_6.png" alt="../../_images/pg_image_6.png" style="zoom: 67%;" />
 
 ### [高级] Child Task 和 Actor
 
-默认情况下，Child actor和Task不共享父actor使用的相同Placement group。要自动将Child actor或Task调度到相同的Placement group，请将 `placement_group_capture_child_tasks` 设置为 True。
+默认情况下，Child actor和Task不共享父Actor使用的相同Placement group。要自动将Child actor或Task调度到相同的Placement group，请将 `placement_group_capture_child_tasks` 设置为 True。
 
 ```python
 import ray
@@ -1846,7 +1861,7 @@ ray.get(
 )
 ```
 
-当 `placement_group_capture_child_tasks` 为 True 时，但你不希望将Child Task和actors调度到同一个Placement group，请指定 `PlacementGroupSchedulingStrategy(placement_group=None)`。
+当 `placement_group_capture_child_tasks` 为 True 时，但你不希望将Child Task和Actor 调度到同一个Placement group，请指定 `PlacementGroupSchedulingStrategy(placement_group=None)`。
 
 ```python
 @ray.remote
