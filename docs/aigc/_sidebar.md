@@ -18,24 +18,61 @@
   - [大型语言模型 (LLM) 微调方法](aigc/llm_finetune/finetune_llm.md)
   - [Low-Rank Adaptation (LoRA)](aigc/llm_finetune/lora_llm.md)
 
+- LLM Datasets
+
+  - [LLM Instruction 数据集](aigc/llm_dataset/instruction_dataset.md)
+  - [LLM Preference 数据集](aigc/llm_dataset/preference_dataset.md)
+  - [LLM 行业数据集](aigc/llm_dataset/prompt_dataset.md)
 
 - LLM RLHF
 
   - [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
-  - [Chip Huyen 对 RLHF的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
+  - [Chip Huyen 对 RLHF 的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
   - [RLHF 相关知识整理](aigc/llm_rlhf/rlhf_overview.md)
+  - [Ray 的核心概念](aigc/llm_rlhf/Ray核心概念.md)
+  - [RLHF 训练框架 OpenRLHF](aigc/llm_rlhf/OpenRLHF.md)
+  - [RLHF 训练框架 NeMo-Aligner](aigc/llm_rlhf/NeMo-Aligner.md)
+  - [RLHF 训练框架 HybridFlow](aigc/llm_rlhf/HybridFlow.md)
+  - [RLHF 训练框架 DeepSpeedChat](aigc/llm_rlhf/DeepSpeedChat.md)
+  - [RLHF 训练框架 OpenR](aigc/llm_rlhf/OpenR.md)
+  - [OpenRLHF 源码解读](aigc/llm_rlhf/OpenRLHF源码解读.md)
+  - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](aigc/llm_rlhf/Ray_OpenRLHF_Verl.md)
   - [RLHF 中的 PPO 代码拆解](aigc/llm_rlhf/rlhf_with_ppo.md)
-  - [直接偏好优化(DPO)](aigc/llm_rlhf/rlhf_dpo.md)
-  - [直接偏好优化(DPO)推导](aigc/llm_rlhf/rlhf_dpo_notes.md)
-  - [Kahneman-Tversky-Optimization(KTO)](aigc/llm_rlhf/rlhf_kto.md)
+  - [直接偏好优化 (DPO)](aigc/llm_rlhf/rlhf_dpo.md)
+  - [直接偏好优化 (DPO) 推导](aigc/llm_rlhf/rlhf_dpo_notes.md)
+  - [Kahneman-Tversky-Optimization (KTO)](aigc/llm_rlhf/rlhf_kto.md)
+  - [RLOO](aigc/llm_rlhf/RLOO.md)
+  - [DeepSeek-R1：通过强化学习激励 LLMs 的推理能力](aigc/llm_rlhf/DeepSeek-R1.md)
+  - [Kimi k1.5：使用 LLM 扩展强化学习](aigc/llm_rlhf/KimiK1.5.md)
+  - [DAPO: 一个开源的大规模 LLM 强化学习系统](aigc/llm_rlhf/DAPO.md)
+  - [深入理解 R1-Zero 类训练：一个批判性视角](aigc/llm_rlhf/DR.GRPO.md)
+  - [REINFORCE++：一种简单高效的大型语言模型对齐方法](aigc/llm_rlhf/REINFORCE++.md)
+  - [ChatGPT O1 Reasoning](aigc/llm_rlhf/chatgpt_O1.md)
+  - [KL 散度的近似计算](aigc/llm_rlhf/KL-Approximate.md)
+  - [过程奖励模型（Process Reward Model）](aigc/llm_rlhf/PRM.md)
+  - [数学推理中过程奖励模型的开发经验](aigc/llm_rlhf/PRM_Reasoning.md)
+  - [ReFT: 通过强化微调提升推理能力](aigc/llm_rlhf/ReFT.md)
+  - [拒绝采样（Reject Sampling）在 RLHF 中的应用](aigc/llm_rlhf/RejectSampling.md)
+  - [ReST-MCTS：通过过程奖励引导的树搜索实现 LLM 自训练](aigc/llm_rlhf/ReST-MCTS.md)
+  - [rStar-Math：小型语言模型通过自我进化的深度思考掌握数学推理](aigc/llm_rlhf/rStar-Math.md)
+
 
 - LLM Agent
 
   - [Autonomous AI Agents](aigc/llm_agent/llm_agent0.md)
   - [LLM 赋能 Agent](aigc/llm_agent/llm_agent1.md)
-  - [AutoGPT与LLM Agent解析](aigc/llm_agent/llm_agent2.md)
-  - [Agent应用:MarkAgent](aigc/llm_agent/market_agent.md)
-  - [Agent应用:SightPro](aigc/llm_agent/sightpro.md)
+  - [AutoGPT 与 LLM Agent 解析](aigc/llm_agent/llm_agent2.md)
+  - [Agent 应用: MarkAgent](aigc/llm_agent/market_agent.md)
+  - [Agent 应用: SightPro](aigc/llm_agent/sightpro.md)
+  - [LLM Playing StarCraftII 1](aigc/llm_agent/llm_starcraft_1.md)
+  - [LLM Playing StarCraftII 2](aigc/llm_agent/llm_starcraft_2.md)
+  - [LLM Playing StarCraftII 3](aigc/llm_agent/llm_starcraft_3.md)
+
+- LLM Evaluation
+
+  - [LLM 评测体系](aigc/llm_eval/LLM评测体系.md)
+  - [LLM 评估工具](aigc/llm_eval/LLM评估工具.md)
+  - [LLM 评估指标](aigc/llm_eval/LLM评估指标.md)
 
 
 - 多模态
@@ -58,11 +95,15 @@
   - [Hooks](aigc/train_engine/hooks.md)
   - [Logger](aigc/train_engine/logger.md)
 
-
 - 分布式训练
 
-  - [ZeRO 技术原理](aigc/llm_engineer/zero-optimizer.md)
-
+  - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
+  - [大模型训练技巧](aigc/llm_recipes/recipes.md)
+  - [Pytorch 分布式使用教程](aigc/llm_recipes/pytorch_distributed.md)
+  - [ZeRO 技术原理 (上)](aigc/llm_recipes/zero-optimizer.md)
+  - [ZeRO 技术原理 (下)](aigc/llm_recipes/deepspeed_zero.md)
+  - [Pytorch FSDP 介绍](aigc/llm_recipes/fsdp.md)
+  - [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
 
 - 扩散模型
 
@@ -73,7 +114,6 @@
   - [扩散模型: 重参数化技巧](aigc/diffusion/reparameterization.md)
   - [基于分数的生成模型](aigc/diffusion/score_model.md)
   - [From Autoencoder to Beta-VAE](aigc/diffusion/vae_model.md)
-
 
 - 量化压缩
 
@@ -96,5 +136,4 @@
   - [从0开始安装AscendPytorch](aigc/ascend/从0开始安装Ascend Pytorch.md)
 
   - [Ascend_Pytorch适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
-
   - [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
