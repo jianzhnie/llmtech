@@ -28,23 +28,23 @@ OpenRLHF提供了多种Post-training方法，本文只围绕PPO相关源码做�
 
 ![img](https://pica.zhimg.com/v2-871a3ef565dac524b6464f11fd8242bc_1440w.jpg)
 
-
-
 <img src="https://pic4.zhimg.com/v2-85cadd3aa6b1b0606562eb6a137cc33f_1440w.jpg" alt="img" style="zoom:50%;" />
-
-
 
 <img src="https://pic2.zhimg.com/v2-781c4eaa36540927667b8159f2c0f15d_1440w.jpg" alt="img" style="zoom:50%;" />
 
 ### 1.3.PPO训练四阶段
 
 - 阶段1：先基于Pretrain model，训练一个精调模型 SFT Model 和 一个奖励模型（Reward Model）。Reward model 一般可以基于SFT model 热启 或 基于 Pretrain model 热启训练
+
 - 阶段2：模型初始化，PPO过程，在线同时有四个模型，分别为
+
 - - Actor Model ： 是我们要优化学习的策略模型，同时用于做数据采样，用SFT Model热启
   - Reference Model ： 代码中为initial_model，是为了控制Actor模型学习的分布与原始模型的分布相差不会太远的参考模型，通过loss中增加KL项，来达到这个效果。训练过程中该模型不更新
   - Critic Model ：是对每个状态做打分的价值模型，衡量当前token到生成结束的整体价值打分，用Reward Model热启
   - Reward Model ：这里实现的是ORM（Outcome Reward Model），对整个生成的结果打分，是事先训练好的Reward Model。训练过程中该模型不更新
+
 - 阶段3：采样Experience数据，这个过程比较复杂, 后面将详细介绍。简述流程为：
+
   - 首先采样一批随机指令集（Prompt）
   - 调用Actor模型的generate()方法，采样1条或多条结果（sequences）
   - 四个模型一起参与获得经验（experiences）的各个部分，用于后续模型训练
@@ -84,8 +84,6 @@ for i in steps:
         critic.step()
 ```
 
-
-
 ## 2. 模型结构
 
 ### 2.1. Actor Model 模型结构（Reference Model 同 Actor Model一致）
@@ -120,9 +118,11 @@ for i in steps:
 > 图4、Critic网络（PPO训练阶段要更新的价值评估网络）
 
 - Critic用于评估当前状态的价值（当前token到生成eos累计预估价值），每个状态都会计算价值打分
+
 - 注： 从图中第二层(Linear层)可以看到，输出结果先做了[:,:-1]的切片操作，然后再取生成长度的切片[:,-num_actions:]。
 
 - Critic用于评估当前状态的价值（当前token到生成eos累计预估价值），每个状态都会计算价值打分
+
 - 注：从图中第二层(Linear层)可以看到，输出结果先做了[:, :-1]的切片操作，然后再取生成长度的切片[:, -num_actions:]。这个操作表示整体价值打分序列往前移了一位，这是因为在生成模型中，一个step数据：$(s_i, a_i, s_{i+1}, r_i)$ 的描述。当 $i = 1$ 时，$s_1$ 就是输入的prompt，状态 $s_1$ 的end位置是prompt的最后一个token的位置，而这个位置就是上述两次切片操作后的首token位置，表示第一个状态。$a_1$ 是生成的第一个token，$s_2$ 是prompt+生成的第一个token，$r_1$ 是从 $s_1 \rightarrow s_2$ 的即时奖励。
 
 ## 3. Experience数据采样过程
@@ -240,6 +240,7 @@ class PPOTrainer(ABC):
 > - B: batch_size
 >
 > - S: Sequence_len，是一个Batch padding后的Prompt + response的长度
+>
 > - A: num_actions, 是生成的token长度
 
 - [Sample](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L88)
@@ -498,7 +499,6 @@ def compute_reward(
         rewards.append(kl_penalty)
 
     return rewards
-
 ```
 
 该代码的主要功能是计算强化学习（RL）或策略优化任务中的奖励（reward），并考虑了 KL 散度（Kullback-Leibler divergence）的惩罚项。具体来说：
@@ -548,10 +548,9 @@ def get_advantages_and_returns(values: torch.Tensor, rewards: torch.Tensor,）
 - $\gamma$：是时间步衰减因子，表示离当前状态越近奖励值影响越大，越远越衰减。默认值：1不衰减。
 
 - $\lambda$：是平衡取观测值的步数的参数。默认值：0.95
+
   - 当 $\lambda \rightarrow 1$ 时，$adv1 = R1 + \gamma R2 + \gamma^2 R3 + \ldots - V1$ 表示更多用观测值计算，偏差小，方差大
   - 当 $\lambda \rightarrow 0$ 时，$adv1 = R1 + \gamma V2 - V1$ 表示更多用估计值计算，偏差大，方差小
-
-
 
 计算advantage 和 return是个从后向前回溯计算的过程，如图13所示，使用value 和 reward数据，从后向前依次计算advantage 和 return。
 
@@ -663,6 +662,7 @@ class PolicyLoss(nn.Module):
 $$
 L^{CLIP}(\theta) = \mathbb{E}_t [min(r_t(\theta)A_t, clip(r_t(\theta), 1 - \epsilon, 1 + \epsilon)A_t)]
 $$
+
  其中：
 $$
 r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}
@@ -740,7 +740,6 @@ ray job submit --address="http://127.0.0.1:8265" \
 # --runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"]}' [Install deps]
 # --ref_reward_offload [Offload to CPU]
 # --remote_rm_url http://localhost:5000/get_reward
-
 ```
 
 ### 5.2 模型参数
@@ -760,16 +759,20 @@ ray job submit --address="http://127.0.0.1:8265" \
 ### 5.4 数据参数
 
 - micro_train_batch_size：训练阶段单卡分配的experience数量
+
 - train_batch_size： 训练时全局的experience数量
+
 - micro_rollout_batch_size：探索阶段单卡分配的experience数量
+
 - rollout_batch_size：探索阶段的prompt数量
+
 - max_samples：实际使用的最大prompt数量
+
 - n_samples_per_prompt：每个prompt需要生成多少个experience
+
 - max_epochs：训练阶段experience的学习次数
+
 - num_episodes：数据集迭代次数
-
-
-
 1. 首先，当我们给定一个数据集之后，框架会从中选择至多max_samples个prompt。假设我们的数据集仅有1024个prompt，并且1024小于max_samples，则1024个prompt全部保留。
 
 2. 之后我们进入探索阶段，由于一次探索完1024个prompt的时间太长了，所以我们选择一次只对rollout_batch_size个prompt进行探索。我们假设rollout_batch_size为32，则一共需要探索1024÷32=32步。这个32步就是我们在wandb或者tensorboard上面看到的步骤，我们称之为explore step。
@@ -790,28 +793,24 @@ ray job submit --address="http://127.0.0.1:8265" \
 
 我们的整个训练流程则需要对整个数据进行num_episodes次的迭代探索和训练，因此整个数据集被探索了32×num_episodes次。
 
-
-
->接下来这里会给使用8卡训练一个包含8192条数据集的例子，仅供大家参考
+> 接下来这里会给使用8卡训练一个包含8192条数据集的例子，仅供大家参考
 >
->- micro_train_batch_size：4
->- train_batch_size：32
->- micro_rollout_batch_size：4
->- rollout_batch_size：8
->- max_samples：8192
->- n_samples_per_prompt：16
->- max_epochs：1
->- num_episodes：1
+> - micro_train_batch_size：4
+> - train_batch_size：32
+> - micro_rollout_batch_size：4
+> - rollout_batch_size：8
+> - max_samples：8192
+> - n_samples_per_prompt：16
+> - max_epochs：1
+> - num_episodes：1
 >
->我们首先计算出 global step，也就是在wand中监控到的global step，是8192（max_samples）÷8（rollout_batch_size）×1（max_epochs）×1（num_episodes）=1024步。
+> 我们首先计算出 global step，也就是在wand中监控到的global step，是8192（max_samples）÷8（rollout_batch_size）×1（max_epochs）×1（num_episodes）=1024步。
 >
->之后我们计算每一个global step内的情况，首先每个global step内有8（rollout_batch_size）×16（n_samples_per_prompt）=128（样本数量）。这个样本是用vllm采样得到的，具体可以看后面的vllm参数。对于128个样本，我们8卡单步可以得到8（gpu数量）×4（micro_rollout_batch_size）=32个experience，所以make experience需要128÷32=4步。
+> 之后我们计算每一个global step内的情况，首先每个global step内有8（rollout_batch_size）×16（n_samples_per_prompt）=128（样本数量）。这个样本是用vllm采样得到的，具体可以看后面的vllm参数。对于128个样本，我们8卡单步可以得到8（gpu数量）×4（micro_rollout_batch_size）=32个experience，所以make experience需要128÷32=4步。
 >
->之后我们进入训练，我们的train_batch_size=32，所以每一个global step内需要更新128（experience数量）÷32（train_batch_size）=4步，因此这是一个off policy的策略，也就是说每个global step我们实际上更新了模型4次，所以全部训练更新了模型1024（global step）×4（每个global step内update step个数）=4096步。
+> 之后我们进入训练，我们的train_batch_size=32，所以每一个global step内需要更新128（experience数量）÷32（train_batch_size）=4步，因此这是一个off policy的策略，也就是说每个global step我们实际上更新了模型4次，所以全部训练更新了模型1024（global step）×4（每个global step内update step个数）=4096步。
 >
->我们一次前向传播可以计算8（gpu数量）×4（micro_train_batch_size）=32个experience，正好等于train_batch_size，所以无需梯度累计。
-
-
+> 我们一次前向传播可以计算8（gpu数量）×4（micro_train_batch_size）=32个experience，正好等于train_batch_size，所以无需梯度累计。
 
 ### 5.5 算法参数
 
@@ -828,7 +827,7 @@ ray job submit --address="http://127.0.0.1:8265" \
 - prompt_max_len：prompt最大长度
 - generate_max_len：生成回答的最大长度
 
-##  6. PPO 训练LLM高级技巧
+## 6. PPO 训练LLM高级技巧
 
 ---
 
@@ -846,6 +845,7 @@ ray job submit --address="http://127.0.0.1:8265" \
 #### 基于采样温度缩放（Logits Scaling）
 
 在计算响应序列的对数概率时，模型首先生成响应词元的原始 logits，随后通过采样温度（sampling temperature）对逻辑值进行缩放。具体实现如下：
+
 ```python
 logits /= self.temperature
 ```
@@ -901,6 +901,7 @@ PPO对价值函数进行截断[5]，损失函数定义为：
 $$
 \text{Loss}_v = \max\left[(V_{\theta_t} - V_{\text{targ}})^2, \left(\text{clip}(V_{\theta_t}, V_{\theta_{t-1}} - \epsilon, V_{\theta_{t-1}} + \epsilon) - V_{\text{targ}}\right)^2\right] \quad (3)
 $$
+
 #### 奖励归一化与截断
 
 在 PPO 的训练种，我们通常会使用 reward normalization 以及 value normalization 等类似技术，我们发现在 RLHF 的训练中 reward normalization 非常有助于训练的稳定性，毕竟我们的 reward 不像在游戏环境中那么规则，而是通过一个模型学出来的中间层输出（这就意味着输出范围可能会很大）。
@@ -947,7 +948,7 @@ class AdaptiveKLController:
 
 ### 6.3 - 创新策略
 
-####  冷启动
+#### 冷启动
 
 R1在冷启动SFT的过程中比较克制，大概只用了几千条数据，这其中主要的动机是避免在冷启动SFT阶段过度模仿，保证RL阶段探索时候的多样性。
 
