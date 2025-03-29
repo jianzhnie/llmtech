@@ -1,4 +1,4 @@
-# _OpenR_: 一个用于增强大语言模型推理能力的开源框架
+# OpenR: 一个用于增强大语言模型推理能力的开源框架
 
 ## 摘要
 
@@ -104,8 +104,11 @@ RL训练。使用强化学习训练LLMs通常涉及近端策略优化（PPO）(S
 
   一旦通过扩展测试时计算生成多个答案，我们需要根据它们的分数选择最佳答案的策略。我们采用了Feng等人 [2024] 的三种策略：
 
-  * **_多数投票_**：使用多数投票聚合答案：$f^{*}=\arg\max_{f}\sum_{\mathbf{y}^{j}}\mathbbm{1}_{\text{final\_ans}(\mathbf{y}^{j})=f}$，其中 $\mathbbm{1}$ 是指示函数。
+  * **_多数投票_**：使用多数投票聚合答案：
+
+$f^{*}=\arg\max_{f}\sum_{\mathbf{y}^{j}}\mathbbm{1}_{\text{final\_ans}(\mathbf{y}^{j})=f}$，其中 $\mathbbm{1}$ 是指示函数。
   * **_RM-Max_**：给定一个结果奖励模型，聚合可以选择具有最大最终奖励的答案 $f$，即 $f^{*}=\text{final\_ans}(\arg\max_{y^{j}}v(\mathbf{y}^{j}|\mathbf{x}))$。
+
   * **_RM-Vote_**：给定一个结果奖励模型，聚合可以选择具有奖励总和的答案 $f$，即 $f^{*}=\arg\max_{f}\sum_{y^{j}:\text{final\_ans}(y^{j})=f}v(\mathbf{y}^{j}|\mathbf{x})$。
 
   结合这些策略，我们可以定义多答案加权方法，例如 _PRM-Last-Max_，即使用 _PRM-Last_ 与 _RM-Max_。
