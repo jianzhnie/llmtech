@@ -163,8 +163,6 @@ $$
 
 请注意，这种策略不一定会阻碍训练效率，因为如果RL系统是同步的且生成阶段没有流水线化，生成时间通常由长尾样本的生成主导。此外，我们发现，使用动态采样的实验能够更快地达到相同的性能，如图5所示。
 
-
-
 <img src="https://arxiv.org/html/2503.14476v1/x8.png" alt="Refer to caption" style="zoom:33%;" />
 
 <img src="https://arxiv.org/html/2503.14476v1/x9.png" alt="Refer to caption" style="zoom:33%;" />
