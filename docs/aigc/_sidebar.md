@@ -95,7 +95,7 @@
   - [Hooks](aigc/train_engine/hooks.md)
   - [Logger](aigc/train_engine/logger.md)
 
-## 分布式训练
+- 分布式训练
 
   - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
   - [大模型训练技巧](aigc/llm_recipes/recipes.md)
@@ -105,7 +105,7 @@
   - [Pytorch FSDP 介绍](aigc/llm_recipes/fsdp.md)
   - [TorchTitan 原生大模型训练](aigc/llm_recipes/torch_titan.md)
 
-## 扩散模型
+- 扩散模型
 
   - [扩散模型理论第一课](aigc/diffusion/theory.md)
   - [什么是扩散模型: A Review](aigc/diffusion/summary.md)
