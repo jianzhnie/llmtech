@@ -10,7 +10,7 @@ MindSpeed是专门面向昇腾（Ascend）平台的大模型训练加速库。�
 
 #### 1.2. MindSpeed-LLM核心功能
 
-MindSpeed-LLM是MindSpeed库中专门针对大语言模型（LLM）训练的模块套件。旨在为[昇腾芯片](https://link.juejin.cn?target=https%3A%2F%2Fwww.hiascend.com%2F)提供端到端的大预言模型训练解决方案, 包含预置业界主流模型，数据工程，分布式训练及加速，预训练、微调、在线推理任务等特性提供了以下核心功能：
+MindSpeed-LLM是MindSpeed库中专门针对大语言模型（LLM）训练的模块套件。旨在为[昇腾芯片](https://www.hiascend.com/)提供端到端的大预言模型训练解决方案, 包含预置业界主流模型，数据工程，分布式训练及加速，预训练、微调、在线推理任务等特性提供了以下核心功能：
 
 - **模型并行与数据并行**：支持多种并行策略，包括张量并行、流水线并行和数据并行，以适应不同规模的模型和硬件配置。
 - **混合精度训练**：通过自动混合精度（AMP）技术，在保证模型精度的同时，显著降低显存占用和计算开销。
@@ -45,7 +45,7 @@ MindSpeed-LLM是MindSpeed库中专门针对大语言模型（LLM）训练的模�
 - **硬件选择**：选择适合大模型训练的硬件，如Atlas 800T A2。本文实践采用的是Atlas 800T A2硬件设备。
 - **操作系统**：本文实践所用操作系统为eulerosv2r12.aarch64。
 - 软件配套
-  - **固件及驱动安装**：因本事件所用昇腾服务器相关NPU驱动和固件已经安装好了，如果你有需要可以参照昇腾社区上的安装指导[NPU驱动固件安装指导](https://link.juejin.cn?target=https%3A%2F%2Fwww.hiascend.com%2Fdocument%2Fdetail%2Fzh%2Fcanncommercial%2F80RC2%2Fsoftwareinst%2Finstg%2Finstg_0003.html%3FMode%3DPmIns%26OS%3DUbuntu%26Software%3DcannToolKit)（注意首次安装场景和覆盖安装场景固件和驱动安装顺序的不同要求）
+  - **固件及驱动安装**：因本事件所用昇腾服务器相关NPU驱动和固件已经安装好了，如果你有需要可以参照昇腾社区上的安装指导[NPU驱动固件安装指导](https://www.hiascend.com%2Fdocument%2Fdetail%2Fzh%2Fcanncommercial%2F80RC2%2Fsoftwareinst%2Finstg%2Finstg_0003.html%3FMode%3DPmIns%26OS%3DUbuntu%26Software%3DcannToolKit)（注意首次安装场景和覆盖安装场景固件和驱动安装顺序的不同要求）
   - **CANN依赖安装**： CANN依赖主要有以下三个,务必先安装toolkot后再安装后两个依赖包。
 
 | 软件类型 | 软件包说明                                                   | 软件包名称                                 |
@@ -58,7 +58,7 @@ MindSpeed-LLM是MindSpeed库中专门针对大语言模型（LLM）训练的模�
 
 后续使用改软件依赖环境可以选择基于容器配置大模型训练环境，也可以基于Conda创建虚拟环境配置大模型训练环境。对于容器可以选择将cann依赖装入镜像环境中进行隔离操作，而对于conda虚拟环境，安装cann依赖时需要需要单独每次session建立后source激活依赖环境（toolkit\nnal都需要source激活）。
 
-- **Ascend Extension for PyTorch 配置与安装**，该依赖主要为解决pytorch生态在昇腾硬件兼容适配问题，具体安装操作很简单，可以参考官方指导[昇腾社区Ascend Extension Pytorch安装指导](https://link.juejin.cn?target=https%3A%2F%2Fwww.hiascend.com%2Fdocument%2Fdetail%2Fzh%2FPytorch%2F60RC3%2Fconfigandinstg%2Finstg%2Finsg_0001.html).
+- **Ascend Extension for PyTorch 配置与安装**，该依赖主要为解决pytorch生态在昇腾硬件兼容适配问题，具体安装操作很简单，可以参考官方指导[昇腾社区Ascend Extension Pytorch安装指导](https://www.hiascend.com%2Fdocument%2Fdetail%2Fzh%2FPytorch%2F60RC3%2Fconfigandinstg%2Finstg%2Finsg_0001.html).
 - **MindSpeed-LLM安装**：按照官方文档安装MindSpeed-LLM，可能需要从源码编译安装，确保所有依赖项都已安装。 严格按照gitee上的操作指导进行即可， **注意**：apex源码出包可能会出现问题，最好直接找已经编译好的apex，whl包，我试图在apex社区通过源码编译whl包，但出错。
 
 ### 2.2 MindSpeed-LLM
