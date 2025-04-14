@@ -41,7 +41,7 @@
 PPO [21] 引入了裁剪替代目标来进行策略优化。通过使用裁剪将策略更新限制在前一策略的近端区域内，PPO稳定了训练并提高了样本效率。具体来说，PPO通过最大化以下目标来更新策略：
 
 $$
-\mathcal{J}_{\textrm{PPO}}(\theta)=\mathbb{E}_{(q,a)\sim\mathcal{D},o_{\leq t} \sim\pi_{\theta,\textrm{old}}(\cdot|q)}\left[\min\left(\frac{\pi_{\theta}(o_{t}\mid q,o_{<t})}{\pi_{\theta,\textrm{old}}(o_{t}\mid q,o_{<t})}\hat{A}_{t},\;\operatorname{clip}\!\left(\frac{\pi_{\theta}(o_{t}\mid q,o_{<t})}{\pi_{\theta,\textrm{old}}(o_{t}\mid q,o_{<t})},1-\varepsilon,1+\varepsilon\right)\!\hat{A}_{t}\right)\right],
+\mathcal{J}_{\textrm{PPO}}(\theta)=\mathbb{E}_{(q,a)\sim\mathcal{D},o_{\leq t} \sim\pi_{\theta,\textrm{old}}(\cdot|q)}\left[\min\left(\frac{\pi_{\theta}(o_{t}|q,o_{<t})}{\pi_{\theta,\textrm{old}}(o_{t}|q,o_{<t})}\hat{A}_{t},\;\operatorname{clip}\left(\frac{\pi_{\theta}(o_{t}|q,o_{<t})}{\pi_{\theta,\textrm{old}}(o_{t}|q,o_{<t})},1-\varepsilon,1+\varepsilon\right)\hat{A}_{t}\right)\right]
 $$
 
 其中$(q,a)$是来自数据分布$\mathcal{D}$的问题-答案对，$\varepsilon$是重要性采样比的裁剪范围，$\hat{A}_{t}$是时间步$t$的优势估计器。给定价值函数$V$和奖励函数$R$，$\hat{A}_{t}$使用广义优势估计（GAE）[22]计算：
@@ -67,8 +67,10 @@ $$
 与PPO类似，GRPO采用裁剪目标，并直接施加KL惩罚项：
 
 $$
-\mathcal{J}_{\text{GRPO}}(\theta) =\mathbb{E}_{(q,a)\sim\mathcal{D},\{o_{i}\}_{i=1}^{G}\sim\pi_{\theta_{\text{old}}}(\cdot|q)}
-\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_{i}|}\sum_{t=1}^{|o_{i}|}\left(\min\left(r_{i,t}(\theta)\hat{A}_{i,t},~{}\text{clip}\Big{(}r_{i,t}(\theta),1-\varepsilon,1+\varepsilon\Big{)}\hat{A}_{i,t}\right)-\beta D_{\text{KL }}(\pi_{\theta}\|\pi_{\text{ref}})\right)\right],
+\begin{aligned}
+\mathcal{J}_{\text{GRPO}}(\theta) &= \mathbb{E}_{(q,a)\sim\mathcal{D},\{o_{i}\}_{i=1}^{G}\sim\pi_{\theta_{\text{old}}}(\cdot|q)} \\
+&\quad\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_{i}|}\sum_{t=1}^{|o_{i}|}\left(\min\left(r_{i,t}(\theta)\hat{A}_{i,t},\text{clip}\left(r_{i,t}(\theta),1-\varepsilon,1+\varepsilon\right)\hat{A}_{i,t}\right)-\beta D_{\text{KL}}(\pi_{\theta}\|\pi_{\text{ref}})\right)\right]
+\end{aligned}
 $$
 
 其中
@@ -104,9 +106,11 @@ $$
 我们提出了解耦裁剪和动态采样策略优化（DAPO）算法。DAPO为每个问题$q$和答案$a$采样一组输出$\{o_{i}\}_{i=1}^{G}$，并通过以下目标优化策略：
 
 $$
-\mathcal{J}_{\text{DAPO}}(\theta)= \mathbb{E}_{(q,a)\sim\mathcal{D},\{o_{i}\}_{i=1}^{G}\sim\pi_{\theta_{\text{old}}}(\cdot|q)}
-\left[\frac{1}{\sum_{t=1}^{G}|o_{i}|}\sum_{i=1}^{G}\sum_{t=1}^{|o_{i}|}\min\left(r_{i,t}(\theta)\hat{A}_{i,t},\;\operatorname{clip}\Big{(}r_{i,t}(\theta),1-\varepsilon_{\text{low}},1+\varepsilon_{\text{high}}\Big{)}\hat{A}_{i,t}\right)\right]
-\text{s.t. } 0<\Big{|}\{o_{i}\mid\texttt{is\_equivalent}(a,o_{i})\}\Big{|}<G,
+\begin{aligned}
+\mathcal{J}_{\text{DAPO}}(\theta) &= \mathbb{E}_{(q,a)\sim\mathcal{D},\{o_{i}\}_{i=1}^{G}\sim\pi_{\theta_{\text{old}}}(\cdot|q)} \\
+&\quad\left[\frac{1}{\sum_{t=1}^{G}|o_{i}|}\sum_{i=1}^{G}\sum_{t=1}^{|o_{i}|}\min\left(r_{i,t}(\theta)\hat{A}_{i,t},\;\operatorname{clip}\left(r_{i,t}(\theta),1-\varepsilon_{\text{low}},1+\varepsilon_{\text{high}}\right)\hat{A}_{i,t}\right)\right] \\
+&\text{s.t. } 0<\left|\{o_{i}|\texttt{is\_equivalent}(a,o_{i})\}\right|<G
+\end{aligned}
 $$
 
 其中
@@ -121,7 +125,7 @@ $$
 
 在我们使用朴素PPO [21] 或GRPO [38] 的初始实验中，我们观察到了熵崩溃现象：随着训练的进行，策略的熵迅速下降（图1(b)）。某些组的采样响应几乎完全相同。这表明探索有限且早期策略确定性，这可能会阻碍扩展过程。
 
-我们提出了Clip-Higher策略来解决这个问题。裁剪重要性采样比在裁剪近端策略优化（PPO-Clip）[21] 中被引入，以限制信任区域并增强RL的稳定性。我们发现，上限裁剪会限制策略的探索。在这种情况下，使“利用token”更有可能比提升不太可能的“探索token”的概率要容易得多。
+我们提出了Clip-Higher策略来解决这个问题。裁剪重要性采样比在裁剪近端策略优化（PPO-Clip）[21] 中被引入，以限制信任区域并增强RL的稳定性。我们发现，上限裁剪会限制策略的探索。在这种情况下，使"利用token"更有可能比提升不太可能的"探索token"的概率要容易得多。
 
 具体来说，当$\varepsilon=0.2$（大多数算法的默认值）时，考虑两个动作，其概率分别为$\pi_{\theta_{\text{old}}}(o_{i}\mid q)=0.01$和$0.9$。更新后的最大可能概率$\pi_{\theta}(o_{i}\mid q)$分别为$0.012$和$1.08$。这意味着对于概率较高的token（例如$0.9$），约束较少。相反，对于低概率token，实现非平凡的概率提升要困难得多。经验上，我们还观察到裁剪token的最大概率约为$\pi_{\theta}(o_{i}\mid q)<0.2$（图2(a)）。这一发现支持了我们的分析，即上限裁剪阈值确实限制了低概率token的概率提升，从而可能限制系统的多样性。
 
@@ -159,8 +163,6 @@ $$
 
 请注意，这种策略不一定会阻碍训练效率，因为如果RL系统是同步的且生成阶段没有流水线化，生成时间通常由长尾样本的生成主导。此外，我们发现，使用动态采样的实验能够更快地达到相同的性能，如图5所示。
 
-
-
 <img src="https://arxiv.org/html/2503.14476v1/x8.png" alt="Refer to caption" style="zoom:33%;" />
 
 <img src="https://arxiv.org/html/2503.14476v1/x9.png" alt="Refer to caption" style="zoom:33%;" />
@@ -188,6 +190,7 @@ $$
 ### 3.4 隐藏与寻找：过长奖励塑造
 
 在RL训练中，我们通常为生成设置最大长度，过长的样本会被截断。我们发现，对截断样本的不当奖励塑造会引入奖励噪声，并显著干扰训练过程。
+
 $$
 R_{\text{length}}(y)=\begin{cases}
 0, & |y|\leq L_{\max}-L_{\text{cache}} \\
@@ -195,6 +198,7 @@ R_{\text{length}}(y)=\begin{cases}
 -1, & L_{\max}<|y|
 \end{cases} \tag{13}
 $$
+
 我们进一步提出**软过长惩罚**（公式13），这是一种长度感知的惩罚机制，用于塑造截断样本的奖励。具体而言，当响应长度超过预定义的最大值时，我们定义一个惩罚区间：
 
 - **无惩罚区**：若 $|y| \leq L_{\max} - L_{\text{cache}}$，奖励无衰减。
