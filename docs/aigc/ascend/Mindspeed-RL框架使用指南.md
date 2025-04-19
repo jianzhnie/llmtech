@@ -48,11 +48,11 @@ MindSpeed-LLM是MindSpeed库中专门针对大语言模型（LLM）训练的模�
   - **固件及驱动安装**：因本事件所用昇腾服务器相关NPU驱动和固件已经安装好了，如果你有需要可以参照昇腾社区上的安装指导[NPU驱动固件安装指导](https://www.hiascend.com%2Fdocument%2Fdetail%2Fzh%2Fcanncommercial%2F80RC2%2Fsoftwareinst%2Finstg%2Finstg_0003.html%3FMode%3DPmIns%26OS%3DUbuntu%26Software%3DcannToolKit)（注意首次安装场景和覆盖安装场景固件和驱动安装顺序的不同要求）
   - **CANN依赖安装**： CANN依赖主要有以下三个,务必先安装toolkot后再安装后两个依赖包。
 
-| 软件类型 | 软件包说明                                                   | 软件包名称                                 |
-| -------- | ------------------------------------------------------------ | ------------------------------------------ |
-| Toolkit  | **CANN开发套件包，在训练&推理&开发调试场景下安装，主要用于训练和推理业务、模型转换、算子/应用/模型的开发和编译**。 | Ascend-cann-toolkit__linux-.run            |
+| 软件类型 | 软件包说明                                                                                                                                                                                                       | 软件包名称                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Toolkit  | **CANN开发套件包，在训练&推理&开发调试场景下安装，主要用于训练和推理业务、模型转换、算子/应用/模型的开发和编译**。                                                                                               | Ascend-cann-toolkit__linux-.run            |
 | Kernels  | **CANN算子包，能够节省算子编译时间，在大模型推理、训练场景和运行包含动态shape网络或单算子API（例如aclnn类API）相关业务时安装。**安装时需已安装Toolkit或NNRT或NNAE软件包，请选择运行设备对应处理器类型的Kernels。 | Ascend-cann-kernels-<chip_type>__linux.run |
-| NNAL     | **CANN加速库，包含面向大模型领域的ATB（Ascend Transformer Boost）加速库，可以提升大模型训练和推理性能。**安装时需已安装Toolkit或NNAE软件包。 | Ascend-cann-nnal__linux-.run               |
+| NNAL     | **CANN加速库，包含面向大模型领域的ATB（Ascend Transformer Boost）加速库，可以提升大模型训练和推理性能。**安装时需已安装Toolkit或NNAE软件包。                                                                     | Ascend-cann-nnal__linux-.run               |
 
 特别说明，Cann相关依赖安装即toolkit、kernels、nnal三个依赖，务必按照指导顺序安装。本文实践按照官方对物理机场景安装操作进行安装， 另，**toolkit及nnal安装后务必记得source 环境。**
 
