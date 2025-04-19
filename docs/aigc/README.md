@@ -26,20 +26,27 @@
 - [LLM Preference 数据集](aigc/llm_dataset/preference_dataset.md)
 - [LLM 行业数据集](aigc/llm_dataset/prompt_dataset.md)
 
-## LLM RLHF
+## LLM RLHF Framework
 
-- [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
-- [Chip Huyen 对 RLHF 的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
-- [RLHF 相关知识整理](aigc/llm_rlhf/rlhf_overview.md)
 - [Ray 的核心概念](aigc/llm_rlhf/Ray核心概念.md)
+- [RLHF 中的 PPO 代码拆解](aigc/llm_rlhf/rlhf_with_ppo.md)
 - [RLHF 训练框架 OpenRLHF](aigc/llm_rlhf/OpenRLHF.md)
 - [RLHF 训练框架 NeMo-Aligner](aigc/llm_rlhf/NeMo-Aligner.md)
 - [RLHF 训练框架 HybridFlow](aigc/llm_rlhf/HybridFlow.md)
 - [RLHF 训练框架 DeepSpeedChat](aigc/llm_rlhf/DeepSpeedChat.md)
 - [RLHF 训练框架 OpenR](aigc/llm_rlhf/OpenR.md)
-- [OpenRLHF 源码解读](aigc/llm_rlhf/OpenRLHF源码解读.md)
+- [RLHF 训练框架 OpenRLHF 源码解读](aigc/llm_rlhf/OpenRLHF源码解读.md)
+- [RLHF 训练框架 VeRL 源码解读](aigc/llm_rlhf/Verl框架.md)
+- [RLHF 训练框架 VeRL 参数配置指南](aigc/llm_rlhf/Verl参数配置.md)
 - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](aigc/llm_rlhf/Ray_OpenRLHF_Verl.md)
-- [RLHF 中的 PPO 代码拆解](aigc/llm_rlhf/rlhf_with_ppo.md)
+
+
+## LLM RLHF Algorithm and Paper
+
+
+- [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
+- [Chip Huyen 对 RLHF 的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
+- [RLHF 相关知识整理](aigc/llm_rlhf/rlhf_overview.md)
 - [直接偏好优化 (DPO)](aigc/llm_rlhf/rlhf_dpo.md)
 - [直接偏好优化 (DPO) 推导](aigc/llm_rlhf/rlhf_dpo_notes.md)
 - [Kahneman-Tversky-Optimization (KTO)](aigc/llm_rlhf/rlhf_kto.md)
@@ -48,6 +55,7 @@
 - [Kimi k1.5：使用 LLM 扩展强化学习](aigc/llm_rlhf/KimiK1.5.md)
 - [DAPO: 一个开源的大规模 LLM 强化学习系统](aigc/llm_rlhf/DAPO.md)
 - [深入理解 R1-Zero 类训练：一个批判性视角](aigc/llm_rlhf/DR.GRPO.md)
+- [DeepScaleR：通过扩展强化学习超越 o1](aigc/llm_rlhf/deepscaler.md)
 - [REINFORCE++：一种简单高效的大型语言模型对齐方法](aigc/llm_rlhf/REINFORCE++.md)
 - [ChatGPT O1 Reasoning](aigc/llm_rlhf/chatgpt_O1.md)
 - [KL 散度的近似计算](aigc/llm_rlhf/KL-Approximate.md)
@@ -136,3 +144,4 @@
 - [从 0 开始安装 Ascend Pytorch](aigc/ascend/从0开始安装AscendPytorch.md)
 - [Ascend_Pytorch 适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
 - [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
+- [Mindspeed-RL框架使用指南](aigc/ascend/Mindspeed-RL框架使用指南.md)
