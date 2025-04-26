@@ -171,17 +171,6 @@ actor_rollout_ref:
 ```yaml
  actor_rollout_ref:
 
-   ref:
-     fsdp_config:
-       param_offload: False
-       wrap_policy:
-         # transformer_layer_cls_to_wrap: None
-         min_num_params: 0
-     log_prob_micro_batch_size: null # will be deprecated, use log_prob_micro_batch_size_per_gpu
-     log_prob_micro_batch_size_per_gpu: 16
-     log_prob_use_dynamic_bsz: ${actor_rollout_ref.actor.use_dynamic_bsz}
-     log_prob_max_token_len_per_gpu: ${actor_rollout_ref.actor.ppo_max_token_len_per_gpu}
-     ulysses_sequence_parallel_size: ${actor_rollout_ref.actor.ulysses_sequence_parallel_size} # sp size
    rollout:
      name: vllm
      temperature: 1.0
