@@ -1,7 +1,5 @@
 # System Prompt 和 Chat Template 对训练和评估的影响
 
-
-
 ## 训练数据模板
 
 ### System Template && Chat Template
