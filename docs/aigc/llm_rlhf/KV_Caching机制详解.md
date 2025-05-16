@@ -98,10 +98,6 @@ step 9 input: Large language models are recent advances in deep learning, which 
 
 ### KV Caching 基础原理
 
-在自回归语言模型（如GPT）中，键值(KV)向量是计算注意力机制的核心组件。这类模型采用逐token生成方式，即每次预测下一个token时都需要基于已生成的全部上下文进行计算。这种机制导致模型需要反复为相同的历史token计算KV向量，造成大量冗余计算。
-
-KV Caching是提升大模型推理性能的常用技术，它通过利用上一次推理的KV Caching来提高推理性能，减少端到端延迟，同时不影响准确性。
-
 在Transformer架构中，键值（Key-Value，KV）向量是注意力机制的核心计算单元，用于生成Query-Key点积注意力分数。以GPT为代表的自回归语言模型采用逐token生成策略，其计算过程具有严格的前向依赖性——每个新token的预测都需要基于完整的先前上下文重新计算注意力权重。这种机制导致历史token的KV向量在每次推理迭代时都被重复计算，产生显著的算力冗余。
 
 KV缓存技术通过持久化存储历史token的KV向量状态，有效解决了这一性能瓶颈。其技术优势主要体现在：
