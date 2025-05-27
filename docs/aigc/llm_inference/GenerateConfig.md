@@ -216,19 +216,17 @@ plt.close()
 
 - min_p=0.1: 排除概率不到最高概率token10%的所有选项
 
-
-
 ## 参数协同工作机制
 
-配置 `Temperature=0.8, Top-K=50, Top-P=0.9 min_p=0.01` 的执行流程：
+配置 `Temperature=0.8, Top-K=50, Top-P=0.9 min_p=0.01` 的执行流程：
 
-1. 根据温度 `Temperature=0.8` 缩放调整原始 logits
+1. 根据温度 `Temperature=0.8` 缩放调整原始 logits
 2. 保留 `Top-K=50` 个候选词
 3. 从中筛选累计概率 ≥90%， （同时排除概率 < min_p *  最高概率的Token），剩余约45个词
 4. 重新归一化(应用softmax将它们转换为适当的概率)
 5. 最终采样
 
-
+`Temperature=1.0, Top-K=-1, Top-P=1.0 min_p=None`
 
 ## 参考
 

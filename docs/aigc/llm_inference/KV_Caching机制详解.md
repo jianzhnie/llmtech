@@ -14,13 +14,13 @@
 
 解码器以自回归方式工作，如下面GPT-2文本生成示例所示：
 
-![GPT-2解码器的自回归生成过程](https://miro.medium.com/v2/resize:fit:700/0*sexO6adGhaKr7aH0.gif)
+<img src="https://miro.medium.com/v2/resize:fit:700/0*sexO6adGhaKr7aH0.gif" alt="GPT-2解码器的自回归生成过程" style="zoom:50%;" />
 
 在解码器的自回归生成中，模型根据输入预测下一个token，然后将组合输入用于下一步预测。
 
 这种自回归行为会重复某些计算操作。通过放大观察解码器中的掩码缩放点积注意力计算，我们可以更清楚地理解这一点：
 
-![解码器中缩放点积注意力的逐步可视化](https://miro.medium.com/v2/resize:fit:700/1*8xqD4AYTwn6mQXNw0uhDCg.gif)
+<img src="https://miro.medium.com/v2/resize:fit:700/1*8xqD4AYTwn6mQXNw0uhDCg.gif" alt="解码器中缩放点积注意力的逐步可视化" style="zoom:50%;" />
 
 由于解码器是因果的(即token的注意力仅取决于其前面的token)，在每个生成步骤中我们都在重复计算相同的前置token注意力，而实际上我们只需要计算新token的注意力。
 
@@ -96,13 +96,16 @@ step 9 input: Large language models are recent advances in deep learning, which 
 
 例如在第4步生成"deep"时，我们只需将"uses"输入模型，并从缓存中获取"Large language models are recent advances in deep learning, which"的表示。
 
-### KV Caching是什么？
+### KV Caching 基础原理
 
-KV Caching是提升大模型推理性能的常用技术，它通过利用上一次推理的KV Caching来提高推理性能，减少端到端延迟，同时不影响准确性。
+在Transformer架构中，键值（Key-Value，KV）向量是注意力机制的核心计算单元，用于生成Query-Key点积注意力分数。以GPT为代表的自回归语言模型采用逐token生成策略，其计算过程具有严格的前向依赖性——每个新token的预测都需要基于完整的先前上下文重新计算注意力权重。这种机制导致历史token的KV向量在每次推理迭代时都被重复计算，产生显著的算力冗余。
 
-### 为什么需要KV Caching？
+KV缓存技术通过持久化存储历史token的KV向量状态，有效解决了这一性能瓶颈。其技术优势主要体现在：
 
-在GPT等自回归语言模型中生成文本(token)时，每次生成新token都需要将之前生成的所有token输入网络。这意味着之前生成token的隐藏表示每次都需要重新计算，造成大量计算浪费。
+1. **计算复用**：避免重复计算已生成token的KV向量
+2. **延迟优化**：将端到端推理延迟降低30-70%（实测数据）
+3. **精度无损**：保持原始模型输出的数学等价性
+4. **内存-计算权衡**：通过牺牲部分内存开销换取计算效率提升
 
 ## KV Caching的工作原理
 
@@ -146,7 +149,7 @@ KV Caching的原理是：在推理时，当我们计算键(K)和值(V)矩阵时�
 
 这正是KV Caching发挥作用的地方。通过缓存先前的Keys和Values，我们可以专注于仅计算新token的注意力：
 
-![使用与不使用KV Caching的缩放点积注意力对比](https://miro.medium.com/v2/resize:fit:700/1*uyuyOW1VBqmF5Gtv225XHQ.gif)
+<img src="https://miro.medium.com/v2/resize:fit:700/1*uyuyOW1VBqmF5Gtv225XHQ.gif" alt="使用与不使用KV Caching的缩放点积注意力对比" style="zoom:50%;" />
 
 为什么这种优化很重要？如上图所示，**使用KV Caching获得的矩阵要小得多，从而实现了更快的矩阵乘法运算**。唯一的缺点是它需要更多的GPU显存(如果不使用GPU则需要更多CPU内存)来缓存Key和Value状态。
 
@@ -190,7 +193,19 @@ $$
 
 
 
-### KV Caching实现
+## KV Caching实现
+
+### 缓存类实现
+
+当使用Transformers库的`Cache`类时，自注意力模块会执行几个关键步骤来整合过去和当前的信息：
+
+1. 注意力模块将当前的键值对与缓存中存储的历史键值对进行拼接。这会创建形状为`(new_tokens_length, past_kv_length + new_tokens_length)`的注意力权重。 当前和历史键值对实质上被组合起来计算注意力分数，确保模型同时感知历史上下文和当前输入
+2. 当迭代调用`forward`方法时，必须确保注意力掩码(attention mask)的形状与历史和当前键值对的组合长度匹配。注意力掩码应具有`(batch_size, past_kv_length + new_tokens_length)`的形状。这通常在`generate()`方法内部处理，但如果你想用`Cache`实现自己的生成循环，请牢记这一点！注意力掩码应包含历史和当前token的值。
+3. 还需要特别注意`cache_position`参数。如果你想用`forward`方法重用预填充的缓存，必须传递有效的`cache_position`值。它表示序列中的输入位置。`cache_position`不受填充(padding)影响，总是为每个token增加一个位置。例如，如果KV Caching包含10个token(不考虑填充token)，下一个token的缓存位置应该是`torch.tensor([10])`。
+
+
+
+### Naive Implemention
 
 假设架构中有n个Transformer层，那么每个注意力头将维护自己独立的KV Caching：
 
@@ -282,7 +297,63 @@ print("🧾 最终输出 shape:", final_out.shape)
 print(final_out)
 ```
 
+### Transformers 中的实现
 
+以下示例演示了如何使用`DynamicCache`创建生成循环。如前所述，注意力掩码是历史和当前token值的拼接，并且为下一个token将缓存位置加1。
+
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, DynamicCache
+
+model_id = "meta-llama/Llama-2-7b-chat-hf"
+model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.bfloat16, device_map="cuda:0")
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+past_key_values = DynamicCache()
+messages = [{"role": "user", "content": "Hello, what's your name."}]
+inputs = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt", return_dict=True).to("cuda:0")
+
+generated_ids = inputs.input_ids
+cache_position = torch.arange(inputs.input_ids.shape[1], dtype=torch.int64, device="cuda:0")
+max_new_tokens = 10
+
+for _ in range(max_new_tokens):
+    outputs = model(**inputs, cache_position=cache_position, past_key_values=past_key_values, use_cache=True)
+    # 贪婪采样下一个token
+    next_token_ids = outputs.logits[:, -1:].argmax(-1)
+    generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
+    # 通过保留未处理的token(本例中只有一个新token)来准备下一个生成步骤的输入
+    # 并按照上述说明扩展注意力掩码
+    attention_mask = inputs["attention_mask"]
+    attention_mask = torch.cat([attention_mask, attention_mask.new_ones((attention_mask.shape[0], 1))], dim=-1)
+    inputs = {"input_ids": next_token_ids, "attention_mask": attention_mask}
+    cache_position = cache_position[-1:] + 1 # 为下一个token增加一个位置
+
+print(tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0])
+# 输出: "[INST] Hello, what's your name. [/INST]  Hello! My name is LLaMA,"
+```
+
+### 传统缓存格式
+
+在`Cache`类出现之前，缓存是以张量元组的元组形式存储的。这种格式是动态的，会随着文本生成而增长，类似于`DynamicCache`。
+
+如果你的项目依赖这种传统格式，可以使用`from_legacy_cache()`和`DynamicCache.to_legacy_cache()`函数在`DynamicCache`和元组元组之间进行转换。这对于需要以特定格式操作缓存的自定义逻辑很有帮助。
+
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, DynamicCache
+
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf")
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", torch_dtype=torch.float16, device_map="auto")
+inputs = tokenizer("Hello, my name is", return_tensors="pt").to(model.device)
+
+# `return_dict_in_generate=True`是返回缓存所必需的，而`return_legacy_cache`强制返回传统格式的缓存
+generation_outputs = model.generate(**inputs, return_dict_in_generate=True, return_legacy_cache=True, max_new_tokens=5)
+
+cache = DynamicCache.from_legacy_cache(generation_outputs.past_key_values)
+legacy_format_cache = cache.to_legacy_cache()
+
+```
 
 ## KV Caching性能影响评估
 
