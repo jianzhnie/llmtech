@@ -1,14 +1,12 @@
 # VLLM 设计文档
 
-
-
 ## 入口点（Entrypoints）
 
 vLLM 提供了多种与系统交互的入口点。下图展示了这些入口点之间的关系。
 
-![Entrypoints Diagram](https://docs.vllm.ai/en/latest/_images/entrypoints.excalidraw.png)
+<img src="https://docs.vllm.ai/en/stable/assets/design/arch_overview/entrypoints.excalidraw.png" alt="Entrypoints Diagram" style="zoom: 50%;" />
 
-## LLM 类
+### LLM 类
 
 `LLM` 类是进行离线推理的主要 Python 接口，即在不借助单独推理服务器的情况下与模型交互。
 
@@ -46,9 +44,7 @@ for output in outputs:
 LLM` 类的代码位于：`vllm/entrypoints/llm.py
 ```
 
-------
-
-## OpenAI 兼容的 API 服务端
+### OpenAI 兼容的 API 服务端
 
 vLLM 的第二个主要接口是其 OpenAI 兼容的 API 服务端，可通过以下命令启动：
 
@@ -68,13 +64,11 @@ python -m vllm.entrypoints.openai.api_server --model <model>
 
 更多信息详见《OpenAI-Compatible Server》文档。
 
-------
-
 ## LLM 引擎
 
 `LLMEngine` 和 `AsyncLLMEngine` 是 vLLM 系统的核心组成部分，分别负责模型推理与异步请求处理。
 
-<img src="https://docs.vllm.ai/en/latest/_images/llm_engine.excalidraw.png" alt="LLMEngine Diagram" style="zoom:50%;" />
+<img src="https://docs.vllm.ai/en/stable/assets/design/arch_overview/llm_engine.excalidraw.png" alt="LLMEngine Diagram" style="zoom:50%;" />
 
 ### LLMEngine
 
@@ -95,19 +89,13 @@ OpenAI 兼容的 API 服务端即基于 `AsyncLLMEngine` 实现，此外还有�
 
 代码位置：`vllm/engine/async_llm_engine.py`
 
-------
-
 ## Worker（工作进程）
 
 Worker 是实际运行模型推理的进程。vLLM 遵循“每个进程对应一个加速设备（如 GPU）”的常见模式。例如，若使用张量并行度为 2、流水并行度为 2，则总共有 4 个 worker。worker 通过 `rank` 与 `local_rank` 标识，前者用于全局调度，后者用于设备分配及访问本地资源（如文件系统和共享内存）。
 
-------
-
 ## 模型运行器（Model Runner）
 
 每个 worker 拥有一个模型运行器对象，负责加载并运行模型。大部分模型执行逻辑位于此处，包括输入张量准备和 CUDA 图捕获等操作。
-
-------
 
 ## 模型（Model）
 
@@ -117,15 +105,15 @@ Worker 是实际运行模型推理的进程。vLLM 遵循“每个进程对应�
 
 下图展示了 vLLM 的类层次结构：
 
-<img src="https://docs.vllm.ai/en/latest/_images/hierarchy.png" alt="query" style="zoom:50%;" />
+<img src="https://docs.vllm.ai/en/stable/assets/design/hierarchy.png" alt="query" style="zoom: 25%;" />
 
 vLLM 的类层次结构背后有以下设计考量：
 
 ### 1. 可扩展性（Extensibility）
 
-类层次结构中的所有类都接受一个配置对象，该对象包含了所有必要的信息。其中，`VllmConfig` 类是整个系统中传递的主要配置对象。由于 vLLM 的类层次结构较为复杂且层级较深，各个类需要访问其所关心的配置项。
+类层次结构中的所有类都接受一个configuration object ，该对象包含了所有必要的信息。其中，`VllmConfig` 类是整个系统中传递的主要configuration object 。由于 vLLM 的类层次结构较为复杂且层级较深，各个类需要访问其所关心的配置项。
 
-通过将所有配置封装在一个对象中，我们可以轻松地在各类之间传递这个配置对象，并在需要时访问相关配置。例如，当我们希望新增一个只涉及模型运行器的功能（在 LLM 推理快速发展的背景下这是非常常见的情况），我们只需在 `VllmConfig` 中添加一个新的配置项。由于整个配置对象是完整传递的，模型运行器可以直接访问这一新增配置项。
+通过将所有配置封装在一个对象中，我们可以轻松地在各类之间传递这个configuration object ，并在需要时访问相关配置。例如，当我们希望新增一个只涉及模型运行器的功能（在 LLM 推理快速发展的背景下这是非常常见的情况），我们只需在 `VllmConfig` 中添加一个新的配置项。由于整个configuration object 是完整传递的，模型运行器可以直接访问这一新增配置项。
 
 这种设计避免了在引擎、Worker 或模型类的构造函数中引入额外的参数，无需对它们的构造函数进行修改即可支持新特性，从而大大提升了系统的可扩展性。
 
@@ -181,7 +169,7 @@ else:
 
 ## 额外说明
 
-这种架构的一个挑战在于：每个组件都依赖完整配置对象，导致单元测试难以独立进行。vLLM 通过默认初始化函数解决此问题，该函数可生成字段全为 `None` 的默认配置对象，便于只设置关注的字段，从而进行独立测试。
+这种架构的一个挑战在于：每个组件都依赖完整configuration object ，导致单元测试难以独立进行。vLLM 通过默认初始化函数解决此问题，该函数可生成字段全为 `None` 的默认configuration object ，便于只设置关注的字段，从而进行独立测试。
 
 需要注意的是，vLLM 的许多测试为端到端测试，覆盖整个系统流程，因此该限制影响较小。
 
