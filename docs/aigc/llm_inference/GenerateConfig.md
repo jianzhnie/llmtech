@@ -58,6 +58,7 @@ $$
 - 高温 → 高熵（多样性输出）
 
 ### 5. 代码实现
+
 ```python
 def softmax_with_temperature(logits, temperature=1.0):
     scaled_logits = logits / temperature
@@ -65,7 +66,7 @@ def softmax_with_temperature(logits, temperature=1.0):
     return exp_logits / np.sum(exp_logits)
 ```
 
-### 6. 温度调节效果图示
+### 6. Temperature 设置
 
 | 温度（t） | 输出分布特点                 | 示例场景           |
 | --------- | ---------------------------- | ------------------ |
@@ -73,6 +74,22 @@ def softmax_with_temperature(logits, temperature=1.0):
 | 0.5       | 适度平滑，平衡确定性与多样性 | 通用对话           |
 | 1.0       | 原始模型分布                 | 默认配置           |
 | 2.0       | 平坦分布，高多样性           | 创意写作、故事生成 |
+
+#### DeepSeek 推进的Temperature 设置
+
+`temperature` 参数默认为 1.0。
+
+- 我们建议您根据如下表格，按使用场景设置 `temperature`。
+
+| 场景                | 温度 |
+| ------------------- | ---- |
+| 代码生成/数学解题   | 0.0  |
+| 数据抽取/分析       | 1.0  |
+| 通用对话            | 1.3  |
+| 翻译                | 1.3  |
+| 创意类写作/诗歌创作 | 1.5  |
+
+
 
 ### 7. 温度缩放对梯度的影响：
 
