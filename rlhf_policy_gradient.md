@@ -648,52 +648,72 @@ $$ {#eq:GAE_DFN}
 ### **1. 强化学习基础与理论**
 
 [4] R. J. Williams, "Simple statistical gradient-following algorithms for connectionist reinforcement learning," *Machine Learning*, vol. 8, pp. 229–256, 1992.
+
 [16] L. Weng, "Policy gradient algorithms," *lilianweng.github.io*, 2018. [Online]. Available: https://lilianweng.github.io/posts/2018-04-08-policy-gradient/
+
 [6] W. Kool, H. van Hoof, and M. Welling, "Buy 4 reinforce samples, get a baseline for free!" *arXiv preprint arXiv:1904.00909*, 2019.
+
 [26] M. Tomar, L. Shani, Y. Efroni, and M. Ghavamzadeh, "Mirror descent policy optimization," *arXiv preprint arXiv:2005.09814*, 2020.
 
----
 
 ### **2. 策略优化算法（PPO及其变体）**
+
 [7] J. Schulman et al., "Proximal policy optimization algorithms," *arXiv preprint arXiv:1707.06347*, 2017.
+
 [3] J. Schulman et al., "High-dimensional continuous control using generalized advantage estimation," *Proc. ICLR*, 2016.
+
 [19] D. Seita, "Notes on the generalized advantage estimation paper," 2017. [Online]. Available: https://danieltakeshi.github.io/2017/04/02/notes-on-the-generalized-advantage-estimation-paper/
+
 [14] J. Schulman, "Approximating KL-divergence," 2016. [Online]. Available: http://joschu.net/blog/kl-approx.html
+
 [20] T. Wu et al., "Pairwise proximal policy optimization: Harnessing relative feedback for LLM alignment," *arXiv preprint arXiv:2310.00212*, 2023.
 
----
 
 ### **3. 大语言模型与人类反馈强化学习（RLHF）**
+
 [1] A. Ahmadian et al., "Back to basics: Revisiting reinforce style optimization for learning from human feedback in LLMs," *arXiv preprint arXiv:2402.14740*, 2024.
+
 [5] S. C. Huang, A. Ahmadian, and C. F. AI, "Putting RL back in RLHF," 2024. [Online]. Available: https://huggingface.co/blog/putting_rl_back_in_rlhf_with_rloo
+
 [13] H. Ivison et al., "Unpacking DPO and PPO: Disentangling best practices for learning from preference feedback," *arXiv preprint arXiv:2406.09279*, 2024.
+
 [15] S. Huang et al., "The n+ implementation details of RLHF with PPO: A case study on TL;DR summarization," *First Conf. Lang. Model.*, 2024. [Online]. Available: https://openreview.net/forum?id=kHO2ZTa8e3
+
 [17] A. Baheti et al., "Leftover lunch: Advantage-based offline reinforcement learning for language models," *arXiv preprint arXiv:2305.14718*, 2023.
+
+
 [21] Y. Flet-Berliac et al., "Contrastive policy gradient: Aligning LLMs on sequence-level scores," *arXiv preprint arXiv:2406.19185*, 2024.
 
----
 
 ### **4. 大语言模型中的强化学习应用**
 [12] D. Guo et al., "Deepseek-r1: Incentivizing reasoning capability in LLMs via reinforcement learning," *arXiv preprint arXiv:2501.12948*, 2025.
-[9] Z. Liu et al., "Understanding R1-zero-like training: A critical perspective," *arXiv preprint arXiv:2503.20783*, 2025.
-[10] Z. Shao et al., "Deepseekmath: Pushing the limits of mathematical reasoning in open language models," *arXiv preprint arXiv:2402.03300*, 2024.
-[11] A. Liu et al., "Deepseek-v3 technical report," *arXiv preprint arXiv:2412.19437*, 2024.
-[22] T. Cohere et al., "Command a: An enterprise-ready large language model," *arXiv preprint arXiv:2504.00698*, 2025.
-[24] T. Gunter et al., "Apple intelligence foundation language models," *arXiv preprint arXiv:2407.21075*, 2024.
-[25] K. Team et al., "Kimi k1.5: Scaling reinforcement learning with LLMs," *arXiv preprint arXiv:2501.12599*, 2025.
 
----
+[9] Z. Liu et al., "Understanding R1-zero-like training: A critical perspective," *arXiv preprint arXiv:2503.20783*, 2025.
+
+[10] Z. Shao et al., "Deepseekmath: Pushing the limits of mathematical reasoning in open language models," *arXiv preprint arXiv:2402.03300*, 2024.
+
+[11] A. Liu et al., "Deepseek-v3 technical report," *arXiv preprint arXiv:2412.19437*, 2024.
+
+[22] T. Cohere et al., "Command a: An enterprise-ready large language model," *arXiv preprint arXiv:2504.00698*, 2025.
+
+[24] T. Gunter et al., "Apple intelligence foundation language models," *arXiv preprint arXiv:2407.21075*, 2024.
+
+[25] K. Team et al., "Kimi k1.5: Scaling reinforcement learning with LLMs," *arXiv preprint arXiv:2501.12599*, 2025
 
 ### **5. 偏好学习与奖励建模**
 [2] Z. Wang et al., "HelpSteer2-preference: Complementing ratings with preferences," *arXiv preprint arXiv:2410.01257*, 2024.
+
 [23] Z. Li et al., "Remax: A simple, effective, and efficient reinforcement learning method for aligning large language models," *Proc. ICML*, 2023.
 
----
 
 ### **6. 优化方法与扩展研究**
 
 [8] C. Berner et al., "Dota 2 with large scale deep reinforcement learning," *arXiv preprint arXiv:1912.06680*, 2019.
+
 [18] Q. Yu et al., "DAPO: An open-source LLM reinforcement learning system at scale," 2025.
+
 [27] Y. Zhang et al., "Improving LLM general preference alignment via optimistic online mirror descent," *arXiv preprint arXiv:2502.16852*, 2025.
+
 [28] Y. Yuan et al., "VAPO: Efficient and reliable reinforcement learning for advanced reasoning tasks," *arXiv preprint arXiv:2504.05118*, 2025.
+
 [29] Y. Yuan et al., "What’s behind PPO’s collapse in long-CoT? Value optimization holds the secret," *arXiv preprint arXiv:2503.01491*, 2025.

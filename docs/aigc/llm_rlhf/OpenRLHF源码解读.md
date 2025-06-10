@@ -48,9 +48,10 @@ OpenRLHF提供了多种Post-training方法，本文只围绕PPO相关源码做�
   - 首先采样一批随机指令集（Prompt）
   - 调用Actor模型的generate()方法，采样1条或多条结果（sequences）
   - 四个模型一起参与获得经验（experiences）的各个部分，用于后续模型训练
-    - 将 `prompt + responses` 输入给 Critic，分别计算得得到所有 token 的 values
-    - 将 `prompt + responses` 输入给 Reward，得到最后一个 token 的 reward
-    - 将 `prompt + responses` 输入给 Reference，得到所有 token 的 log probs
+    - 将 `prompt + responses` 输入给 Actor Model，得到所有 token 的 log probs
+    - 将 `prompt + responses` 输入给 Critic Model，分别计算得得到所有 token 的 values
+    - 将 `prompt + responses` 输入给 Reward Model，得到最后一个 token 的 reward
+    - 将 `prompt + responses` 输入给 Reference Model，得到所有 token 的 log probs
 
 - 阶段4: 用Experience样本，训练 Actor Model 和 Critic Model，后面单独介绍
 
@@ -93,11 +94,10 @@ for i in steps:
 > Actor网络（我们要更新训练的网络）
 
 - PreTrainModel 和 CausalLM Head 都是 Huggingface 定义的标准模型层。详见：[LlamaForCausalLM类定义](https://github.com/huggingface/transformers/blob/v4.47.1/src/transformers/models/llama/modeling_llama.py%23L1077C7-L1077C62)
-
 - 2个处理Head：
-
-- - F.log_softmax(logits)： 采样经验数据的数据处理Head，获取log(p)，方便后面计算KL和计算loss
+  - F.log_softmax(logits)： 采样经验数据的数据处理Head，获取log(p)，方便后面计算KL和计算loss
   - generate()：采样Head，详见 ：[generate方法定义](https://github.com/huggingface/transformers/blob/main/src/transformers/generation/utils.py%23L1907) 。generate可以定义多种生成策略（beam search , sample N等）和配置多种生成参数（topP, temperature等）。
+
 
 ### 2.2. Reward Model 模型结构
 
@@ -118,12 +118,9 @@ for i in steps:
 > 图4、Critic网络（PPO训练阶段要更新的价值评估网络）
 
 - Critic用于评估当前状态的价值（当前token到生成eos累计预估价值），每个状态都会计算价值打分
-
-- 注： 从图中第二层(Linear层)可以看到，输出结果先做了[:,:-1]的切片操作，然后再取生成长度的切片[:,-num_actions:]。
-
 - Critic用于评估当前状态的价值（当前token到生成eos累计预估价值），每个状态都会计算价值打分
 
-- 注：从图中第二层(Linear层)可以看到，输出结果先做了[:, :-1]的切片操作，然后再取生成长度的切片[:, -num_actions:]。这个操作表示整体价值打分序列往前移了一位，这是因为在生成模型中，一个step数据：$(s_i, a_i, s_{i+1}, r_i)$ 的描述。当 $i = 1$ 时，$s_1$ 就是输入的prompt，状态 $s_1$ 的end位置是prompt的最后一个token的位置，而这个位置就是上述两次切片操作后的首token位置，表示第一个状态。$a_1$ 是生成的第一个token，$s_2$ 是prompt+生成的第一个token，$r_1$ 是从 $s_1 \rightarrow s_2$ 的即时奖励。
+> 注：从图中第二层(Linear层)可以看到，输出结果先做了[:, :-1]的切片操作，然后再取生成长度的切片[:, -num_actions:]。这个操作表示整体价值打分序列往前移了一位，这是因为在生成模型中，一个step数据：$(s_i, a_i, s_{i+1}, r_i)$ 的描述。当 $i = 1$ 时，$s_1$ 就是输入的prompt，状态 $s_1$ 的end位置是prompt的最后一个token的位置，而这个位置就是上述两次切片操作后的首token位置，表示第一个状态。$a_1$ 是生成的第一个token，$s_2$ 是prompt+生成的第一个token，$r_1$ 是从 $s_1 \rightarrow s_2$ 的即时奖励。
 
 ## 3. Experience数据采样过程
 
@@ -149,7 +146,7 @@ for i in steps:
 
 首先从源码中截取关键的代码块（[ppo_trainer.py](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_trainer.py)）
 
-```python3
+```python
 class PPOTrainer(ABC):
     """
     Trainer for Proximal Policy Optimization (PPO) algorithm.
@@ -186,7 +183,7 @@ class PPOTrainer(ABC):
 
 下面我们看下make_experience_list的核心代码。（看代码注释）
 
-```python3
+```python
  def make_experience_list(self, all_prompts: Union[str, List[str]], generate_kwargs) -> List[Experience]:
         """
         Make a list of experience with the micro_rollout_batch_size.
@@ -697,7 +694,7 @@ set -x
 
 ray job submit --address="http://127.0.0.1:8265" \
    --runtime-env-json='{"working_dir": "/openrlhf"}' \
-   -- python3 -m openrlhf.cli.train_ppo_ray \
+   -- python -m openrlhf.cli.train_ppo_ray \
    --ref_num_nodes 1 \
    --ref_num_gpus_per_node 2 \
    --reward_num_nodes 1 \
