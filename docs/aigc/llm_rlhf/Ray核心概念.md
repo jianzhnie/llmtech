@@ -98,7 +98,7 @@ assert ray.get(obj_ref2) == 2
 
 Task也可以依赖于其他Task。下面，multiply_matrices task使用两个create_matrix task的输出，因此它将在前两个Task执行完毕后才开始执行。前两个Task的输出将自动作为参数传递给第三个Task，future将被替换为相应的值）。通过这种方式，Task可以组合在一起，具有任意DAG依赖性。
 
-```python3
+```python
 import ray
 import numpy as np
 from typing import Tuple
@@ -186,7 +186,7 @@ Ray允许您通过 `@ray.remote` 装饰器将Python类进行声明。每当类�
 
 各个Actors串行执行（每个单独的方法都是原子的），因此没有竞态条件。可以通过创建多个Actors来实现并行性。
 
-```python3
+```python
 import ray
 from typing import Any
 
@@ -302,7 +302,7 @@ print(results)
 
 以下示例创建了一个存储消息的actor。几个 Woker Task反复将消息推送到actor，主Python脚本定期读取消息。
 
-```python3
+```python
 import time
 import ray
 from typing import List

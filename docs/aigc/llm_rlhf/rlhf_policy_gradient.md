@@ -288,6 +288,93 @@ pg_loss = -advantages * ratio
 
 情形 3：优势值为零，因此无需更新。损失为零，保持策略模型不变。
 
+###  Entropy
+
+熵是衡量概率分布不确定性的一个指标，值越大表示分布越均匀（不确定性越高），值越小表示分布越集中（不确定性越低）。熵函数在机器学习中经常用于：
+
+1. 评估模型预测的不确定性
+2. 在强化学习中作为探索策略的一部分
+3. 在生成模型中控制生成的多样性
+
+例如，如果模型对某个预测非常确定，熵会很小；如果模型对预测不确定，熵会很大。
+
+#### 熵（entropy）的计算
+
+这个函数用于计算从 logits 得到的概率分布的熵（entropy）。
+
+```python
+def entropy_from_logits(logits: torch.Tensor):
+    """Calculate entropy from logits."""
+    # 1. 将 logits 转换为概率分布
+    pd = torch.nn.functional.softmax(logits, dim=-1)
+
+    # 2. 计算熵
+    entropy = torch.logsumexp(logits, dim=-1) - torch.sum(pd * logits, dim=-1)
+    return entropy
+```
+
+#### 计算过程推导
+
+首先，让我们回顾一下熵的标准定义：
+$$ H(p) = -\sum_i p_i \log p_i $$
+
+其中 $p_i$ 是概率分布中的第 i 个概率值。
+
+在代码中，我们有以下步骤：
+
+1. `pd = torch.nn.functional.softmax(logits, dim=-1)` 将 logits 转换为概率分布
+2. 对于 softmax，我们知道：$p_i = \frac{e^{x_i}}{\sum_j e^{x_j}}$，其中 $x_i$ 是 logits
+
+让我们推导一下：
+
+1. 首先，对于 softmax 的概率：
+   $$ p_i = \frac{e^{x_i}}{\sum_j e^{x_j}} = e^{x_i - \log(\sum_j e^{x_j})} $$
+
+2. 因此：
+   $$ \log p_i = x_i - \log(\sum_j e^{x_j}) $$
+
+3. 代入熵的公式：
+   $$ H(p) = -\sum_i p_i \log p_i = -\sum_i p_i (x_i - \log(\sum_j e^{x_j})) $$
+
+4. 展开：
+   $$ H(p) = -\sum_i p_i x_i + \log(\sum_j e^{x_j}) \sum_i p_i $$
+
+5. 因为 $\sum_i p_i = 1$，所以：
+   $$ H(p) = -\sum_i p_i x_i + \log(\sum_j e^{x_j}) $$
+
+6. 最后，因为 $\log(\sum_j e^{x_j})$ 就是 `logsumexp`，所以：
+   $$ H(p) = \log(\sum_j e^{x_j}) - \sum_i p_i x_i $$
+
+这就是代码中使用的公式：
+
+```python
+entropy = torch.logsumexp(logits, dim=-1) - torch.sum(pd * logits, dim=-1)
+```
+
+这个实现有以下优点：
+
+1. 数值稳定性：直接使用 logits 计算，避免了计算 softmax 时可能出现的数值溢出问题
+2. 计算效率：只需要一次 softmax 和一次 logsumexp 操作
+3. 内存效率：不需要存储中间的对数值
+
+#### 熵的范围
+
+对于离散概率分布，熵的最大值取决于可能的结果数量（即概率分布的维度）。具体来说：
+
+对于一个有 n 个可能结果的离散概率分布，熵的最大值是 log(n)。
+
+这是因为：
+1. 当所有结果概率相等时（即均匀分布），熵达到最大值
+2. 对于 n 个等概率事件，每个事件的概率是 1/n
+3. 代入熵的公式：H = -∑(1/n)log(1/n) = log(n)
+
+例如：
+- 对于二分类问题（n=2），最大熵是 log(2) ≈ 0.693
+- 对于三分类问题（n=3），最大熵是 log(3) ≈ 1.099
+- 对于词汇表大小为 50,000 的语言模型，最大熵是 log(50000) ≈ 10.82
+
+在代码中，如果输入 logits 的最后一个维度是 n，那么熵的最大值就是 log(n)。这个最大值在概率分布完全均匀时达到。
+
 ### Loss Aggregation
 
 在使用语言模型实现任何策略梯度算法时，核心问题在于：如何通过对 KL 散度与损失函数进行加权求和，从而设计不同类型的价值归因机制。
