@@ -116,7 +116,6 @@
 ## 分布式训练
 
 - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
-- [大模型训练技巧](aigc/llm_recipes/recipes.md)
 - [Pytorch 分布式使用教程](aigc/llm_recipes/pytorch_distributed.md)
 - [DeepSpeed教程](aigc/llm_recipes/DeepSpeed教程.md)
 - [ZeRO 技术原理 (上)](aigc/llm_recipes/zero-optimizer.md)
@@ -153,6 +152,7 @@
 ## 从 GPU 到华为 NPU
 
 - [从 0 开始安装 Ascend Pytorch](aigc/ascend/从0开始安装AscendPytorch.md)
-- [Ascend_Pytorch 适配方案介绍](aigc/ascend/Ascend_Pytorch适配方案介绍.md)
+- [Ascend Pytorch 适配方案介绍](aigc/ascend/AscendPytorch适配方案介绍.md)
 - [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
 - [Mindspeed-RL框架使用指南](aigc/ascend/Mindspeed-RL框架使用指南.md)
+- [MindSpeed LLM 并行特性介绍](aigc/ascend/README.md)
