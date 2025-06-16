@@ -20,16 +20,21 @@
 - [大型语言模型 (LLM) 微调方法](aigc/llm_finetune/finetune_llm.md)
 - [Low-Rank Adaptation (LoRA)](aigc/llm_finetune/lora_llm.md)
 
-## LLM Inference
-
-- [KV_Caching机制详解](aigc/llm_rlhf/KV_Caching机制详解.md)
-
 
 ## LLM Datasets
 
 - [LLM Instruction 数据集](aigc/llm_dataset/instruction_dataset.md)
 - [LLM Preference 数据集](aigc/llm_dataset/preference_dataset.md)
 - [LLM 行业数据集](aigc/llm_dataset/prompt_dataset.md)
+
+
+## LLM Inference
+
+- [解码策略基础](aigc/llm_inference/解码策略基础.md)
+- [解码策略高级方法](aigc/llm_inference/解码策略高级方法.md)
+- [KVCaching机制详解](aigc/llm_inference/KVCaching机制详解.md)
+- [PagedAttention 原理详解](aigc/llm_inference/PageAttention.md)
+
 
 ## LLM RLHF Framework
 
@@ -48,7 +53,7 @@
 
 ## LLM RLHF Algorithm and Paper
 
-
+- [RLHF 中的 Policy Gradient Algorithms](aigc/llm_rlhf/rlhf_policy_gradient.md)
 - [理解 RLHF](aigc/llm_rlhf/rlhf_advance.md)
 - [Chip Huyen 对 RLHF 的分析](aigc/llm_rlhf/rlhf_chiphuyen.md)
 - [RLHF 相关知识整理](aigc/llm_rlhf/rlhf_overview.md)
@@ -113,6 +118,7 @@
 - [大模型训练技术挑战](aigc/llm_recipes/llm_training.md)
 - [大模型训练技巧](aigc/llm_recipes/recipes.md)
 - [Pytorch 分布式使用教程](aigc/llm_recipes/pytorch_distributed.md)
+- [DeepSpeed教程](aigc/llm_recipes/DeepSpeed教程.md)
 - [ZeRO 技术原理 (上)](aigc/llm_recipes/zero-optimizer.md)
 - [ZeRO 技术原理 (下)](aigc/llm_recipes/deepspeed_zero.md)
 - [Pytorch FSDP 介绍](aigc/llm_recipes/fsdp.md)
