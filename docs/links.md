@@ -1,31 +1,5 @@
 # Some links
 
-## AI Reasoning
-
-### OpenR
-
- OpenR，首个集过程奖励模型（PRM）训练、强化学习、多种搜索框架为一身的类 o1 开源框架，旨在增强大型语言模型（LLM）的复杂推理能力。
-
-
-
-
-
-代码链接：https://github.com/openreasoner/openr
-
-教程链接：https://openreasoner.github.io/
-
-论文链接：https://github.com/openreasoner/openr/blob/main/reports/OpenR-Wang.pdf
-
-### O1-Journey
-
-上海交通大学 GAIR 研究组发布首个OpenAI o1复现项目进展报告
-
-Github链接：https://github.com/GAIR-NLP/O1-Journey
-
-o1 讨论资源：https://github.com/GAIR-NLP/O1-Journey/tree/main/resource
-
-技术报告：https://github.com/GAIR-NLP/O1-Journey/blob/main/resource/report.pdf
-
 ## Company Or Institution
 
 |                          公司/机构                           |                 Github                 | 领域       |                             简介                             | 推荐指数 |
@@ -59,23 +33,24 @@ o1 讨论资源：https://github.com/GAIR-NLP/O1-Journey/tree/main/resource
 
 |                          公司/机构                           | 分类                               |    推荐指数    |
 | :----------------------------------------------------------: | ---------------------------------- | :------------: |
-|        [AI Summer](https://theaisummer.com/learn-ai/)        |                                    |      🤗🤗🤗       |
-|    [syncedreview  \|机器之心](https://syncedreview.com/)     |                                    |      🤗🤗🤗       |
-|              [科学空间](https://spaces.ac.cn/)               |                                    |      🤗🤗🤗       |
-|          [Chip Huyen](https://huyenchip.com/blog/)           |                                    |     🤗🤗🤗🤗🤗      |
-|           [Lilian](https://lilianweng.github.io/)            |                                    |     🤗🤗🤗🤗🤗      |
-|           [Andrej Karpathy](https://karpathy.ai/)            |                                    |      🤗🤗🤗       |
-| [DeepLearning Focus](https://cameronrwolfe.substack.com/archive) |                                    |      🤗🤗🤗🤗      |
+|        [AI Summer](https://theaisummer.com/learn-ai/)        |              综合，深度学习                      |      🤗🤗🤗       |
+|    [syncedreview  \|机器之心](https://syncedreview.com/)     |               综合，深度学习                     |      🤗🤗🤗       |
+|              [科学空间](https://spaces.ac.cn/)               |               数学、统计学、机器学习                    |      🤗🤗🤗       |
+|          [Chip Huyen](https://huyenchip.com/blog/)           |             机器学习                       |     🤗🤗🤗🤗🤗      |
+|           [Lilian](https://lilianweng.github.io/)            |             机器学习、NLP                       |     🤗🤗🤗🤗🤗      |
+|           [Andrej Karpathy](https://karpathy.ai/)            |                 机器学习、NLP                    |      🤗🤗🤗       |
+| [DeepLearning Focus](https://cameronrwolfe.substack.com/archive) |             机器学习、NLP                        |      🤗🤗🤗🤗      |
 |          [Jay Alammar](https://jalammar.github.io/)          | 图解系列模型                       |     🤗🤗🤗🤗🤗      |
-|    [Ahead of AI](https://magazine.sebastianraschka.com/)     |                                    |      🤗🤗🤗🤗      |
-|       [Nathan Lambert](https://robotic.substack.com/)        |                                    |       🤗🤗       |
+|    [Ahead of AI](https://magazine.sebastianraschka.com/)     |     机器学习、NLP                                |      🤗🤗🤗🤗      |
+|       [Nathan Lambert](https://robotic.substack.com/)        |       机器学习、NLP                              |       🤗🤗       |
 |                   [int8](https://int8.io/)                   | 综合，深度学习，强化学习           |      🤗🤗🤗🤗      |
 |             [Yang Song](https://yang-song.net/)              | 分数生成模型                       |      🤗🤗🤗       |
 |           [Tim Dettmers](https://timdettmers.com/)           | 高性能计算， 量化                  |      🤗🤗🤗       |
 |       [joseph.rocca](https://medium.com/@joseph.rocca)       | Medium： 统计，机器学习，VAE， GAN |                |
-| Xavier Amatriain [link1](https://amatriain.net/blog/)  [link2](https://amatriain.net/blog/posts/) |                                    |      🤗🤗🤗       |
-|            [Chiyuan Zhang](https://pluskid.org/)             | 生活，艺术                         |      🤗🤗🤗       |
-|               [Yihui Xie](https://yihui.org/)                | 生活，艺术                         | 生活，艺术 🤗🤗🤗 |
+| [Matthew N. Bernstein  马修·N·伯恩斯坦](https://mbernste.github.io/posts/) |  数学、统计学、机器学习 | 🤗🤗🤗🤗  |
+|            [Chiyuan Zhang](https://pluskid.org/)             | 生活，读书，随笔              |      🤗🤗🤗       |
+|               [Yihui Xie](https://yihui.org/)                | 生活，读书，随笔                    | 🤗🤗🤗 |
+
 
 
 ## LLM Courses
