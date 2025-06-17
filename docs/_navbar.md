@@ -1,5 +1,6 @@
 -  [首页](/)
 - [AIGC](aigc/)
+- [Ascend生态](ascend/)
 - [强化学习](rlwiki/)
 - [深度学习](dlwiki/)
 - [机器学习](mlwiki/)
