@@ -148,11 +148,3 @@
 ## Tools
 
 - [如何快速下载 Huggingface 模型](aigc/hf_download.md)
-
-## 从 GPU 到华为 NPU
-
-- [从 0 开始安装 Ascend Pytorch](aigc/ascend/从0开始安装AscendPytorch.md)
-- [Ascend Pytorch 适配方案介绍](aigc/ascend/AscendPytorch适配方案介绍.md)
-- [LLamaFactory NPU Docker 镜像配置](aigc/ascend/llamafactory_docker.md)
-- [Mindspeed-RL框架使用指南](aigc/ascend/Mindspeed-RL框架使用指南.md)
-- [MindSpeed LLM 并行特性介绍](aigc/ascend/README.md)
