@@ -27,7 +27,7 @@ state['exp_avg_sq'] = torch_npu.empty_with_swapped_memory(p.size(), device=p.dev
 
 如下为图示对比说明：
 
-![Alt text](../../sources/images/virtual-optimizer.png)
+![Alt text](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/virtual-optimizer.png)
 
 **优势分析**：
 - 虚拟内存能够节省两次UB与HBM的搬运时长，直接从硬件执行访问。

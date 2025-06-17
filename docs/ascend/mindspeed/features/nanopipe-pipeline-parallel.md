@@ -10,15 +10,15 @@
 
 反向input梯度和weight梯度一起调度的Interleaved 1F1B如下图所示：
 
-![img](../../sources/images/virtual-pipeline.PNG)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/virtual-pipeline.PNG)
 
 独立调度input梯度和weight梯度的nano-pipe如下图所示：
 
-![img](../../sources/images/nanopipe.png)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/nanopipe.png)
 
 独立调度weight计算展示图如下图所示：
 
-![img](../../sources/images/FBW.png)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/FBW.png)
 
 ### 解决思路:
 
@@ -59,7 +59,7 @@ nanopipe依赖于vpp，设置`--num-layers-per-virtual-pipeline-stage N`。要�
 
 完整nanopipe-swap原理图如下图所示：
 
-![img](../../sources/images/nanopipe_v2.png)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/nanopipe_v2.png)
 
 ## 使用方法
 

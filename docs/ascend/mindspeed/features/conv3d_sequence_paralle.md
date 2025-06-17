@@ -9,7 +9,7 @@
  构造Conv3DSequenceParallel类，将输入特征图按照卷积核的depth维度进行切分，分发到不同的进程组中进行conv3d三维卷积操作,将卷积结果进行gather操作后输出到下游模块。<br>
 - **反向过程** :<br>
  Conv3DSequenceParallel类会将下游反向得到的梯度进行split操作，实现梯度的depth维度进行切分，分发到并行的三维卷积模块上进行反向传播，再将并行的三维卷积模块的反向梯度进行gather操作后输出到上游模块。<br>
-![](../../sources/images/conv3d_sequence_parallel.png)
+![](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/conv3d_sequence_parallel.png)
 ## 使用场景
 训练含有conv3d（非padding模式）模块的模型。<br>
 

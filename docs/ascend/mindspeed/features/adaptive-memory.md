@@ -18,10 +18,10 @@
 
 自适应内存优化策略流程如下图所示：
 
-<p align="center"> <img src="../../sources/images/adaptive_memory_a.png.png" height="500px" width="400px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/adaptive_memory_a.png.png" height="500px" width="400px"></p>
 
 SwapManager功能需要内存管理适配PTA的NPUPluggableAllocator接口拦截OOM，让SwapManager功能可以介入，流程如下图所示：
-<p align="center"> <img src="../../sources/images/adaptive_recompute_b.png" height="300px" width="500px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/adaptive_recompute_b.png" height="300px" width="500px"></p>
 
 ## 使用场景
 

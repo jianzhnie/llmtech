@@ -13,7 +13,7 @@
 * **基于概率匹配的高效搜索算法**：基于Thompson Sampling方法探索并行策略，以高概率探索高价值并行配置，提高探索效率，灵活支持探索早停，提高易用性。
 
 
-![1](../../sources/images/auto_parallel_1.png)
+![1](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/auto_parallel_1.png)
 
 **并行配置的支持情况：**
 
@@ -153,4 +153,4 @@ python pretrain_gpt.py \
 
 ## 使用效果
 
-![2](../../sources/images/auto_parallel_2.png)
+![2](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/auto_parallel_2.png)

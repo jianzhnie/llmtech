@@ -30,11 +30,11 @@ gelu函数重计算->后续模块A的反向。
 
 例如，gelu在mlp中的位置下图所示。反向计算需要前向产生的a，b，c, d。其中b, c的shape为(batch, seq , 4 * hidden_size)，gelu为激活函数，其计算较少，故可将tensor c释放掉，反向在 4h->h 反向前重新计算。
 
-![现有框架](../../sources/images/activation_function_a.png)
+![现有框架](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/activation_function_a.png)
 
 在前向4h->h计算完毕后，将c释放，保留逻辑视图。在4h->h grad前，需要将c计算回来。这里使用给d打tensor_hook的方式来进行重计算的插入，如下图所示：
 
-![新框架](../../sources/images/activation_function_b.png)
+![新框架](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/activation_function_b.png)
 
 ## 使用场景
 

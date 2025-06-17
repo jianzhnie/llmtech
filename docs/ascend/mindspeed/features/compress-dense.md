@@ -10,7 +10,7 @@
 
 激活值在训练过程中属于高频使用的内存对象，前向产生反向释放，并且不同的并行策略会导致激活值的生命周期产生复杂的变化，因此需要合理并安全的设计可异步的无损压缩方案。通过使能compress-dense的特性，可以利用多流异步的方案实现对大量dense-层激活值小代价的压缩，具体方法如下图所示：
 
-![Alt text](../../sources/images/compress_dense.png)
+![Alt text](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/compress_dense.png)
 
 ## 使用方法
 

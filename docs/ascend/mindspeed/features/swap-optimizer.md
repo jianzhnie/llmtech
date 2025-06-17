@@ -21,7 +21,7 @@
 大小参数的 h2d 操作，再做 adamw 计算以及 copy 到模型权重（bf16），最后再 d2h 释放显存。
 3. 由于 d2h 与 h2d 是异步拷贝，为了保证时序正确，第二轮的 d2h 需要等前一轮的 h2d 操作结束之后再下发第二轮。
 
-![img.png](../../sources/images/swap-optimizer.png)
+![img.png](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/swap-optimizer.png)
 
 ## 使用场景
 

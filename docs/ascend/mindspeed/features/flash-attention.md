@@ -18,7 +18,7 @@ b. 重计算：放弃中间结果写回，需要使用时重新计算，用计�
 
 c. Kernel Fusion：将多个操作融合为一个操作，基于Tiling利用一个kernel完成整个计算。
 
-<p align="center"> <img src="../../sources/images/flash_attention.png" height="400px" width="880px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/flash_attention.png" height="400px" width="880px"></p>
 
 [原文链接](https://arxiv.org/pdf/2205.14135)
 

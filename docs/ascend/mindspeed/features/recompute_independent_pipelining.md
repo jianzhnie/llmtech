@@ -13,10 +13,10 @@
 ## 使用场景
 
 在pipelining_with_interleaving调度中，若用户未开启重计算，则可以利用bubble主动插入重计算，以极小的性能代价换取内存峰值的降低，将需要保留激活值的前向计算块的个数减少到pp * vp。
-<p align="center"> <img src="../../sources/images/ripipe_a.png" height="154px" width="972px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/ripipe_a.png" height="154px" width="972px"></p>
 
 在pipelining_with_interleaving调度中，若用户已开启重计算，则可以通过解除重计算与后一个stage的反向计算间的依赖关系从而提前重计算，以及去除模型最后一层的重计算，实现计算性能的提升。
-<p align="center"> <img src="../../sources/images/ripipe_b.png" height="122px" width="954px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/ripipe_b.png" height="122px" width="954px"></p>
 
 ## 使用方法
 

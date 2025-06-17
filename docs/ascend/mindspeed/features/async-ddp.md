@@ -7,7 +7,7 @@
 ## 解决方案
 
 通过将计算和通信任务分别拆分成更细粒度的子任务来实现相互的流水掩盖。并行原理如下图所示：
-<p align="center"> <img src="../../sources/images/async_ddp.png" height="250px" width="680px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/async_ddp.png" height="250px" width="680px"></p>
 
 ### 解决思路:
 

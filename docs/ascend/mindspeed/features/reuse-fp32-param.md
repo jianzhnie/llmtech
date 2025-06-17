@@ -22,10 +22,10 @@
 
 
 参数副本复用流程如下图所示：
-<p align="center"> <img src="../../sources/images/reuse_fp32_param_a.png" height="400px" width="600px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/reuse_fp32_param_a.png" height="400px" width="600px"></p>
 
 数值变化的详细逻辑如下图所示：
-<p align="center"> <img src="../../sources/images/reuse_fp32_param_b.png" height="400px" width="750px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/reuse_fp32_param_b.png" height="400px" width="750px"></p>
 
 ## 使用场景
 

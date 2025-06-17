@@ -11,7 +11,7 @@
 ### 解决思路:
 
 Alibi算法给attention score添加了一个预设的线性偏置矩阵（如下图所示），使模型能够理解输入之间的相对位置关系。由于位置信息直接作用于attention score上，位置差异性被突出，使模型具有较强的外推能力。
-<p align="center"> <img src="../../sources/images/alibi.png" height="180px" width="400px"></p>
+<p align="center"> <img src="https://gitee.com/ascend/MindSpeed/raw/master/sources/images/alibi.png" height="180px" width="400px"></p>
 
 [原文链接](https://arxiv.org/pdf/2108.12409)
 

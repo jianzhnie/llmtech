@@ -14,7 +14,7 @@
 
 为了方便理解，以下图为例：假设输入$X$的大小为$ s \times b \times h $，按照序列维度切分$X=[X_1^s,X_2^s]$，经过LayerNorm操作后的结果为$Y=[Y_1^s,Y_2^s]$，随后进行张量模型并行。
 
-![image.png](../../sources/images/sequence-parallel.png)
+![image.png](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/sequence-parallel.png)
 
 [原文链接](https://arxiv.org/pdf/2205.05198)
 

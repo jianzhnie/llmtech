@@ -7,7 +7,7 @@
 通过将共享专家和路由专家结合，MOE模型能够在不同的输入情况下既关注到输入数据的共性也能关注到输入数据的差异性，从而提高模型的泛化能力。
 
 共享专家如下图c所示（参考论文：https://arxiv.org/pdf/2401.06066 ）：
-![img](../../sources/images/shared-experts.png)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/shared-experts.png)
 
 ## 使用场景
 

@@ -14,7 +14,7 @@
 
 给定TP域大小，通过建立多通信域，在原Megatron（ColumnParallelLinear、RowParallelLinear）增加了一维的切分维度。将原tp通信域进行分解为两个子通信域tp_x和tp_y，需要满足`tp = tp_x * tp_y`。以MLP层为例，其实现过程如下：
 
-![img](../../sources/images/tensor-parallel-2d.png)
+![img](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/tensor-parallel-2d.png)
 
 #### 分布式normalization
 

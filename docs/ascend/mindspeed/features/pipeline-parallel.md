@@ -13,7 +13,8 @@
 * 将整个网络分阶段（stage），不同阶段在不同的设备上，前后阶段流水线分批工作，通过一种“接力”的方式并行。
 * 开始训练时，会先进行预热。预热完成后，每进行一个前向运算，就安排一个后向运算。最后进行冷却，完成剩余阶段。如下图所示
 
-![alt text](../../sources/images/pipedream1F1B.png)
+![alt text](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/pipedream1F1B.png)
+
 
 [原文链接](https://arxiv.org/pdf/1806.03377)
 ## 使用场景

@@ -12,7 +12,7 @@ Pipedream流水线并行切分粒度过大，运行过程中仍然有许多空�
 
 在设备数量不变的情况下，分出更多的流水线阶段，以更多的通信量，换取空泡比率降低。
 
-![alt text](../../sources/images/virtual-pipeline.PNG)
+![alt text](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/virtual-pipeline.PNG)
 
 [原文链接](https://people.eecs.berkeley.edu/~matei/papers/2021/sc_megatron_lm.pdf)
 

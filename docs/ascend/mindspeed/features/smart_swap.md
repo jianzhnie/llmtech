@@ -15,7 +15,7 @@
 - SearchPolicy阶段，执行数据采样和策略执行。 在策略生成中，包括候选内存过滤，内存策略生成，内存模拟排布等步骤。
 - Stable阶段，仅执行策略执行。在策略执行中，通过多流异步执行内存Swap，掩盖对计算流的耗时影响。
 
-![smart_swap_flowchart](../../sources/images/smart_swap_flowchart.png)
+![smart_swap_flowchart](https://gitee.com/ascend/MindSpeed/raw/master/sources/images/smart_swap_flowchart.png)
 
 ## 使用场景
 
