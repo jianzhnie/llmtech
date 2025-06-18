@@ -26,16 +26,14 @@
 
 $$
 e_x = \sum_{i=1}^{H} x_i
-\
 $$
 
 ##### **步骤2：分布式归约操作（All-Reduce）**
 
 将步骤1中的总和 $e_x$ 在所有tp_y通信域进程中进行归约（求和），确保每个进程都拥有其通信域全局总和：
+
 $$
-\
 e_x^{\text{global}} = \text{AllReduce}\left( e_x \right) = \sum_{p=1}^{P} \sum_{i=1}^{H} x_i^{(p)}
-\
 $$
 
 其中：
