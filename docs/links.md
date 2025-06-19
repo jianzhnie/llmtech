@@ -34,6 +34,8 @@
 |                          公司/机构                           | 分类                               |    推荐指数    |
 | :----------------------------------------------------------: | ---------------------------------- | :------------: |
 | [TheGradient](https://thegradient.pub/) | AI | 🤗🤗🤗🤗🤗 |
+| [LLM Parallelism](https://insujang.github.io/) | 大模型并行技术 | 🤗🤗🤗🤗 |
+| [determined.ai](https://www.determined.ai/tag/blog/blog) | AI | 🤗🤗🤗🤗 |
 |        [AI Summer](https://theaisummer.com/learn-ai/)        |              综合，深度学习                      |      🤗🤗🤗       |
 |    [syncedreview  \|机器之心](https://syncedreview.com/)     |               综合，深度学习                     |      🤗🤗🤗       |
 |              [科学空间](https://spaces.ac.cn/)               |               数学、统计学、机器学习                    |      🤗🤗🤗       |
