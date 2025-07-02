@@ -8,6 +8,8 @@
 
 在 GRPO 方法中包含了三个关键模型：Actor，Reference，Reward。其中 Actor 和 Reference 模型是通过SFT后得到的策略模型，而 Reward 模型则是通过训练构建的奖励评估模型。GRPO 的核心训练目标是优化 Actor 模型的策略，使其在执行强化学习任务时能够产生更优的动作序列，更符合任务目标的预期。
 
+
+
 ## 环境配置
 
 ### 版本要求
@@ -198,9 +200,7 @@ bash examples/ckpt/ckpt_convert_qwen25_mcore2hf.sh
 
 ## 配置文件
 
-由于 GRPO 训练过程中涉及 3 个模型，通过将模型参数和训练配置解耦的层级化参数配置，来简化 GRPO 训练的参数配置过程。RLXF 训练涉及到的所有配置文件均存储在 configs/rlxf 路径下，其中 model 文件夹下存储了模型结构相关的配置文件，GRPO 训练相关的模型参数文件以 grpo_{模型名}.yaml方式命名。
-
-在每个 grpo_trainer 配置文件中，需要包含 defaults、megatron_training、rl_config、generate_config等字段的参数配置以及 GRPO 训练过程中涉及到的 3 个角色 actor，reward，ref 的配置。
+MindSpeed RL 通过将模型参数和训练配置解耦的层级化参数配置，来简化 GRPO 训练的参数配置过程。RLXF 训练涉及到的所有配置文件均存储在 configs/ 路径下，其中 model 文件夹下存储了模型结构相关的配置文件，GRPO 训练相关的模型参数文件以  `grpo_trainer_模型名_模型大小_机器型号.yaml` 方式命名。在每个 grpo_trainer 配置文件中，需要包含 defaults、megatron_training、actor_config、rl_config、generate_config 字段的参数配置。
 
 1. defaults 负责引入模型配置文件，在 defaults 中应列举本配置文件中所需要用到的所有模型配置，模型配置可以在下方3个角色的具体配置中通过 model 字段进行选择。
 2. megatron_training 字段设置的参数为所有 3 个角色通用的默认参数，这些参数可以在下方进一步被角色的单独配置所覆盖。
@@ -208,7 +208,11 @@ bash examples/ckpt/ckpt_convert_qwen25_mcore2hf.sh
 4. rl_config: 在 GRPO 训练中的特性参数，以及 actor，reward，ref 模型的资源配置。
 5. generate_config: 包含 tokenizer 相关配置、推理并行配置、vllm 模型相关设置以及样本采样参数配置。
 
-###  MegatronConfig 参数解析
+
+
+### 配置文件字段解析
+
+####  MegatronConfig 参数解析
 
 这是一个用于配置 Megatron-LM 模型训练和推理的复杂配置类，继承自 `BaseConfig`。让我从几个主要方面来解释：
 
@@ -314,7 +318,7 @@ self.use_fused_swiglu = False          # 是否使用融合SwiGLU
 4. 训练优化策略配置
 5. 内存和计算优化设置
 
-### GenerateConfig 参数解析
+#### GenerateConfig 参数解析
 
 这是一个用于控制模型生成（推理）过程的配置类，继承自 `BaseConfig`。让我从几个关键方面来解释：
 
@@ -387,7 +391,7 @@ self.num_scheduler_steps = 1        # 调度器步数
 2. 在推理阶段，用于控制模型输出文本的生成策略
 3. 在分布式训练中，用于控制模型并行和资源使用
 
-###  RLConfig 参数解析
+####  RLConfig 参数解析
 
 这是用于配置强化学习训练过程的核心配置类，继承自 `BaseConfig`。我将从几个主要方面来解释：
 
@@ -477,7 +481,7 @@ self.wandb_save_dir = ""  # W&B保存目录
 4. 优化训练参数
 5. 监控训练过程
 
-### 参数校验
+#### 参数校验
 
 我来详细解释 `validate_rl_args` 函数。这是一个用于验证RLHF训练配置参数的关键函数，它检查多个配置类之间的参数一致性和合理性。让我从几个主要方面来解释：
 
@@ -588,36 +592,9 @@ if len(rl_config.verifier_function) != len(rl_config.verifier_weight):
         f"{len(rl_config.verifier_function)} vs {len(rl_config.verifier_weight)}")
 ```
 
-**验证的主要方面**：
-
-1. **资源分配合理性**：
-   - 检查NPU资源分配是否合理
-   - 验证并行度配置
-   - 确保资源能被正确划分
-
-2. **批次处理一致性**：
-   - 验证全局批次大小
-   - 检查微批次配置
-   - 确保采样数量合理
-
-3. **并行计算配置**：
-   - 验证数据并行设置
-   - 检查模型并行配置
-   - 确保并行度匹配
-
-4. **经验收集配置**：
-   - 验证经验计数设置
-   - 检查调度大小配置
-   - 确保数据流合理
-
-5. **组件间一致性**：
-   - 检查各个组件配置的匹配性
-   - 验证资源分配的协调性
-   - 确保参数设置的一致性
 
 
-
-### 训练Config参数解析
+### 训练参数Yaml 文件解析
 
 `defaults:`
 
@@ -628,8 +605,8 @@ if len(rl_config.verifier_function) != len(rl_config.verifier_weight):
 #### `megatron_training:`
 
 - `stage`：用于指定训练算法，使用 Ray GRPO 训练须设置为`ray_grpo`；
-- `global_batch_size`: 经过多少样本后 actor-train 和 rollout 权重同步；
-- `data_path`: 数据集路径配置，例如 /dataset/data ；
+- `global_batch_size`:  经过多少样本后 actor-train 和 rollout 权重同步；
+- `data_path`: 数据集路径配置，例如 /dataset/data，注意带前缀；
 - `tokenizer_name_or_path`: 分词器路径配置，可以配置为 Hugging Face 权重文件的文件夹路径，例如 /ckpt/qwen2.5_7b_hf/ ;
 - `其余参数`: 其余参数为Megatron训练中的特性配置；
 
@@ -637,68 +614,84 @@ if len(rl_config.verifier_function) != len(rl_config.verifier_weight):
 
 配置 GRPO 训练中 Actor 模型、Reference 模型和 Reward 模型的配置参数；当前支持不开启 Reward 模型，开启规则奖励进行打分，开启参数详见rl_config中的rule_reward参数。
 
-- `tensor_model_parallel_size`：TP 并行策略数;
-- `pipeline_model_parallel_size`：PP 并行策略数;
 - `micro_batch_size`：梯度累积的 mbs 大小;
+
+- `tensor_model_parallel_size`：TP 并行策略数;
+
+- `pipeline_model_parallel_size`：PP 并行策略数;
+
 - `lr`：学习率；
+
 - `lr_decay_style`：学习率衰减配置；
+
 - `min_lr`：最小学习率；
+
 - `weight_decay`：权重衰减，用于防止模型过拟合；
+
 - `lr_warmup_fraction`：学习率预热比例，在训练初期逐渐增大学习率的比例；
+
 - `clip_grad`：梯度裁剪系数；
+
 - `load`：模型加载的路径；
+
 - `save`：模型保存的路径；
-- `no_load_optim`：续训加载优化器状态；
-- `no_load_rng`：续训加载数据随机数生成器；
-- `no_save_optim`：保存优化器状态；
-- `no_save_rng`：保存数据随机数生成器；
+
+- `no_load_optim`：续训加载优化器状态，默认为false；
+
+- `no_load_rng`：续训加载数据随机数生成器，默认为false；
+
+- `no_save_optim`：保存优化器状态，默认为false；
+
+- `no_save_rng`：保存数据随机数生成器，默认为false；
+
+
 
 #### `rl_config:`
 
 - `use_integrated_worker`：是否开启全共卡模式，默认为 true;
-
 - `blocking`：是否开启异步，默认为 true;
-
 - `actor_forward_micro_batch_size`：actor model 前向计算 logp 的 mbs 大小;
-
 - `ref_forward_micro_batch_size`：ref model 前向计算 logp 的 mbs 大小;
-
 - `adv_estimator`：优势计算方法;
-
 - `kl_ctrl_type`：kl loss 计算方法;
-
 - `init_kl_coef`：kl loss 所占权重;
-
 - `mini_batch_size`：每 mini batch size 之后 actor 会更新一次;
-
 - `max_prompt_length`：GRPO 训练中最大 prompt 长度，默认为512;
-
 - `clip_ratio`：Actor 模型训练计算损失函数时的 clip 比例，默认为0.2 一般取值范围 [0.1，0.3] 最大取值范围[0，1] 该数值越大允许策略更新的幅度越大，反之不然；
-
 - `entropy_coeff`: entropy loss 所占权重;
-
 - `n_samples_per_prompt`：每条prompt的重用次数，一条 prompt 输入能输出 n 条 responese;
-
 - `guarantee_order`: 是否开启TransferDock保序，默认 False;
-
 - `shuffle_mini_batch`：Actor 训练时是否对 minibatch 进行 shuffle，默认为 False;
-
 - `actor_resource` ：分配给 Actor 、Reference模型的显卡数量;
 
-  显卡资源配置格式为 :
 
-  ```
-  actor_resource:
-      num_npus: 4
-  ```
+
+##### 显卡资源配置
+
+显卡资源配置格式为 :
+
+```
+actor_resource:
+    num_npus: 8
+```
+
+
+
+##### 规则奖励配置
 
 开启规则奖励开关后，不用分配资源给 reward_resource 参数，规则奖励参数配置如下：
 
 - `rule_reward`: 开启后，使用规则奖励进行打分；
+
 - `verifier_function`: 选择使用的规则奖励模型方法，例如["acc", "strict_format"] ；
+
 - `verifier_weight`: 配置规则奖励模型权重，例如[1.0, 1.0]；
 
-日志配置参数也在 rl_config 中进行配置，当前支持 wandb/tensorboard 日志输出：
+
+
+##### 日志配置
+
+当前支持 wandb/tensorboard 日志输出：
 
 tensorboard开关（若use_tensorboard和use_wandb同时为True，则tensorboard不生效）:
 
@@ -735,6 +728,7 @@ vllm 模型参数 可以参照 [vllm官网参数介绍](https://gitee.com/link?t
 - `max_model_len`：vllm 能够处理的最大输入序列长度(prompt+response)；
 - `max_num_batched_tokens`：vllm 推理并发最大token限制；
 - `gpu_memory_utilization`：GPU 内存利用率，指定推理时使用 GPU 内存的比例；
+- `num_scheduler_steps `：指的是在一个完整的调度周期内，调度器会将批处理请求分成多少个子步骤来执行；
 
 ##### 采样配置
 
@@ -745,6 +739,31 @@ vllm 模型参数 可以参照 [vllm官网参数介绍](https://gitee.com/link?t
 - `top_k`：vllm 会先选出概率最高的 top_k 个 token，然后在这 top_k 个 token 范围内进行采样；
 - `min_p`：vllm 过滤掉概率低于 min_p 的词元，不参与后续的采样过程；
 - `detokenize`：是否将输出token重新转为文本；
+
+
+
+###  runtime_env 环境变量
+
+**（ 注：位于 configs/envs/runtime_env.yaml 中 ）**
+
+- `RAY_EXPERIMENTAL_NOSET_ASCEND_RT_VISIBLE_DEVICES`：是否禁用 Ray 对 ASCEND_RT_VISIBLE_DEVICES 的自动设置，'true'为禁用
+- `TOKENIZERS_PARALLELISM`：设置tokenizers是否支持并行，'true'为支持
+- `NCCL_DEBUG`：NCCL Debug日志级别，VERSION、WARN、INFO、TRACE
+- `PYTORCH_NPU_ALLOC_CONF`：设置缓存分配器行为
+- `HCCL_CONNECT_TIMEOUT`：HCCL 连接超时时间
+- `HCCL_EXEC_TIMEOUT`：HCCL 执行超时时间
+- `HCCL_IF_BASE_PORT`：HCCL 通信端口
+- `CUDA_DEVICE_MAX_CONNECTIONS`：设备最大连接数
+- `HYDRA_FULL_ERROR`：设置 HYDRA 是否输出完整错误日志
+- `VLLM_DP_SIZE`：vLLM数据并行度（Data Parallelism）大小，控制数据分片数量，MOE模型建议和EP一致，稠密模型设置为1
+- `HCCL_BUFFSIZE`：HCCL通信层单次传输的最大缓冲区大小（单位MB），影响跨设备通信效率
+- `VLLM_USE_V1`：使用vLLM的V1 engine API（v1接口），当前只支持 v1 ，需设置为 '1'。
+- `VLLM_VERSION`：指定使用的vLLM版本号
+- `VLLM_ENABLE_GRAPH_MODE`：启用昇腾torchair图模式优化（1=启用），提升执行效率
+- `VLLM_ENABLE_TOPK_OPTIMZE`：使能vLLM TOPK性能优化
+- `TASK_QUEUE_ENABLE`：控制开启task_queue算子下发队列优化的等级，推荐设置为 '2' 使能 Level 2 优化。
+- `CPU_AFFINITY_CONF`：指定使用绑核优化，推荐设置为 '1'。
+- `LCAL_COMM_ID`: 开启coc特性时配套启用，设置为'127.0.0.1:27001'。
 
 
 
@@ -762,87 +781,121 @@ DeepSeek-R1-Zero的训练过程使用GRPO算法，将ORM（结果奖励模型）
 
 ###  配置准备
 
-模型结构的配置文件位于configs/model下，训练配置文件位于configs/目录下，我们以qwen2.5-7b为例[r1_zero_qwen25_7b.yaml]，该配置用到了16卡，为了进一步加速可以不断增加推理DP的数量。以下为参数配置：
+模型结构的配置文件位于configs/model下，训练配置文件位于configs/目录下，我们以qwen2.5-7b为例[r1_zero_qwen25_7b.yaml]，该配置用到了8卡，为了进一步加速可以不断增加推理DP的数量。以下为参数配置：
 
 ```shell
 defaults:
   - model:
-      - qwen25-7b                        <-- 网络结构需要定义在model目录的yaml文件下
+      - qwen25_7b
 
 megatron_training:
-  global_batch_size: 64                   <-- 经过多少样本后actor-train和rollout权重同步
-  ...
-  dataset_additional_keys: ['labels',]    <-- 使用打分器时需要的额外字段
+  model: qwen25_7b
+  use_fused_rmsnorm: true
+  use_mcore_models: true
+  sequence_parallel: true
+  use_flash_attn: true
+  no_masked_softmax_fusion: true
+  attention_softmax_in_fp32: true
+  no_gradient_accumulation_fusion: true
+  use_fused_swiglu: true
+  use_fused_rotary_pos_emb: true
+  bf16: true
+  use_distributed_optimizer: true
+  tokenizer_type: PretrainedFromHF
+  tokenizer_name_or_path: /root/llmtuner/hfhub/models/Qwen/Qwen2.5-7B
+  global_batch_size: 32
+  seq_length: 4096
+  save_interval: 1000
+  train_iters: 200
+  stage: ray_grpo
+  attention_dropout: 0.0
+  init_method_std: 0.01
+  hidden_dropout: 0.0
+  distributed_backend: nccl
+  no_shared_storage: true
+  variable_seq_lengths: true
+  dataset_additional_keys: ['labels']
+  data_path: /root/llmtuner/hfhub/mindspeed/datasets/qwen2.5-math-7b/math500_diffcult7-9_cot/math500_diffcult7-9_cot
+  split: 100,0,0
+  no_shuffle: false
+  full_shuffle_instruction_dataset: false
+  seed: 1234
 
 actor_config:
-  model: qwen25-7b
-  micro_batch_size: 1          <-- 训练的mbs
-  ...
-  lr: 5e-7
-  lr_decay_style: cosine     <-- 学习率衰减方式
-  min_lr: 5e-8
-  weight_decay: 0.0            <-- 正则化强度系数
-  lr_warmup_fraction: 0.0      <-- 控制学习率预热
-  ...
-  no_load_optim: false         <-- 续训加载优化器状态
-  no_load_rng: false           <-- 续训加载数据随机数生成器
-  no_save_optim: false         <-- 保存权重时同时保存优化器状态
-  no_save_rng: false           <-- 保存权重时同时保存数据随机数生成器
-
-ref_config:
-  model: qwen25-7b
-  ...
-
-reward_config:
   model: qwen25_7b
-  ...
+  micro_batch_size: 4
+  tensor_model_parallel_size: 4
+  pipeline_model_parallel_size: 2
+  lr: 1e-6
+  lr_decay_style: cosine
+  min_lr: 1e-7
+  weight_decay: 0.01
+  lr_warmup_fraction: 0.03
+  clip_grad: 1.0
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  finetune: true
+  load: /root/llmtuner/hfhub/mindspeed/models/Qwen/Qwen2.5-7B/mcore_tp4_pp2
+  save: /root/llmtuner/hfhub/mindspeed/models/Qwen/Qwen2.5-7B/mcore_tp4_pp2/math500_diffcult7-9_cot
+  no_load_optim: true
+  no_load_rng: true
 
 rl_config:
-  blocking: false              <-- 开启异步流水
-  ...
-  adv_estimator: group_norm    <-- 优势计算方法
-  mini_batch_size: 512         <-- 训练更新梯度的bs, 一般为gbs*n_samples_per_prompt
-  ...
-  max_prompt_length: 1024      <-- 最大的prompt长度
-  clip_ratio: 0.2              <-- 策略裁剪比例
-  shuffle_minibatch: false     <-- minibatch里的数据是否打乱
-  n_samples_per_prompt: 8      <-- GRPO中一个group内生成的response条数
-  colocate_actor_ref: false
-  colocate_all_models: false
-  rule_reward: true                              <-- 开启规则奖励
-  verifier_function: ["base_acc"]                <-- 规则奖励模型方法
-  verifier_weight: [1.0]                         <-- 规则奖励模型权重
-  use_tensorboard: true                          <-- 开启tensorboard日志功能
-  actor_resource:                                <-- actor worker资源分配
-    num_npus: 8
-  reference_resource:                            <-- ref worker资源分配
+  blocking: true # 全共卡情况下应开启blocking。
+  guarantee_order: false
+  use_integrated_worker: true
+  gamma: 1.0
+  lam: 0.95
+  actor_forward_micro_batch_size: 4
+  adv_estimator: group_norm
+  kl_penalty: kl
+  kl_ctrl_type: fixed
+  init_kl_coef: 0.0
+  mini_batch_size: 32
+  max_prompt_length: 1024
+  epochs: 1
+  clip_ratio: 0.2
+  entropy_coeff: 0.00
+  n_samples_per_prompt: 16
+  rule_reward: true
+  verifier_function: ["acc"]
+  verifier_weight: [1.0]
+  verifier_parallel: 1
+  num_cpus_for_local_task: 1.0
+  verifier_timeout: 120
+  use_tensorboard: true
+  tensorboard_log_dir: ./work_dir/qwen2.5-math-7b_32_4k/tensorboard_log2
+  actor_resource:
     num_npus: 8
 
 generate_config:
-  trust_remote_code: true            <-- tokenizer相关配置
+  trust_remote_code: true
+  offload_train_optimizer: true
+  offload_train_grad: true
+  offload_train_param: true
 
-  infer_tensor_parallel_size: 2      <-- 推理时的并行配置
+  # 推理时的并行配置
+  infer_tensor_parallel_size: 4
   infer_pipeline_parallel_size: 1
   infer_expert_parallel_size: 1
 
-  max_num_seqs: 128                  <-- vllm 推理并发最大样本限制
-  max_num_batched_tokens: 128000     <-- vllm 推理并发最大token限制
+  # vllm 模型相关设置
+  max_num_seqs: 1024
   max_model_len: 4096
+  max_num_batched_tokens: 32768
   dtype: "bfloat16"
-  gpu_memory_utilization: 0.9
-  offload_train_optimizer: true      <-- 卸载训练节点优化器
-  offload_train_grad: true           <-- 卸载训练节点梯度
-  offload_train_param: true          <-- 卸载模型权重
+  gpu_memory_utilization: 0.8
 
-  sampling_config:                   <-- vllm 采样配置
-    max_tokens: 2048                 <-- 单条response最大生成token数量
-    logprobs: 1                      <-- 是否生成logprobs
-    top_p: 0.9
-    top_k: 50
-    min_p: 0.01
-    temperature: 0.8
+  # 采样配置
+  sampling_config:
+    logprobs: 1
+    max_tokens: 4096
+    top_p: 1.0
+    top_k: -1
+    min_p: 0
+    seed: 1234
+    temperature: 1.0
     detokenize: false
-  ...
 ```
 
 ### 训练启动方式
