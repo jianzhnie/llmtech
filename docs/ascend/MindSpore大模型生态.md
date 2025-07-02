@@ -23,16 +23,16 @@ MindSpore Transformers套件基于MindSpore内置的并行技术和组件化设�
 
 目前支持的模型列表如下：
 
-| 模型                                                         | 任务（task name）                                            | 模型（model name）                                           |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [LLama2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/llama2.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | llama2_7b llama2_13b llama2_7b_lora llama2_13b_lora llama2_70b |
-| [GLM2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/glm2.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | glm2_6b glm2_6b_lora                                         |
-| [CodeGeex2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/codegeex2.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | codegeex2_6b                                                 |
-| [LLama](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/llama.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | llama_7b llama_13b llama_7b_lora                             |
-| [GLM](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/glm.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | glm_6b glm_6b_lora                                           |
-| [Bloom](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/bloom.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | bloom_560m bloom_7.1b                                        |
-| [GPT2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/gpt2.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | gpt2_small gpt2_13b                                          |
-| [PanGuAlpha](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/pangualpha.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | pangualpha_2_6_b pangualpha_13b                              |
+| 模型                                                                                                  | 任务（task name）                                                                                              | 模型（model name）                                             |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [LLama2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/llama2.md)         | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | llama2_7b llama2_13b llama2_7b_lora llama2_13b_lora llama2_70b |
+| [GLM2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/glm2.md)             | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | glm2_6b glm2_6b_lora                                           |
+| [CodeGeex2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/codegeex2.md)   | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | codegeex2_6b                                                   |
+| [LLama](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/llama.md)           | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | llama_7b llama_13b llama_7b_lora                               |
+| [GLM](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/glm.md)               | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | glm_6b glm_6b_lora                                             |
+| [Bloom](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/bloom.md)           | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | bloom_560m bloom_7.1b                                          |
+| [GPT2](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/gpt2.md)             | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | gpt2_small gpt2_13b                                            |
+| [PanGuAlpha](https://github.com/mindspore-lab/mindformers/blob/master/docs/model_cards/pangualpha.md) | [text_generation](https://github.com/mindspore-lab/mindformers/blob/master/docs/task_cards/text_generation.md) | pangualpha_2_6_b pangualpha_13b                                |
 
 # MindRLHF
 
@@ -78,14 +78,14 @@ MindPet（Pet：Parameter-Efficient Tuning）是属于Mindspore领域的微调�
 
 **目前MindPet已提供以下六种经典低参微调算法以及一种提升精度的微调算法的API接口，用户可快速适配原始大模型，提升下游任务微调性能和精度；**
 
-| 微调算法       | 算法论文                                                     | 使用说明                                                     |
-| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| LoRA           | LoRA: Low-Rank Adaptation of Large Language Models           | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第一章 |
-| PrefixTuning   | Prefix-Tuning: Optimizing Continuous Prompts for Generation  | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第二章 |
-| Adapter        | Parameter-Efficient Transfer Learning for NLP                | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第三章 |
-| LowRankAdapter | Compacter: Efficient low-rank hypercom plex adapter layers   | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第四章 |
-| BitFit         | BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第五章 |
-| R_Drop         | R-Drop: Regularized Dropout for Neural Networks              | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第六章 |
+| 微调算法       | 算法论文                                                                                        | 使用说明                                                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| LoRA           | LoRA: Low-Rank Adaptation of Large Language Models                                              | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第一章 |
+| PrefixTuning   | Prefix-Tuning: Optimizing Continuous Prompts for Generation                                     | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第二章 |
+| Adapter        | Parameter-Efficient Transfer Learning for NLP                                                   | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第三章 |
+| LowRankAdapter | Compacter: Efficient low-rank hypercom plex adapter layers                                      | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第四章 |
+| BitFit         | BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models     | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第五章 |
+| R_Drop         | R-Drop: Regularized Dropout for Neural Networks                                                 | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第六章 |
 | P-Tuning v2    | P-Tuning v2: Prompt Tuning Can Be Comparable to Fine-tuning Universally Across Scales and Tasks | [MindPet_DeltaAlgorithm_README](https://gitee.com/mindspore-lab/mindpet/blob/master/doc/MindPet_DeltaAlgorithm_README.md) 第七章 |
 
 # DeepSpeed
