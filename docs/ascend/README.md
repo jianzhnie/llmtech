@@ -9,6 +9,7 @@
 
 
 ## 自定义开发
+
 - [脑海 2B 模型强化微调](ascend/脑海2B模型强化微调.md)
 - [使用 WandB Tables 记录生成的文本数据](ascend/使用WandBTables记录生成的文本数据.md)
 - [Verl 在 Ascend 适配指南](ascend/Verl在Ascend适配指南.md)
