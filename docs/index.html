@@ -8,14 +8,13 @@
     <link rel="icon" href="_media/favicon.ico" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="google-site-verification" content="6t0LoIeFksrjF4c9sqUEsVXiQNxLp2hgoqo0KryT-sE" />
-    <meta name="description" content="通用人工智能技术文档,主要收集人工智能相关的算法，论文，技术，笔记等">
+    <meta name="description" content="通用人工智能技术文档,主要收集人工智能相关的算法,论文,技术,笔记等">
     <meta name="keywords" content="人工智能 大语言模型 科技生活 技术文档" />
     <meta name="author" content="Robin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=5.0">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" title="vue" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
-    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/light.css" /> -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css" />
     <link rel="stylesheet" href="_media/amzn_style.css" />
@@ -71,9 +70,7 @@
             // 自定义侧边栏后默认不会再生成目录，设置生成目录的最大层级（建议配置为2-4）
             subMaxLevel: 3,
             //自动显示标题
-            autoHeader: true,
-            //小屏设备下合并导航栏到侧边栏
-            mergeNavbar: true,
+            autoHeader: false,
             // 使用相对路径
             relativePath: false,
             // 404页面
@@ -95,7 +92,6 @@
             },
             alias: {
                 '/.*/_navbar.md': '/_navbar.md',
-                // '/.*/_sidebar.md': '/_sidebar.md'
             },
             copyCode: {
                 buttonText: 'Copy',
@@ -108,11 +104,6 @@
                 crossChapter: true,
                 crossChapterText: true,
             },
-            // progress: {
-            //     position: "top",//默认上方
-            //     color: "var(--theme-color,#42b983)",//进度条颜色
-            //     height: "3px",//进度条高度
-            // },
             tabs: {
                 persist: true,
                 sync: true,
@@ -120,11 +111,6 @@
                 tabComments: true,
                 tabHeadings: true
             },
-            // toc: {
-            //     tocMaxLevel: 5,
-            //     target: 'h1, h2, h3, h4, h5, h6',
-            //     ignoreHeaders: ['<!-- {docsify-ignore} -->', '<!-- {docsify-ignore-all} -->']
-            // },
             autoHeaders: {
                 separator: String,          // how numbers should be separated
                 custom: String,          // if `separator` is set to other then specify own here
@@ -341,8 +327,6 @@
     <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
     <!-- Markdown 引用样式美化 -->
     <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
-    <!-- 文档里的header（也就是目录，Table of Content ）显示在右侧边栏 -->
-    <!-- <script src="//cdn.jsdelivr.net/npm/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script> -->
     <!-- 代码高亮:引入其他语言扩展 -->
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-cpp.min.js"></script>
@@ -350,30 +334,13 @@
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-css.min.js"></script>
     <script src="https://notebook.js.org/plugin/prism-docker.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-http.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-java.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/matlab.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-nginx.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-php.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-powershell.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-properties.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-sql.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-shell-session.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
     <!-- 复制提醒 -->
     <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
-    <!-- 复制信息提示 -->
-    <!-- <script>
-        document.body.oncopy = function () {
-            +swal("复制成功 🎉",
-                "若要转载或引用请务必保留原文链接，并申明来源。",
-                "success");
-        };
-    </script> -->
-    <!-- gitalk for comments -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
     <script>
@@ -397,8 +364,8 @@
                 location.reload()
             }
         }
-</script>
-    <!-- 回到顶部功能 -->
+    </script>
+        <!-- 回到顶部功能 -->
     <script src="https://notebook.js.org/plugin/jquery.js"></script>
     <script src="https://notebook.js.org/plugin/jquery.goup.js"></script>
     <script type="text/javascript">
@@ -411,7 +378,7 @@
                 titleAsText: true
             });
         });
-</script>
+    </script>
 </body>
 
 </html>
