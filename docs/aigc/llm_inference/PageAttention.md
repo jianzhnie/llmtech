@@ -1,6 +1,6 @@
 # PagedAttention
 
-在 **vLLM** 中，我们发现大语言模型（LLM）推理服务的性能瓶颈在于**内存**。在自回归解码过程中，所有输入的 token 都会生成注意力机制中的 **key** 和 **value** 张量，这些张量被缓存在 GPU 内存中以生成后续 token。这些缓存的 key 和 value 张量通常被称为 **KV 缓存**（KV cache）。
+我们发现大语言模型（LLM）推理服务的性能瓶颈在于**内存**。在自回归解码过程中，所有输入的 token 都会生成注意力机制中的 **key** 和 **value** 张量，这些张量被缓存在 GPU 内存中以生成后续 token。这些缓存的 key 和 value 张量通常被称为 **KV 缓存**（KV cache）。
 
 ## KV 缓存的挑战
 
@@ -16,6 +16,16 @@ KV 缓存具备如下特点：
 在论文《Efficient Memory Management for Large Language Model Serving with PagedAttention》中，作者提出了 PagedAttention，一种受虚拟内存分页启发的新型算法。
 
 内存分页技术最早用于操作系统（如 Windows 和 Unix）中，用于管理和分配系统内存中的页帧（Page Frame）。当系统内存不足时，它可以将暂时未被使用的内存区域换出，从而提升整体内存使用效率。PagedAttention 借鉴这一思想，对 LLM 推理中的 KV 缓存空间进行更高效的管理，从而实现动态内存分配，减少资源浪费。
+
+<img src="https://cdn.prod.website-files.com/67e1e36d3551f5a66e4095f5/68528e1f7e050381d596c900_AD_4nXdG0DxuPdeZHyw-AKAGwURyYhB8tN9xoqBbUKZ0cF3aa7FtZ909Z5sTNRydL8lnmHbZgNbh9s364Q7JnzaNOZgwhKgbtcTdihhzNbZWQ1nmnJ6Kg-Jc328uECmaVeiZaw_NGtFLirtOYce_JrLdTtUVOo4.png" alt="img" style="zoom:50%;" />
+
+Segmented Memory System ([Source](https://www.youtube.com/watch?v=p9yZNLeOj4s&ref=blog.runpod.io))
+
+
+<img src="https://cdn.prod.website-files.com/67e1e36d3551f5a66e4095f5/68528e1f7e050381d596c91f_AD_4nXc-N-FLOdHy9j6S7f8DJeuFb5WL-KDAaCwrv5Xtp-_z-SXU6UyJdUGzRmiIeZm-gvAcg5ScQ6Zm8U8E0uzRVyw70kasxXfA8KLAXgWn51YN1lDxl0IBQgt77_XGY_6-1Lhz_V3B2caz-v3QwaeOl9Gx0JHH.png" alt="img" style="zoom:50%;" />
+
+Paged Memory System ([Source](https://www.youtube.com/watch?v=p9yZNLeOj4s&ref=blog.runpod.io))
+
 
 <img src="https://lh7-us.googleusercontent.com/docsz/AD_4nXdJZ_p3OUnUQ1YtSTNef6iqMMGcHlntOzJCE_-ZlSfEfPqXet_EWJNFK7Hcpd9xDKBOqaOOmCNUCECCAmLfPidlEAhkCDjdWMImNaOL9tXvs6DgiH61ym2v-qSu3MpggyCXabhaB4UQGvNcapdSW9mHuy2k?key=jULPpW3gOjPzXuxrraGiJA" alt="img" style="zoom:50%;" />
 
@@ -35,7 +45,7 @@ vLLM 团队将浪费归纳为三类：
 - **保留浪费（Reservation）**：为了保证请求不中断，系统为整个序列持续预留内存块，即便部分内存未被使用，也不能被其他请求共享。
 - **外部碎片（External Fragmentation）**：内存块固定大小与请求长度不匹配时，会在块之间产生无法复用的“空隙”。
 
-![img](https://blog.runpod.io/content/images/2024/05/image.png)
+![img](https://cdn.prod.website-files.com/67e1e36d3551f5a66e4095f5/68528e1d7e050381d596c8ec_image.png)
 
 > 图示：传统系统中三种 KV 缓存内存浪费形式（来源）
 
@@ -76,7 +86,7 @@ PagedAttention 通过其 **块映射表（block table）** 天然实现了内存
 - 追踪每个物理块的 **引用计数（reference count）**；
 - 实施 **写时复制（Copy-on-Write）机制**，在需要修改共享内容时自动创建副本，避免数据冲突。
 
-![img](https://blog.vllm.ai/assets/figures/annimation3.gif)
+<img src="https://blog.vllm.ai/assets/figures/annimation3.gif" alt="img" style="zoom:50%;" />
 
 > 示例：并行采样下的生成过程
 
