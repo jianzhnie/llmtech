@@ -41,7 +41,7 @@ for output in outputs:
 更多 API 细节可参考 [Offline Inference](https://chatgpt.com/c/682eda70-eb4c-800a-ba30-aa064e6533d5#offline-inference-api) 章节的 API 文档。
 
 ```
-LLM` 类的代码位于：`vllm/entrypoints/llm.py
+LLM 类的代码位于：vllm/entrypoints/llm.py
 ```
 
 ### OpenAI 兼容的 API 服务端
