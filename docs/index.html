@@ -12,6 +12,7 @@
     <meta name="keywords" content="人工智能 大语言模型 科技生活 技术文档" />
     <meta name="author" content="Robin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=5.0">
+    <!-- 样式文件 -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" title="vue" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
@@ -19,22 +20,331 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css" />
     <link rel="stylesheet" href="_media/amzn_style.css" />
     <link rel="stylesheet" href="_media/netflix_style.css" />
+
     <style>
+        /* 基础样式优化 */
+        <!-- :root {
+            --theme-color: #42b983;
+            --sidebar-width: 300px;
+            --content-max-width: 900px;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme-color: #4fc08d;
+            }
+        } -->
+
+        /* 全局字体和间距优化 */
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* 内容区域优化 */
+        .markdown-section {
+            max-width: var(--content-max-width);
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* 标题样式优化 */
+        .markdown-section h1,
+        .markdown-section h2,
+        .markdown-section h3,
+        .markdown-section h4,
+        .markdown-section h5,
+        .markdown-section h6 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .markdown-section h1 {
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--theme-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .markdown-section h2 {
+            font-size: 2rem;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3rem;
+        }
+
+        /* 代码块优化 - 修复注释问题 */
+        .markdown-section pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            border: 1px solid #e1e4e8;
+            margin: 1rem 0;
+        }
+
+        <!-- .markdown-section code {
+            background-color: #f6f8fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        } -->
+
+        .markdown-section pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #24292e;
+        }
+
+        /* 代码高亮主题优化 */
+        .markdown-section .hljs {
+            background: #f6f8fa;
+            color: #24292e;
+        }
+
+        .markdown-section .hljs-keyword {
+            color: #d73a49;
+        }
+
+        .markdown-section .hljs-string {
+            color: #032f62;
+        }
+
+        .markdown-section .hljs-comment {
+            color: #6a737d;
+            font-style: italic;
+        }
+
+        .markdown-section .hljs-number {
+            color: #005cc5;
+        }
+
+        .markdown-section .hljs-function {
+            color: #6f42c1;
+        }
+
+        /* 表格优化 */
+        .markdown-section table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .markdown-section th,
+        .markdown-section td {
+            border: 1px solid #dfe2e5;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .markdown-section th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
+
+        /* 引用块优化 */
+        .markdown-section blockquote {
+            border-left: 4px solid var(--theme-color);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            background-color: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* 图片优化 */
         .katex-display>.katex {
             max-width: 100%;
             overflow-x: auto;
             overflow-y: hidden;
         }
+
+        figure {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        figcaption {
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* 导航栏优化 */
         nav.app-nav li ul {
             min-width: 100px;
+        }
+
+        /* 侧边栏优化 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #fafafa;
+        }
+
+        .sidebar-nav {
+            padding: 1rem;
+        }
+
+        .sidebar-nav li {
+            margin: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #e1e4e8;
+        }
+
+        /* 搜索框优化 */
+        .search {
+            margin: 1rem;
+        }
+
+        .search input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #dfe2e5;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .markdown-section {
+                padding: 1rem;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .markdown-section h1 {
+                font-size: 2rem;
+            }
+
+            .markdown-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 加载动画优化 */
+        #app {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 1.2rem;
+            color: var(--theme-color);
+        }
+
+        /* 回到顶部按钮优化 */
+        .goup-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .goup-container .goup {
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .goup-container .goup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        /* Vue 组件样式 */
+        .vue-button {
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .vue-button:hover {
+            background-color: #3aa876;
+        }
+
+        /* 表格响应式包装 */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 代码复制按钮样式 */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(255,255,255,0.9);
+            border: 1px solid #e1e4e8;
+            border-radius: 3px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: #f6f8fa;
+            border-color: #d1d5da;
         }
 
         #carbonads {
             box-shadow: none !important;
             width: auto !important;
-        }
-        figure {
-            text-align: center
         }
     </style>
 </head>
@@ -43,67 +353,65 @@
     <div id="app">Loading ...</div>
     <script src="//cdn.jsdelivr.net/npm/docsify-plugin-carbon@1"></script>
     <script>
+        // 全局变量定义
+        let num = 0;
+        const PDF_MARGIN_TOP = '20px';
+        const PDF_MARGIN_BOTTOM = '20px';
+
         // Docsify configuration
         window.$docsify = {
-            // name: 'Machine-Learning-Wiki',
-            name: '<p>🌈 Robin Home Page </p>',
+            name: '<p> 🌈 Robin Home Page </p>',
             repo: 'https://github.com/jianzhnie/llmtech',
             homepage: 'README.md',
-            //自动跳转到页面顶部
             auto2top: true,
-            // 封面
             coverpage: true,
-            // 封面和内容单独显示
             onlyCover: true,
-            // 执行页面上的脚本。只解析第一个脚本标记（演示）。如果存在Vue，则默认开
             executeScript: true,
-            // 侧边栏
             loadSidebar: true,
-            // 顶栏
             loadNavbar: true,
-            // load from _footer.md
             loadFooter: true,
-            // 小屏设备下合并导航栏到侧边栏
             mergeNavbar: true,
-            // 最大支持渲染的标题层级
             maxLevel: 4,
-            // 自定义侧边栏后默认不会再生成目录，设置生成目录的最大层级（建议配置为2-4）
             subMaxLevel: 3,
-            //自动显示标题
             autoHeader: false,
-            // 使用相对路径
             relativePath: false,
-            // 404页面
-            notFoundPage: true,
             notFoundPage: 'error.md',
-            // 日期格式
             formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}',
-            // 谷歌分析 SEO
             ga: 'UA-46744044-1',
-            //搜索插件
+
+            // 搜索配置优化
             search: {
-                placeholder: '搜索',
+                placeholder: '🔍 搜索文档...',
                 paths: 'auto',
-                noData: '抱歉！找不到对应的结果',
-                maxAge: 86400000,// 过期时间，单位毫秒，默认一天
+                noData: '😔 抱歉！找不到对应的结果',
+                maxAge: 86400000,
                 depth: 6,
                 hideOtherSidebarContent: false,
                 namespace: 'Robins Home Page',
+                pathNamespaces: ['/'],
+                maxResults: 20,
             },
+
             alias: {
                 '/.*/_navbar.md': '/_navbar.md',
             },
+
+            // 代码复制配置
             copyCode: {
-                buttonText: 'Copy',
-                errorText: 'Error!',
-                successText: 'Copied!'
+                buttonText: '📋 复制',
+                errorText: '❌ 复制失败',
+                successText: '✅ 已复制'
             },
+
+            // 分页配置
             pagination: {
                 previousText: '上一节',
                 nextText: '下一节',
                 crossChapter: true,
                 crossChapterText: true,
             },
+
+            // 标签页配置
             tabs: {
                 persist: true,
                 sync: true,
@@ -111,13 +419,8 @@
                 tabComments: true,
                 tabHeadings: true
             },
-            autoHeaders: {
-                separator: String,          // how numbers should be separated
-                custom: String,          // if `separator` is set to other then specify own here
-                levels: String | Object, // heading levels h[1-6]
-                scope: String,          // plugin search scope
-                debug: Boolean          // show console.log messages
-            },
+
+            // 字数统计配置
             count: {
                 countable: true,
                 position: 'top',
@@ -127,32 +430,41 @@
                 color: 'rgb(90,90,90)',
                 language: 'chinese',
                 localization: {
-                    words: "",
-                    minute: ""
+                    words: "字",
+                    minute: "分钟"
                 },
                 isExpected: true
             },
+
+            // Markdown 渲染器优化
             markdown: {
                 renderer: {
                     image: function (href, title, text) {
-                        // 按照原来的渲染 img
-                        var image_html = this.origin.image.apply(this, arguments)
-                        // 用 figure 包一下图片，实现居中
-                        return '<figure>' + image_html + '<figcaption>' + text +
-                            '</figcaption></figure>'
+                        var image_html = this.origin.image.apply(this, arguments);
+                        return '<figure>' + image_html + '<figcaption>' + text + '</figcaption></figure>';
                     },
                     code: function (code, lang, base = null) {
+                        // Mermaid 图表渲染
                         if (lang === "mermaid") {
-                            return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
+                            try {
+                                return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
+                            } catch (error) {
+                                console.error('Mermaid rendering error:', error);
+                                return '<pre><code class="language-mermaid">' + code + '</code></pre>';
+                            }
                         }
-                        return this.origin.code.apply(this, arguments);
 
+                        // DOT 图表渲染
                         if (lang === "dot") {
-                            return (
-                                '<div class="viz">' + Viz(code, "SVG") + '</div>'
-                            );
+                            try {
+                                return '<div class="viz">' + Viz(code, "SVG") + '</div>';
+                            } catch (error) {
+                                console.error('DOT rendering error:', error);
+                                return '<pre><code class="language-dot">' + code + '</code></pre>';
+                            }
                         }
 
+                        // PDF 渲染
                         var pdf_renderer = function (code, lang, verify) {
                             function unique_id_generator() {
                                 function rand_gen() {
@@ -160,6 +472,7 @@
                                 }
                                 return rand_gen() + rand_gen() + '-' + rand_gen() + '-' + rand_gen() + '-' + rand_gen() + '-' + rand_gen() + rand_gen() + rand_gen();
                             }
+
                             if (lang && !lang.localeCompare('pdf', 'en', { sensitivity: 'base' })) {
                                 if (verify) {
                                     return true;
@@ -171,41 +484,36 @@
                                     }
                                     container_list.push({ "pdf_location": code, "div_id": divId });
                                     localStorage.setItem('pdf_container_list', JSON.stringify(container_list));
-                                    return (
-                                        '<div style="margin-top:' + PDF_MARGIN_TOP + '; margin-bottom:' + PDF_MARGIN_BOTTOM + ';" id="' + divId + '">'
-                                        + '<a href="' + code + '"> Link </a> to ' + code +
-                                        '</div>'
-                                    );
+                                    return '<div style="margin-top:' + PDF_MARGIN_TOP + '; margin-bottom:' + PDF_MARGIN_BOTTOM + ';" id="' + divId + '">' + '<a href="' + code + '">📄 查看 PDF</a>' + '</div>';
                                 }
                             }
                             return false;
                         }
+
                         if (pdf_renderer(code, lang, true)) {
                             return pdf_renderer(code, lang, false);
                         }
-                        //return this.origin.code.apply(this, arguments);
+
                         return (base ? base : this.origin.code.apply(this, arguments));
                     },
                 },
             },
-            // other setting
+
+            // Vue 组件配置
             vueComponents: {
                 'button-counter': {
-                    template:
-                        '<button @click="count += 1">You clicked me {{ count }} times</button>',
+                    template: '<button @click="count += 1" class="vue-button">点击了 {{ count }} 次</button>',
                     data: function () {
-                        return {
-                            count: 0,
-                        };
+                        return { count: 0 };
                     },
                 },
             },
+
             vueGlobalOptions: {
                 data: function () {
                     return {
                         count: 0,
                         message: 'Hello, World!',
-                        // Fake API response
                         images: [
                             { title: 'Image 1', url: 'https://picsum.photos/150?random=1' },
                             { title: 'Image 2', url: 'https://picsum.photos/150?random=2' },
@@ -217,14 +525,9 @@
                     timeOfDay: function () {
                         const date = new Date();
                         const hours = date.getHours();
-
-                        if (hours < 12) {
-                            return 'morning';
-                        } else if (hours < 18) {
-                            return 'afternoon';
-                        } else {
-                            return 'evening';
-                        }
+                        if (hours < 12) return 'morning';
+                        else if (hours < 18) return 'afternoon';
+                        else return 'evening';
                     },
                 },
                 methods: {
@@ -233,32 +536,28 @@
                     },
                 },
             },
+
             vueMounts: {
                 '#counter': {
                     data: function () {
-                        return {
-                            count: 0,
-                        };
+                        return { count: 0 };
                     },
                 },
             },
+
+            // 合并的插件配置
             plugins: [
+                // 图片路径修复插件
                 function (hook, vm) {
                     hook.beforeEach(function (content) {
-                        // 每次开始解析 Markdown 内容时调用
-                        // 将所有../img替换成img
-                        // https://github.com/docsifyjs/docsify/issues/936
                         return content.replace(/..\/img/g, "/rlwiki/img");
-                    })
+                    });
+                },
 
-                    // hook.doneEach(function () {
-                    //   window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')]);
-                    // })
-                }
-            ],
-            plugins: [
+                // GitHub 编辑链接插件
                 function (hook, vm) {
                     hook.beforeEach(function (html) {
+                        let url;
                         if (/githubusercontent\.com/.test(vm.route.file)) {
                             url = vm.route.file
                                 .replace('raw.githubusercontent.com', 'github.com')
@@ -268,66 +567,95 @@
                                 .replace('cdn.jsdelivr.net/gh', 'github.com')
                                 .replace('@master', '/blob/master');
                         } else {
-                            url =
-                                'https://github.com/jianzhnie/llmtech/blob/main/docs/' +
-                                vm.route.file;
+                            url = 'https://github.com/jianzhnie/llmtech/blob/main/docs/' + vm.route.file;
                         }
-                        var editHtml = '[:memo: Edit on Github](' + url + ')\n';
+                        var editHtml = '[:memo: 在 GitHub 上编辑](' + url + ')\n';
                         return editHtml + html;
-                    })
+                    });
                 },
+
+                // 页面加载完成后的优化
+                function (hook, vm) {
+                    hook.doneEach(function () {
+                        // 添加代码块行号
+                        document.querySelectorAll('pre code').forEach(function (block) {
+                            if (block.classList.contains('hljs')) {
+                                // 检查是否已经添加了行号
+                                if (!block.parentElement.querySelector('.hljs-ln')) {
+                                    hljs.lineNumbersBlock(block);
+                                }
+                            }
+                        });
+
+                        // 优化表格响应式
+                        document.querySelectorAll('table').forEach(function (table) {
+                            if (!table.parentElement.classList.contains('table-wrapper')) {
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'table-wrapper';
+                                wrapper.style.overflowX = 'auto';
+                                table.parentNode.insertBefore(wrapper, table);
+                                wrapper.appendChild(table);
+                            }
+                        });
+
+                        // 优化代码块显示
+                        document.querySelectorAll('pre').forEach(function (pre) {
+                            if (!pre.querySelector('.copy-btn')) {
+                                const copyBtn = document.createElement('button');
+                                copyBtn.className = 'copy-btn';
+                                copyBtn.textContent = '复制';
+                                copyBtn.onclick = function() {
+                                    const code = pre.querySelector('code');
+                                    if (code) {
+                                        navigator.clipboard.writeText(code.textContent).then(function() {
+                                            copyBtn.textContent = '已复制!';
+                                            setTimeout(function() {
+                                                copyBtn.textContent = '复制';
+                                            }, 2000);
+                                        });
+                                    }
+                                };
+                                pre.style.position = 'relative';
+                                pre.appendChild(copyBtn);
+                            }
+                        });
+                    });
+                }
             ],
         }
     </script>
-    <!-- latex 公式渲染 -->
+
+    <!-- 脚本文件加载 -->
+    <script src="//unpkg.com/docsify-reading-time/dist/reading-time.min.js"></script>
+    <script src="//unpkg.com/docsify-toc@1.0.0/dist/toc.min.js"></script>
+    <script src="//unpkg.com/docsify-bookmark/dist/bookmark.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@3"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
-    <!-- 支持 DOT 语言 -->
     <script src="https://notebook.js.org/plugin/viz.js"></script>
-    <!-- docsify的js依赖 -->
     <script src="//cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-    <!-- 搜索功能支持  -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-    <!-- 图片放大缩小支持 -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
-    <!-- 图片标题 -->
     <script src="https://unpkg.com/@h-hg/docsify-image-caption/dist/docsify-image-caption.min.js"></script>
-    <!-- 添加 PDF 页面展示功能 -->
     <script src="https://notebook.js.org/plugin/pdfobject.min.js"></script>
     <script src="https://notebook.js.org/plugin/docsify-pdf-embed.js"></script>
-    <!-- emoji表情支持 -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
-    <!-- 红心点击特效 -->
     <script src="//cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/js/click_heart.js"></script>
-    <!-- 谷歌分析 -->
     <script src="https://notebook.js.org/plugin/js/ga.min.js"></script>
-    <!-- 访问量统计 -->
     <script async src="https://notebook.js.org/plugin/js/busuanzi.pure.mini.js"></script>
-    <!-- 外链脚本 -->
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
-    <!-- 添加页 AutoHeader -->
     <script src="https://cdn.jsdelivr.net/npm/@markbattistella/docsify-autoheaders@latest"></script>
-    <!-- 添加页脚 -->
     <script src="//cdn.jsdelivr.net/npm/@alertbox/docsify-footer/dist/docsify-footer.min.js"></script>
-    <!-- 翻页 -->
     <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
-    <!-- 字数统计 -->
     <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
-    <!-- 导航栏折叠 -->
     <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
-    <!-- 阅读进度条插件 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script> -->
-    <!-- 在markdown里回显tabs -->
     <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1.6.1/dist/docsify-tabs.min.js"></script>
-    <!-- 支持 mermaid -->
     <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <!-- 代码复制 -->
     <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
-    <!-- Markdown 引用样式美化 -->
     <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
-    <!-- 代码高亮:引入其他语言扩展 -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+    <!-- 代码高亮扩展 -->
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-cpp.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-c.min.js"></script>
@@ -339,10 +667,12 @@
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-shell-session.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
-    <!-- 复制提醒 -->
+    <!-- 其他插件 -->
     <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+
+    <!-- Gitalk 评论系统 -->
     <script>
         const gitalk = new Gitalk({
             clientID: 'Ov23liLV6QeSv9YZSuqt',
@@ -350,22 +680,26 @@
             repo: 'llmtech',
             owner: 'jianzhnie',
             admin: ['jianzhnie'],
-            title: location.hash.match(/#(.*?)([?]|$)/)[1], // 这个是设置 issue 对应的标题
+            title: location.hash.match(/#(.*?)([?]|$)/)[1],
             id: location.hash.match(/#(.*?)([?]|$)/)[1],
-            // facebook-like distraction free mode
-            distractionFreeMode: false
+            distractionFreeMode: false,
+            createIssueManually: true,
+            enableHotKey: true,
         });
+
         gitalk.render('gitalk-container').catch(err => {
-        console.error('Gitalk error:', err);
+            console.error('Gitalk error:', err);
         });
-        // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
+
+        // 监听URL变化
         window.onhashchange = function (event) {
             if (event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
-                location.reload()
+                location.reload();
             }
         }
     </script>
-        <!-- 回到顶部功能 -->
+
+    <!-- 回到顶部功能 -->
     <script src="https://notebook.js.org/plugin/jquery.js"></script>
     <script src="https://notebook.js.org/plugin/jquery.goup.js"></script>
     <script type="text/javascript">
@@ -375,8 +709,23 @@
                 bottomOffset: 52,
                 locationOffset: 25,
                 title: 'TOP',
-                titleAsText: true
+                titleAsText: true,
+                containerColor: '#42b983',
+                containerSize: 50,
+                locationGap: 25,
             });
+        });
+    </script>
+
+    <!-- 初始化 Mermaid -->
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
         });
     </script>
 </body>
