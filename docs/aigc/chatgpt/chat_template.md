@@ -92,7 +92,7 @@ Matey, I'm afraid I must inform ye that humans cannot eat helicopters. Helicopte
 
 ### **多模态 LLMs与聊天模板的适配**
 
-对于像 [LLaVA](<url id="" type="url" status="" title="" wc="">https://huggingface.co/llava-hf</url> ) 这样的多模态 LLMs，提示可以以类似的方式格式化。唯一的区别是你需要同时传递输入图像/视频以及文本。每个 `"content"` 必须是一个包含文本或图像/视频的列表。
+对于像 [LLaVA](https://huggingface.co/llava-hf) 这样的多模态 LLMs，提示可以以类似的方式格式化。唯一的区别是你需要同时传递输入图像/视频以及文本。每个 `"content"` 必须是一个包含文本或图像/视频的列表。
 
 以下是使用 `LLaVA` 模型准备输入的示例：
 
@@ -121,7 +121,7 @@ processed_chat = processor.apply_chat_template(messages, tokenize=True, add_gene
 print(processor.batch_decode(processed_chat["input_ids"][:, :30]))
 ```
 
-该代码会生成符合LLaVA预期输入格式的字符串，末尾包含多个<image>标记。这些<image>标记是占位符，在前向传播时会被实际图像嵌入替换。`processed_chat` 可以进一步传递给 [generate()](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.GenerationMixin.generate</url> ) 以生成文本。
+该代码会生成符合LLaVA预期输入格式的字符串，末尾包含多个<image>标记。这些<image>标记是占位符，在前向传播时会被实际图像嵌入替换。`processed_chat` 可以进一步传递给 [generate()](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.GenerationMixin.generate) 以生成文本。
 
 ```python
 '<|im_start|>system
@@ -324,7 +324,7 @@ model_input = tokenizer.apply_chat_template(
 
 ### 完整的工具使用示例
 
-在这个示例中，我们将使用 `Hermes-2-Pro` 模型，因为它是撰写本文时在其尺寸类别中性能最高的工具使用模型之一。如果你有内存，可以考虑使用更大的模型，如 [Command-R](<url id="" type="url" status="" title="" wc="">https://huggingface.co/CohereForAI/c4ai-command-r-v01</url> ) 或 [Mixtral-8x22B](<url id="" type="url" status="" title="" wc="">https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1</url> )，它们都支持工具使用并提供更强的性能。
+在这个示例中，我们将使用 `Hermes-2-Pro` 模型，因为它是撰写本文时在其尺寸类别中性能最高的工具使用模型之一。如果你有内存，可以考虑使用更大的模型，如 [Command-R](https://huggingface.co/CohereForAI/c4ai-command-r-v01) 或 [Mixtral-8x22B](https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1)，它们都支持工具使用并提供更强的性能。
 
 首先，加载模型和分词器：
 
@@ -480,7 +480,7 @@ The current temperature in Paris, France is 22.0 ° Celsius.<|im_end|>
 
 ### 理解工具模式
 
-你传递给 `apply_chat_template` 的 `tools` 参数的每个函数都会被转换为一个 [JSON 模式](<url id="" type="url" status="" title="" wc="">https://json-schema.org/learn/getting-started-step-by-step</url> )。这些模式随后会被传递给模型聊天模板。换句话说，工具使用模型不会直接看到你的函数，也永远不会看到它们的实际代码。它们关心的是函数的**定义**和需要传递给它们的**参数**——它们关心工具的作用以及如何使用它们，而不是它们的工作原理！由你来读取它们的输出，检测它们是否请求使用工具，将参数传递给工具函数，并以聊天的形式返回响应。
+你传递给 `apply_chat_template` 的 `tools` 参数的每个函数都会被转换为一个 [JSON 模式](https://json-schema.org/learn/getting-started-step-by-step)。这些模式随后会被传递给模型聊天模板。换句话说，工具使用模型不会直接看到你的函数，也永远不会看到它们的实际代码。它们关心的是函数的**定义**和需要传递给它们的**参数**——它们关心工具的作用以及如何使用它们，而不是它们的工作原理！由你来读取它们的输出，检测它们是否请求使用工具，将参数传递给工具函数，并以聊天的形式返回响应。
 
 如果遵循上述规范，生成 JSON 模式以传递给模板应该是自动且不可见的，但如果你遇到问题，或者只是想对转换过程有更多的控制，你可以手动处理转换。以下是一个手动模式转换的示例。
 
@@ -632,7 +632,7 @@ RAG 的 `documents` 输入尚未被广泛支持，许多模型的聊天模板会
 
 要验证模型是否支持 `documents` 输入，可以阅读其 `Model Card`，或者 `print(tokenizer.chat_template)` 查看 `documents` 键是否在任何地方被使用。
 
-不过，Cohere 的 [Command-R](<url id="" type="url" status="" title="" wc="">https://huggingface.co/CohereForAI/c4ai-command-r-08-2024</url> ) 和 [Command-R+](<url id="" type="url" status="" title="" wc="">https://huggingface.co/CohereForAI/c4ai-command-r-plus-08-2024</url> ) 模型通过其 `rag` 聊天模板支持此功能。你可以在它们的模型卡中查看使用此功能的更多示例。
+不过，Cohere 的 [Command-R](https://huggingface.co/CohereForAI/c4ai-command-r-08-2024) 和 [Command-R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus-08-2024) 模型通过其 `rag` 聊天模板支持此功能。你可以在它们的模型卡中查看使用此功能的更多示例。
 
 ## 高级：聊天模板是如何工作的？
 
@@ -648,7 +648,7 @@ RAG 的 `documents` 输入尚未被广泛支持，许多模型的聊天模板会
 {%- endif %}
 ```
 
-如果你以前从未见过这样的内容，这是一个 [Jinja 模板](<url id="" type="url" status="" title="" wc="">https://jinja.palletsprojects.com/en/3.1.x/templates/</url> )。Jinja 是一种模板语言，允许你编写生成文本的简单代码。在很多方面，代码和语法类似于 Python。在纯 Python 中，这个模板看起来像这样：
+如果你以前从未见过这样的内容，这是一个 [Jinja 模板](https://jinja.palletsprojects.com/en/3.1.x/templates/)。Jinja 是一种模板语言，允许你编写生成文本的简单代码。在很多方面，代码和语法类似于 Python。在纯 Python 中，这个模板看起来像这样：
 
 ```python
 for message in messages:
@@ -698,7 +698,7 @@ if add_generation_prompt:
 {%- endfor %}
 ```
 
-现在，只需设置 `tokenizer.chat_template` 属性。下次你使用 [apply_chat_template()](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template</url> ) 时，它将使用你的新模板！此属性将保存在 `tokenizer_config.json` 文件中，因此你可以使用 [push_to_hub()](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/main_classes/model#transformers.utils.PushToHubMixin.push_to_hub</url> ) 将你的新模板上传到 Hub，并确保每个人都为你的模型使用正确的模板！
+现在，只需设置 `tokenizer.chat_template` 属性。下次你使用 [apply_chat_template()](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template) 时，它将使用你的新模板！此属性将保存在 `tokenizer_config.json` 文件中，因此你可以使用 [push_to_hub()](https://huggingface.co/docs/transformers/main/en/main_classes/model#transformers.utils.PushToHubMixin.push_to_hub) 将你的新模板上传到 Hub，并确保每个人都为你的模型使用正确的模板！
 
 ```python
 template = tokenizer.chat_template
@@ -707,7 +707,7 @@ tokenizer.chat_template = template  # 设置新模板
 tokenizer.push_to_hub("model_name")  # 将新模板上传到 Hub！
 ```
 
-使用你的聊天模板的方法 [apply_chat_template()](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template</url> ) 被 [TextGenerationPipeline](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline</url> ) 类调用，因此一旦你设置了正确的聊天模板，你的模型将自动与 [TextGenerationPipeline](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline</url> ) 兼容。
+使用你的聊天模板的方法 [apply_chat_template()](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template) 被 [TextGenerationPipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline) 类调用，因此一旦你设置了正确的聊天模板，你的模型将自动与 [TextGenerationPipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline) 兼容。
 
 如果你正在为聊天微调模型，除了设置聊天模板外，你还应该将任何新的聊天控制标记添加为分词器中的特殊标记。特殊标记永远不会被拆分，确保你的控制标记始终被处理为单个标记，而不是被分词为多个部分。你还应将分词器的 `eos_token` 属性设置为模板中标记助手生成结束的标记。这将确保文本生成工具能够正确判断何时停止生成文本。
 
@@ -731,7 +731,7 @@ tokenizer.push_to_hub("model_name")  # 将新模板上传到 Hub！
 {%- endfor %}
 ```
 
-如果你喜欢这个模板，这里是一行代码形式，可以直接复制到你的代码中。这一行代码还方便地支持了 [生成提示](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/chat_templating#what-are-generation-prompts</url> )，但请注意，它不会添加 BOS 或 EOS 标记！如果你的模型期望这些标记，它们不会由 `apply_chat_template` 自动添加——换句话说，文本将以 `add_special_tokens=False` 进行分词。这是为了避免模板和 `add_special_tokens` 逻辑之间的潜在冲突。如果你的模型期望特殊标记，请确保将它们添加到模板中！
+如果你喜欢这个模板，这里是一行代码形式，可以直接复制到你的代码中。这一行代码还方便地支持了 [生成提示](https://huggingface.co/docs/transformers/main/chat_templating#what-are-generation-prompts)，但请注意，它不会添加 BOS 或 EOS 标记！如果你的模型期望这些标记，它们不会由 `apply_chat_template` 自动添加——换句话说，文本将以 `add_special_tokens=False` 进行分词。这是为了避免模板和 `add_special_tokens` 逻辑之间的潜在冲突。如果你的模型期望特殊标记，请确保将它们添加到模板中！
 
 ```python
 tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
@@ -748,11 +748,11 @@ How are you?<|im_end|>
 I'm doing great!<|im_end|>
 ```
 
-“user”、“system” 和 “assistant” 角色是聊天的标准角色，我们建议在适用时使用它们，特别是如果你希望你的模型与 [TextGenerationPipeline](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline</url> ) 兼容。然而，你并不限于这些角色——模板非常灵活，任何字符串都可以作为角色。
+“user”、“system” 和 “assistant” 角色是聊天的标准角色，我们建议在适用时使用它们，特别是如果你希望你的模型与 [TextGenerationPipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.TextGenerationPipeline) 兼容。然而，你并不限于这些角色——模板非常灵活，任何字符串都可以作为角色。
 
 ### 我想添加一些聊天模板！我该如何开始？
 
-如果你有任何聊天模型，你应该设置它们的 `tokenizer.chat_template` 属性，并使用 [apply_chat_template()](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template</url> ) 进行测试，然后将更新后的分词器推送到 Hub。即使你不是模型所有者，这也适用——如果你正在使用一个聊天模板为空或仍然使用默认类模板的模型，请向模型仓库提交一个 [pull request](<url id="" type="url" status="" title="" wc="">https://huggingface.co/docs/hub/repositories-pull-requests-discussions</url> )，以便正确设置此属性！
+如果你有任何聊天模型，你应该设置它们的 `tokenizer.chat_template` 属性，并使用 [apply_chat_template()](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template) 进行测试，然后将更新后的分词器推送到 Hub。即使你不是模型所有者，这也适用——如果你正在使用一个聊天模板为空或仍然使用默认类模板的模型，请向模型仓库提交一个 [pull request](https://huggingface.co/docs/hub/repositories-pull-requests-discussions)，以便正确设置此属性！
 
 一旦设置了该属性，就完成了！`tokenizer.apply_chat_template` 现在可以正确用于该模型，这意味着它也自动在 `TextGenerationPipeline` 等地方受支持！
 
@@ -760,7 +760,7 @@ I'm doing great!<|im_end|>
 
 ## 高级：模板编写技巧
 
-开始编写 Jinja 模板的最简单方法是查看一些现有的模板。你可以使用 `print(tokenizer.chat_template)` 查看任何聊天模型正在使用的模板。通常，支持工具使用的模型比其他模型具有更复杂的模板——因此，当你刚开始时，它们可能不是学习的好例子！你还可以查看 [Jinja 文档](<url id="" type="url" status="" title="" wc="">https://jinja.palletsprojects.com/en/3.1.x/templates/#synopsis</url> ) 以了解 Jinja 的一般格式和语法。
+开始编写 Jinja 模板的最简单方法是查看一些现有的模板。你可以使用 `print(tokenizer.chat_template)` 查看任何聊天模型正在使用的模板。通常，支持工具使用的模型比其他模型具有更复杂的模板——因此，当你刚开始时，它们可能不是学习的好例子！你还可以查看 [Jinja 文档](https://jinja.palletsprojects.com/en/3.1.x/templates/#synopsis) 以了解 Jinja 的一般格式和语法。
 
 `transformers` 中的 Jinja 模板与其他地方的 Jinja 模板相同。需要了解的主要内容是，对话历史将在模板中作为一个名为 `messages` 的变量可用。你将能够像在 Python 中一样访问 `messages`，这意味着你可以使用 `{% for message in messages %}` 遍历它，或者使用 `{{ messages[0] }}` 访问单个消息。
 
@@ -810,7 +810,7 @@ I'm doing great!<|im_end|>
 
 不要惊慌！你可以对模板进行一些简单的更改，以确保它们在所有 Jinja 实现中兼容：
 
-- 用 Jinja 过滤器替换 Python 方法。这些通常具有相同的名称，例如 `string.lower()` 变为 `string|lower`，`dict.items()` 变为 `dict|items`。一个显著的变化是 `string.strip()` 变为 `string|trim`。有关 Jinja 文档中内置过滤器的列表，请参阅 [内置过滤器](<url id="" type="url" status="" title="" wc="">https://jinja.palletsprojects.com/en/3.1.x/templates/#builtin-filters</url> )。
+- 用 Jinja 过滤器替换 Python 方法。这些通常具有相同的名称，例如 `string.lower()` 变为 `string|lower`，`dict.items()` 变为 `dict|items`。一个显著的变化是 `string.strip()` 变为 `string|trim`。有关 Jinja 文档中内置过滤器的列表，请参阅 [内置过滤器](https://jinja.palletsprojects.com/en/3.1.x/templates/#builtin-filters)。
 - 用 Python 特定的 `True`、`False` 和 `None` 替换为 `true`、`false` 和 `none`。
 - 直接渲染字典或列表在其他实现中可能会产生不同的结果（例如，字符串条目可能从单引号变为双引号）。添加 `tojson` 过滤器可以帮助确保一致性。
 
@@ -898,7 +898,7 @@ tokenizer.chat_template = open("template.jinja").read()
 {%- endif %}
 ```
 
-你的模板渲染的工具调用的具体标记和描述应与模型训练时使用的格式匹配。没有要求你的**模型**理解 JSON 模式输入，只需要你的模板可以将 JSON 模式转换为模型的格式。例如，[Command-R](<url id="" type="url" status="" title="" wc="">https://huggingface.co/CohereForAI/c4ai-command-r-plus-08-2024</url> ) 是使用 Python 函数头定义工具训练的，但 Command-R 工具模板接受 JSON 模式，内部转换类型，并将输入工具渲染为 Python 函数头。你可以用模板做很多事情！
+你的模板渲染的工具调用的具体标记和描述应与模型训练时使用的格式匹配。没有要求你的**模型**理解 JSON 模式输入，只需要你的模板可以将 JSON 模式转换为模型的格式。例如，[Command-R](https://huggingface.co/CohereForAI/c4ai-command-r-plus-08-2024) 是使用 Python 函数头定义工具训练的，但 Command-R 工具模板接受 JSON 模式，内部转换类型，并将输入工具渲染为 Python 函数头。你可以用模板做很多事情！
 
 #### 工具调用
 
