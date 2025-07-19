@@ -1,15 +1,17 @@
-![Hello](_media/icon.svg)
+![Robin's AI Lab](_media/icon.svg)
 
-# Artificial General Intelligence
+# 🤖 Robin's AI Lab
 
->欢迎来到 Artificial General Intelligence，这是由 Robin 所维护的 blog site，
+> **探索人工智能的无限可能**
 >
->博客主要记录AIGC、Machine Learning、编程以及各种技术的相关内容。
-
->你可以通过顶部和侧边的导航栏找到自己感兴趣的内容，也可以进行搜索。
+> 专注于大语言模型、强化学习、深度学习等前沿AI技术的研究与实践
 >
->博客基于 GithubPages 创建，如果你发现有任何错误，欢迎在 Github 上进行编辑纠正。
+> 分享实用的技术教程、项目经验和行业洞察
 
+
+
+
+## 🎯 核心领域
 
 - 🦙[大语言模型](aigc/)
 - 🤗[强化微调](rlhf/)
@@ -19,8 +21,7 @@
 - 🍔[多模态](multimodal/)
 - 🍒[强化学习](rlwiki/)
 - ⚒️[效率工具](toolbox/)
-- 🧑[关于我](https://jianzhnie.github.io/)
-- 🔗[友链🔗](links.md)
+
 
 <br>
 <span id="busuanzi_container_site_pv" style='display:none'>
@@ -31,5 +32,8 @@
 </span>
 <br>
 
-[GitHub](https://github.com/jianzhnie/llmtech)
-[Getting Started](aigc/)
+
+[💻 GitHub](https://github.com/jianzhnie/llmtech)
+[👨‍💻 关于我](https://jianzhnie.github.io/)
+[🔗 友链](links.md)
+[📖 开始阅读](aigc/)
