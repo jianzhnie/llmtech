@@ -1,0 +1,38 @@
+## LLM RLHF Framework
+
+- [RLHF 中的 PPO 代码拆解](rlhf/rlhf_with_ppo.md)
+- [RLHF 训练框架 OpenRLHF](rlhf/OpenRLHF.md)
+- [RLHF 训练框架 NeMo-Aligner](rlhf/NeMo-Aligner.md)
+- [RLHF 训练框架 HybridFlow](rlhf/HybridFlow.md)
+- [RLHF 训练框架 DeepSpeedChat](rlhf/DeepSpeedChat.md)
+- [RLHF 训练框架 OpenR](rlhf/OpenR.md)
+- [RLHF 训练框架 OpenRLHF 源码解读](rlhf/OpenRLHF源码解读.md)
+- [RLHF 训练框架 VeRL 源码解读](rlhf/Verl框架.md)
+- [RLHF 训练框架 VeRL 参数配置指南](rlhf/Verl参数配置.md)
+- [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](rlhf/Ray_OpenRLHF_Verl.md)
+
+
+## LLM RLHF Algorithm and Paper
+
+- [RLHF 中的 Policy Gradient Algorithms](rlhf/rlhf_policy_gradient.md)
+- [理解 RLHF](rlhf/rlhf_advance.md)
+- [Chip Huyen 对 RLHF 的分析](rlhf/rlhf_chiphuyen.md)
+- [RLHF 相关知识整理](rlhf/rlhf_overview.md)
+- [直接偏好优化 (DPO)](rlhf/rlhf_dpo.md)
+- [直接偏好优化 (DPO) 推导](rlhf/rlhf_dpo_notes.md)
+- [Kahneman-Tversky-Optimization (KTO)](rlhf/rlhf_kto.md)
+- [RLOO](rlhf/RLOO.md)
+- [DeepSeek-R1：通过强化学习激励 LLMs 的推理能力](rlhf/DeepSeek-R1.md)
+- [Kimi k1.5：使用 LLM 扩展强化学习](rlhf/KimiK1.5.md)
+- [DAPO: 一个开源的大规模 LLM 强化学习系统](rlhf/DAPO.md)
+- [深入理解 R1-Zero 类训练：一个批判性视角](rlhf/DR.GRPO.md)
+- [DeepScaleR：通过扩展强化学习超越 o1](rlhf/deepscaler.md)
+- [REINFORCE++：一种简单高效的大型语言模型对齐方法](rlhf/REINFORCE++.md)
+- [ChatGPT O1 Reasoning](rlhf/chatgpt_O1.md)
+- [KL 散度的近似计算](rlhf/KL-Approximate.md)
+- [过程奖励模型（Process Reward Model）](rlhf/PRM.md)
+- [数学推理中过程奖励模型的开发经验](rlhf/PRM_Reasoning.md)
+- [ReFT: 通过强化微调提升推理能力](rlhf/ReFT.md)
+- [拒绝采样（Reject Sampling）在 RLHF 中的应用](rlhf/RejectSampling.md)
+- [ReST-MCTS：通过过程奖励引导的树搜索实现 LLM 自训练](rlhf/ReST-MCTS.md)
+- [rStar-Math：小型语言模型通过自我进化的深度思考掌握数学推理](rlhf/rStar-Math.md)
