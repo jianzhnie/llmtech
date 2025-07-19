@@ -82,28 +82,33 @@
             ga: 'UA-46744044-1',
             //搜索插件
             search: {
-                placeholder: '搜索',
+                placeholder: '🔍 搜索文档...',
                 paths: 'auto',
-                noData: '抱歉！找不到对应的结果',
-                maxAge: 86400000,// 过期时间，单位毫秒，默认一天
+                noData: '😔 抱歉！找不到对应的结果',
+                maxAge: 86400000,
                 depth: 6,
                 hideOtherSidebarContent: false,
                 namespace: 'Robins Home Page',
+                pathNamespaces: ['/'],
+                maxResults: 20,
             },
             alias: {
                 '/.*/_navbar.md': '/_navbar.md',
             },
+            // 代码复制配置
             copyCode: {
                 buttonText: 'Copy',
                 errorText: 'Error!',
                 successText: 'Copied!'
             },
+            // 分页配置
             pagination: {
                 previousText: '上一节',
                 nextText: '下一节',
                 crossChapter: true,
                 crossChapterText: true,
             },
+            // 标签页配置
             tabs: {
                 persist: true,
                 sync: true,
@@ -127,33 +132,34 @@
                 color: 'rgb(90,90,90)',
                 language: 'chinese',
                 localization: {
-                    words: "",
-                    minute: ""
+                    words: "字",
+                    minute: "分钟"
                 },
                 isExpected: true
             },
+            // Markdown 渲染器优化
             markdown: {
                 renderer: {
                     image: function (href, title, text) {
                         // 按照原来的渲染 img
-                        var image_html = this.origin.image.apply(this, arguments)
+                        var image_html = this.origin.image.apply(this, arguments);
                         // 用 figure 包一下图片，实现居中
-                        return '<figure>' + image_html + '<figcaption>' + text +
-                            '</figcaption></figure>'
+                        return '<figure>' + image_html + '<figcaption>' + text + '</figcaption></figure>';
                     },
                     code: function (code, lang, base = null) {
+                        // Mermaid 图表渲染
                         if (lang === "mermaid") {
                             return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
                         }
                         return this.origin.code.apply(this, arguments);
-
+                        // DOT 图表渲染
                         if (lang === "dot") {
                             return (
                                 '<div class="viz">' + Viz(code, "SVG") + '</div>'
                             );
                         }
-
-                        var pdf_renderer = function (code, lang, verify) {
+                        // PDF 渲染
+                        function pdf_renderer(code, lang, verify) {
                             function unique_id_generator() {
                                 function rand_gen() {
                                     return Math.floor((Math.random() + 1) * 65536).toString(16).substring(1);
@@ -171,11 +177,7 @@
                                     }
                                     container_list.push({ "pdf_location": code, "div_id": divId });
                                     localStorage.setItem('pdf_container_list', JSON.stringify(container_list));
-                                    return (
-                                        '<div style="margin-top:' + PDF_MARGIN_TOP + '; margin-bottom:' + PDF_MARGIN_BOTTOM + ';" id="' + divId + '">'
-                                        + '<a href="' + code + '"> Link </a> to ' + code +
-                                        '</div>'
-                                    );
+                                    return ('<div style="margin-top:' + PDF_MARGIN_TOP + '; margin-bottom:' + PDF_MARGIN_BOTTOM + ';" id="' + divId + '">' + '<a href="' + code + '">📄 查看 PDF</a>' + '</div>');
                                 }
                             }
                             return false;
@@ -183,20 +185,17 @@
                         if (pdf_renderer(code, lang, true)) {
                             return pdf_renderer(code, lang, false);
                         }
-                        //return this.origin.code.apply(this, arguments);
+                        // 其它所有代码块，使用默认渲染器（保证 copy 按钮正常）
                         return (base ? base : this.origin.code.apply(this, arguments));
                     },
                 },
             },
-            // other setting
+            // Vue 组件配置
             vueComponents: {
                 'button-counter': {
-                    template:
-                        '<button @click="count += 1">You clicked me {{ count }} times</button>',
+                    template: '<button @click="count += 1" class="vue-button">点击了 {{ count }} 次</button>',
                     data: function () {
-                        return {
-                            count: 0,
-                        };
+                        return { count: 0 };
                     },
                 },
             },
@@ -217,14 +216,9 @@
                     timeOfDay: function () {
                         const date = new Date();
                         const hours = date.getHours();
-
-                        if (hours < 12) {
-                            return 'morning';
-                        } else if (hours < 18) {
-                            return 'afternoon';
-                        } else {
-                            return 'evening';
-                        }
+                        if (hours < 12) return 'morning';
+                        else if (hours < 18) return 'afternoon';
+                        else return 'evening';
                     },
                 },
                 methods: {
@@ -242,23 +236,12 @@
                     },
                 },
             },
-            plugins: [
-                function (hook, vm) {
-                    hook.beforeEach(function (content) {
-                        // 每次开始解析 Markdown 内容时调用
-                        // 将所有../img替换成img
-                        // https://github.com/docsifyjs/docsify/issues/936
-                        return content.replace(/..\/img/g, "/rlwiki/img");
-                    })
 
-                    // hook.doneEach(function () {
-                    //   window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')]);
-                    // })
-                }
-            ],
+            // 合并的插件配置
             plugins: [
                 function (hook, vm) {
                     hook.beforeEach(function (html) {
+                        let url;
                         if (/githubusercontent\.com/.test(vm.route.file)) {
                             url = vm.route.file
                                 .replace('raw.githubusercontent.com', 'github.com')
@@ -268,17 +251,21 @@
                                 .replace('cdn.jsdelivr.net/gh', 'github.com')
                                 .replace('@master', '/blob/master');
                         } else {
-                            url =
-                                'https://github.com/jianzhnie/llmtech/blob/main/docs/' +
-                                vm.route.file;
+                            url = 'https://github.com/jianzhnie/llmtech/blob/main/docs/' + vm.route.file;
                         }
                         var editHtml = '[:memo: Edit on Github](' + url + ')\n';
                         return editHtml + html;
-                    })
+                    });
                 },
             ],
         }
     </script>
+    <!-- 阅读时间估算 -->
+    <script src="//unpkg.com/docsify-reading-time/dist/reading-time.min.js"></script>
+    <!-- 目录导航 -->
+    <script src="//unpkg.com/docsify-toc@1.0.0/dist/toc.min.js"></script>
+    <!-- 页面书签 -->
+    <script src="//unpkg.com/docsify-bookmark/dist/bookmark.min.js"></script>
     <!-- latex 公式渲染 -->
     <script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@3"></script>
@@ -317,8 +304,6 @@
     <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
     <!-- 导航栏折叠 -->
     <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
-    <!-- 阅读进度条插件 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script> -->
     <!-- 在markdown里回显tabs -->
     <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1.6.1/dist/docsify-tabs.min.js"></script>
     <!-- 支持 mermaid -->
@@ -327,6 +312,7 @@
     <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
     <!-- Markdown 引用样式美化 -->
     <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
     <!-- 代码高亮:引入其他语言扩展 -->
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-cpp.min.js"></script>
@@ -350,10 +336,11 @@
             repo: 'llmtech',
             owner: 'jianzhnie',
             admin: ['jianzhnie'],
-            title: location.hash.match(/#(.*?)([?]|$)/)[1], // 这个是设置 issue 对应的标题
+            title: location.hash.match(/#(.*?)([?]|$)/)[1],
             id: location.hash.match(/#(.*?)([?]|$)/)[1],
-            // facebook-like distraction free mode
-            distractionFreeMode: false
+            distractionFreeMode: false,
+            createIssueManually: true,
+            enableHotKey: true,
         });
         gitalk.render('gitalk-container').catch(err => {
         console.error('Gitalk error:', err);
@@ -361,7 +348,7 @@
         // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
         window.onhashchange = function (event) {
             if (event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
-                location.reload()
+                location.reload();
             }
         }
     </script>
@@ -375,7 +362,10 @@
                 bottomOffset: 52,
                 locationOffset: 25,
                 title: 'TOP',
-                titleAsText: true
+                titleAsText: true,
+                containerColor: '#42b983',
+                containerSize: 50,
+                locationGap: 25,
             });
         });
     </script>
