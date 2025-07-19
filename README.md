@@ -12,7 +12,7 @@
 - 🦙[大语言模型](https://jianzhnie.github.io/llmtech/#/aigc/)
 - 🤗[强化微调](https://jianzhnie.github.io/llmtech/#/rlhf/)
 - 🇨🇳[Ascend生态](https://jianzhnie.github.io/llmtech/#/ascend/)
-- 🚀[大规模并行]https://jianzhnie.github.io/llmtech/#/(ultrascale/)
+- 🚀[大规模并行](https://jianzhnie.github.io/llmtech/#/ultrascale/)
 - 🍭[扩散模型](https://jianzhnie.github.io/llmtech/#/diffusion/)
 - 🍔[多模态](https://jianzhnie.github.io/llmtech/#/multimodal/)
 - 🍒[强化学习](https://jianzhnie.github.io/llmtech/#/rlwiki/)
