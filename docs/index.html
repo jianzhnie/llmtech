@@ -177,10 +177,32 @@
         @media (max-width: 768px) {
             .markdown-section {
                 padding: 1.25rem;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
             }
 
+            /* 隐藏侧边栏 */
             .sidebar {
-                width: 100%;
+                display: none !important;
+            }
+
+            /* 隐藏侧边栏切换按钮 */
+            .sidebar-toggle {
+                display: none !important;
+            }
+
+            /* 调整主内容区域，占满全屏 */
+            .content {
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+                width: 100% !important;
+            }
+
+            /* 调整应用容器 */
+            .app {
+                margin-left: 0 !important;
             }
 
             .markdown-section h1 {
@@ -193,6 +215,51 @@
 
             .app-nav {
                 padding: 0.5rem;
+            }
+
+            /* 优化搜索框在移动端的显示 */
+            .search {
+                margin: 0.5rem;
+            }
+
+            .search input {
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+
+            /* 优化回到顶部按钮位置 */
+            .goup-container {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .goup-container .goup {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* 更小屏幕的额外优化 */
+        @media (max-width: 480px) {
+            .markdown-section {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .markdown-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .markdown-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .app-nav {
+                padding: 0.25rem;
+            }
+
+            .app-nav a {
+                font-size: 16px;
             }
         }
 
