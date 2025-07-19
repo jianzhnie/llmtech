@@ -8,7 +8,9 @@
 
 数据并行因其简单性成为最常见的并行形式。在数据并行训练中，数据集被分割为若干分片，每个分片分配给一个设备。这相当于沿批次维度并行化训练过程。每个设备持有完整的模型副本，并在分配的数据分片上进行训练。反向传播后，模型梯度将进行全归约操作，确保不同设备上的模型参数保持同步。
 
-<img src="https://s2.loli.net/2022/01/28/WSAensMqjwHdOlR.png" alt="img" style="zoom:33%;" />
+<div align="center">
+  <img src="https://s2.loli.net/2022/01/28/WSAensMqjwHdOlR.png" alt="img" style="zoom:33%;" />
+</div>
 
 >  数据并行示意图
 
@@ -26,7 +28,9 @@
 
 以通用矩阵乘法 C=AB 为例，假设我们将 B 沿列维度分割为 `[B0 B1 B2 ... Bn]`，每个设备持有一列。然后在各设备上将 `A` 与 `B` 的对应列相乘，得到 `[AB0 AB1 AB2 ... ABn]`。此时每个设备仍持有部分结果，例如设备 0 持有 `AB0`。为确保结果正确，我们需要全收集这些部分结果并沿列维度拼接张量。通过这种方式，我们能在设备间分布张量的同时保证计算流程的正确性。
 
-<img src="https://s2.loli.net/2022/01/28/2ZwyPDvXANW4tMG.png" alt="img" style="zoom:33%;" />
+<div align="center">
+  <img src="https://s2.loli.net/2022/01/28/2ZwyPDvXANW4tMG.png" alt="img" style="zoom:33%;" />
+</div>
 
 > 张量并行示意图
 
@@ -34,7 +38,9 @@
 
 ### Pipeline Parallel
 
-<img src="https://s2.loli.net/2022/01/28/at3eDv7kKBusxbd.png" alt="img" style="zoom:33%;" />
+<div align="center">
+  <img src="https://s2.loli.net/2022/01/28/at3eDv7kKBusxbd.png" alt="img" style="zoom:33%;" />
+</div>
 
 
 
@@ -43,7 +49,9 @@
 
 流水线并行的核心思想是将模型按层分割为若干块，每块分配给不同设备。在前向传播过程中，每个设备将中间激活值传递给下一阶段；在反向传播时，各设备将输入张量的梯度回传给前一流水线阶段。这种机制使得设备能够并行计算，从而提升训练吞吐量。流水线并行训练的缺点在于会产生气泡时间——部分设备处于计算等待状态，导致计算资源浪费。
 
-![img](https://s2.loli.net/2022/01/28/sDNq51PS3Gxbw7F.png)
+<div align="center">
+  <img src="https://s2.loli.net/2022/01/28/sDNq51PS3Gxbw7F.png" alt="img" />
+</div>
 
 
 
@@ -73,10 +81,12 @@
 - 阶段1对优化器状态进行分区
 
 - 阶段2对优化器及梯度状态进行分区
--
+  -
   阶段3对优化器、梯度和参数全部分区
 
-![img](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/parallelism-zero.png)
+<div align="center">
+  <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/parallelism-zero.png" alt="img" />
+</div>
 
 ## Parallelism on Heterogeneous System
 
@@ -84,7 +94,9 @@
 
 近期进展依赖于 CPU 甚至 NVMe 磁盘来训练大型模型。核心思路是在张量未被使用时将其卸载回 CPU 内存或 NVMe 磁盘。通过采用异构系统架构，可以在单台机器上容纳超大规模模型。
 
-![img](https://s2.loli.net/2022/01/28/qLHD5lk97hXQdbv.png)
+<div align="center">
+  <img src="https://s2.loli.net/2022/01/28/qLHD5lk97hXQdbv.png" alt="img" />
+</div>
 
 > Heterogenous system illustration
 > 异构系统示意图
