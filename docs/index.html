@@ -83,8 +83,17 @@
             font-size: 1.5rem;
         }
 
+        /* 行内代码无背景 */
+        .markdown-section code:not(pre code) {
+            background: transparent;
+            color: #c7254e; /* 你喜欢的醒目色，也可用 inherit */
+            padding: 0.2em 0.4em !important;
+            border-radius: 3px !important;
+            font-size: 1em !important;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+        }
         /* 代码块优化 - 修复注释问题 */
-        .markdown-section pre, .markdown-section code {
+        .markdown-section pre, .markdown-section pre code {
             background: #1e1e1e !important;
             color: #d4d4d4 !important;
             padding: 0.2rem 0.4rem;
@@ -95,13 +104,13 @@
         }
 
          /* 引用块优化 */
-        .markdown-section blockquote {
-            border-left: 4px solid var(--theme-color);
-            padding-left: 1rem;
-            margin: 1.5rem 0;
-            background-color: #f8f9fa;
-            border-radius: 0 4px 4px 0;
-            color: #555;
+        .markdown-section > blockquote {
+            border-left: 4px solid var(--theme-color) !important;
+            padding-left: 1rem !important;
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+            background-color: #f8f9fa !important;
+            border-radius: 4px !important;
         }
 
         /* 图片优化 */
@@ -285,6 +294,23 @@
             font-size: 0.9rem;
             margin-top: 2rem;
             border-top: 1px solid #eee;
+        }
+
+        .app-nav {
+            background: #42b983;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .app-nav a {
+            color: #fff !important;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .app-nav a:hover {
+            color: #ffd700 !important;
+            background: rgba(0,0,0,0.08);
+            border-radius: 4px;
         }
     </style>
 </head>
