@@ -17,7 +17,16 @@ URL_ENTRY_TEMPLATE = """<url>
 """
 
 # 要扫描的子目录
-TARGET_DIRS = ['aigc', 'ascend', 'rlwiki', 'toolbox']
+TARGET_DIRS = [
+    'aigc',
+    'ascend',
+    'diffusion',
+    'multimodal',
+    'rlhf',
+    'ultrascale',
+    'rlwiki',
+    'toolbox',
+]
 
 # 要忽略的文件名
 IGNORE_FILES = ['_navbar.md', '_sidebar.md', '_coverpage.md', '_footer.md']
