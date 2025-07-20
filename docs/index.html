@@ -68,6 +68,9 @@
             margin-bottom: 1rem;
             font-weight: 600;
             line-height: 1.25;
+            color: #2c3e50;
+            position: relative;
+            transition: all 0.3s ease;
         }
 
         .markdown-section h1 {
@@ -120,13 +123,22 @@
             border-radius: 4px !important;
         }
 
-        /* 图片优化 */
-        .katex-display > .katex {
+        /* 图片优化 - 确保所有图片居中 */
+        .markdown-section img {
+            display: block;
+            margin: 1.5rem auto;
             max-width: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform var(--transition-speed);
         }
 
+        .markdown-section img:hover {
+            transform: scale(1.02);
+        }
+
+        /* 确保figure内的图片也居中 */
         figure {
             text-align: center;
             margin: 2rem 0;
@@ -142,8 +154,32 @@
             margin: 1.5rem auto;
         }
 
-        .markdown-section img:hover {
-            transform: scale(1.02);
+        /* 确保所有图片容器都居中 */
+        .markdown-section p:has(img) {
+            text-align: center;
+        }
+
+        /* 对于没有figure包装的图片，确保其父容器居中 */
+        .markdown-section > img {
+            display: block;
+            margin: 1.5rem auto;
+        }
+
+        /* 移动端图片优化 */
+        @media (max-width: 768px) {
+            .markdown-section img,
+            figure img {
+                margin: 1rem auto;
+                border-radius: 6px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+        }
+
+        /* 图片优化 */
+        .katex-display > .katex {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         figcaption {
@@ -263,24 +299,174 @@
             }
         }
 
-        /* 滚动条美化 */
+        /* 滚动条美化 - 全面优化 */
+        /* Webkit浏览器滚动条样式 */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
+            background: linear-gradient(180deg, var(--theme-color) 0%, #3aa876 100%);
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background: linear-gradient(180deg, #3aa876 0%, #2d8a5f 100%);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            transform: scale(1.05);
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: linear-gradient(180deg, #2d8a5f 0%, #1f6b4a 100%);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        /* 侧边栏滚动条特殊样式 */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(66, 185, 131, 0.6);
+            border-radius: 4px;
+            border: none;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(66, 185, 131, 0.8);
+        }
+
+        /* 代码块滚动条样式 */
+        .markdown-section pre::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        /* 表格容器滚动条样式 */
+        .table-wrapper::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-radius: 5px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--theme-color) 0%, #3aa876 100%);
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #3aa876 0%, #2d8a5f 100%);
+        }
+
+        /* Firefox滚动条样式 */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-color) #f8f9fa;
+        }
+
+        /* 移动端滚动条优化 */
+        @media (max-width: 768px) {
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(248, 249, 250, 0.9);
+                border-radius: 3px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: rgba(66, 185, 131, 0.7);
+                border-radius: 3px;
+                border: none;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(66, 185, 131, 0.9);
+            }
+
+            /* 移动端表格滚动条 */
+            .table-wrapper::-webkit-scrollbar {
+                height: 6px;
+            }
+
+            .table-wrapper::-webkit-scrollbar-track {
+                background: rgba(241, 243, 244, 0.9);
+                border-radius: 3px;
+            }
+
+            .table-wrapper::-webkit-scrollbar-thumb {
+                background: rgba(66, 185, 131, 0.7);
+                border-radius: 3px;
+            }
+        }
+
+        /* 平滑滚动效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 自定义滚动容器样式 */
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-color) transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(66, 185, 131, 0.5);
+            border-radius: 3px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(66, 185, 131, 0.8);
         }
 
         /* 加载动画优化 */
@@ -361,6 +547,126 @@
             margin: 1.5rem 0;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 100%; /* 确保不超出容器宽度 */
+        }
+
+        /* 表格样式优化 */
+        .markdown-section table {
+            width: 100%;
+            max-width: 100%; /* 确保表格不超出容器 */
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 0.95em;
+            table-layout: auto; /* 允许表格根据内容调整列宽 */
+        }
+
+        .markdown-section table th {
+            background: linear-gradient(135deg, var(--theme-color), #3aa876);
+            color: white;
+            font-weight: 700;
+            padding: 1rem 1.2rem;
+            text-align: left;
+            border: none;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            position: relative;
+            white-space: nowrap; /* 防止表头文字换行 */
+            min-width: 80px; /* 设置最小列宽 */
+        }
+
+        .markdown-section table th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .markdown-section table th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        .markdown-section table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+            line-height: 1.5;
+            word-wrap: break-word; /* 允许长文本换行 */
+            max-width: 0; /* 配合word-wrap使用 */
+        }
+
+        .markdown-section table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .markdown-section table tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        .markdown-section table tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        .markdown-section table tr:nth-child(even):hover {
+            background-color: #f0f2f5;
+        }
+
+        /* 表格内的代码样式 */
+        .markdown-section table code {
+            background-color: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 1em;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+        }
+
+        /* 表格内的链接样式 */
+        .markdown-section table a {
+            color: var(--theme-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .markdown-section table a:hover {
+            color: #3aa876;
+            text-decoration: underline;
+        }
+
+        /* 移动端表格优化 */
+        @media (max-width: 768px) {
+            .markdown-section table {
+                font-size: 0.9em;
+                margin: 1rem 0;
+                min-width: 100%; /* 确保在移动端至少占满容器宽度 */
+            }
+
+            .markdown-section table th,
+            .markdown-section table td {
+                padding: 0.75rem 0.8rem;
+                min-width: 60px; /* 移动端减小最小列宽 */
+            }
+
+            .table-wrapper {
+                margin: 1rem 0;
+                border-radius: 4px;
+                -webkit-overflow-scrolling: touch; /* iOS滚动优化 */
+            }
+        }
+
+        /* 小屏幕表格优化 */
+        @media (max-width: 480px) {
+            .markdown-section table {
+                font-size: 0.85em;
+                min-width: 100%;
+            }
+
+            .markdown-section table th,
+            .markdown-section table td {
+                padding: 0.6rem 0.7rem;
+                min-width: 50px; /* 更小屏幕进一步减小最小列宽 */
+            }
         }
         /* 页脚样式 */
         .footer {
@@ -408,7 +714,7 @@
         // Docsify configuration
         window.$docsify = {
             // name: 'Machine-Learning-Wiki',
-            name: '<span>🌈 Robin Home Page </span>',
+            name: '<span> Robin AI Lab </span>',
             repo: 'https://github.com/jianzhnie/llmtech',
             homepage: 'README.md',
             //自动跳转到页面顶部
@@ -461,7 +767,7 @@
 
             // 代码复制配置
             copyCode: {
-                buttonText: 'Copy',
+                buttonText: 'Copy to clipboard',
                 errorText: 'Error!',
                 successText: 'Copied!'
             },
@@ -604,28 +910,6 @@
                     },
                 },
             },
-
-            // 合并的插件配置
-            plugins: [
-                function (hook, vm) {
-                    hook.beforeEach(function (html) {
-                        let url;
-                        if (/githubusercontent\.com/.test(vm.route.file)) {
-                            url = vm.route.file
-                                .replace('raw.githubusercontent.com', 'github.com')
-                                .replace(/\/master/, '/blob/master');
-                        } else if (/jsdelivr\.net/.test(vm.route.file)) {
-                            url = vm.route.file
-                                .replace('cdn.jsdelivr.net/gh', 'github.com')
-                                .replace('@master', '/blob/master');
-                        } else {
-                            url = 'https://github.com/jianzhnie/llmtech/blob/main/docs/' + vm.route.file;
-                        }
-                        var editHtml = '[:memo: Edit on Github](' + url + ')\n';
-                        return editHtml + html;
-                    });
-                },
-            ],
         }
     </script>
     <!-- 阅读时间估算 -->
