@@ -338,24 +338,24 @@
         }
 
         /* 侧边栏滚动条特殊样式 */
-        .sidebar::-webkit-scrollbar {
+        /* .sidebar::-webkit-scrollbar {
             width: 8px;
-        }
+        } */
 
-        .sidebar::-webkit-scrollbar-track {
+        /* .sidebar::-webkit-scrollbar-track {
             background: rgba(248, 249, 250, 0.8);
             border-radius: 4px;
-        }
+        } */
 
-        .sidebar::-webkit-scrollbar-thumb {
+        /* .sidebar::-webkit-scrollbar-thumb {
             background: rgba(66, 185, 131, 0.6);
             border-radius: 4px;
             border: none;
-        }
+        } */
 
-        .sidebar::-webkit-scrollbar-thumb:hover {
+        /* .sidebar::-webkit-scrollbar-thumb:hover {
             background: rgba(66, 185, 131, 0.8);
-        }
+        } */
 
         /* 代码块滚动条样式 */
         .markdown-section pre::-webkit-scrollbar {
@@ -679,15 +679,48 @@
         }
 
         .app-nav {
+            display: flex;
+            justify-content: space-between; /* or space-around/space-evenly as you prefer */
+            align-items: center;
+            width: 100vw;
+            left: 0;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            position: relative;
+            box-sizing: border-box;
             background: #42b983;
             color: #fff;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 0 2vw; /* optional: add some horizontal padding */
         }
+        /* If your nav uses a <ul> for links: */
+        .app-nav ul {
+            display: flex;
+            flex: 1;
+            justify-content: space-evenly; /* Evenly distribute all links */
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            width: 100%;
+        }
+
+        /* Make sure nav links fill available space */
+        .app-nav li {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Remove default link styling if needed */
         .app-nav a {
+            display: block;
+            width: 100%;
             color: #fff !important;
             font-weight: bold;
             font-size: 18px;
             transition: color 0.2s, background 0.2s;
+            padding: 1rem 0;
+            text-decoration: none;
         }
         .app-nav a:hover {
             color: #ffd700 !important;
@@ -726,7 +759,7 @@
             // 执行页面上的脚本。只解析第一个脚本标记（演示）。如果存在Vue，则默认开
             executeScript: true,
             // 侧边栏
-            loadSidebar: true,
+            loadSidebar: false,
             // 顶栏
             loadNavbar: true,
             // load from _footer.md
