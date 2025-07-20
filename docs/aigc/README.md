@@ -30,6 +30,7 @@
 
 ## LLM Inference
 
+- [大语言模型解码采样参数解析](aigc/llm_inference/GenerateConfig.md)
 - [解码策略基础](aigc/llm_inference/解码策略基础.md)
 - [解码策略高级方法](aigc/llm_inference/解码策略高级方法.md)
 - [KVCaching机制详解](aigc/llm_inference/KVCaching机制详解.md)
