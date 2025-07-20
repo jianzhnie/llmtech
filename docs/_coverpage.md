@@ -1,6 +1,6 @@
 ![Robin's AI Lab](_media/icon.svg)
 
-# 🤖 Robin's AI Lab
+#  Robin's AI Lab
 
 > **探索人工智能的无限可能**
 >
