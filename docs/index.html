@@ -29,8 +29,10 @@
             --sidebar-width: 320px;
             --content-max-width: 900px;
             --main-max-width: 2000px;
-            --font-family: 'Microsoft YaHei', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
-            --font-family-en: 'Georgia', 'Times New Roman', Arial, sans-serif;
+            --font-family: 'Inter', 'Microsoft YaHei', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
+            --font-family-en: 'Inter', 'Georgia', 'Times New Roman', Arial, sans-serif;
+            --font-weight-normal: 400;
+            --font-weight-bold: 600;
             --theme-color: #42b983; /* Add this line */
             --header-height: 60px;
             --transition-speed: 0.2s;
@@ -43,11 +45,12 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             font-weight: 400; /* 或 600，具体看效果 */
-            line-height: 1.6;
+            line-height: 1.7;
+            letter-spacing: 0.01em;
+            background-color: #f9f9f9;
+            color: #222;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
         }
         .main-wrapper {
             display: flex;
@@ -66,7 +69,9 @@
             background: white;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
             border-radius: 8px;
-            font-size: 16px;  /* 新增或修改这一行 */
+            font-size: 17px;
+            font-family: var(--font-family);
+            color: #222;
             margin-top: 2.5rem; /* 根据需要调整数值 */
         }
         .sidebar {
@@ -86,7 +91,9 @@
         .markdown-section h6 {
             margin-top: 1.8rem;
             margin-bottom: 1rem;
-            font-weight: 600;
+            font-family: var(--font-family-en), var(--font-family);
+            font-weight: var(--font-weight-bold);
+            letter-spacing: 0.02em;
             line-height: 1.25;
             color: #2c3e50;
             position: relative;
@@ -112,11 +119,19 @@
 
         /* 行内代码无背景 */
         .markdown-section code:not(pre code) {
-            background: transparent;
-            color: #c7254e; /* 你喜欢的醒目色，也可用 inherit */
+            background: #f4f6fa;
             padding: 0.2em 0.4em !important;
             border-radius: 3px !important;
-            font-size: 0.95em !important;
+            font-size: 1em !important;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 2px rgba(66,185,131,0.04);
+            transition: background 0.2s;
+            word-break: break-all;
+        }
+        .markdown-section code:not(pre code):hover {
+            background: #e6f7ef;
+            color: #197278;
         }
         /* 代码块优化 - 修复注释问题 */
         .markdown-section pre, .markdown-section pre code {
@@ -135,12 +150,29 @@
 
          /* 引用块优化 */
         .markdown-section > blockquote {
-            border-left: 4px solid var(--theme-color) !important;
-            padding-left: 1rem !important;
-            margin-top: 1rem !important;
-            margin-bottom: 1rem !important;
-            background-color: #f8f9fa !important;
-            border-radius: 4px !important;
+            border-left: 3px solid var(--theme-color) !important;
+            background: linear-gradient(90deg, #f8f9fa 80%, #e6f7ef 100%) !important;
+            padding: 0.5em 0.8em 0.8em 0.8em !important;
+            margin: 1.5em 0 !important;
+            border-radius: 8px !important;
+            font-size: 1.0em;
+            box-shadow: 0 2px 8px rgba(66,185,131,0.04);
+            position: relative;
+            transition: background 0.2s;
+        }
+        .markdown-section > blockquote::before {
+            color: var(--theme-color);
+            font-size: 2.2em;
+            position: absolute;
+            left: 0.4em;
+            top: 0.1em;
+            opacity: 0.18;
+            pointer-events: none;
+            font-family: serif;
+        }
+        .markdown-section > blockquote p {
+            margin: 0;
+            padding: 0;
         }
 
         /* 图片优化 - 确保所有图片居中 */
@@ -653,7 +685,13 @@
             color: #3aa876;
             text-decoration: underline;
         }
-
+        @media (max-width: 768px) {
+            .markdown-section > blockquote {
+                padding: 0.8em 0.7em 0.8em 0.9em !important;
+                font-size: 1em;
+                border-radius: 6px !important;
+            }
+        }
         /* 移动端表格优化 */
         @media (max-width: 768px) {
             .markdown-section table {
