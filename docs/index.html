@@ -29,8 +29,10 @@
             --sidebar-width: 320px;
             --content-max-width: 900px;
             --main-max-width: 2000px;
-            --font-family: 'Microsoft YaHei', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
-            --font-family-en: 'Georgia', 'Times New Roman', Arial, sans-serif;
+            --font-family: 'Inter', 'Microsoft YaHei', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
+            --font-family-en: 'Inter', 'Georgia', 'Times New Roman', Arial, sans-serif;
+            --font-weight-normal: 400;
+            --font-weight-bold: 600;
             --theme-color: #42b983; /* Add this line */
             --header-height: 60px;
             --transition-speed: 0.2s;
@@ -43,11 +45,12 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             font-weight: 400; /* 或 600，具体看效果 */
-            line-height: 1.6;
+            line-height: 1.7;
+            letter-spacing: 0.01em;
+            background-color: #f9f9f9;
+            color: #222;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
         }
         .main-wrapper {
             display: flex;
@@ -66,7 +69,9 @@
             background: white;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
             border-radius: 8px;
-            font-size: 16px;  /* 新增或修改这一行 */
+            font-size: 17px;
+            font-family: var(--font-family);
+            color: #222;
             margin-top: 2.5rem; /* 根据需要调整数值 */
         }
         .sidebar {
@@ -86,7 +91,9 @@
         .markdown-section h6 {
             margin-top: 1.8rem;
             margin-bottom: 1rem;
-            font-weight: 600;
+            font-family: var(--font-family-en), var(--font-family);
+            font-weight: var(--font-weight-bold);
+            letter-spacing: 0.02em;
             line-height: 1.25;
             color: #2c3e50;
             position: relative;
