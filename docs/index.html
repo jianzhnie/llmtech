@@ -26,9 +26,10 @@
     <style>
         /* 基础样式优化 */
         :root {
-            --sidebar-width: 200px;
-            --content-max-width: 800px;
-            --font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
+            --sidebar-width: 320px;
+            --content-max-width: 1200px;
+            --main-max-width: 2000px;
+            --font-family: 'Microsoft YaHei', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', Arial, sans-serif;
             --font-family-en: 'Georgia', 'Times New Roman', Arial, sans-serif;
             --theme-color: #42b983; /* Add this line */
             --header-height: 60px;
@@ -38,13 +39,25 @@
         /* 全局字体和间距优化 */
         body {
             font-family: var(--font-family);
+            font-weight: var(--font-weight-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-weight: 400; /* 或 600，具体看效果 */
             line-height: 1.6;
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
             color: #333;
         }
-
+        .main-wrapper {
+            display: flex;
+            justify-content: center;
+            max-width: var(--main-max-width);
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #fff;
+            box-shadow: 0 0 24px rgba(0,0,0,0.06);
+        }
         /* 内容区域优化 */
         .markdown-section {
             max-width: var(--content-max-width);
@@ -56,7 +69,14 @@
             font-size: 16px;  /* 新增或修改这一行 */
             margin-top: 2.5rem; /* 根据需要调整数值 */
         }
-
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #222;
+            color: #fff;
+            padding: 2em 1em;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
         /* 标题样式优化 */
         .markdown-section h1,
         .markdown-section h2,
@@ -894,8 +914,12 @@
                         if (pdf_renderer(code, lang, true)) {
                             return pdf_renderer(code, lang, false);
                         }
+                        // 默认使用 python 语言高亮
+                        if (!lang || lang.trim() === '') {
+                            lang = 'python';
+                        }
                         // 其它所有代码块，使用默认渲染器（保证 copy 按钮正常）
-                        return (base ? base : this.origin.code.apply(this, arguments));
+                        return (base ? base : this.origin.code.apply(this, [code, lang, base]));
                     },
                 },
             },
