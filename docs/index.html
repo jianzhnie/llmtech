@@ -24,7 +24,6 @@
 
     <!-- 内联样式优化 -->
     <style>
-        /* 基础样式优化 */
         :root {
             --sidebar-width: 320px;
             --content-max-width: 900px;
@@ -33,18 +32,16 @@
             --font-family-en: 'Inter', 'Georgia', 'Times New Roman', Arial, sans-serif;
             --font-weight-normal: 400;
             --font-weight-bold: 600;
-            --theme-color: #42b983; /* Add this line */
+            --theme-color: #42b983;
             --header-height: 60px;
             --transition-speed: 0.2s;
         }
 
-        /* 全局字体和间距优化 */
         body {
             font-family: var(--font-family);
             font-weight: var(--font-weight-normal);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            font-weight: 400; /* 或 600，具体看效果 */
             line-height: 1.7;
             letter-spacing: 0.01em;
             background-color: #f9f9f9;
@@ -52,6 +49,7 @@
             margin: 0;
             padding: 0;
         }
+
         .main-wrapper {
             display: flex;
             justify-content: center;
@@ -61,7 +59,7 @@
             background: #fff;
             box-shadow: 0 0 24px rgba(0,0,0,0.06);
         }
-        /* 内容区域优化 */
+
         .markdown-section {
             max-width: var(--content-max-width);
             margin: 2rem auto;
@@ -72,8 +70,9 @@
             font-size: 17px;
             font-family: var(--font-family);
             color: #222;
-            margin-top: 2.5rem; /* 根据需要调整数值 */
+            margin-top: 2.5rem;
         }
+
         .sidebar {
             width: var(--sidebar-width);
             background: #222;
@@ -82,7 +81,8 @@
             box-sizing: border-box;
             min-height: 100vh;
         }
-        /* 标题样式优化 */
+
+        /* Headings */
         .markdown-section h1,
         .markdown-section h2,
         .markdown-section h3,
@@ -99,42 +99,38 @@
             position: relative;
             transition: all 0.3s ease;
         }
-
         .markdown-section h1 {
             font-size: 2rem;
             border-bottom: 2px solid var(--theme-color);
             padding-bottom: 0.6rem;
             margin-top: 0;
         }
-
         .markdown-section h2 {
             font-size: 1.8rem;
             border-bottom: 1px solid #eaecef;
             padding-bottom: 0.4rem;
         }
+        .markdown-section h3 { font-size: 1.5rem; }
 
-        .markdown-section h3 {
-            font-size: 1.5rem;
-        }
-
-        /* 行内代码无背景 */
+        /* Inline code */
         .markdown-section code:not(pre code) {
             background: #f4f6fa;
-            padding: 0.05em 0.2em !important; /* smaller padding */
+            padding: 0.05em 0.2em !important;
             border-radius: 3px !important;
-            font-size: inherit !important;    /* match surrounding text */
+            font-size: inherit !important;
             font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
             border: 1px solid #ececec;
-            box-shadow: none;                 /* remove shadow */
+            box-shadow: none;
             transition: background 0.2s;
             word-break: break-all;
-            vertical-align: baseline;         /* align with text */
+            vertical-align: baseline;
         }
         .markdown-section code:not(pre code):hover {
             background: #e6f7ef;
             color: #197278;
         }
-        /* 代码块优化 - 修复注释问题 */
+
+        /* Code blocks */
         .markdown-section pre, .markdown-section pre code {
             background: #1e1e1e !important;
             color: #d4d4d4 !important;
@@ -142,14 +138,10 @@
             border-radius: 6px;
             font-size: 0.95em;
             font-family: 'Fira Mono', 'Consolas', monospace;
-            /* 其它 VSCode 风格细节 */
         }
+        .token.comment { color: #6A9955 !important; }
 
-        .token.comment {
-            color: #6A9955 !important;
-        }
-
-         /* 引用块优化 */
+        /* Blockquotes */
         .markdown-section > blockquote {
             border-left: 3px solid var(--theme-color) !important;
             background: linear-gradient(90deg, #f8f9fa 80%, #e6f7ef 100%) !important;
@@ -171,575 +163,31 @@
             pointer-events: none;
             font-family: serif;
         }
-        .markdown-section > blockquote p {
-            margin: 0;
-            padding: 0;
-        }
+        .markdown-section > blockquote p { margin: 0; padding: 0; }
 
-        /* 图片优化 - 确保所有图片居中 */
-        .markdown-section img {
-            display: block;
-            margin: 1.5rem auto;
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform var(--transition-speed);
-        }
-
-        .markdown-section img:hover {
-            transform: scale(1.02);
-        }
-
-        /* 确保figure内的图片也居中 */
-        figure {
-            text-align: center;
-            margin: 2rem 0;
-        }
-
+        /* Images */
+        .markdown-section img,
         figure img {
+            display: block;
+            margin: 1.5rem auto;
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform var(--transition-speed);
-            display: block;
-            margin: 1.5rem auto;
         }
-
-        /* 确保所有图片容器都居中 */
-        .markdown-section p:has(img) {
-            text-align: center;
-        }
-
-        /* 对于没有figure包装的图片，确保其父容器居中 */
-        .markdown-section > img {
-            display: block;
-            margin: 1.5rem auto;
-        }
-
-        /* 移动端图片优化 */
-        @media (max-width: 768px) {
-            .markdown-section img,
-            figure img {
-                margin: 1rem auto;
-                border-radius: 6px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-        }
-
-        /* 图片优化 */
-        .katex-display > .katex {
-            max-width: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-
-        figcaption {
-            margin-top: 0.75rem;
-            color: #666;
-            font-size: 0.95em;
-            font-style: italic;
-        }
-
-        /* 导航栏优化 */
-        .app-nav li ul {
-            min-width: 180px;
-            border-radius: 4px;
-        }
-
-        /* 搜索框优化 */
-        .search {
-            margin: 1rem;
-            position: relative;
-        }
-
-        .search input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 1px solid #dfe2e5;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        /* 移动端优化 */
-        @media (max-width: 768px) {
-            .markdown-section {
-                padding: 1.25rem;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-                max-width: 100% !important;
-                width: 100% !important;
-            }
-
-            /* 隐藏侧边栏 */
-            .sidebar {
-                display: none !important;
-            }
-
-            /* 隐藏侧边栏切换按钮 */
-            .sidebar-toggle {
-                display: none !important;
-            }
-
-            /* 调整主内容区域，占满全屏 */
-            .content {
-                margin-left: 0 !important;
-                padding-left: 0 !important;
-                width: 100% !important;
-            }
-
-            /* 调整应用容器 */
-            .app {
-                margin-left: 0 !important;
-            }
-
-            .markdown-section h1 {
-                font-size: 2rem;
-            }
-
-            .markdown-section h2 {
-                font-size: 1.6rem;
-            }
-
-            .app-nav {
-                padding: 0.5rem;
-            }
-
-            /* 优化搜索框在移动端的显示 */
-            .search {
-                margin: 0.5rem;
-            }
-
-            .search input {
-                font-size: 16px; /* 防止iOS缩放 */
-            }
-
-            /* 优化回到顶部按钮位置 */
-            .goup-container {
-                bottom: 1rem;
-                right: 1rem;
-            }
-
-            .goup-container .goup {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-            }
-        }
-
-        /* 更小屏幕的额外优化 */
-        @media (max-width: 480px) {
-            .markdown-section {
-                padding: 1rem;
-                margin-top: 1rem;
-            }
-
-            .markdown-section h1 {
-                font-size: 1.8rem;
-            }
-
-            .markdown-section h2 {
-                font-size: 1.4rem;
-            }
-
-            .app-nav {
-                padding: 0.25rem;
-            }
-
-            .app-nav a {
-                font-size: 16px;
-            }
-        }
-
-        /* 滚动条美化 - 全面优化 */
-        /* Webkit浏览器滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 6px;
-            border: 1px solid #dee2e6;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--theme-color) 0%, #3aa876 100%);
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #3aa876 0%, #2d8a5f 100%);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            transform: scale(1.05);
-        }
-
-        ::-webkit-scrollbar-thumb:active {
-            background: linear-gradient(180deg, #2d8a5f 0%, #1f6b4a 100%);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-        }
-
-        ::-webkit-scrollbar-corner {
-            background: #f8f9fa;
-            border-radius: 6px;
-        }
-
-        /* 侧边栏滚动条特殊样式 */
-        /* .sidebar::-webkit-scrollbar {
-            width: 8px;
-        } */
-
-        /* .sidebar::-webkit-scrollbar-track {
-            background: rgba(248, 249, 250, 0.8);
-            border-radius: 4px;
-        } */
-
-        /* .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(66, 185, 131, 0.6);
-            border-radius: 4px;
-            border: none;
-        } */
-
-        /* .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(66, 185, 131, 0.8);
-        } */
-
-        /* 代码块滚动条样式 */
-        .markdown-section pre::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .markdown-section pre::-webkit-scrollbar-track {
-            background: #2d2d2d;
-            border-radius: 4px;
-        }
-
-        .markdown-section pre::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-            border: none;
-        }
-
-        .markdown-section pre::-webkit-scrollbar-thumb:hover {
-            background: #777;
-        }
-
-        /* 表格容器滚动条样式 */
-        .table-wrapper::-webkit-scrollbar {
-            height: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f1f3f4;
-            border-radius: 5px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: linear-gradient(90deg, var(--theme-color) 0%, #3aa876 100%);
-            border-radius: 5px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(90deg, #3aa876 0%, #2d8a5f 100%);
-        }
-
-        /* Firefox滚动条样式 */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--theme-color) #f8f9fa;
-        }
-
-        /* 移动端滚动条优化 */
-        @media (max-width: 768px) {
-            ::-webkit-scrollbar {
-                width: 6px;
-                height: 6px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: rgba(248, 249, 250, 0.9);
-                border-radius: 3px;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: rgba(66, 185, 131, 0.7);
-                border-radius: 3px;
-                border: none;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: rgba(66, 185, 131, 0.9);
-            }
-
-            /* 移动端表格滚动条 */
-            .table-wrapper::-webkit-scrollbar {
-                height: 6px;
-            }
-
-            .table-wrapper::-webkit-scrollbar-track {
-                background: rgba(241, 243, 244, 0.9);
-                border-radius: 3px;
-            }
-
-            .table-wrapper::-webkit-scrollbar-thumb {
-                background: rgba(66, 185, 131, 0.7);
-                border-radius: 3px;
-            }
-        }
-
-        /* 平滑滚动效果 */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* 自定义滚动容器样式 */
-        .custom-scroll {
-            scrollbar-width: thin;
-            scrollbar-color: var(--theme-color) transparent;
-        }
-
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(66, 185, 131, 0.5);
-            border-radius: 3px;
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(66, 185, 131, 0.8);
-        }
-
-        /* 加载动画优化 */
-        #app {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-size: 1.2rem;
-            color: var(--theme-color);
-            flex-direction: column;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(66, 185, 131, 0.2);
-            border-top: 5px solid var(--theme-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* 回到顶部按钮优化 */
-        .goup-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-        }
-
-        .goup-container .goup {
-            background-color: var(--theme-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-        }
-
-        .goup-container .goup:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-        }
-
-        /* Vue 组件样式 */
-        .vue-button {
-            background-color: var(--theme-color);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 1rem;
-            margin: 0.5rem 0;
-        }
-
-        .vue-button:hover {
-            background-color: #3aa876;
-        }
-
-        /* 表格响应式包装 */
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 100%; /* 确保不超出容器宽度 */
-        }
-
-        /* 表格样式优化 */
-        .markdown-section table {
-            width: 100%;
-            max-width: 100%; /* 确保表格不超出容器 */
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            font-size: 0.95em;
-            table-layout: auto; /* 允许表格根据内容调整列宽 */
-        }
-
-        .markdown-section table th {
-            background: linear-gradient(135deg, var(--theme-color), #3aa876);
-            color: white;
-            font-weight: 700;
-            padding: 1rem 1.2rem;
-            text-align: left;
-            border: none;
-            font-size: 1.1em;
-            letter-spacing: 0.5px;
-            position: relative;
-            white-space: nowrap; /* 防止表头文字换行 */
-            min-width: 80px; /* 设置最小列宽 */
-        }
-
-        .markdown-section table th:first-child {
-            border-top-left-radius: 8px;
-        }
-
-        .markdown-section table th:last-child {
-            border-top-right-radius: 8px;
-        }
-
-        .markdown-section table td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: top;
-            line-height: 1.5;
-            word-wrap: break-word; /* 允许长文本换行 */
-            max-width: 0; /* 配合word-wrap使用 */
-        }
-
-        .markdown-section table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .markdown-section table tr:hover {
-            background-color: #f8f9fa;
-            transition: background-color 0.2s ease;
-        }
-
-        .markdown-section table tr:nth-child(even) {
-            background-color: #fafbfc;
-        }
-
-        .markdown-section table tr:nth-child(even):hover {
-            background-color: #f0f2f5;
-        }
-
-        /* 表格内的代码样式 */
-        .markdown-section table code {
-            background-color: #f1f3f4;
-            color: #d73a49;
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-            font-size: 1em;
-            font-family: 'Fira Mono', 'Consolas', monospace;
-        }
-
-        /* 表格内的链接样式 */
-        .markdown-section table a {
-            color: var(--theme-color);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .markdown-section table a:hover {
-            color: #3aa876;
-            text-decoration: underline;
-        }
-        @media (max-width: 768px) {
-            .markdown-section > blockquote {
-                padding: 0.8em 0.7em 0.8em 0.9em !important;
-                font-size: 1em;
-                border-radius: 6px !important;
-            }
-        }
-        /* 移动端表格优化 */
-        @media (max-width: 768px) {
-            .markdown-section table {
-                font-size: 0.9em;
-                margin: 1rem 0;
-                min-width: 100%; /* 确保在移动端至少占满容器宽度 */
-            }
-
-            .markdown-section table th,
-            .markdown-section table td {
-                padding: 0.75rem 0.8rem;
-                min-width: 60px; /* 移动端减小最小列宽 */
-            }
-
-            .table-wrapper {
-                margin: 1rem 0;
-                border-radius: 4px;
-                -webkit-overflow-scrolling: touch; /* iOS滚动优化 */
-            }
-        }
-
-        /* 小屏幕表格优化 */
-        @media (max-width: 480px) {
-            .markdown-section table {
-                font-size: 0.85em;
-                min-width: 100%;
-            }
-
-            .markdown-section table th,
-            .markdown-section table td {
-                padding: 0.6rem 0.7rem;
-                min-width: 50px; /* 更小屏幕进一步减小最小列宽 */
-            }
-        }
-        /* 页脚样式 */
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 2rem;
-            border-top: 1px solid #eee;
-        }
-
+        .markdown-section img:hover,
+        figure img:hover { transform: scale(1.02); }
+        figure { text-align: center; margin: 2rem 0; }
+        .markdown-section p:has(img) { text-align: center; }
+        .markdown-section > img { display: block; margin: 1.5rem auto; }
+        .katex-display > .katex { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+        figcaption { margin-top: 0.75rem; color: #666; font-size: 0.95em; font-style: italic; }
+
+        /* Navigation bar */
         .app-nav {
             display: flex;
-            justify-content: space-between; /* or space-around/space-evenly as you prefer */
+            justify-content: space-between;
             align-items: center;
             width: 100vw;
             left: 0;
@@ -750,27 +198,19 @@
             background: #42b983;
             color: #fff;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            padding: 0 2vw; /* optional: add some horizontal padding */
+            padding: 0 2vw;
         }
-        /* If your nav uses a <ul> for links: */
         .app-nav ul {
             display: flex;
             flex: 1;
-            justify-content: space-evenly; /* Evenly distribute all links */
+            justify-content: space-evenly;
             align-items: center;
             margin: 0;
             padding: 0;
             list-style: none;
             width: 100%;
         }
-
-        /* Make sure nav links fill available space */
-        .app-nav li {
-            flex: 1;
-            text-align: center;
-        }
-
-        /* Remove default link styling if needed */
+        .app-nav li { flex: 1; text-align: center; }
         .app-nav a {
             display: block;
             width: 100%;
@@ -786,6 +226,266 @@
             background: rgba(0,0,0,0.08);
             border-radius: 4px;
         }
+
+        /* Search box */
+        .search {
+            margin: 1rem;
+            position: relative;
+        }
+        .search input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #dfe2e5;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        /* Vue button */
+        .vue-button {
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+        .vue-button:hover { background-color: #3aa876; }
+
+        /* Table styles */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 100%;
+        }
+        .markdown-section table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 0.95em;
+            table-layout: auto;
+        }
+        .markdown-section table th {
+            background: linear-gradient(135deg, var(--theme-color), #3aa876);
+            color: white;
+            font-weight: 700;
+            padding: 1rem 1.2rem;
+            text-align: left;
+            border: none;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            position: relative;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+        .markdown-section table th:first-child { border-top-left-radius: 8px; }
+        .markdown-section table th:last-child { border-top-right-radius: 8px; }
+        .markdown-section table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+            line-height: 1.5;
+            word-wrap: break-word;
+            max-width: 0;
+        }
+        .markdown-section table tr:last-child td { border-bottom: none; }
+        .markdown-section table tr:hover { background-color: #f8f9fa; transition: background-color 0.2s ease; }
+        .markdown-section table tr:nth-child(even) { background-color: #fafbfc; }
+        .markdown-section table tr:nth-child(even):hover { background-color: #f0f2f5; }
+        .markdown-section table code {
+            background-color: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 1em;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+        }
+        .markdown-section table a {
+            color: var(--theme-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .markdown-section table a:hover {
+            color: #3aa876;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Go to top button */
+        .goup-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        .goup-container .goup {
+            background-color: var(--theme-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+        .goup-container .goup:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        /* Custom scrollbars (Webkit & Firefox) */
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--theme-color) 0%, #3aa876 100%);
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #3aa876 0%, #2d8a5f 100%);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            transform: scale(1.05);
+        }
+        ::-webkit-scrollbar-thumb:active {
+            background: linear-gradient(180deg, #2d8a5f 0%, #1f6b4a 100%);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+        ::-webkit-scrollbar-corner { background: #f8f9fa; border-radius: 6px; }
+        .markdown-section pre::-webkit-scrollbar { height: 8px; }
+        .markdown-section pre::-webkit-scrollbar-track { background: #2d2d2d; border-radius: 4px; }
+        .markdown-section pre::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; border: none; }
+        .markdown-section pre::-webkit-scrollbar-thumb:hover { background: #777; }
+        .table-wrapper::-webkit-scrollbar { height: 10px; }
+        .table-wrapper::-webkit-scrollbar-track { background: #f1f3f4; border-radius: 5px; }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--theme-color) 0%, #3aa876 100%);
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .table-wrapper::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #3aa876 0%, #2d8a5f 100%); }
+        * { scrollbar-width: thin; scrollbar-color: var(--theme-color) #f8f9fa; }
+        .custom-scroll { scrollbar-width: thin; scrollbar-color: var(--theme-color) transparent; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(66, 185, 131, 0.5); border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(66, 185, 131, 0.8); }
+
+        /* Loading spinner */
+        #app {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 1.2rem;
+            color: var(--theme-color);
+            flex-direction: column;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(66, 185, 131, 0.2);
+            border-top: 5px solid var(--theme-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive styles (merged and grouped) */
+        @media (max-width: 768px) {
+            .markdown-section {
+                padding: 1.25rem;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .sidebar,
+            .sidebar-toggle { display: none !important; }
+            .content,
+            .app { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; }
+            .markdown-section h1 { font-size: 2rem; }
+            .markdown-section h2 { font-size: 1.6rem; }
+            .app-nav { padding: 0.5rem; }
+            .search { margin: 0.5rem; }
+            .search input { font-size: 16px; }
+            .goup-container { bottom: 1rem; right: 1rem; }
+            .goup-container .goup { width: 45px; height: 45px; font-size: 1.2rem; }
+            .markdown-section img,
+            figure img { margin: 1rem auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .markdown-section > blockquote {
+                padding: 0.8em 0.7em 0.8em 0.9em !important;
+                font-size: 1em;
+                border-radius: 6px !important;
+            }
+            .markdown-section table {
+                font-size: 0.9em;
+                margin: 1rem 0;
+                min-width: 100%;
+            }
+            .markdown-section table th,
+            .markdown-section table td {
+                padding: 0.75rem 0.8rem;
+                min-width: 60px;
+            }
+            .table-wrapper {
+                margin: 1rem 0;
+                border-radius: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            ::-webkit-scrollbar,
+            .table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track,
+            .table-wrapper::-webkit-scrollbar-track { background: rgba(248, 249, 250, 0.9); border-radius: 3px; }
+            ::-webkit-scrollbar-thumb,
+            .table-wrapper::-webkit-scrollbar-thumb { background: rgba(66, 185, 131, 0.7); border-radius: 3px; border: none; }
+            ::-webkit-scrollbar-thumb:hover,
+            .table-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(66, 185, 131, 0.9); }
+        }
+        @media (max-width: 480px) {
+            .markdown-section { padding: 1rem; margin-top: 1rem; }
+            .markdown-section h1 { font-size: 1.8rem; }
+            .markdown-section h2 { font-size: 1.4rem; }
+            .app-nav { padding: 0.25rem; }
+            .app-nav a { font-size: 16px; }
+            .markdown-section table { font-size: 0.85em; min-width: 100%; }
+            .markdown-section table th,
+            .markdown-section table td { padding: 0.6rem 0.7rem; min-width: 50px; }
+        }
+        html { scroll-behavior: smooth; }
     </style>
 </head>
 
