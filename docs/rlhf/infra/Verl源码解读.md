@@ -1,6 +1,4 @@
-# Verl 框架使用指南
-
-
+# Verl 相关特性介绍
 
 - VeRL框架的论文（[HybridFlow]）：[https://arxiv.org/pdf/2409.19256](https://arxiv.org/pdf/2409.19256)
 
@@ -145,6 +143,12 @@ HybridFlow 框架已经支持多种数据传输协议，涵盖大部分数据重
 - 减少通信开销
 
 参数重组过程中，3D-HybridEngine 仅在每个微数据并行组（Micro DP Group）内进行 All-Gather 操作，而非所有 GPU 之间进行。这大大减少了通信量，降低过渡时间，提高了整体的训练效率。
+
+
+
+# Verl 源码解析
+
+
 
 
 
