@@ -72,7 +72,12 @@
             color: #222;
             margin-top: 2.5rem;
         }
-
+        /* 当前页面标识 */
+        .app-nav a.active {
+            color: #fff;
+            background: rgba(0,0,0,0.15);
+            border-radius: 4px;
+        }
         .sidebar {
             width: var(--sidebar-width);
             background: #222;
@@ -536,6 +541,8 @@
             loadNavbar: true,
             // load from _footer.md
             loadFooter: true,
+            coverpage: true,
+            onlyCover: true, // 让封面和内容同时显示
             // 小屏设备下合并导航栏到侧边栏
             mergeNavbar: true,
             // 最大支持渲染的标题层级
