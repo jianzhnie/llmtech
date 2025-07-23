@@ -34,7 +34,7 @@
 <br>
 
 
-[💻 GitHub](https://github.com/jianzhnie/llmtech)
+[💻 GitHub](https://github.com/jianzhnie)
 [👨‍💻 关于我](https://jianzhnie.github.io/)
 [🔗 友链](links.md)
 [📖 开始阅读](aigc/)
