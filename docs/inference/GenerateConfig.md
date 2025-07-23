@@ -107,13 +107,12 @@ $$
 - 低 $ \tau $：概率分布呈现尖峰
 - 高 $ \tau $：概率分布趋于平坦
 
-<img src="../../../Library/Application%20Support/typora-user-images/image-20250514162120429.png" alt="image-20250514162120429" style="zoom: 100%;" />
+
+<img src='inference/images/temperature_effect_raw.png' style="zoom: 100%;" />
 
 
+<img src='inference/images/temperature_effect_sorted.png' style="zoom: 100%;" />
 
-
-
-![image-20250514162243391](../../../Library/Application%20Support/typora-user-images/image-20250514162243391.png)
 
 ### code to play the figuer
 
