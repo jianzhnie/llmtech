@@ -45,14 +45,6 @@
 - [LLM 评估工具](aigc/llm_eval/LLM评估工具.md)
 - [LLM 评估指标](aigc/llm_eval/LLM评估指标.md)
 
-## MMEngine
-
-- [MMEngine](aigc/train_engine/engine.md)
-- [Runner](aigc/train_engine/runner.md)
-- [Model](aigc/train_engine/model.md)
-- [Hooks](aigc/train_engine/hooks.md)
-- [Logger](aigc/train_engine/logger.md)
-
 
 ## 量化压缩
 
