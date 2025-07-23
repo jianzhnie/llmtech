@@ -1,6 +1,7 @@
 - [首页](/)
 - [大语言模型](aigc/)
 - [强化微调](rlhf/)
+- [推理部署](inference/)
 - [Ascend生态](ascend/)
 - [大规模并行](ultrascale/)
 - [扩散模型](diffusion/)
