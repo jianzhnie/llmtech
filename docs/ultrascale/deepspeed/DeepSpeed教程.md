@@ -173,7 +173,7 @@ deepspeed --include="worker-2:0,1" \
 	--deepspeed --deepspeed_config ds_config.json
 ```
 
-### 不使用无密码SSH启动
+### 无密码SSH启动
 
 DeepSpeed现在支持在无需无密码SSH的情况下启动训练作业。这种模式在云环境中特别有用，例如Kubernetes，其中可以灵活地进行容器编排，而在云环境中设置领导者-worker 架构并使用无密码SSH会增加不必要的复杂性。
 
