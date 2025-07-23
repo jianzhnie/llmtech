@@ -108,20 +108,9 @@ PagedAttention  支持多个请求之间共享 KV 缓存内存，这是其动态
 
 用于机器翻译等任务，每步保留最可能的几个候选路径，逐步扩展。vLLM 能够在不同 beam 分支间高效复用共享的前缀缓存。
 
-![img](https://lh7-us.googleusercontent.com/docsz/AD_4nXc70d9QWgOdbKsDXxfBbhf_5YxW577w3S6Zih2-EFGKoMx1-lKOkfHzHMFsmPwFxUc6_rqFVB5U8GsKTXMPmWCP3jAFtWJWTIvWBRJu1xYZzFpfi9OQXkp40kEAqFpfSPQG92vtPTWSFrec1ekDDsrmOUlw?key=jULPpW3gOjPzXuxrraGiJA)
-
-> 图示：Beam Search 中的共享缓存机制
-
-
-
 ### 3. 共享前缀（Shared Prefix）
 
 多个请求使用相同系统提示词（system prompt）时，vLLM 会将其预存缓存共享，从而减少重复计算，提高效率。
-
-![img](https://blog.runpod.io/content/images/2024/05/image-1.png)
-
-> 多请求共享系统前缀的缓存（来源）
-
 
 
 ### 4. 混合解码策略（Mixed Decoding）
