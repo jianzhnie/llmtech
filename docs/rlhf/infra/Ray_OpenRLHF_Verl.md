@@ -669,9 +669,10 @@ veRL 采用的 single control 设计将控制逻辑集中在 `RayPPOTrainer` 里
   - `Actor3 / Ref3 / RM3 / Critic3 / vllm_engine3`为一组
   - 你可以把每一组想象成原来的一张单卡，那么它的作用就是负责一个micro_batch的训练，这样我们就能大致想象到它们之间是如何配合运作的了。需要注意的是，在我们的例子中，这些实例都是一一对应的（各自有4个实例），但在实际操作中，根据不同用户的资源配置，不一定存在这个一一对应的关系。例如你可能用4卡部署Actor，2卡部署Critic，8个vllm_engines...以此类推。不管怎样，我们应该尽量在处理micro_bathes的各个组间均匀分配负载，在代码里相关的操作如下：
 
-  > 为每个actor分配其对应的critic/reward/ref，并启动每个分组的训练：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py#L278-L299](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py%23L278-L299)
 
-  > 为每个actor分配对应的vllm_engine，并使用vllm_engine进行推理：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L627](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L627)
+> 为每个actor分配其对应的critic/reward/ref，并启动每个分组的训练：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py#L278-L299](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ray/launcher.py%23L278-L299)
+
+> 为每个actor分配对应的vllm_engine，并使用vllm_engine进行推理：[https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py#L627](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/trainer/ppo_utils/experience_maker.py%23L627)
 
 
 

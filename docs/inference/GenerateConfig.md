@@ -114,7 +114,7 @@ $$
 <img src='inference/images/temperature_effect_sorted.png' style="zoom: 100%;" />
 
 
-### code to play the figuer
+### Code to plot the figuer
 
 ```python
 import numpy as np

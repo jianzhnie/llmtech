@@ -121,7 +121,7 @@ processed_chat = processor.apply_chat_template(messages, tokenize=True, add_gene
 print(processor.batch_decode(processed_chat["input_ids"][:, :30]))
 ```
 
-该代码会生成符合LLaVA预期输入格式的字符串，末尾包含多个<image>标记。这些<image>标记是占位符，在前向传播时会被实际图像嵌入替换。`processed_chat` 可以进一步传递给 [generate()](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.GenerationMixin.generate) 以生成文本。
+该代码会生成符合LLaVA预期输入格式的字符串。`processed_chat` 可以进一步传递给 [generate()](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.GenerationMixin.generate) 以生成文本。
 
 ```python
 '<|im_start|>system
