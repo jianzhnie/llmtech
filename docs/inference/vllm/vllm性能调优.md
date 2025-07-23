@@ -109,7 +109,7 @@ llm = LLM(model="meta-llama/Llama-3.1-8B-Instruct", max_num_batched_tokens=16384
 > - https://arxiv.org/pdf/2401.08671
 > - https://arxiv.org/pdf/2308.16369
 
-------
+
 
 ## 并行策略（Parallelism Strategies）
 
@@ -131,7 +131,6 @@ from vllm import LLM
 llm = LLM(model="meta-llama/Llama-3.3-70B-Instruct", tensor_parallel_size=4)
 ```
 
-------
 
 ### 流水线并行（Pipeline Parallelism, PP）
 
@@ -155,7 +154,6 @@ llm = LLM(
 )
 ```
 
-------
 
 ### 专家并行（Expert Parallelism, EP）
 
@@ -174,7 +172,6 @@ llm = LLM(
 )
 ```
 
-------
 
 ### 数据并行（Data Parallelism, DP）
 
@@ -207,7 +204,7 @@ llm = LLM(
 
 #### 使用建议
 
-- **调整 `tokenizer-pool-size`**：根据实际应用场景的需求以及系统资源情况（如 CPU 核心数），合理设置 `tokenizer-pool-size` 的值。较大的池大小可以在高负载情况下提高处理速度，但也会消耗更多内存和计算资源。
+- 调整 `tokenizer-pool-size`：根据实际应用场景的需求以及系统资源情况（如 CPU 核心数），合理设置 `tokenizer-pool-size` 的值。较大的池大小可以在高负载情况下提高处理速度，但也会消耗更多内存和计算资源。
 - **监控与调优**：定期监控系统的性能指标，包括任务队列长度、平均等待时间和资源利用率等，基于监控数据对 `tokenizer-pool-size` 进行优化调整，以达到最佳性能表现。
 
 通过适当配置 `tokenizer-pool-size`，可以显著改善在高并发环境下的用户体验，确保系统能够高效、稳定地运行。
@@ -218,7 +215,6 @@ llm = LLM(
     tokenizer-pool-size=4
 )
 ```
-
 
 
 ## 投机解码（Speculative Decoding）
@@ -262,16 +258,6 @@ llm = LLM(
 - 设置较大的 `ngram_prompt_lookup_max` 值可以增加找到匹配项的可能性，提高投机命中率。
 - 但同时也会增加查找计算开销，需在命中率与性能之间进行权衡。
 
----
-
-### 总结与建议
-
-- 投机解码（Speculative Decoding）通过并行生成多个 Token，显著提升长文本生成的效率。
-- `speculative_model="[ngram]"` 是一种基于 N-Gram 的具体实现方式，适合上下文连续性强的生成任务。
-- 合理配置 `num_speculative_tokens` 可在性能与资源之间取得平衡。
-- 必须启用 `--use-v2-block-manager` 以支持投机解码所需的缓存管理机制。
-- 使用 `ngram_prompt_lookup_max` 可优化投机 Token 的预测准确性，但需注意其对性能的影响。
-
 
 
 ## 量化（Quantization）
@@ -290,7 +276,7 @@ experts_int8, neuron_quant, ipex, None}
 
 不同的量化方法适用于不同的模型架构和应用场景，选择合适的量化策略需结合模型本身特性、部署环境和性能要求进行综合评估。
 
----
+
 
 ### 常见量化方法简介
 
@@ -312,7 +298,7 @@ experts_int8, neuron_quant, ipex, None}
 - 基于 Marlin 内核优化，提升了 GPTQ 模型在推理阶段的计算效率和吞吐性能。
 - 推荐作为 GPTQ 模型的首选实现方式。
 
----
+
 
 ### 示例代码
 
@@ -370,7 +356,7 @@ llm = LLM(
 )
 ```
 
-------
+
 
 ### 调整 CUDA 图编译配置
 
