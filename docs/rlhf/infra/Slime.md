@@ -2,17 +2,19 @@
 
 ## 1. 引言
 
-本文将围绕 Zilin 提出的 Slime 框架展开分析。无论 RL 算法如何演进，其最终落地仍依赖于算法与系统的深度协同。而规模化（Scale）能力则是 RL 应用价值的关键所在。本文旨在从系统设计角度出发，梳理 Slime 的核心架构与实现机制，为后续 RL 算法迭代与系统协同设计提供参考依据。
+无论 RL 算法如何演进，其最终落地仍依赖于算法与系统的深度协同。而规模化（Scale）能力则是 RL 应用价值的关键所在。本文将围绕Slime 框架展开分析，旨在从系统设计角度出发，梳理 Slime 的核心架构与实现机制，为后续 RL 算法迭代与系统协同设计提供参考依据。
 
 ## 2. 框架整体设计
-
-![arch](https://github.com/THUDM/slime/raw/main/imgs/arch.png)
 
 Slime 是一个面向大规模 RL 训练的系统框架，采用 Ray 作为统一的调度器，Megatron-LM 作为训练后端，SGLang 作为推理后端。该框架支持资源训推一体化部署与分离部署两种模式，具备良好的可扩展性与灵活性。
 
 其设计目标明确：降低训练与推理之间的数据传输开销，同时尽可能贴近真实生产环境中的组件结构，以支持高效的大规模 RL 训练。从实际部署效果来看，Slime 成功实现了上述目标，具备良好的工程实践价值。
 
+![arch](https://github.com/THUDM/slime/raw/main/imgs/arch.png)
+
 ### 2.1 数据流视角：Buffer 的作用
+
+![img](https://pica.zhimg.com/v2-189b0dd4632b2bc23327c25de200b6da_1440w.jpg)
 
 从数据流的角度来看，Slime 的核心模块之一是 Buffer，它以 Ray Actor 的形式实现。Buffer 不仅负责维护 rollout 数据集（即策略生成的样本数据），还支持用户自定义 `generate_rollout` 方法，从而实现灵活多样的 rollout 策略。
 
@@ -106,8 +108,6 @@ for i in range(num_engines):
 
 Slime 框架的训练初始化过程采用分层架构设计，分为三层：**RayTrainGroup**（顶层）、**TrainRayActor**（中层）与 **Megatron-LM**（底层）。该设计不仅实现了模块化职责划分，还支持异步调度与灵活的资源管理，适用于大规模分布式 RL 场景。
 
----
-
 ### 3.1. RayTrainGroup：训练组的管理与调度
 
 RayTrainGroup 是训练任务的顶层控制器，负责 TrainRayActor 实例的创建、初始化与资源分配。其核心职责包括：
@@ -199,8 +199,6 @@ Slime 尽量复用 Megatron 的原生组件，以降低系统复杂度、提升�
 
 Slime 的推理初始化流程同样采用三层架构设计，分别由 **RolloutGroup**（顶层）、**RolloutRayActor**（中层）与 **SGLangEngine**（底层）构成。
 
----
-
 ### 4.1. RolloutGroup：推理组的生命周期管理
 
 RolloutGroup 是推理任务的顶层控制器，负责以下关键初始化操作：
@@ -244,8 +242,6 @@ SGLangEngine 是 SGLang 框架的具体实现，负责实际的文本生成任�
 ## 5. 模型与参数同步机制
 
 在强化学习系统中，训练与推理之间的模型参数一致性是确保训练稳定性和策略收敛性的关键环节。Slime 框架通过一套高效的模型同步机制，实现了训练模块（TrainRayActor）与推理模块（RolloutRayActor）之间的参数一致性管理。本节将从模型初始化流程出发，深入分析 Slime 的模型同步设计与实现。
-
----
 
 ### 5.1 模型同步初始化流程
 
