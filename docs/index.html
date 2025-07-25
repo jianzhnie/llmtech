@@ -504,6 +504,37 @@
             .markdown-section table td { padding: 0.6rem 0.7rem; min-width: 50px; }
         }
         html { scroll-behavior: smooth; }
+
+        /* 代码块折叠样式 */
+        .markdown-section pre[data-expandable] {
+            position: relative;
+            max-height: 300px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .markdown-section pre[data-expandable]::after {
+            content: "展开代码";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(transparent, #1e1e1e);
+            color: var(--theme-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .markdown-section pre[data-expandable].expanded {
+            max-height: none;
+        }
+
+        .markdown-section pre[data-expandable].expanded::after {
+            content: "收起代码";
+            background: #1e1e1e;
+        }
     </style>
 </head>
 
@@ -629,7 +660,7 @@
                         // Mermaid 图表渲染
                         if (lang === "mermaid") {
                             try {
-                            return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
+                                return '<div class="mermaid">' + mermaid.render("mermaid-svg-" + num++, code) + "</div>";
                             } catch (error) {
                                 console.error('Mermaid rendering error:', error);
                                 return '<pre><code class="language-mermaid">' + code + '</code></pre>';
@@ -678,7 +709,16 @@
                             lang = 'python';
                         }
                         // 其它所有代码块，使用默认渲染器（保证 copy 按钮正常）
-                        return (base ? base : this.origin.code.apply(this, [code, lang, base]));
+                        // 处理普通代码块
+                        const lines = code.split('\n');
+                        let codeHtml = (base ? base : this.origin.code.apply(this, [code, lang, base]));
+
+                        // 如果代码超过8行，添加折叠功能
+                        if (lines.length > 8) {
+                            codeHtml = codeHtml.replace('<pre', '<pre data-expandable');
+                        }
+
+                        return codeHtml;
                     },
                 },
             },
@@ -837,6 +877,15 @@
                 containerSize: 50,
                 locationGap: 25,
             });
+        });
+    </script>
+    <script>
+        // 添加代码块折叠交互
+        document.addEventListener('click', function (e) {
+            const pre = e.target.closest('pre[data-expandable]');
+            if (pre) {
+                pre.classList.toggle('expanded');
+            }
         });
     </script>
 </body>
