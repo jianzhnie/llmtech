@@ -43,3 +43,4 @@
   - [拒绝采样（Reject Sampling）在 RLHF 中的应用](rlhf/paper/RejectSampling.md)
   - [ReST-MCTS：通过过程奖励引导的树搜索实现 LLM 自训练](rlhf/paper/ReST-MCTS.md)
   - [rStar-Math：小型语言模型通过自我进化的深度思考掌握数学推理](rlhf/paper/rStar-Math.md)
+  - [GRPO-λ (动态长度惩罚)](rlhf/paper/GRPO-λ.md)
