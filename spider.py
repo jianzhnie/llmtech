@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import urllib.parse
 from datetime import date
 from typing import List
@@ -23,15 +24,15 @@ URL_ENTRY_TEMPLATE = """<url>
 
 # 要扫描的子目录
 TARGET_DIRS = [
-    'aigc',
-    'ascend',
+    # 'aigc',
+    # 'ascend',
     'diffusion',
     'inference',
     'multimodal',
-    'rlhf',
+    # 'rlhf',
     'ultrascale',
-    'rlwiki',
-    'toolbox',
+    # 'rlwiki',
+    # 'toolbox',
 ]
 
 # 要忽略的文件名
@@ -54,6 +55,12 @@ def get_changefreq(url: str) -> str:
     return 'weekly'
 
 
+def has_chinese(text: str) -> bool:
+    """检查文本是否包含中文字符"""
+    # Unicode范围：\u4e00-\u9fff 表示中文字符范围
+    return bool(re.search('[\u4e00-\u9fff]', text))
+
+
 def generate_urls_from_md_files(docs_dir: str, base_url: str) -> List[str]:
     """生成网站URL列表"""
     if not os.path.isdir(docs_dir):
@@ -72,9 +79,19 @@ def generate_urls_from_md_files(docs_dir: str, base_url: str) -> List[str]:
                 dirs[:] = [d for d in dirs if not d.startswith('_')]
 
                 for file in files:
+                    # 跳过包含中文的文件名
+                    if has_chinese(file):
+                        logging.debug(f'跳过中文文件: {file}')
+                        continue
+
                     if file.endswith('.md') and file not in IGNORE_FILES:
                         rel_path = os.path.relpath(os.path.join(root, file),
                                                    docs_dir)
+                        # 检查相对路径中是否包含中文
+                        if has_chinese(rel_path):
+                            logging.debug(f'跳过中文路径: {rel_path}')
+                            continue
+
                         rel_path = rel_path.replace('.md', '')
                         rel_path = rel_path.replace('\\', '/')
                         encoded_path = urllib.parse.quote(rel_path)
