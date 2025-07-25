@@ -78,18 +78,17 @@ from collections import defaultdict
 import math
 import numpy as np
 from transformers import PreTrainedTokenizer
-from openrlhf.trainer.ppo_utils.math_reward_funcs import MathAccuracyReward
+from openrlhf.trainer.ppo_utils.math_reward_funcs import MathAccuracyReward, BaseRewardFunction
 
 
-class GRPOLambdaReward:
+class GRPOLambdaReward(BaseRewardFunction):
     """
     Implements GRPO-λ dynamic reward assignment based on group-wise accuracy ranking.
 
     Args:
-        efficiency_reward (BaseRewardFunction): Reward function for efficiency-prioritized groups (with length penalty).
-        accuracy_reward (BaseRewardFunction): Reward function for accuracy-prioritized groups (0/1 reward).
         tokenizer (PreTrainedTokenizer): Tokenizer for measuring response length.
-        acc_top_lambda (float): Proportion of top-accurate groups to assign efficiency reward.
+        math_accuracy_reward (BaseRewardFunction): Reward function for accuracy-prioritized groups (0/1 reward).
+        accuracy_top_lambda (float): Proportion of top-accurate groups to assign efficiency reward.
         length_penalty_alpha (float): Length penalty strength.
     """
 
@@ -97,12 +96,12 @@ class GRPOLambdaReward:
         self,
         tokenizer: PreTrainedTokenizer,
         math_acc_reward: MathAccuracyReward,
-        acc_top_lambda: float = 0.2,
+        accuracy_top_lambda: float = 0.2,
         length_penalty_alpha: float = 0.6,  # 长度惩罚强度
     ) -> None:
         self.tokenizer = tokenizer
         self.math_acc_reward = math_acc_reward
-        self.acc_top_lambda = acc_top_lambda
+        self.accuracy_top_lambda = accuracy_top_lambda
         self.length_penalty_alpha = length_penalty_alpha
 
     def __call__(self, completions: List[str], solutions: List[str], groups: List[int], **kwargs) -> List[float]:
@@ -142,7 +141,7 @@ class GRPOLambdaReward:
 
         # Step 5: Sort groups by accuracy, select top λ%
         sorted_groups = sorted(group_accuracy.items(), key=lambda x: x[1], reverse=True)
-        num_top_groups = max(1, math.ceil(len(sorted_groups) * self.acc_top_lambda))
+        num_top_groups = max(1, math.ceil(len(sorted_groups) * self.accuracy_top_lambda))
         top_group_ids = {g for g, _ in sorted_groups[:num_top_groups]}
 
         # Step 6: Calculate mean and std of lengths for correct answers in each group
@@ -157,12 +156,13 @@ class GRPOLambdaReward:
 
         # Step 7: Apply corresponding reward function
         rewards = []
-        for i, (length, group) in enumerate(zip(lengths, groups)):
+        for i, (accuracy, length, group) in enumerate(zip(acc_rewards, lengths, groups)):
             if group in top_group_ids:
                 # Efficiency-prioritized group: use efficiency reward
                 mean_length, std_length = group_length_stats[group]
                 sigma_value = (length - mean_length) / std_length
                 reward = 1 - self.length_penalty_alpha * self.sigmoid(sigma_value)
+                reward = reward * accuracy
             else:
                 # Accuracy-prioritized group: use accuracy reward
                 reward = acc_rewards[i]
@@ -174,4 +174,5 @@ class GRPOLambdaReward:
     def sigmoid(x: float) -> float:
         """Sigmoid function."""
         return 1 / (1 + math.exp(-x))
+
 ```
