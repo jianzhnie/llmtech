@@ -2,7 +2,8 @@
 
   - [大模型RL框架的演进与发展趋势](rlhf/infra/RL-Infra_overview.md)
   - [面向 LLM 的开源强化学习库](rlhf/infra/Open-source-rl-library.md)
-  - [Slime 框架深度解析](rlhf/infra/Slime.md)
+  - [RLHF 训练框架 Slime](rlhf/infra/Slime.md)
+  - [RLHF 训练框架 ROLL](rlhf/infra/ROLL.md)
   - [RLHF 中的 PPO 代码拆解](rlhf/infra/RLHF中的PPO代码拆解.md)
   - [RLHF 训练框架 NeMo-Aligner](rlhf/infra/NeMo-Aligner.md)
   - [RLHF 训练框架 DeepSpeedChat](rlhf/infra/DeepSpeedChat.md)
