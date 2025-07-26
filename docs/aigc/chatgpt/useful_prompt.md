@@ -4,7 +4,7 @@
 
 ## 论文/博客 翻译
 
-```python
+```markdown
 任务描述：请将以下AI领域的英语论文或博客内容翻译成中文，确保翻译准确、专业，并符合中文技术文献的表达习惯。输出格式为Markdown。
 
 翻译要求：
@@ -35,8 +35,28 @@
 
 
 请根据以上要求，将以下AI领域的英语论文或博客内容翻译成中文：
-
 ```
+
+## 文档重写
+
+```markdown
+重写下面的技术博客，要求符合中文技术文档的表达习惯，语言更加准确、清晰，并保持了原意的完整性与技术深度.
+
+要求：
+
+1. 专业性：
+   - 确保重写后的内容在AI领域内准确无误。
+
+2. 逻辑清晰：
+   - 确保重写后的内容逻辑清晰，语句通顺，符合中文技术文档的阅读习惯。
+
+3. 数学公式：
+   - 使用 `$$` 符号修饰数学公式：
+     - 行内公式：`$公式$`
+     - 独立公式：`$$公式$$`
+```
+
+
 
 ## 代码纠错
 
@@ -66,11 +86,9 @@
    - 指出代码中可能存在的性能问题或可改进之处，并提供优化方案。
 ```
 
-
-
 ## 代码规范
 
-````python
+````markdown
 Please help me review, debug, and improve the following code. The code is written in [programming language] and involves [related technologies or frameworks, if any]. Your task includes:
 
 1. Error Checking and Correction:
@@ -101,7 +119,7 @@ Please help me review, debug, and improve the following code. The code is writte
 
 ## 代码提升
 
-```python
+```markdown
 Please help me analyze and improve the code, do following things:
 1. Fix any errors
 2. Add proper type hints
@@ -123,16 +141,4 @@ Please help me analyze and improve the code, do following things:
 4. 如果代码涉及特定技术或框架，请简要说明其背景和作用。
 5. 逐行或逐段解释代码的功能。
 5. 提供代码的优化建议（如果有）。
-
-示例输出格式：
-
-1. 代码功能概述：简要描述代码的整体功能。
-2. 关键算法/技术：解释代码中使用的核心算法或技术。
-3. 特定技术或框架: 对于代码中涉及特定技术或框架，简要说明背景和作用。
-4. 代码逐行/逐段分析：
-   - 第X行：解释该行代码的作用。
-   - 第Y行：说明该行代码的逻辑。
-   - ...
-5. 潜在问题与优化建议：指出代码中可能存在的问题，并提供改进建议。
-
 ```
