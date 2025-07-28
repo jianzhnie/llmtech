@@ -130,10 +130,6 @@ Rollout任务通常以批次形式执行，但批次内部任务的复杂度可�
 
 ### 4.1 SPMD和MPMD概念解析
 
-在讨论训练框架与推理引擎如何结合之前，有必要先理解SPMD（Single Program, Multiple Data）和MPMD（Multiple Programs, Multiple Data）的概念。简而言之，SPMD指的是多个处理单元执行相同的程序但操作不同的数据集，而MPMD则涉及多个处理单元运行不同的程序并处理不同的数据集。前者通常不需要一个中央控制器来协调工作流程，而后者则可能需要以避免混乱。
-
-
-
 在讨论训练框架和推理引擎的集成时，首先需要理解两种并行处理模式：**SPMD（Single Program, Multiple Data）** 和 **MPMD（Multiple Programs, Multiple Data）**。这两种模式也可以被描述为单一控制器与多控制器架构。
 
 - **单一控制器（SPMD）**：所有工作节点执行相同的程序逻辑，适用于数据量大但模型规模较小的场景。
