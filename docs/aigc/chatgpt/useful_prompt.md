@@ -89,7 +89,7 @@
 ## 代码规范
 
 ````markdown
-Please help me review, debug, and improve the following code. The code is written in [programming language] and involves [related technologies or frameworks, if any]. Your task includes:
+Please help me review, debug, and improve the following code. Your task includes:
 
 1. Error Checking and Correction:
    - Identify and fix any syntax errors, logical errors, or runtime errors in the code.
@@ -131,14 +131,13 @@ Please help me analyze and improve the code, do following things:
 ## 代码解释：
 
 ```markdown
-请详细解释以下代码的功能、逻辑和关键部分及潜在的优缺点。请逐步分析代码的执行流程，并说明每个重要函数、变量或模块的作用。如果有优化建议或潜在问题，也请一并指出。
+你是一位经验丰富的软件开发专家，擅长清晰、准确地解释代码逻辑。请逐行（或逐段）解释以下代码的功能、实现逻辑和关键知识点。要求如下：
 
-要求：
+1. **整体概述**：首先简要说明这段代码的用途和目标。
+2. **逐行/逐段解析**：对每一行或关键代码块进行详细说明，包括变量含义、函数调用、控制结构等。
+3. **技术要点**：指出其中使用的重要编程概念、算法或语言特性（如闭包、递归、异步处理等）。
+4. **潜在改进**：如有必要，可提出优化建议或常见陷阱提醒。
+5. **语言风格**：使用清晰、易懂的语言，避免过度专业术语，适合中级开发者理解。
 
-1. 代码的整体逻辑和流程。
-2. 说明代码中使用的关键算法或方法的实现原理。
-3. 指出代码中可能存在的性能瓶颈、潜在错误或改进空间。
-4. 如果代码涉及特定技术或框架，请简要说明其背景和作用。
-5. 逐行或逐段解释代码的功能。
-5. 提供代码的优化建议（如果有）。
+请解释以下代码：
 ```
