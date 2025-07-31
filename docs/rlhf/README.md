@@ -17,6 +17,38 @@
 - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](rlhf/infra/Ray_OpenRLHF_Verl.md)
 
 
+## Verl 源码分析
+
+### 核心实现
+- [Verl 框架 Wiki](rlhf/infra/verl/Verl-wiki.md)
+- [核心算法实现](rlhf/infra/verl/core_algos.md)
+- [单控制器设计](rlhf/infra/verl/single_controller.md)
+
+### Actor 实现
+- [FSDP Actor 实现](rlhf/infra/verl/fsdp_actor.md)
+- [FSDP Actor Worker](rlhf/infra/verl/fsdp_actor_worker.md)
+- [Megatron Actor 实现](rlhf/infra/verl/megatron_actor.md)
+
+### Critic 实现
+- [FSDP Critic 实现](rlhf/infra/verl/fsdp_critic.md)
+- [FSDP Critic Worker](rlhf/infra/verl/fsdp_critic_worker.md)
+- [Megatron Critic 实现](rlhf/infra/verl/megatron_critic.md)
+
+### Rollout 相关
+- [Hugging Face Rollout](rlhf/infra/verl/hf_rollout.md)
+- [VLLM Rollout](rlhf/infra/verl/vllm_rollout.md)
+- [Rollout Schemas](rlhf/infra/verl/rollout_schemas.md)
+
+### VLLM 集成
+- [FSDP VLLM 集成](rlhf/infra/verl/fsdp_vllm.md)
+- [Megatron VLLM 集成](rlhf/infra/verl/megatron_vllm.md)
+- [VLLM Server](rlhf/infra/verl/vllm_server.md)
+
+### 奖励管理
+- [朴素奖励管理器](rlhf/infra/verl/naive_reward_manager.md)
+
+
+
 ## LLM RLHF Intro
 
 - [理解 RLHF](rlhf/intro/rlhf_advance.md)
