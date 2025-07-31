@@ -331,14 +331,16 @@
         .markdown-section table {
             width: 100%;
             max-width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin: 1.5rem 0;
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             font-size: 0.95em;
             table-layout: auto;
+            border: 1px solid #e2e8f0;
         }
 
         .markdown-section table th {
@@ -347,7 +349,7 @@
             font-weight: 700;
             padding: 1rem 1.2rem;
             text-align: left;
-            border: none;
+            border: 1px solid #2d8a5f;
             font-size: 1.1em;
             letter-spacing: 0.5px;
             position: relative;
@@ -365,15 +367,16 @@
 
         .markdown-section table td {
             padding: 1rem 1.2rem;
-            border-bottom: 1px solid #f0f0f0;
+            border: 1px solid #e2e8f0;
             vertical-align: top;
             line-height: 1.5;
             word-wrap: break-word;
             max-width: 0;
+            background: #ffffff;
         }
 
         .markdown-section table tr:last-child td {
-            border-bottom: none;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .markdown-section table tr:hover {
@@ -382,11 +385,11 @@
         }
 
         .markdown-section table tr:nth-child(even) {
-            background-color: #fafbfc;
+            background-color: #f8fafc;
         }
 
         .markdown-section table tr:nth-child(even):hover {
-            background-color: #f0f2f5;
+            background-color: #f1f5f9;
         }
 
         .markdown-section table code {
