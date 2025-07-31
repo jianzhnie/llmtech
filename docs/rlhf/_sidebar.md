@@ -17,15 +17,50 @@
   - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](rlhf/infra/Ray_OpenRLHF_Verl.md)
 
 
-- LLM RLHF Intro
+- Verl 源码分析
+
+  - 核心实现
+    - [Verl 框架 Wiki](rlhf/infra/verl/Verl-wiki.md)
+    - [核心算法实现](rlhf/infra/verl/core_algos.md)
+    - [单控制器设计](rlhf/infra/verl/single_controller.md)
+
+  - Actor 实现
+    - [FSDP Actor 实现](rlhf/infra/verl/fsdp_actor.md)
+    - [FSDP Actor Worker](rlhf/infra/verl/fsdp_actor_worker.md)
+    - [Megatron Actor 实现](rlhf/infra/verl/megatron_actor.md)
+
+  - Critic 实现
+    - [FSDP Critic 实现](rlhf/infra/verl/fsdp_critic.md)
+    - [FSDP Critic Worker](rlhf/infra/verl/fsdp_critic_worker.md)
+    - [Megatron Critic 实现](rlhf/infra/verl/megatron_critic.md)
+
+  - Rollout 相关
+    - [Hugging Face Rollout](rlhf/infra/verl/hf_rollout.md)
+    - [VLLM Rollout](rlhf/infra/verl/vllm_rollout.md)
+    - [Rollout Schemas](rlhf/infra/verl/rollout_schemas.md)
+
+  - VLLM 集成
+    - [FSDP VLLM 集成](rlhf/infra/verl/fsdp_vllm.md)
+    - [Megatron VLLM 集成](rlhf/infra/verl/megatron_vllm.md)
+    - [VLLM Server](rlhf/infra/verl/vllm_server.md)
+
+  - 奖励管理
+    - [朴素奖励管理器](rlhf/infra/verl/naive_reward_manager.md)
+
+
+
+## LLM RLHF Intro
 
   - [理解 RLHF](rlhf/intro/rlhf_advance.md)
   - [Chip Huyen 对 RLHF 的分析](rlhf/intro/rlhf_chiphuyen.md)
   - [RLHF 相关知识整理](rlhf/intro/rlhf_overview.md)
   - [RLHF 中的 Policy Gradient Algorithms](rlhf/intro/rlhf_policy_gradient.md)
+  - [KL 散度的近似计算](rlhf/intro/KL散度的近似计算方法.md)
 
 
-- LLM RLHF Algorithm and Paper
+
+
+## LLM RLHF Algorithm and Paper
 
   - [直接偏好优化 (DPO)](rlhf/paper/rlhf_dpo.md)
   - [直接偏好优化 (DPO) 推导](rlhf/paper/rlhf_dpo_notes.md)
@@ -38,7 +73,6 @@
   - [DeepScaleR：通过扩展强化学习超越 o1](rlhf/paper/deepscaler.md)
   - [REINFORCE++：一种简单高效的大型语言模型对齐方法](rlhf/paper/REINFORCE++.md)
   - [ChatGPT O1 Reasoning](rlhf/paper/chatgpt_O1.md)
-  - [KL 散度的近似计算](rlhf/paper/KL-Approximate.md)
   - [过程奖励模型（Process Reward Model）](rlhf/paper/PRM.md)
   - [数学推理中过程奖励模型的开发经验](rlhf/paper/PRM_Reasoning.md)
   - [ReFT: 通过强化微调提升推理能力](rlhf/paper/ReFT.md)
