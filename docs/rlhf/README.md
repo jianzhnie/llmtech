@@ -23,7 +23,7 @@
 - [Chip Huyen 对 RLHF 的分析](rlhf/intro/rlhf_chiphuyen.md)
 - [RLHF 相关知识整理](rlhf/intro/rlhf_overview.md)
 - [RLHF 中的 Policy Gradient Algorithms](rlhf/intro/rlhf_policy_gradient.md)
-
+- [KL 散度的近似计算](rlhf/intro/KL散度的近似计算方法.md)
 
 ## LLM RLHF Algorithm and Paper
 
@@ -39,7 +39,7 @@
 - [DeepScaleR：通过扩展强化学习超越 o1](rlhf/paper/deepscaler.md)
 - [REINFORCE++：一种简单高效的大型语言模型对齐方法](rlhf/paper/REINFORCE++.md)
 - [ChatGPT O1 Reasoning](rlhf/paper/chatgpt_O1.md)
-- [KL 散度的近似计算](rlhf/paper/KL-Approximate.md)
+
 - [过程奖励模型（Process Reward Model）](rlhf/paper/PRM.md)
 - [数学推理中过程奖励模型的开发经验](rlhf/paper/PRM_Reasoning.md)
 - [ReFT: 通过强化微调提升推理能力](rlhf/paper/ReFT.md)
