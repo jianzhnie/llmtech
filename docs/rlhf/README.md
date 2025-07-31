@@ -71,7 +71,6 @@
 - [DeepScaleR：通过扩展强化学习超越 o1](rlhf/paper/deepscaler.md)
 - [REINFORCE++：一种简单高效的大型语言模型对齐方法](rlhf/paper/REINFORCE++.md)
 - [ChatGPT O1 Reasoning](rlhf/paper/chatgpt_O1.md)
-
 - [过程奖励模型（Process Reward Model）](rlhf/paper/PRM.md)
 - [数学推理中过程奖励模型的开发经验](rlhf/paper/PRM_Reasoning.md)
 - [ReFT: 通过强化微调提升推理能力](rlhf/paper/ReFT.md)
