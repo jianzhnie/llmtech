@@ -57,7 +57,7 @@
             margin: 0 auto;
             min-height: 100vh;
             background: #fff;
-            box-shadow: 0 0 24px rgba(0,0,0,0.06);
+            box-shadow: 0 0 24px rgba(0, 0, 0, 0.06);
         }
 
         .markdown-section {
@@ -72,12 +72,14 @@
             color: #222;
             margin-top: 2.5rem;
         }
+
         /* 当前页面标识 */
         .app-nav a.active {
             color: #fff;
-            background: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.15);
             border-radius: 4px;
         }
+
         .sidebar {
             width: var(--sidebar-width);
             background: #222;
@@ -104,18 +106,23 @@
             position: relative;
             transition: all 0.3s ease;
         }
+
         .markdown-section h1 {
             font-size: 2rem;
             border-bottom: 2px solid var(--theme-color);
             padding-bottom: 0.6rem;
             margin-top: 0;
         }
+
         .markdown-section h2 {
             font-size: 1.8rem;
             border-bottom: 1px solid #eaecef;
             padding-bottom: 0.4rem;
         }
-        .markdown-section h3 { font-size: 1.5rem; }
+
+        .markdown-section h3 {
+            font-size: 1.5rem;
+        }
 
         /* Inline code */
         .markdown-section code:not(pre code) {
@@ -130,13 +137,15 @@
             word-break: break-all;
             vertical-align: baseline;
         }
+
         .markdown-section code:not(pre code):hover {
             background: #e6f7ef;
             color: #197278;
         }
 
         /* Code blocks */
-        .markdown-section pre, .markdown-section pre code {
+        .markdown-section pre,
+        .markdown-section pre code {
             background: #1e1e1e !important;
             color: #d4d4d4 !important;
             padding: 1rem;
@@ -144,17 +153,20 @@
             font-size: 0.95em;
             font-family: 'Fira Mono', 'Consolas', monospace;
         }
-        .token.comment { color: #6A9955 !important; }
+
+        .token.comment {
+            color: #6A9955 !important;
+        }
 
         /* Blockquotes */
-        .markdown-section > blockquote {
+        .markdown-section>blockquote {
             border-left: 3px solid var(--theme-color) !important;
             background: linear-gradient(90deg, #f8f9fa 80%, #e6f7ef 100%) !important;
             padding: 0.5em 0.8em 0.8em 0.8em !important;
             margin: 1.5em 0 !important;
             border-radius: 8px !important;
             font-size: 1.0em;
-            box-shadow: 0 2px 8px rgba(66,185,131,0.04);
+            box-shadow: 0 2px 8px rgba(66, 185, 131, 0.04);
             position: relative;
             transition: background 0.2s;
             overflow-wrap: break-word;
@@ -162,7 +174,8 @@
             word-break: break-word;
             hyphens: auto;
         }
-        .markdown-section > blockquote::before {
+
+        .markdown-section>blockquote::before {
             color: var(--theme-color);
             font-size: 2.2em;
             position: absolute;
@@ -172,13 +185,15 @@
             pointer-events: none;
             font-family: serif;
         }
-        .markdown-section > blockquote p {
+
+        .markdown-section>blockquote p {
             margin: 0.5em 0;
             padding: 0;
             line-height: 1.6;
             color: #444;
             max-width: 100%;
         }
+
         /* Images */
         .markdown-section img,
         figure img {
@@ -187,16 +202,41 @@
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform var(--transition-speed);
         }
+
         .markdown-section img:hover,
-        figure img:hover { transform: scale(1.02); }
-        figure { text-align: center; margin: 2rem 0; }
-        .markdown-section p:has(img) { text-align: center; }
-        .markdown-section > img { display: block; margin: 1.5rem auto; }
-        .katex-display > .katex { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
-        figcaption { margin-top: 0.75rem; color: #666; font-size: 0.95em; font-style: italic; }
+        figure img:hover {
+            transform: scale(1.02);
+        }
+
+        figure {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .markdown-section p:has(img) {
+            text-align: center;
+        }
+
+        .markdown-section>img {
+            display: block;
+            margin: 1.5rem auto;
+        }
+
+        .katex-display>.katex {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        figcaption {
+            margin-top: 0.75rem;
+            color: #666;
+            font-size: 0.95em;
+            font-style: italic;
+        }
 
         /* Navigation bar */
         .app-nav {
@@ -211,9 +251,10 @@
             box-sizing: border-box;
             background: #42b983;
             color: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             padding: 0 2vw;
         }
+
         .app-nav ul {
             display: flex;
             flex: 1;
@@ -224,7 +265,12 @@
             list-style: none;
             width: 100%;
         }
-        .app-nav li { flex: 1; text-align: center; }
+
+        .app-nav li {
+            flex: 1;
+            text-align: center;
+        }
+
         .app-nav a {
             display: block;
             width: 100%;
@@ -235,9 +281,10 @@
             padding: 1rem 0;
             text-decoration: none;
         }
+
         .app-nav a:hover {
             color: #ffd700 !important;
-            background: rgba(0,0,0,0.08);
+            background: rgba(0, 0, 0, 0.08);
             border-radius: 4px;
         }
 
@@ -246,6 +293,7 @@
             margin: 1rem;
             position: relative;
         }
+
         .search input {
             width: 100%;
             padding: 0.75rem 1rem 0.75rem 2.5rem;
@@ -266,55 +314,144 @@
             font-size: 1rem;
             margin: 0.5rem 0;
         }
-        .vue-button:hover { background-color: #3aa876; }
+
+        .vue-button:hover {
+            background-color: #3aa876;
+        }
 
         /* Table styles */
         .table-wrapper {
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 100%;
+            display: block;
+            width: 100%;
+            margin: 1.5rem auto;
+            border-radius: 8px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            /* 改回hidden以确保圆角效果 */
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            /* 添加边框 */
         }
+
+        /* 为Firefox添加滚动条样式 */
+        .table-wrapper {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-color) #f1f3f4;
+        }
+
+        /* 为Webkit浏览器(Chrome、Safari等)添加滚动条样式 */
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: var(--theme-color);
+            border-radius: 4px;
+            border: 2px solid #f1f3f4;
+            background-clip: padding-box;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #3aa876;
+            border: 1.5px solid #f1f3f4;
+        }
+
         .markdown-section table {
             width: 100%;
-            max-width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             font-size: 0.95em;
             table-layout: auto;
+            border: 1px solid #e2e8f0;
+            white-space: normal;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+
         .markdown-section table th {
-            background: linear-gradient(135deg, var(--theme-color), #3aa876);
+            background: var(--theme-color);
             color: white;
-            font-weight: 700;
-            padding: 1rem 1.2rem;
-            text-align: left;
-            border: none;
-            font-size: 1.1em;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.95em;
+            letter-spacing: 0.3px;
             position: relative;
             white-space: nowrap;
-            min-width: 80px;
+            min-width: 50px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
-        .markdown-section table th:first-child { border-top-left-radius: 8px; }
-        .markdown-section table th:last-child { border-top-right-radius: 8px; }
+
+        .markdown-section table th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .markdown-section table th:last-child {
+            border-top-right-radius: 8px;
+        }
+
         .markdown-section table td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: top;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
             line-height: 1.5;
-            word-wrap: break-word;
-            max-width: 0;
+            white-space: normal;
+            background: #ffffff;
+            min-width: 50px;
+            word-break: break-word;
+            text-align: center;
+            font-size: 0.9em;
+            color: #333;
+            position: relative;
+            transition: background-color 0.2s ease;
         }
-        .markdown-section table tr:last-child td { border-bottom: none; }
-        .markdown-section table tr:hover { background-color: #f8f9fa; transition: background-color 0.2s ease; }
-        .markdown-section table tr:nth-child(even) { background-color: #fafbfc; }
-        .markdown-section table tr:nth-child(even):hover { background-color: #f0f2f5; }
+
+        /* 确保最后一行单元格的底部边框可见 */
+        .markdown-section table tr:last-child td {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* 确保第一列和最后一列的边框可见 */
+        .markdown-section table td:first-child {
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .markdown-section table td:last-child {
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .markdown-section table tr:last-child td {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .markdown-section table tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        .markdown-section table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .markdown-section table tr:nth-child(even):hover {
+            background-color: #f1f5f9;
+        }
+
         .markdown-section table code {
             background-color: #f1f3f4;
             color: #d73a49;
@@ -323,11 +460,13 @@
             font-size: 1em;
             font-family: 'Fira Mono', 'Consolas', monospace;
         }
+
         .markdown-section table a {
             color: var(--theme-color);
             text-decoration: none;
             transition: color 0.2s ease;
         }
+
         .markdown-section table a:hover {
             color: #3aa876;
             text-decoration: underline;
@@ -350,6 +489,7 @@
             right: 2rem;
             z-index: 1000;
         }
+
         .goup-container .goup {
             background-color: var(--theme-color);
             color: white;
@@ -358,61 +498,158 @@
             width: 50px;
             height: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.5rem;
         }
+
         .goup-container .goup:hover {
             transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
         /* Custom scrollbars (Webkit & Firefox) */
-        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
         ::-webkit-scrollbar-track {
             background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 6px;
             border: 1px solid #dee2e6;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, var(--theme-color) 0%, #3aa876 100%);
             border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #3aa876 0%, #2d8a5f 100%);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
             transform: scale(1.05);
         }
+
         ::-webkit-scrollbar-thumb:active {
             background: linear-gradient(180deg, #2d8a5f 0%, #1f6b4a 100%);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
-        ::-webkit-scrollbar-corner { background: #f8f9fa; border-radius: 6px; }
-        .markdown-section pre::-webkit-scrollbar { height: 8px; }
-        .markdown-section pre::-webkit-scrollbar-track { background: #2d2d2d; border-radius: 4px; }
-        .markdown-section pre::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; border: none; }
-        .markdown-section pre::-webkit-scrollbar-thumb:hover { background: #777; }
-        .table-wrapper::-webkit-scrollbar { height: 10px; }
-        .table-wrapper::-webkit-scrollbar-track { background: #f1f3f4; border-radius: 5px; }
+
+        ::-webkit-scrollbar-corner {
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .markdown-section pre::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .markdown-section pre::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+            cursor: pointer;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-radius: 4px;
+            margin: 0 4px;
+        }
+
         .table-wrapper::-webkit-scrollbar-thumb {
             background: linear-gradient(90deg, var(--theme-color) 0%, #3aa876 100%);
-            border-radius: 5px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            border: 2px solid #fff;
+            background-clip: padding-box;
         }
-        .table-wrapper::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #3aa876 0%, #2d8a5f 100%); }
-        * { scrollbar-width: thin; scrollbar-color: var(--theme-color) #f8f9fa; }
-        .custom-scroll { scrollbar-width: thin; scrollbar-color: var(--theme-color) transparent; }
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(66, 185, 131, 0.5); border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(66, 185, 131, 0.8); }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #3aa876 0%, #2d8a5f 100%);
+            border: 1.5px solid #fff;
+        }
+
+        /* 添加滚动提示阴影 */
+        .table-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .table-wrapper:hover::after {
+            opacity: 1;
+        }
+
+        /* 确保markdown中的表格正确显示 */
+        .markdown-section>table {
+            display: table;
+            /* 改为table显示 */
+            width: 100%;
+            margin: 0;
+            border-collapse: collapse;
+        }
+
+        /* 移除所有表格相关的滚动条样式 */
+        .table-wrapper::-webkit-scrollbar,
+        .markdown-section table::-webkit-scrollbar {
+            display: none;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-color) #f8f9fa;
+        }
+
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-color) transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(66, 185, 131, 0.5);
+            border-radius: 3px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(66, 185, 131, 0.8);
+        }
 
         /* Loading spinner */
         #app {
@@ -424,6 +661,7 @@
             color: var(--theme-color);
             flex-direction: column;
         }
+
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -433,9 +671,15 @@
             animation: spin 1s linear infinite;
             margin-bottom: 1rem;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive styles (merged and grouped) */
@@ -447,63 +691,145 @@
                 max-width: 100% !important;
                 width: 100% !important;
             }
+
             .sidebar,
-            .sidebar-toggle { display: none !important; }
+            .sidebar-toggle {
+                display: none !important;
+            }
+
             .content,
-            .app { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; }
-            .markdown-section h1 { font-size: 2rem; }
-            .markdown-section h2 { font-size: 1.6rem; }
-            .app-nav { padding: 0.5rem; }
-            .search { margin: 0.5rem; }
-            .search input { font-size: 16px; }
-            .goup-container { bottom: 1rem; right: 1rem; }
-            .goup-container .goup { width: 45px; height: 45px; font-size: 1.2rem; }
+            .app {
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .markdown-section h1 {
+                font-size: 2rem;
+            }
+
+            .markdown-section h2 {
+                font-size: 1.6rem;
+            }
+
+            .app-nav {
+                padding: 0.5rem;
+            }
+
+            .search {
+                margin: 0.5rem;
+            }
+
+            .search input {
+                font-size: 16px;
+            }
+
+            .goup-container {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .goup-container .goup {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
             .markdown-section img,
-            figure img { margin: 1rem auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-            .markdown-section > blockquote {
+            figure img {
+                margin: 1rem auto;
+                border-radius: 6px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .markdown-section>blockquote {
                 padding: 0.8em 0.7em 0.8em 0.9em !important;
                 font-size: 1em;
                 border-radius: 6px !important;
             }
-            .markdown-section > blockquote::before {
+
+            .markdown-section>blockquote::before {
                 font-size: 1.8em;
                 left: 0.3em;
             }
+
             .markdown-section table {
                 font-size: 0.9em;
                 margin: 1rem 0;
                 min-width: 100%;
             }
+
             .markdown-section table th,
             .markdown-section table td {
                 padding: 0.75rem 0.8rem;
                 min-width: 60px;
             }
+
             .table-wrapper {
                 margin: 1rem 0;
                 border-radius: 4px;
                 -webkit-overflow-scrolling: touch;
             }
-            ::-webkit-scrollbar,
-            .table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
-            ::-webkit-scrollbar-track,
-            .table-wrapper::-webkit-scrollbar-track { background: rgba(248, 249, 250, 0.9); border-radius: 3px; }
-            ::-webkit-scrollbar-thumb,
-            .table-wrapper::-webkit-scrollbar-thumb { background: rgba(66, 185, 131, 0.7); border-radius: 3px; border: none; }
-            ::-webkit-scrollbar-thumb:hover,
-            .table-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(66, 185, 131, 0.9); }
+
+            .table-wrapper::-webkit-scrollbar {
+                height: 6px;
+            }
+
+            .table-wrapper::-webkit-scrollbar-track {
+                background: rgba(248, 249, 250, 0.9);
+                border-radius: 3px;
+            }
+
+            .table-wrapper::-webkit-scrollbar-thumb {
+                background: var(--theme-color);
+                border-radius: 3px;
+                border: 1.5px solid #fff;
+                background-clip: padding-box;
+            }
+
+            .table-wrapper::-webkit-scrollbar-thumb:hover {
+                background: #3aa876;
+                border: 1px solid #fff;
+            }
         }
+
         @media (max-width: 480px) {
-            .markdown-section { padding: 1rem; margin-top: 1rem; }
-            .markdown-section h1 { font-size: 1.8rem; }
-            .markdown-section h2 { font-size: 1.4rem; }
-            .app-nav { padding: 0.25rem; }
-            .app-nav a { font-size: 16px; }
-            .markdown-section table { font-size: 0.85em; min-width: 100%; }
+            .markdown-section {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .markdown-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .markdown-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .app-nav {
+                padding: 0.25rem;
+            }
+
+            .app-nav a {
+                font-size: 16px;
+            }
+
+            .markdown-section table {
+                font-size: 0.85em;
+                min-width: 100%;
+            }
+
             .markdown-section table th,
-            .markdown-section table td { padding: 0.6rem 0.7rem; min-width: 50px; }
+            .markdown-section table td {
+                padding: 0.6rem 0.7rem;
+                min-width: 50px;
+            }
         }
-        html { scroll-behavior: smooth; }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         /* 代码块折叠样式 */
         .markdown-section pre[data-expandable] {
@@ -853,7 +1179,7 @@
             enableHotKey: true,
         });
         gitalk.render('gitalk-container').catch(err => {
-        console.error('Gitalk error:', err);
+            console.error('Gitalk error:', err);
         });
         // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
         window.onhashchange = function (event) {
