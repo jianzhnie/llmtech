@@ -2,7 +2,7 @@
 
 ## 整体概述
 
-`ActorRolloutRefWorker` 是一个多功能的工作器类，可以根据配置扮演不同角色：单独的演员（actor）、推理引擎（rollout）、参考策略（ref），或者它们的组合（如 actor_rollout、actor_rollout_ref）。 fsdp_workers.py:106-110 这种设计实现了最大化的代码复用，同时支持高效的权重传输和内存管理。
+`ActorRolloutRefWorker` 是一个多功能的Worker类，可以根据配置扮演不同角色：单独的演员（actor）、推理引擎（rollout）、参考策略（ref），或者它们的组合（如 actor_rollout、actor_rollout_ref）。 fsdp_workers.py:106-110 这种设计实现了最大化的代码复用，同时支持高效的权重传输和内存管理。
 
 ## 类初始化和配置
 
@@ -31,7 +31,7 @@
 
 - **PPO mini batch size**：按设备数量缩放
 - **Micro batch size**：确保能被 mini batch size 整除
-- **日志概率批次大小**：为推理和参考模型单独配置
+- **日志概率批次大小**：为推理和Reference单独配置
 
 ## 模型构建核心方法
 
@@ -61,13 +61,13 @@
 
 ### init_model 方法 fsdp_workers.py:563-668
 
-这个方法是模型初始化的入口点，使用 `@register(dispatch_mode=Dispatch.ONE_TO_ALL)` 装饰器，确保所有工作器都执行相同的初始化：
+这个方法是模型初始化的入口点，使用 `@register(dispatch_mode=Dispatch.ONE_TO_ALL)` 装饰器，确保所有Worker都执行相同的初始化：
 
 1. **外部库导入**：导入用户指定的外部库
 2. **演员/推理模型构建**：如果角色包含 actor 或 rollout，构建主模型
 3. **演员包装**：将 FSDP 模型包装为 `DataParallelPPOActor`
 4. **推理引擎构建**：构建 vLLM 推理引擎和分片管理器
-5. **参考模型构建**：如果需要参考策略，构建独立的参考模型
+5. **Reference构建**：如果需要参考策略，构建独立的Reference
 6. **检查点管理器**：设置 FSDP 检查点管理器
 
 ## 核心训练方法
@@ -114,7 +114,7 @@
 
 所有方法都使用 `@register` 装饰器，支持不同的分发模式：
 
-- `Dispatch.ONE_TO_ALL`：广播到所有工作器
+- `Dispatch.ONE_TO_ALL`：广播到所有Worker
 - `Dispatch.DP_COMPUTE_PROTO`：数据并行计算和收集
 
 ### 2. 内存优化策略
@@ -127,7 +127,7 @@
 
 - **FSDP 集成**：使用 PyTorch FSDP 进行参数分片
 - **序列并行**：通过 Ulysses 支持长序列处理
-- **混合精度**：演员模型使用 fp32，参考模型使用 bfloat16
+- **混合精度**：演员模型使用 fp32，Reference使用 bfloat16
 
 ## 潜在改进建议
 
