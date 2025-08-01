@@ -65,9 +65,9 @@
 
 ## 集成使用
 
-该 Actor 在 Megatron 工作器中被实例化和使用： megatron_workers.py:436-443
+该 Actor 在 Megatron Worker中被实例化和使用： megatron_workers.py:436-443
 
-工作器负责模型初始化、权重加载和与推理引擎的协调。
+Worker负责模型初始化、权重加载和与推理引擎的协调。
 
 ## 潜在改进
 
