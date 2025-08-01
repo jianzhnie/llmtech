@@ -60,6 +60,8 @@
 
 ![The execution diagram](https://github.com/eric-haibin-lin/verl-community/blob/main/docs/driver_Worker.png?raw=true)
 
+
+
 在该架构中，**控制器**（Controller，又称驱动进程）运行于单个进程中，而Actor（或行动者）、Critic等Workers 则分布于多个 GPU 进程中，并以**Workers组**（WorkerGroup）的形式进行管理。
 
 在轨迹采样阶段，控制器将提示（prompt）数据分发给 generator WorkerGroup，各节点并行生成响应。采样完成后，生成的数据被回传至控制器，由其执行后续的算法步骤（如优势计算、奖励计算等）。其他计算任务（如价值估计、奖励打分）遵循类似的交互模式。
@@ -99,7 +101,7 @@
 
 - **ActorRolloutRef**：管理Actor（Actor）、轨迹采样（Rollout）和参考策略（Reference Policy）。`ActorRolloutRefWorker` 可以实例化为单一角色（如仅Actor），也可组合多个角色（如Actor+采样器+参考策略）。这种设计旨在最大化代码复用性。将Actor与采样器共置，是为了利用 NCCL 实现高效的权重同步；将参考策略与Actor共置，则是为了支持高效的 LoRA-PPO——在 LoRA 微调中，参考策略通常对应基础模型。共置功能通过 `verl.single_controller.ray.base.create_colocated_Worker_cls` 装饰器实现，该装饰器会创建一个暴露所有角色方法的 Ray 远程类。
 - **Critic**：管理Critic 模型。
-- **Reward**：管理奖励模型（Reward Model）。
+- **Reward**：管理RewardModel（Reward Model）。
 
 这些WorkerGroup将在指定的资源池（即 Ray 集群中的 GPU 集合）上进行部署。
 
@@ -206,7 +208,7 @@ verl  # verl 主包
       megatron_critic.py   # 基于 Megatron 后端的 nD 并行评价者
     reward_model
       megatron
-        reward_model.py    # 基于 Megatron 后端的奖励模型
+        reward_model.py    # 基于 Megatron 后端的RewardModel
     rollout
       vllm
         vllm_rollout.py    # 基于 vLLM 后端的采样实现
