@@ -18,7 +18,7 @@
 
 例如，框架已在 `_select_rm_score_fn` 函数中为 [GSM8k](https://github.com/volcengine/verl/blob/main/verl/utils/reward_score/gsm8k.py) 和 [MATH](https://github.com/volcengine/verl/blob/main/verl/utils/reward_score/math.py) 数据集实现了相应的奖励函数。在 `RewardManager` 组件中，系统会依据数据源自动选择匹配的奖励函数来计算奖励分数。
 
-对于某些 RLHF 数据集（如 `full_hh_rlhf`），可直接使用预训练的奖励模型（Reward Model, RM）对生成的响应进行评估，无需额外定义奖励函数。在此情况下，`RewardManager` 将直接返回奖励模型计算出的 `rm_score`。
+对于某些 RLHF 数据集（如 `full_hh_rlhf`），可直接使用预训练的RewardModel（Reward Model, RM）对生成的响应进行评估，无需额外定义奖励函数。在此情况下，`RewardManager` 将直接返回RewardModel计算出的 `rm_score`。
 
 更多关于奖励函数的具体实现，请参见 [奖励函数实现目录](https://github.com/volcengine/verl/blob/main/verl/utils/reward_score)。
 
@@ -73,7 +73,7 @@ class Role(Enum):
     ActorRollout = 2    # 同时包含Actor和Rollout的 混合引擎
     Critic = 3          # 仅包含Critic（Critic）的 worker
     RefPolicy = 4       # 仅包含参考策略（Reference Policy）的 worker
-    RewardModel = 5     # 仅包含奖励模型（Reward Model）的 worker
+    RewardModel = 5     # 仅包含RewardModel（Reward Model）的 worker
     ActorRolloutRef = 6 # 同时包含Actor、Rollout和参考策略的worker
 ```
 
@@ -88,12 +88,12 @@ class Role(Enum):
   - 在上述示例中，我们定义了一个名为 `global_pool_id` 的全局资源池，并将所有角色均部署于此。这意味着所有模型共享本次训练任务中的全部 GPU 资源，属于典型的 *协同部署*（co-located deployment）方案。
 - 更高级的资源池配置与部署策略，请参阅相关文档。
 
-## 奖励模型与奖励函数的配置
+## RewardModel与奖励函数的配置
 
 ```python
 # 我们应在此处采用多源奖励机制：
 # - 对于基于规则的奖励，直接调用奖励评分函数
-# - 对于基于模型的奖励，调用奖励模型
+# - 对于基于模型的奖励，调用RewardModel
 # - 对于涉及代码生成的任务，若存在测试用例，则发送至沙箱执行
 # - 最终，将所有奖励信号进行融合
 # - 奖励类型取决于数据标签
