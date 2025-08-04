@@ -221,7 +221,7 @@ Worker 类提供了两个使用 `@register` 装饰器的分布式执行方法：
 
 ## 整体概述
 
-`verl/single_controller/base/worker_group.py` 文件的`WorkerGroup` 类是 VERL 单控制器架构的核心抽象，负责管理一组分布式Worker并提供统一的接口来执行分布式计算。它实现了控制流（单进程）与计算流（多进程）分离的设计理念，使得开发者可以像调用本地方法一样调用分布式方法。
+`verl/single_controller/base/worker_group.py` 文件的`WorkerGroup` 类是 VERL Single-Controller架构的核心抽象，负责管理一组分布式Worker并提供统一的接口来执行分布式计算。它实现了控制流（单进程）与计算流（多进程）分离的设计理念，使得开发者可以像调用本地方法一样调用分布式方法。
 
 ## 逐行/逐段解析
 
