@@ -49,7 +49,7 @@
 
 
 
-## LLM RLHF Intro
+-  LLM RLHF Intro
 
   - [理解 RLHF](rlhf/intro/rlhf_advance.md)
   - [Chip Huyen 对 RLHF 的分析](rlhf/intro/rlhf_chiphuyen.md)
@@ -60,7 +60,7 @@
 
 
 
-## LLM RLHF Algorithm and Paper
+-  LLM RLHF Algorithm and Paper
 
   - [直接偏好优化 (DPO)](rlhf/paper/rlhf_dpo.md)
   - [直接偏好优化 (DPO) 推导](rlhf/paper/rlhf_dpo_notes.md)
