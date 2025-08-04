@@ -44,7 +44,7 @@
 - **节点**：代表一个 LLM 的分布式训练或推理任务；
 - **边**：表示节点间的数据依赖与通信，常涉及多对多的模型分片重分布（re-sharding）。
 
-由于 LLM 规模庞大，各模型通常采用不同的并行策略（如Data Parallel、流水线并行、Tensor Parallel），且在训练、推理、生成等不同阶段计算特性差异显著。因此，如何高效调度和协调这些异构任务，成为 RLHF 系统设计的关键挑战。
+由于 LLM 规模庞大，各模型通常采用不同的并行策略（如Data Parallel、Pipeline Parallel、Tensor Parallel），且在训练、推理、生成等不同阶段计算特性差异显著。因此，如何高效调度和协调这些异构任务，成为 RLHF 系统设计的关键挑战。
 
 传统 RL 框架（如 RLLib [45]、RLLib Flow [46]）采用**Single-Controller范式**：由一个中央控制器协调所有节点的执行顺序与资源分配。然而，该模式在面对 LLM 级别的复杂节点时，控制调度开销巨大，难以扩展。
 
@@ -83,11 +83,11 @@ $$
 
 ### 2.2 并行策略
 
-大型语言模型（LLM）的训练与 Server 通常采用Data Parallel（Data Parallelism, DP）、管道并行（Pipeline Parallelism, PP）和张量并行（Tensor Parallelism, TP）相结合的策略
+大型语言模型（LLM）的训练与 Server 通常采用Data Parallel（Data Parallelism, DP）、Pipeline Parallel（Pipeline Parallelism, PP）和张量并行（Tensor Parallelism, TP）相结合的策略
 
 - **Data Parallel（Data Parallelism, DP）**：将数据分片，各设备处理不同批次，此外，ZeRO [59] 和 PyTorch FSDP [57] 通过分片优化器状态、梯度与参数，进一步降低内存占用。
 
-- **流水线并行（Pipeline Parallelism, PP）**：将模型按层划分为多个阶段（stages），各阶段分布于不同设备上顺序执行；
+- **Pipeline Parallel（Pipeline Parallelism, PP）**：将模型按层划分为多个阶段（stages），各阶段分布于不同设备上顺序执行；
 
 - **Tensor Parallel（Tensor Parallelism, TP）**：将模型中的大张量（如权重矩阵）沿特定维度进行切分，使得单个设备仅需处理张量的一部分。
 
