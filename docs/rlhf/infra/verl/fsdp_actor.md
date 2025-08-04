@@ -81,4 +81,4 @@
 
 ## Notes
 
-该文件是 verl 框架 FSDP 工作器系统的核心实现，与 `verl/workers/fsdp_workers.py` 中的 `ActorRolloutRefWorker` 紧密配合。 fsdp_workers.py:618-620 它在 PPO 训练架构中扮演关键角色，负责策略网络的前向传播和参数更新。代码还支持与不同推理引擎（如 vLLM）的集成，实现训练和推理的无缝切换。
+该文件是 verl 框架 FSDP Worker系统的核心实现，与 `verl/workers/fsdp_workers.py` 中的 `ActorRolloutRefWorker` 紧密配合。 fsdp_workers.py:618-620 它在 PPO 训练架构中扮演关键角色，负责策略网络的前向传播和参数更新。代码还支持与不同推理引擎（如 vLLM）的集成，实现训练和推理的无缝切换。

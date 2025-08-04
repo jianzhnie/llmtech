@@ -4,7 +4,7 @@
 
 ## 整体概述
 
-`CriticWorker` 是基于 FSDP（Fully Sharded Data Parallel）的价值函数工作器，负责在 PPO 训练中估计状态价值并更新价值网络。 fsdp_workers.py:915-918 它继承自 `Worker` 和 `DistProfilerExtension`，支持分布式训练和性能分析。
+`CriticWorker` 是基于 FSDP（Fully Sharded Data Parallel）的价值函数Worker，负责在 PPO 训练中估计状态价值并更新价值网络。 fsdp_workers.py:915-918 它继承自 `Worker` 和 `DistProfilerExtension`，支持分布式训练和性能分析。
 
 ## 类初始化和配置
 
@@ -65,7 +65,7 @@
 
 ### init_model 方法 fsdp_workers.py:1174-1203
 
-模型初始化入口点，使用 `@register(dispatch_mode=Dispatch.ONE_TO_ALL)` 装饰器确保所有工作器同步初始化。
+模型初始化入口点，使用 `@register(dispatch_mode=Dispatch.ONE_TO_ALL)` 装饰器确保所有Worker同步初始化。
 
 ### compute_values 方法 fsdp_workers.py:1205-1227
 
@@ -99,7 +99,7 @@
 
 所有核心方法都使用 `@register` 装饰器，支持不同的分发模式：
 
-- `Dispatch.ONE_TO_ALL`：广播到所有工作器
+- `Dispatch.ONE_TO_ALL`：广播到所有Worker
 - `Dispatch.DP_COMPUTE_PROTO`：数据并行计算和收集
 
 ### 2. 内存优化策略
