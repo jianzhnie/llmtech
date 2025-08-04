@@ -472,7 +472,7 @@ def register(dispatch_mode=None, execute_mode=None, blocking=True, materialize_f
 
 - **映射表维护**：框架维护一个预定义的映射表，将 `dispatch_mode`（如 `"DP"`）映射到具体的 `dispatch function` 和 `collect function`。
 
-  - **分发函数**（`dispatch_fn`）：负责将输入数据从**单一控制器**（Single Controller）进程分发至多个工作进程（Worker Process）；
+  - **分发函数**（`dispatch_fn`）：负责将输入数据从**Single-Controller**（Single Controller）进程分发至多个工作进程（Worker Process）；
 
   - **收集函数**（`collect_fn`）：在各个工作进程完成计算后，负责将分散的结果聚合为统一输出。
 
@@ -555,7 +555,7 @@ def collect_dp_compute_data_proto(outputs: List[DataProto]) -> DataProto:
     return DataProto.concat(outputs)
 ```
 
-最终，聚合后的结果被返回给单一控制器，完成一轮分布式计算的闭环。
+最终，聚合后的结果被返回给Single-Controller，完成一轮分布式计算的闭环。
 
 #### 执行模式（Execute Mode）的调度逻辑
 
