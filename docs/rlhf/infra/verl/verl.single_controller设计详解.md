@@ -60,6 +60,44 @@ def register(dispatch_mode=Dispatch.ALL_TO_ALL, execute_mode=Execute.ALL, blocki
 
 上述代码展示了如何将`dispatch_mode`、`execute_mode`和`blocking`等参数值附加到`generate_sequences`方法上。
 
+`register` 函数是一个装饰器，用于为分布式计算方法添加元数据配置。 它允许开发者指定方法在分布式环境中的执行模式、数据分发策略和阻塞行为。
+
+- **dispatch_mode**: 数据分发模式，默认为 `Dispatch.ALL_TO_ALL`，控制数据如何分发到各个 Worker
+- **execute_mode**: 执行模式，默认为 `Execute.ALL`，控制方法在哪些 Worker 上执行
+- **blocking**: 是否阻塞执行，默认为 `True`，控制是否等待远程执行完成
+- **materialize_futures**: 是否物化 Future 对象，默认为 `True`，在执行前解析异步对象
+
+#### 装饰器实现 decorator.py:509-527
+
+装饰器的核心逻辑包括：
+
+1. **同步函数包装器（第510-514行）**: 创建 `inner` 函数处理同步方法调用
+2. **异步函数包装器（第516-520行）**: 创建 `async_inner` 函数处理异步方法调用
+3. **函数类型检测（第522行）**: 使用 `inspect.iscoroutinefunction()` 判断原函数是否为协程
+4. **元数据附加（第523-524行）**: 将配置参数作为属性附加到包装函数上
+
+#### 魔法属性机制 decorator.py:22-23
+
+使用 `MAGIC_ATTR = "attrs_3141562937"` 作为特殊属性名，避免与用户定义的属性冲突。装饰器将配置信息存储在这个属性中。
+
+#### 技术要点
+
+##### 装饰器模式和元编程
+
+`register` 函数采用装饰器模式，通过元编程技术在运行时为方法添加分布式执行能力。它不改变原函数的核心逻辑，而是添加元数据供后续的方法绑定过程使用。
+
+##### Future 对象物化机制 decorator.py:470-482
+
+`_materialize_futures` 函数处理 `DataProtoFuture` 对象的物化，确保在分发数据前所有异步对象都已解析完成。
+
+##### 分发模式系统 decorator.py:26-53
+
+支持多种预定义的分发模式，如 `DP_COMPUTE_PROTO`（数据并行计算）、`MEGATRON_COMPUTE`（Megatron 3D 并行）等，每种模式对应不同的数据分发和收集策略。
+
+##### 方法绑定集成
+
+装饰器的元数据会在 WorkerGroup 初始化时被提取和使用。 decorator.py:421-422 通过 `get_predefined_dispatch_fn` 函数获取对应的分发和收集函数。
+
 ### 第二步：初始化时绑定
 
 当封装在 `RayClassWithInitArgs` 中的 `ActorRolloutRefWorker` 被传递给 `RayWorkerGroup` 时，这些附加属性会被提取并利用。
