@@ -20,14 +20,17 @@
 ## Verl 源码分析
 
 ### 核心实现
-- [Verl 框架 Wiki](rlhf/infra/verl/Verl-wiki.md)
 - [核心算法实现](rlhf/infra/verl/core_algos.md)
-- [单控制器设计](rlhf/infra/verl/single_controller.md)
+- [Verl 单控制器设计详解](rlhf/infra/verl/verl.single_controller设计详解.md)
+- [Verl 源码解析与 Hybrid Flow 编程范式](rlhf/infra/verl/verl_design.md)
+- [Verl 中PPO 示例架构详解](rlhf/infra/verl/verl_ppo.md)
 
 ### Actor 实现
 - [FSDP Actor 实现](rlhf/infra/verl/fsdp_actor.md)
 - [FSDP Actor Worker](rlhf/infra/verl/fsdp_actor_worker.md)
 - [Megatron Actor 实现](rlhf/infra/verl/megatron_actor.md)
+- [FSDP Backend](rlhf/infra/verl/fsdp_backend.md)
+- [Megatron Backend](rlhf/infra/verl/megatron_backend.md)
 
 ### Critic 实现
 - [FSDP Critic 实现](rlhf/infra/verl/fsdp_critic.md)
