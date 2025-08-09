@@ -8,6 +8,8 @@
   - [RLHF 训练框架 NeMo-Aligner](rlhf/infra/NeMo-Aligner.md)
   - [RLHF 训练框架 DeepSpeedChat](rlhf/infra/DeepSpeedChat.md)
   - [RLHF 训练框架 OpenR](rlhf/infra/OpenR.md)
+  - [RLHF 训练框架AReaL](rlhf/infra/AReaL.md)
+  - [RLHF 训练框架 AsyncFlow](rlhf/infra/AsyncFlow.md)
   - [RLHF 训练框架 OpenRLHF](rlhf/infra/OpenRLHF.md)
   - [RLHF 训练框架 OpenRLHF 源码解读](rlhf/infra/OpenRLHF源码解读.md)
   - [RLHF 训练框架 VeRL](rlhf/infra/Verl.md)
