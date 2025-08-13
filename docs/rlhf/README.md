@@ -17,6 +17,7 @@
 - [RLHF 训练框架 VeRL 参数配置指南](rlhf/infra/Verl参数配置.md)
 - [OpenRLHF & &Verl参数转换指南](rlhf/infra/OpenRLHF&Verl参数转换指南.md)
 - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](rlhf/infra/Ray_OpenRLHF_Verl.md)
+- [Ray与LLM强化学习框架设计](rlhf/infra/Ray与LLM强化学习框架设计.md)
 
 
 ## Verl 源码分析
