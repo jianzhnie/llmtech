@@ -32,6 +32,8 @@ MPMD系统的复杂性主要在于各组件间的协调与同步。**单控制�
 
 Ray框架的核心设计使其非常适合开发基于单控制器+MPMD的程序，自然地适应了LLM强化学习的场景需求。事实上，社区已经基于Ray开发了大量强化学习框架，主要包括两种架构模式：**共置式（Task-Collocated）架构**和**分离式（Task-Separated）架构**  。
 
+![img](https://pica.zhimg.com/v2-d66a9b5e383aecdd53fe596b1c8b80c6_1440w.jpg)
+
 **共置式架构**意味着将生成阶段和训练阶段部署在同一节点上，形成时分复用系统；而**分离式架构**则允许部分或全部计算任务部署在不同设备上，形成空分复用系统  。
 
 在共置式架构中，Ray通过**资源组（Placement Group）**实现资源分割，例如在OpenRLHF框架中，可能将每个GPU的0.75分配给训练Actor，0.25分配给生成Actor，从而实现资源共享  。这种架构的优势在于减少GPU空闲时间，减少模型offload频率，同时尽量并行化不同节点的执行，提高资源利用效率  。
@@ -63,7 +65,23 @@ Ray框架的核心设计使其非常适合开发基于单控制器+MPMD的程序
 
 ### Disaggregated架构：从Offline Policy到Streaming RL
 
+
+
 近年来，**分离式架构逐渐成为主流**  。根据统计，2025年发布的主流框架如Kimi、SeedThinking-1.5、StreamRL、AReaL等均采用分离式架构，而早期的DeepSpeed-Chat、NeMo-Aligner、RLHFuse、verl等则多采用共置式架构  。
+
+| 框架             | 发布时间 | 架构                      |
+| ---------------- | -------- | ------------------------- |
+| DeepSpeed-Chat   | 2023     | Task-Collocated           |
+| NeMo-Aligner     | 2024     | Task-Collocated           |
+| RLHFuse          | 2024     | Task-Collocated           |
+| verl             | 2024     | Task-Collocated           |
+| OpenRLHF         | 2024     | Task-Separated            |
+| K1.5             | 2025     | Task-Collocated           |
+| SeedThinking-1.5 | 2025     | Task-Separated            |
+| StreamRL         | 2025     | Task-Separated            |
+| AReal            | 2025     | Task-Separated            |
+| slime            | 2025     | Task-Separated/Collocated |
+| siiRL            | 2025     | Task-Separated            |
 
 分离式架构成为主流的原因可归结为两点：**提高效率**与**降低成本**  。
 
