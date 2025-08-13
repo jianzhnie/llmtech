@@ -8,7 +8,7 @@
   - [RLHF 训练框架 NeMo-Aligner](rlhf/infra/NeMo-Aligner.md)
   - [RLHF 训练框架 DeepSpeedChat](rlhf/infra/DeepSpeedChat.md)
   - [RLHF 训练框架 OpenR](rlhf/infra/OpenR.md)
-  - [RLHF 训练框架AReaL](rlhf/infra/AReaL.md)
+  - [RLHF 训练框架 AReaL](rlhf/infra/AReaL.md)
   - [RLHF 训练框架 AsyncFlow](rlhf/infra/AsyncFlow.md)
   - [RLHF 训练框架 OpenRLHF](rlhf/infra/OpenRLHF.md)
   - [RLHF 训练框架 OpenRLHF 源码解读](rlhf/infra/OpenRLHF源码解读.md)
@@ -17,6 +17,7 @@
   - [RLHF 训练框架 VeRL 参数配置指南](rlhf/infra/Verl参数配置.md)
   - [OpenRLHF & &Verl参数转换指南](rlhf/infra/OpenRLHF&Verl参数转换指南.md)
   - [从 Ray 角度分析 OpenRLHF 和 Verl 的工程设计](rlhf/infra/Ray_OpenRLHF_Verl.md)
+  - [Ray与LLM强化学习框架设计](rlhf/infra/Ray与LLM强化学习框架设计.md)
 
 
 - Verl 源码分析
