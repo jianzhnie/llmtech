@@ -86,46 +86,21 @@
    - 指出代码中可能存在的性能问题或可改进之处，并提供优化方案。
 ```
 
-## 代码规范
-
-````markdown
-Please help me review, debug, and improve the following code. Your task includes:
-
-1. Error Checking and Correction:
-   - Identify and fix any syntax errors, logical errors, or runtime errors in the code.
-   - Explain the cause of each error and provide the corrected version.
-2. Code Refactoring:
-   - Rewrite the code to improve its structure, readability, and maintainability.
-   - Use meaningful variable and function names that reflect their purpose.
-   - Group related functions or logic into classes, modules, or sections as appropriate.
-   - Simplify complex logic or break it into smaller, reusable functions.
-   - Follow best practices for [programming language] and ensure the code adheres to PEP 8 (if Python) or relevant style guidelines.
-3. Documentation:
-   - Add clear and concise documentation (e.g., docstrings) to describe the purpose of functions, classes, and modules.
-   - Include details about parameters, return values, and any exceptions raised.
-4. Comments:
-   - Include inline comments to explain complex logic or important steps in the code.
-   - Ensure comments are meaningful and not redundant.
-5. Type Annotations:
-   - Add type hints (e.g., using `Typing` in Python) to make the code more robust and easier to understand, enable static type checking.
-   - Ensure type annotations are consistent and accurate.
-6. Optimization Suggestions:
-   - Identify any potential performance issues or inefficiencies and suggest improvements.
-   - Recommend ways to make the code more Pythonic (if applicable) or idiomatic for the language.
-7. Final Output:
-   - Provide the corrected, refactored, and fully documented code with all the above enhancements.
-   - Include a summary of changes made and explanations for key improvements.
-````
-
 ## 代码提升
 
 ```markdown
 Please help me analyze and improve the code, do following things:
-1. Fix any errors
-2. Add proper type hints
-3. Add documentation and comments
-4. Improve code structure and readability
-5. Follow best practices and coding standards
+1. Fix any errors.
+2. Add proper type hints.
+3. Add documentation and comments.
+4. Improve code structure and readability.
+5. Follow best practices and coding standards.
+```
+
+## 代码文件功能介绍与使用教程
+
+```text
+你是一位专业的软件开发与技术写作的专家。你的任务是为给定的代码文件生成一份介绍文档，该文档应包含两个主要部分：功能介绍和使用教程。
 ```
 
 ## 代码解释：
@@ -133,11 +108,11 @@ Please help me analyze and improve the code, do following things:
 ```
 你是一位经验丰富的软件开发专家，擅长清晰、准确地解释代码逻辑。请逐行（或逐段）解释以下代码的功能、实现逻辑和关键知识点。要求如下：
 
-1. **整体概述**：首先简要说明这段代码的用途和目标。
-2. **逐行/逐段解析**：对每一行或关键代码块进行详细说明，包括变量含义、函数调用、控制结构等, 标记重要代码段（行号/函数名）
-3. **技术要点**：指出其中使用的重要编程概念、算法或语言特性（如闭包、递归、异步处理等）。
-4. **潜在改进**：如有必要，可提出优化建议或常见陷阱提醒。
-5. **语言风格**：使用清晰、易懂的语言，避免过度专业术语，适合中级开发者理解。
+1. 整体概述：首先简要说明这段代码的用途和目标。
+2. 逐行/逐段解析：对每一行或关键代码块进行详细说明，包括变量含义、函数调用、控制结构等, 标记重要代码段（行号/函数名）
+3. 技术要点：指出其中使用的重要编程概念、算法或语言特性（如闭包、递归、异步处理等）。
+4. 潜在改进：如有必要，可提出优化建议或常见陷阱提醒。
+5. 语言风格：使用清晰、易懂的语言，避免过度专业术语，适合中级开发者理解。
 
 请解释以下代码：
 

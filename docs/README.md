@@ -16,4 +16,5 @@
 - 🍭[扩散模型](diffusion/)
 - 🍔[多模态](multimodal/)
 - 🍒[强化学习](rlwiki/)
+- 🔗[外部链接](links.md)
 - ⚒️[效率工具](toolbox/)
