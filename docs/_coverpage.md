@@ -10,8 +10,7 @@
 
 
 
-
-## 🎯 核心领域
+## 🎯 主要栏目
 
 - 🦙[大语言模型](aigc/)
 - 🤗[强化微调](rlhf/)
@@ -21,6 +20,7 @@
 - 🍭[扩散模型](diffusion/)
 - 🍔[多模态](multimodal/)
 - 🍒[强化学习](rlwiki/)
+- 🔗[外部链接](links.md)
 - ⚒️[效率工具](toolbox/)
 
 
@@ -33,8 +33,7 @@
 </span>
 <br>
 
-
 [💻 GitHub](https://github.com/jianzhnie)
-[👨‍💻 关于我](https://jianzhnie.github.io/)
-[🔗 友链](links.md)
+[👨‍关于我](https://jianzhnie.github.io/) 
+[🧋LLMReasoning](https://jianzhnie.github.io/LLMReasoning/)
 [📖 开始阅读](aigc/)
