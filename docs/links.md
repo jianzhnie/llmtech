@@ -1,6 +1,6 @@
 # Some links
 
-## Company Or Institution
+## 公司和研究机构
 
 |                          公司/机构                           |                 Github                 | 领域       |                             简介                             | 推荐指数 |
 | :----------------------------------------------------------: | :------------------------------------: | ---------- | :----------------------------------------------------------: | -------- |
@@ -29,9 +29,37 @@
 |         [幻方AI](https://www.high-flyer.cn/blog#ALL)         |                   -                    | 综合       |                                                              |          |
 
 
-## AIGC Blog
+## AI 资讯汇总
 
-|                          公司/机构                           | 分类                               |    推荐指数    |
+|                               Links                               | 简介                       | 推荐指数 |
+| :---------------------------------------------------------------: | -------------------------- | :------: |
+|          [GithubTrending](https://github.com/trending/)           | Github 趋势                |  🤗🤗🤗🤗🤗   |
+|     [determined.ai](https://www.determined.ai/tag/blog/blog)      | AI                         |   🤗🤗🤗🤗   |
+|              [AI Magazine](https://aimagazine.com/)               | 全球AI技术行业数字社区     |  🤗🤗🤗🤗🤗   |
+| [Aanalytics Insight](https://www.analyticsinsight.net/magazine/)  | 报告大数据项目及AI发展趋势 |   🤗🤗🤗🤗   |
+|              [AI Trends](https://www.aitrends.com/)               | 专注企业AI业务与技术       |   🤗🤗🤗🤗   |
+| [WIRED UK](https://www.wired.co.uk/topic/artificial-intelligence) | 知名技术网站AI专题         |   🤗🤗🤗    |
+|        [AI News](https://artificialintelligence-news.com/)        | 提供最新AI新闻和趋势       |   🤗🤗🤗🤗   |
+|  [MIT News](https://news.mit.edu/topic/artificial-intelligence2)  | 麻省理工AI技术新闻         |   🤗🤗🤗🤗   |
+|    [MIT Technology Review](https://www.technologyreview.com/)     | 权威科技资讯平台           |  🤗🤗🤗🤗🤗   |
+|           [BAIR Blog](https://bair.berkeley.edu/blog/)            | 伯克利AI研究博客           |   🤗🤗🤗    |
+|     [Analytics Vidhya](https://www.analyticsvidhya.com/blog/)     | 数据科学家博客             |   🤗🤗🤗🤗   |
+|      [Towards Data Science](https://towardsdatascience.com/)      | 数据科学交流平台           |  🤗🤗🤗🤗🤗   |
+|              [KDnuggets](https://www.kdnuggets.com/)              | AI和大数据权威来源         |   🤗🤗🤗🤗   |
+|           [MarkTechPost](https://www.marktechpost.com/)           | 机器学习研究资讯           |   🤗🤗🤗    |
+|            [DeepMind Blog](https://deepmind.com/blog)             | DeepMind最新研究动态       |   🤗🤗🤗🤗   |
+|             [Towards AI](https://pub.towardsai.net/)              | AI教育内容开放平台         |    🤗🤗    |
+|              [ML CMU Blog](https://blog.ml.cmu.edu/)              | 卡内基梅隆机器学习博客     |   🤗🤗🤗    |
+|                   [OpenAI](https://openai.com/)                   | AI研究和部署公司           |    🤗🤗    |
+|                  [Distill](https://distill.pub/)                  | 机器学习研究可视化平台     |    🤗🤗    |
+|      [Apple ML Journal](https://machinelearning.apple.com/)       | 苹果机器学习研究           |    🤗🤗    |
+|           [Google AI Blog](https://ai.googleblog.com/)            | 谷歌AI研究博客             |   🤗🤗🤗    |
+
+
+
+## Personal AI Blog
+
+|                          Blog Links                          | 分类                               |    推荐指数    |
 | :----------------------------------------------------------: | ---------------------------------- | :------------: |
 | [TheGradient](https://thegradient.pub/) | AI | 🤗🤗🤗🤗🤗 |
 | [LLM Parallelism](https://insujang.github.io/) | 大模型并行技术 | 🤗🤗🤗🤗 |

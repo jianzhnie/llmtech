@@ -54,9 +54,6 @@
 - [QLora: Efficient Finetuning of Quantized LLMs](aigc/quantization/qlora.md)
 - [QLora 源码分析](aigc/quantization/qlora_usage.md)
 
-## AI News and Blogs
-
-- [Top AI Blogs and Websites](aigc/ai-news.md)
 
 ## Tools
 
