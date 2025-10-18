@@ -34,7 +34,6 @@
 |                               Links                               | 简介                       | 推荐指数 |
 | :---------------------------------------------------------------: | -------------------------- | :------: |
 |          [GithubTrending](https://github.com/trending/)           | Github 趋势                |  🤗🤗🤗🤗🤗   |
-|     [determined.ai](https://www.determined.ai/tag/blog/blog)      | AI                         |   🤗🤗🤗🤗   |
 |              [AI Magazine](https://aimagazine.com/)               | 全球AI技术行业数字社区     |  🤗🤗🤗🤗🤗   |
 | [Aanalytics Insight](https://www.analyticsinsight.net/magazine/)  | 报告大数据项目及AI发展趋势 |   🤗🤗🤗🤗   |
 |              [AI Trends](https://www.aitrends.com/)               | 专注企业AI业务与技术       |   🤗🤗🤗🤗   |
@@ -46,9 +45,7 @@
 |      [Towards Data Science](https://towardsdatascience.com/)      | 数据科学交流平台           |  🤗🤗🤗🤗🤗   |
 |              [KDnuggets](https://www.kdnuggets.com/)              | AI和大数据权威来源         |   🤗🤗🤗🤗   |
 |           [MarkTechPost](https://www.marktechpost.com/)           | 机器学习研究资讯           |   🤗🤗🤗    |
-|            [DeepMind Blog](https://deepmind.com/blog)             | DeepMind最新研究动态       |   🤗🤗🤗🤗   |
 |             [Towards AI](https://pub.towardsai.net/)              | AI教育内容开放平台         |    🤗🤗    |
-|                  [Distill](https://distill.pub/)                  | 机器学习研究可视化平台     |    🤗🤗    |
 
 
 
@@ -56,6 +53,7 @@
 
 |                          Blog Links                          | 分类                               |    推荐指数    |
 | :----------------------------------------------------------: | ---------------------------------- | :------------: |
+|                  [Distill](https://distill.pub/)                  | 机器学习研究可视化平台     |    🤗🤗    |
 | [TheGradient](https://thegradient.pub/) | AI | 🤗🤗🤗🤗🤗 |
 | [LLM Parallelism](https://insujang.github.io/) | 大模型并行技术 | 🤗🤗🤗🤗 |
 | [determined.ai](https://www.determined.ai/tag/blog/blog) | AI | 🤗🤗🤗🤗 |
