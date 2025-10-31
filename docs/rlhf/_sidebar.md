@@ -61,6 +61,7 @@
   - [Chip Huyen 对 RLHF 的分析](rlhf/intro/rlhf_chiphuyen.md)
   - [RLHF 相关知识整理](rlhf/intro/rlhf_overview.md)
   - [RLHF 中的 Policy Gradient Algorithms](rlhf/intro/rlhf_policy_gradient.md)
+  - [浅谈 GRPO 的系列改进（From GRPO to DAPO and GSPO）](rlhf/intro/grpo-to-dapo-and-gspo.md)
   - [KL 散度的近似计算](rlhf/intro/KL散度的近似计算方法.md)
 
 - LLM RLHF Algorithm and Paper
