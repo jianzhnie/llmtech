@@ -417,8 +417,76 @@ Dr.GRPO 对于 逐Token Loss 的处理方式 和 DAPO 的 Token-Level 对比.
 
 ## CISPO
 
+## ASPO
 
+### 策略损失函数分析
+
+#### 1. `compute_policy_loss_vanilla` 函数（PPO 基础和 Dual-Clip PPO）
+
+这个函数实现了标准的 **PPO 剪切目标（Clipped Objective）**，并加入了 **Dual-Clip PPO** 的逻辑。
+
+- **核心逻辑：**
+  1. 计算重要性采样的比率 $r_t = \frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)} = \exp(\log\pi_{\theta} - \log\pi_{\theta_{old}})$。
+  2. 计算原始策略梯度损失项 $\text{Loss}_1 = -r_t \hat{A}_t$。
+  3. 计算剪切策略梯度损失项 $\text{Loss}_2 = -\text{clip}(r_t, 1-\epsilon, 1+\epsilon) \hat{A}_t$。
+  4. 标准 PPO 目标是 $\text{Loss}_{\text{PPO}} = \max(\text{Loss}_1, \text{Loss}_2)$，即取 $\min(r_t \hat{A}_t, \text{clip}(r_t, 1-\epsilon, 1+\epsilon) \hat{A}_t)$。
+  5. **Dual-Clip PPO（双重剪切）：** 引入了额外的剪切项 $\text{Loss}_3 = -\text{clip\_ratio\_c} \cdot \hat{A}_t$（其中 $\text{clip\_ratio\_c} > 1.0$）。
+     - 当 **优势估计 $\hat{A}_t < 0$**（即当前动作不好）时，策略损失目标变为 $\text{Loss}_{\text{Dual-Clip}} = \min(\text{Loss}_{\text{PPO}}, \text{Loss}_3)$。这进一步限制了损失的最小化（即策略的更新），**避免在新策略下不好的动作的概率被过度降低**。
+- **输入参数：** 使用统一的 $\text{clip\_ratio}$，并可选择性地使用 $\text{clip\_ratio\_low}$、$\text{clip\_ratio\_high}$ 进行不对称剪切，以及 $\text{clip\_ratio\_c}$ 用于 Dual-Clip。
+
+#### 2. `compute_policy_loss_archer` 函数（ARCHER 策略优化）
+
+`compute_policy_loss_archer` 引入了 **ARCHER (Adaptive Reward-Conditioned High-Entropy Regularization)** 的策略优化思想。它主要体现在 **动态剪切范围** 和 **基于优势符号的损失分离处理** 两个方面。
+
+- **实现优化的具体改变：**
+
+#### 🚀 改变 1: 引入基于熵（Entropy）的 **动态剪切范围**
+
+函数引入了 **`high_entropy_mask`** 和四个不同的剪切参数：
+
+- `negative_low_entropy_clip_ratio_low`
+- `negative_high_entropy_clip_ratio_low`
+- `positive_low_entropy_clip_ratio_high`
+- `positive_high_entropy_clip_ratio_high`
+
+它根据 **优势 $\hat{A}_t$ 的符号** 和 **`high_entropy_mask`** 动态地计算 $\text{clip\_ratio}$：
+
+| **优势符号 (A^t)**       | **high_entropy_mask** | **剪切范围 (Ratio rt)**       | **参数**                                                     | **目的**                                                     |
+| ------------------------ | --------------------- | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **负 ($\hat{A}_t < 0$)** | True (高熵)           | $[1 - \mathbf{L}_N, \infty)$  | $\mathbf{L}_N = \text{negative\_low\_entropy\_clip\_ratio\_low}$ | 相对保守地降低 $r_t$ 的下限。                                |
+| **负 ($\hat{A}_t < 0$)** | False (低熵)          | $[1 - \mathbf{H}_N, \infty)$  | $\mathbf{H}_N = \text{negative\_high\_entropy\_clip\_ratio\_low}$ | 积极地降低 $r_t$ 的下限，**允许更大的负向更新**（即更大幅度地降低不好的动作的概率）。 |
+| **正 ($\hat{A}_t > 0$)** | True (高熵)           | $(-\infty, 1 + \mathbf{L}_P]$ | $\mathbf{L}_P = \text{positive\_low\_entropy\_clip\_ratio\_high}$ | 相对保守地提高 $r_t$ 的上限。                                |
+| **正 ($\hat{A}_t > 0$)** | False (低熵)          | $(-\infty, 1 + \mathbf{H}_P]$ | $\mathbf{H}_P = \text{positive\_high\_entropy\_clip\_ratio\_high}$ | 积极地提高 $r_t$ 的上限，**允许更大的正向更新**（即更大幅度地增加好的动作的概率）。 |
+
+**优化效果：** 这是一个 **自适应的策略更新**。
+
+- 对于 **低熵**（即策略分布较集中，可能更确定或更自信）的动作，允许使用 **更大的 $\epsilon$**（即 $\mathbf{H}_N$ 和 $\mathbf{H}_P$ 通常大于 $\mathbf{L}_N$ 和 $\mathbf{L}_P$），使得策略更新可以更激进。
+- 对于 **高熵**（即策略分布较分散，可能更不确定）的动作，使用 **更小的 $\epsilon$**，使得策略更新更保守，以维持探索。
+
+#### 🚀 改变 2: 基于优势符号的 **策略损失项分离处理**
+
+函数将策略损失项 **根据 $\hat{A}_t$ 的符号** 分为 $\text{negative\_pg\_losses}$ 和 $\text{positive\_pg\_losses}$ 两部分，并分别处理 Dual-Clip 逻辑。
+
+- **优势 $\hat{A}_t < 0$ (负向更新):**
+  - `negative_pg_losses_clip`：使用动态 $\text{negative\_clip\_ratio}$ 的 PPO 剪切项。
+  - 引入 $\text{negative\_dual\_clip\_ratio} = \min(\text{negative\_clip\_ratio}, \text{negative\_clip\_ratio\_c})$。
+  - `negative_pg_losses_dual`：**当 $\text{negative\_clip\_ratio} > \text{negative\_clip\_ratio\_c}$ 时激活**。
+  - **不同之处：** `compute_policy_loss_vanilla` 的 Dual-Clip 项是 $-\hat{A}_t \cdot \text{clip\_ratio\_c}$，而 `compute_policy_loss_archer` 的 Dual-Clip 项是 **$-\hat{A}_t \cdot \text{negative\_dual\_clip\_ratio.detach()} \cdot \log\pi$**，这看起来是一个不同的实现，它结合了 $\text{negative\_dual\_clip\_ratio}$ 和 $\log\pi$。
+- **优势 $\hat{A}_t > 0$ (正向更新):**
+  - `positive_pg_losses_clip`：使用动态 $\text{positive\_clip\_ratio}$ 的 PPO 剪切项。
+  - 引入 $\text{positive\_dual\_clip\_ratio} = \min(1 / \text{positive\_clip\_ratio}, \text{positive\_clip\_ratio\_c})$。
+  - `positive_pg_losses_dual`：**当 $1 / \text{positive\_clip\_ratio} > \text{positive\_clip\_ratio\_c}$ 时激活**。
+  - **不同之处：** 为正向优势引入了一个 **Dual-Clip 机制**，但这里的实现逻辑比较复杂，似乎是在 $\text{clip}(1/r_t, 1, \text{clip\_ratio\_c})$ 上进行操作，而不是在 $r_t$ 上，这进一步限制了 $r_t$ 的上限，**避免过度增加好的动作的概率**。
+
+#### 优化总结
+
+`compute_policy_loss_archer` 函数主要实现了以下优化：
+
+1. **分段式、自适应剪切（Entropy-Conditioned Clipping）：** 根据动作的 **熵水平** 和 **优势符号** 动态调整 PPO 的剪切范围 ($\epsilon$。这使得策略在不确定（高熵）的动作上更新保守，在确定（低熵）的动作上更新激进，从而平衡探索和利用。
+2. **正负优势的 Dual-Clip 分离：** 提供了独立的 $\text{negative\_clip\_ratio\_c}$ 和 $\text{positive\_clip\_ratio\_c}$，用于分别控制负向更新和正向更新的 Dual-Clip 行为，实现更精细的策略控制。
+3. **对正向更新的限制：** 引入了一种 **针对 $\hat{A}_t > 0$ 的 Dual-Clip 机制**，旨在防止新策略过度偏离旧策略，即使是在有利的动作上，这有助于提高训练稳定性。
 
 ## Reference：
 
 - https://huggingface.co/blog/NormalUhr/grpo-to-dapo-and-gspo
+- https://rogue-canopy-54a.notion.site/ASPO-Asymmetric-Importance-Sampling-Policy-Optimization-2650e4c8c16a8034a5d3dfec358c9021
