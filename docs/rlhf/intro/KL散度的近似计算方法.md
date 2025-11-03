@@ -25,6 +25,7 @@ $$
 ## 常见的KL散度估计量
 
 假设我们可以从分布 $q$ 中独立采样得到样本 $\{x_1, x_2, \dots, x_N\}$，目标是构造 $KL[q, p]$ 的估计量。一个理想的估计量应具备以下特性：
+
 - **无偏性**：估计量的期望等于真实KL值。
 - **低方差**：估计结果稳定，减少采样噪声的影响。
 
@@ -57,6 +58,7 @@ D_f(p, q) = \mathbb{E}_{x \sim q} \left[ f\left( \frac{p(x)}{q(x)} \right) \righ
 $$
 
 其中 $f: \mathbb{R}^+ \to \mathbb{R}$ 是一个凸函数，且 $f(1) = 0$。KL散度本身是 $f$-散度的特例：
+
 - $KL[q, p]$ 对应 $f(x) = -\log x$
 - $KL[p, q]$ 对应 $f(x) = x \log x$
 
@@ -89,6 +91,7 @@ k_3 = (r - 1) - \log r
 $$
 
 该估计量具有以下优点：
+
 - **无偏性**：$\mathbb{E}_q[k_3] = KL[q, p]$
 - **非负性**：由不等式 $\log x \leq x - 1$ 可知 $k_3 \geq 0$
 - **几何解释**：$k_3$ 是凸函数 $-\log x$ 与其在 $x=1$ 处切线 $-(x-1)$ 之间的垂直距离，属于 **Bregman散度** 的特例。
@@ -104,11 +107,13 @@ $$
 该式表示凸函数 $f(x)$ 与其在 $x=1$ 处切线之间的差距。
 
 - 对于 $KL[p, q]$，$f(x) = x \log x$，$f'(1) = 1$，因此估计量为：
+
   $$
   r \log r - (r - 1)
   $$
 
 - 对于 $KL[q, p]$，$f(x) = -\log x$，$f'(1) = -1$，因此估计量为：
+
   $$
   (r - 1) - \log r \quad (\text{即 } k_3)
   $$
@@ -181,5 +186,6 @@ for name, k in zip(['k1', 'k2', 'k3'], [k1, k2, k3]):
 ---
 
 **参考文献**：
+
 - Joschu's Blog: [KL Approximation](http://joschu.net/blog/kl-approx.html)
 - 知乎专栏: [KL散度的近似与估计](https://zhuanlan.zhihu.com/p/25208314999)
