@@ -11,10 +11,34 @@
 5. 为什么 GRPO 的逐Token重要性采样在 MoE 架构中产生巨大方差。
 6. GSPO 如何用Sequence-Level优化替换Token-Level优化，从根本上提高稳定性和效率。
 
+
+
+## PPO 回顾
+
+PPO [Schulman et al., 2017] 是目前 RL 领域，尤其是 RLHF（Reinforcement Learning from Human Feedback）中应用最广泛的算法之一。它属于“行动者-评论家（Actor-Critic）”框架，通过优化一个“裁剪后（clipped）”的替代目标函数来提升策略的稳定性。其核心思想是在鼓励策略向好的方向更新的同时，通过一个裁剪超参数 $ \epsilon $ 来限制新旧策略之间的差距，防止因单步更新过大而导致训练崩溃。
+
+PPO 的目标函数可以表示为：
+$$
+ J^{PPO}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta)\hat{A}_t, \text{clip}(r_t(\theta), 1 - \epsilon, 1 + \epsilon)\hat{A}_t \right) \right]
+$$
+其中：
+
+- $ r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)} $ 是新旧策略在状态 $ s_t $ 下采取动作 $ a_t $ 的概率比。
+- $ \hat{A}_t $ 是在时间步 $ t $ 的优势函数估计值，通常使用广义优势估计（GAE, Generalized Advantage Estimation）[Schulman et al., 2018] 计算得出。它表示在当前状态下，采取某个动作比平均水平好多少。
+- $ \text{clip} $ 函数将概率比限制在 $ [1 - \epsilon, 1 + \epsilon] $ 区间内。
+
+这个 $ \min $ 操作是 PPO 的精髓：
+
+- 当优势 $ \hat{A}_t > 0 $（即这是一个好动作）时，目标函数变为 $ \min(r_t(\theta)\hat{A}_t, (1 + \epsilon)\hat{A}_t) $。这鼓励我们增大 $ r_t(\theta) $，但增幅被 $ 1 + \epsilon $ 限制，防止策略更新过于激进。
+- 当优势 $ \hat{A}_t < 0 $（即这是一个坏动作）时，目标函数变为 $ \max(r_t(\theta)\hat{A}_t, (1 - \epsilon)\hat{A}_t) $（因为 $ \hat{A}_t $ 为负，所以 min 变成了 max）。这鼓励我们减小 $ r_t(\theta) $，但减幅被 $ 1 - \epsilon $ 限制，同样是为了稳定。
+
+
+
 ## GRPO 回顾
 
-GRPO 的训练目标是：
+GRPO [Shao et al., 2024] 是DeepSeek在训练其数学大模型DeepSeekMath时提出的一种方法。它对PPO进行了简化和改进，核心特点是**去掉了价值网络（Critic）**，直接通过对同一提示（prompt）产生的多个输出（responses）的奖励进行归一化来估计优势。
 
+GRPO 的训练目标是：
 $$
 J_{\text{GRPO}}(\theta) = \mathbb{E}_{q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(O \mid q)} \left[ \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \left( \min \left( r_{i,t}(\theta) A_i, \text{clip}(r_{i,t}(\theta), 1-\varepsilon, 1+\varepsilon) A_i \right) - \beta \, D_{\text{KL}}(\pi_{\theta} \parallel \pi_{\text{ref}}) \right) \right]
 $$
@@ -400,7 +424,7 @@ GFPO 的代价是训练时更高的采样开销，因为需要生成和评估比
 
 LitePPO并非一个全新的算法，而是对现有PPO框架中各种技术进行严格解构和评估后的产物。其研究方法论的核心是，在一个统一的开源框架下，独立地评估每种技术（如不同的归一化策略、截断方法、损失聚合粒度等）的实际影响，从而避免了因实验设置、数据分布或模型初始化的不一致而导致的混淆结论。这项工作揭示了大多数RL技术对实验设置（如模型类型、数据难度、奖励机制）具有明显的偏好和敏感性，从而为从业者提供了清晰的应用指南。
 
-#### 极简组合
+### 极简组合
 
 研究最终发现，一个仅由两种关键技术组成的极简组合，应用于一个无评论家的、使用vanilla PPO损失的框架，就能够稳定地提升性能，甚至超越GRPO和DAPO等更复杂的策略。这两个核心技术是：
 
@@ -412,11 +436,13 @@ LitePPO并非一个全新的算法，而是对现有PPO框架中各种技术进�
 
    - **原理**: 这种聚合方式确保了每个token对总损失的贡献是均等的。这对于训练基础模型（base models）尤为重要，因为基础模型需要从长而复杂的正确推理链中充分学习知识，而token级聚合可以克服序列级聚合中存在的“长度偏差”问题（即长序列中单个token的信号被稀释）。
 
-#### 简化框架的性能
+### 简化框架的性能
 
 LitePPO的价值在于其“少即是多”的哲学。实验结果表明，这个仅包含两种精心选择的技术的简化框架，在多种模型和数据集上，其性能持续优于集成了多种复杂技术的GRPO和DAPO。这一发现挑战了当前RL流程过度工程化的趋势，并强调了根据具体环境（如模型是否对齐、数据难度等）自适应地选择技术的重要性，而不是盲目堆砌所有看似有用的“技巧”。
 
 ## CISPO
+
+##
 
 ## 策略优化算法的比较分析
 
