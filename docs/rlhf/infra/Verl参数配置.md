@@ -345,7 +345,7 @@ custom_reward_function:
 
 
 
-### (Algorithm) 算法配置
+### 算法配置 (Algorithm)
 
 ```yaml
 algorithm:
@@ -392,7 +392,7 @@ algorithm:
 - `rollout_is_veto_threshold`: RIS权重的veto阈值。默认为null，表示不启用veto。
 
 
-### 训练器Trainer配置
+### 训练器配置 (Trainer)
 
 ```yaml
 trainer:
@@ -468,7 +468,7 @@ custom_reward_function:
 
 
 
-## SFT训练配置（FSDP后端）
+## SFT 训练配置（FSDP后端）
 
 ```yaml
 optim:
