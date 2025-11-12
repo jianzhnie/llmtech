@@ -21,7 +21,7 @@
   - [Ray与LLM强化学习框架设计](rlhf/infra/Ray与LLM强化学习框架设计.md)
 
 
-## Verl 源码分析
+- Verl 源码分析
 
   - [核心算法实现](rlhf/infra/verl/core_algos.md)
   - [Verl 单控制器设计详解](rlhf/infra/verl/verl.single_controller设计详解.md)
