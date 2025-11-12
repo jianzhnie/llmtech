@@ -21,7 +21,7 @@ $$
 
 此处我们使用 $\pi_{\text{sampler}}$ 表示搭载推理引擎（如 vLLM、SGLang）的模型，$\pi_{\text{learner}}$ 表示使用训练后端（如 FSDP、Megatron）实例化的同模型。若无特别说明，我们的实验均采用 vLLM 作为采样器后端、FSDP 作为训练器后端。
 
-实验中观察到意外的 **rollout 训练失配现象**。如图 1 所示，尽管 $\pi_{\text{fsdp}}$ 与 $\pi_{\text{vlm}}$ 共享相同模型参数 $\theta$，它们却可能生成显著不同的Token概率。对于某些特定Token $a$，甚至会产生相互矛盾的预测结果，即 $\pi_{\text{vlm}}(a, \theta) = 1$ 与 $\pi_{\text{fsdp}}(a, \theta) = 0$。这种异常行为隐式破坏了同策略假设，实质上使 On-Policy 强化学习训练悄然转变为异策略模式。
+实验中观察到意外的 **rollout 训练失配现象**, 尽管 $\pi_{\text{fsdp}}$ 与 $\pi_{\text{vlm}}$ 共享相同模型参数 $\theta$，它们却可能生成显著不同的Token概率。对于某些特定Token $a$，甚至会产生相互矛盾的预测结果，即 $\pi_{\text{vlm}}(a, \theta) = 1$ 与 $\pi_{\text{fsdp}}(a, \theta) = 0$。这种异常行为隐式破坏了同策略假设，实质上使 On-Policy 强化学习训练悄然转变为异策略模式。
 
 ### 优化驱动的恶性循环
 
@@ -40,7 +40,7 @@ $$
 
 ### 使用 FP32 lm_head
 
-受 *Minimax-M1* 技术报告及博客文章《你的高效 RL 框架正在悄悄进行离线策略训练》启发，我们通过修改 vLLM 将 lm_head 转换为 fp32 精度。但在实验中，修补后失配问题依然存在，模型崩溃仍不可避免。
+受 *Minimax-M1* 技术报告及博客文章 [《Your Efficient RL Framework Secretly Brings You Off-Policy RL Training》](https://fengyao.notion.site/off-policy-rl)启发，我们通过修改 vLLM 将 lm_head 转换为 fp32 精度。但在实验中，修补后失配问题依然存在，模型崩溃仍不可避免。
 
 ### 禁用分块预填充
 
@@ -54,7 +54,16 @@ VeRL 官方提供的 DAPO 方案指出，启用 CUDA 图（`enforce_eager=False`
 
 ### 重要性采样
 
-当直接对目标分布下的期望值进行蒙特卡洛估计较为困难时，重要性采样允许我们从替代分布中进行抽样。在我们的场景中，目标分布是 $\pi_{\text{learner}}$，但从中抽样极其缓慢。使用独立后端（如 vLLM）进行轨迹生成意味着我们实际上是从 $\pi_{\text{sampler}}$ 进行抽样。此时通过重要性权重对每个样本进行加权修正偏差：
+当直接对目标分布下的期望值进行蒙特卡洛估计较为困难时，重要性采样允许我们从替代分布中进行抽样。在上面描述的强化学习场景中，目标分布是 $\pi_{\text{learner}}$，但从中抽样极其缓慢。使用独立后端（如 vLLM）进行轨迹生成意味着我们实际上是从 $\pi_{\text{sampler}}$ 进行抽样。此时通过重要性权重对每个样本进行加权修正偏差：
+
+
+$$
+\mathbb{E}_{a \sim \textcolor{blue}{\pi_{\text{learner}}}(\theta)} [R(a)]
+= \mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta)} \left[
+\underbrace{\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta)}}_{\tiny\text{importance ratio}} \cdot R(a)
+\right].
+$$
+
 
 ### 解耦式 PPO
 
