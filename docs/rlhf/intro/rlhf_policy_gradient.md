@@ -16,6 +16,7 @@ $$ {#eq:return_definition}
 回报的定义也可以递归地表示为：
 
 $$
+
 G_{t} = \gamma{G_{t+1}} + R_{t+1}.
 $$ {#eq:recursive_return}
 基于这个回报，可以学习一个价值函数 $ V(s) $，该函数是给定当前状态下的未来回报估计：
@@ -28,6 +29,7 @@ $$ {#eq:value_function}
 假设策略 $ \pi(s) $诱导的状态平稳分布为 $ d_\pi(s) $，优化目标定义为：
 
 $$
+
 J(\theta) = \sum_{s} d_\pi(s) V_\pi(s),
 $$ {#eq:policy_objective}
 策略梯度算法的核心是计算当前策略下的有限时间期望回报的梯度。有了这个期望回报 $ J $，梯度可以按照以下方式计算，其中 $ \alpha $是学习率：
@@ -38,6 +40,7 @@ $$ {#eq:policy_update}
 核心实现细节是如何计算这个梯度。Schulman 等人 2015 年综述了策略梯度的多种计算方法[3]。目标是估计精确梯度 $ g := \nabla_\theta \mathbb{E}[\sum_{t=0}^\infty r_t] $，其存在多种形式，例如
 
 $$
+
 g = \mathbb{E}\Big[\sum_{t=0}^\infty \Psi_t \nabla_\theta \text{log} \pi_\theta(a_t|s_t) \Big],
 $$ {#eq:general_gradient}
 其中 $ \Psi_t $可以是以下形式（奖励也可以通过 $ \gamma $进行折扣）：
@@ -63,6 +66,7 @@ $$ {#eq:advantage_trick}
 原始策略梯度的实现通过关于策略参数的微分来优化上述 $ J(\theta) $的表达式。基于整体回报的简化版本为：
 
 $$
+
 \nabla_\theta J(\pi_\theta) = \mathbb{E}_\tau \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t|s_t) R_t \right]
 $$ {#eq:vanilla_policy_gradient}
 原始策略梯度算法的常见问题是梯度更新方差过高，可通过多种方式缓解。为此常采用价值估计归一化技术（称为基线），通过状态价值相对于后续动作的标准化实现（如优势函数即 Q 值与状态价值的差值）。最简单的基线是批次奖励均值或滑动平均，即使此类基线也能消除梯度偏差，使得 $ \mathbb{E}_{a \sim \pi(a|s)}[\nabla_\theta \log \pi_\theta(a|s)] = 0 $，从而显著提高学习信号。
@@ -74,6 +78,7 @@ $$
 $$ {#eq:advantage_policy_gradient}
 策略梯度实现的核心环节涉及概率策略的求导运算，其源于：
 $$
+
 \nabla_\theta \log \pi_\theta(a|s) = \frac{\nabla_\theta \pi_\theta(a|s)}{\pi_\theta(a|s)}
 $$ {#eq:log_prob_derivative}
 这是从链式法则推导出来的：
@@ -98,6 +103,7 @@ REINFORCE 算法很可能是一个逆向首字母缩写词，但其代表的算�
 因此，其形式看起来相当熟悉：
 
 $$
+
 \Delta_\theta = \alpha(r - b)e
 $$ {#eq:REINFORCE_BASIC}
 用更现代的符号和广义回报 $ G $，REINFORCE算子表示为：
@@ -108,6 +114,7 @@ $$ {#eq:REINFORCE_with_baseline}
 这里，值 $ G_t - b(s_t) $是当前状态下策略的优势，因此我们可以因此我们可以用优势函数将策略梯度重新表述为下面形式：
 
 $$
+
 \nabla_{\theta}\,J(\theta) = \mathbb{E}_{\tau \sim \pi_{\theta}}\Big[ \sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}(a_t \mid s_t)\,A_t \Big],
 $$ {#eq:REINFORCE_with_advantage}
 REINFORCE是原始策略梯度的一个具体实现，它使用蒙特卡洛估计器来估计梯度。
@@ -128,6 +135,7 @@ $$ {#eq:RLOO_baseline}
 从而得出优势：
 
 $$
+
 A(s, a_k) = R(s, a_k) - b(s, a_k).
 $$ {#eq:RLOO_advantage}
 等价地，这可以表示为：
@@ -145,6 +153,7 @@ $$ {#eq:RLOO_advantage_alt}
 
 近端策略优化（PPO）[7]是深度强化学习取得突破性成果的基础算法之一（如 OpenAI 的 DOTA 5[8]及大量研究成果）。其单样本损失函数如下：
 $$
+
 J(\theta) = \min\left(\frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)}A, \text{clip} \left( \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)}, 1-\varepsilon, 1+\varepsilon \right) A \right).
 $$ {#eq:PPO_EQN}
 对于语言模型而言，损失是按每个token计算的，这直观上可以理解为如何计算自回归预测整个序列的概率——通过概率的乘积来实现。由此出发，常见的实现方式是采用对数概率，这使得计算变得更为可行。
@@ -167,6 +176,7 @@ $$ {#eq:PPO_POL_RATIO}
 第一种情况是当优势为正且策略比率超过 $ 1+\varepsilon $（意味着新策略更有可能采取该动作），时，该比率会被截断，此时目标函数变为：
 
 $$
+
 J(\theta) = \min \left(R(\theta), (1 + \varepsilon)\right)A = (1 + \varepsilon)A
 $$ {#eq:PPO_CASE1}
 这将增加概率比率，使动作更有可能发生，但仅限在clip 参数ε范围内。类似情况还包括优势函数仍为正时，但似然比发生了偏移。
@@ -179,6 +189,7 @@ $$ {#eq:PPO_CASE2}
 这简化为
 
 $$
+
 J(\theta) = R(\theta)A
 $$ {#eq:PPO_CASE3}
 由于小于假设。
@@ -193,6 +204,7 @@ $$ {#eq:PPO_CASE4}
 因为 $ A<0 $，我们有 $ R(\theta)A > (1-\varepsilon)A $，并且在从方程中提取 A 时可以将最小值转换为最大值，因此上式等价于
 
 $$
+
 J(\theta) = \max \left(R(\theta), (1 - \varepsilon)\right)A.
 $$ {#eq:PPO_CASE5}
 然后目标变为：
@@ -215,6 +227,7 @@ GRPO通过简化价值估计并为每个token分配相同的值来实现这一�
 
 从形式化角度表述，GRPO 目标函数与前述 PPO 目标函数高度相似。对于 GRPO 而言，其损失函数是在给定问题  $ s $的一组响应 $ \{a_1, a_2, ..., a_G\} $上累积的：
 $$
+
 J(\theta) = \frac{1}{G}\sum_{i=1}^G \left(\min\left(\frac{\pi_\theta(a_i|s)}{\pi_{\theta_{old}}(a_i|s)}A_i, \text{clip} \left( \frac{\pi_\theta(a_i|s)}{\pi_{\theta_{old}}(a_i|s)}, 1-\varepsilon, 1+\varepsilon \right) A_i \right) - \beta D_{KL}(\pi_\theta||\pi_{ref})\right).
 $$ {#eq:GRPO}
 与上述类似，我们可以将其扩展为按token计算的损失：
@@ -225,6 +238,7 @@ $$ {#eq:GRPO_token}
 需要注意的是，相对于 PPO 算法，GRPO 的标准实现会在损失函数中加入 KL 散度项。对于 completion 索引 $ i $的优势计算为：
 
 $$
+
 A_i = \frac{r_i - \text{mean}({r_1, r_2, \cdots, r_G})}{\text{std}({r_1, r_2, \cdots, r_G})}.
 $$ {#eq:GRPO_ADV}
 直观而言，GRPO 更新机制通过批量比较单个问题下的多个答案进行学习。模型会逐渐趋近于被标记为正确的答案，而远离其他答案。这是一种计算优势值的简易方法——优势值用于衡量特定动作在给定状态下优于平均水平的程度。相较于 PPO、REINFORCE 及普遍采用奖励模型评分（相对于输出奖励）的 RLHF 方法，GRPO 通常对每个提示词会采样更多样本。具体表现为：当前策略针对给定提示生成多个响应，而分组 GRPO 优势估计则能从中获取有价值的上下文信息。
@@ -245,6 +259,7 @@ $$ {#eq:RLOO_ADV_AGAIN}
 因此，如果我们将Dr. GRPO优势定义乘以 $ \frac{G}{G-1} $，我们可以看到一个缩放后的等价性：
 
 $$
+
 \begin{aligned}
 \frac{G}{G-1} \tilde{A}_i &= \frac{G}{G-1} \left( r_i - \frac{1}{G}\sum_{j=1}^G r_j \right) \\
 &= \frac{G}{G-1} r_i - \frac{1}{G-1} \sum_{j=1}^G r_j \\
@@ -288,7 +303,7 @@ pg_loss = -advantages * ratio
 
 情形 3：优势值为零，因此无需更新。损失为零，保持策略模型不变。
 
-###  Entropy
+### Entropy
 
 熵是衡量概率分布不确定性的一个指标，值越大表示分布越均匀（不确定性越高），值越小表示分布越集中（不确定性越低）。熵函数在机器学习中经常用于：
 
@@ -364,11 +379,13 @@ entropy = torch.logsumexp(logits, dim=-1) - torch.sum(pd * logits, dim=-1)
 对于一个有 n 个可能结果的离散概率分布，熵的最大值是 log(n)。
 
 这是因为：
+
 1. 当所有结果概率相等时（即均匀分布），熵达到最大值
 2. 对于 n 个等概率事件，每个事件的概率是 1/n
 3. 代入熵的公式：H = -∑(1/n)log(1/n) = log(n)
 
 例如：
+
 - 对于二分类问题（n=2），最大熵是 log(2) ≈ 0.693
 - 对于三分类问题（n=3），最大熵是 log(3) ≈ 1.099
 - 对于词汇表大小为 50,000 的语言模型，最大熵是 log(50000) ≈ 10.82
@@ -423,6 +440,7 @@ seq_2_losses = [1, 1, 1, 1, 1, 1, 1, 1, 1, 10] # 10个token
 ```
 
 如果我们按序列对这些进行平均，我们将得到以下数字：
+
 ```python
 seq_1_loss = 2.8
 seq_2_loss = 1.9
@@ -434,7 +452,7 @@ seq_2_loss = 1.9
 
 示例使用了三种损失聚合技术：
 
--  `masked_mean` 对应每样本长度归一化，即 DAPO[18]提出的按批次进行token-level归一化的损失；
+- `masked_mean` 对应每样本长度归一化，即 DAPO[18]提出的按批次进行token-level归一化的损失；
 - `masked_mean_token_level` ；
 - 以及 `masked_sum_result` 采用 Dr. GRPO[9]提出的基于最大长度的固定长度归一化方法。
 
@@ -568,12 +586,12 @@ with torch.no_grad():
 ```
 
 理解 PPO 算法的核心在于把握策略梯度损失的更新方式。重点关注以下三行代码：
+
 ```python
 pg_losses1 = -advantages * ratio  # 形状：(B*G, L)
 pg_losses2 = -advantages * torch.clamp(ratio, 1.0 - eps, 1.0 + eps)  # 形状：(B*G, L)
 pg_loss_max = torch.max(pg_losses1, pg_losses2)  # 形状：(B*G, L)
 ```
-
 
 `pg_losses1` 与上述基于普通优势的 PR 损失相同，该损失包含在 PPO 中，但损失（及梯度更新）可被截断。不过，PPO 通过控制更新幅度来避免过大。由于损失可能为负值，我们必须创建一个更保守版本的普通策略梯度更新规则。
 
@@ -692,6 +710,7 @@ r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots - V(s_t), & n = \infty
 $$ {#eq:K_STEP_ADV}
 在这里，较短的 $ n $将具有较低的方差，但较高的偏差，因为我们赋予每个轨迹更多的学习能力——它可能会过拟合。广义优势估计（GAE）试图将该公式推广为加权多步平均值，而非特定的 $ n $。首先，我们必须定义预测值的时序差（TD）残差。
 $$
+
 \delta_t^V = r_t + \gamma V(s_{t+1}) - V(s_t)
 $$ {#eq:TD_RESIDUAL}
 为此，我们引入另一个变量 $ \lambda $作为广义优势估计（GAE）的混合参数。该参数将我们希望估计的未来优势值以指数衰减形式进行加权融合。
@@ -728,8 +747,6 @@ $$ {#eq:GAE_DFN}
   - 4）对过长样本施加软惩罚，避免从截断答案中学习。
 - **Value-based Augmented Proximal Policy Optimization (VAPO)** （VAPO）[28]融合了 DAPO 的优化策略（包括高值裁剪、token级策略梯度及差异化长度归一化）与价值校准 PPO[29]的洞见，通过预训练价值函数和长度自适应 GAE，展现了价值基方法相对于 GRPO 的优势。
 
-
-
 ## Bibliography
 
 ### **1. 强化学习基础与理论**
@@ -741,7 +758,6 @@ $$ {#eq:GAE_DFN}
 [6] W. Kool, H. van Hoof, and M. Welling, "Buy 4 reinforce samples, get a baseline for free!" *arXiv preprint arXiv:1904.00909*, 2019.
 
 [26] M. Tomar, L. Shani, Y. Efroni, and M. Ghavamzadeh, "Mirror descent policy optimization," *arXiv preprint arXiv:2005.09814*, 2020.
-
 
 ### **2. 策略优化算法（PPO及其变体）**
 
@@ -755,7 +771,6 @@ $$ {#eq:GAE_DFN}
 
 [20] T. Wu et al., "Pairwise proximal policy optimization: Harnessing relative feedback for LLM alignment," *arXiv preprint arXiv:2310.00212*, 2023.
 
-
 ### **3. 大语言模型与人类反馈强化学习（RLHF）**
 
 [1] A. Ahmadian et al., "Back to basics: Revisiting reinforce style optimization for learning from human feedback in LLMs," *arXiv preprint arXiv:2402.14740*, 2024.
@@ -768,11 +783,10 @@ $$ {#eq:GAE_DFN}
 
 [17] A. Baheti et al., "Leftover lunch: Advantage-based offline reinforcement learning for language models," *arXiv preprint arXiv:2305.14718*, 2023.
 
-
 [21] Y. Flet-Berliac et al., "Contrastive policy gradient: Aligning LLMs on sequence-level scores," *arXiv preprint arXiv:2406.19185*, 2024.
 
-
 ### **4. 大语言模型中的强化学习应用**
+
 [12] D. Guo et al., "Deepseek-r1: Incentivizing reasoning capability in LLMs via reinforcement learning," *arXiv preprint arXiv:2501.12948*, 2025.
 
 [9] Z. Liu et al., "Understanding R1-zero-like training: A critical perspective," *arXiv preprint arXiv:2503.20783*, 2025.
@@ -788,10 +802,10 @@ $$ {#eq:GAE_DFN}
 [25] K. Team et al., "Kimi k1.5: Scaling reinforcement learning with LLMs," *arXiv preprint arXiv:2501.12599*, 2025
 
 ### **5. 偏好学习与奖励建模**
+
 [2] Z. Wang et al., "HelpSteer2-preference: Complementing ratings with preferences," *arXiv preprint arXiv:2410.01257*, 2024.
 
 [23] Z. Li et al., "Remax: A simple, effective, and efficient reinforcement learning method for aligning large language models," *Proc. ICML*, 2023.
-
 
 ### **6. 优化方法与扩展研究**
 
