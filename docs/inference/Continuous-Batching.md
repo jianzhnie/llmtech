@@ -39,9 +39,7 @@ GPU 专为高度并行计算工作负载而设计，每秒可执行数万亿甚�
 
 <img src="https://bentoml.com/llm/assets/images/continuous-batching-25f9b449d3cfc954d7ef2a8d820b1073.png" alt="continuous-batching.png" style="zoom: 25%;" />
 
-采用连续批处理生成七个序列的示意图。，此时立即插入新序列。[ 图片来源](https://www.anyscale.com/blog/continuous-batching-llm-inference)
-
-如上图所示，使用连续批处理完成七条序列。在首次迭代时（左图），每个序列根据其提示词生成首个令牌。左图显示了单个迭代后的Batch，随时间推移（右图），右图显示了多次迭代后的Batch。一旦某个序列产生结束序列标记，我们在其位置插入新的序列（即序列S5、S6和S7）。这实现了更高的 GPU 利用率，因为 GPU 不需要等待所有序列完成才开始新的一个。
+采用连续批处理生成七个序列的示意图, [图片来源](https://www.anyscale.com/blog/continuous-batching-llm-inference). 在首次迭代时（左图），每个序列根据其提示词生成首个令牌。左图显示了单个迭代后的Batch，随时间推移（右图），右图显示了多次迭代后的Batch。一旦某个序列产生结束序列标记，我们在其位置插入新的序列（即序列S5、S6和S7）。这实现了更高的 GPU 利用率，因为 GPU 不需要等待所有序列完成才开始新的一个。
 
 
 
