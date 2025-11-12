@@ -61,10 +61,11 @@
 - [理解 RLHF](rlhf/intro/rlhf_advance.md)
 - [Chip Huyen 对 RLHF 的分析](rlhf/intro/rlhf_chiphuyen.md)
 - [RLHF 相关知识整理](rlhf/intro/rlhf_overview.md)
+- [RLHF 中KL 散度的近似计算](rlhf/intro/KL散度的近似计算方法.md)
 - [RLHF 中的 Policy Gradient Algorithms](rlhf/intro/rlhf_policy_gradient.md)
 - [浅谈 GRPO 的系列改进（From GRPO to DAPO and GSPO）](rlhf/intro/grpo-to-dapo-and-gspo.md)
 - [重新思考 PPO-Clip — GRPO 时代下的各种变体](rlhf/intro/ppo_clip.md)
-- [KL 散度的近似计算](rlhf/intro/KL散度的近似计算方法.md)
+- [截断重要性采样（TIS）](rlhf/intro/truncated_importance_sampling.md)
 
 
 ## LLM RLHF Algorithm and Paper
