@@ -12,16 +12,16 @@ $$
 \theta \leftarrow \theta + \mu \cdot \underbrace{\mathbb{E}_{a \sim \pi(\theta)}}_{\text{rollout}}[R(a) \cdot \underbrace{\nabla_\theta \log \pi(a, \theta)}_{\text{training}}].
 $$
 
-
 实践中，轨迹生成成本高昂，现代强化学习框架（例如 VeRL）通常采用高度优化的推理引擎（例如 vLLM、SGLang）来提升吞吐量，同时使用独立后端（例如 FSDP、Megatron）进行模型训练。这种混合设计使得更新过程变为：
 
 $$
-\theta \leftarrow \theta + \mu \cdot \mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta)}[R(a) \cdot \nabla_\theta \log \pi_{\text{learner}}(a, \theta)].
+\theta \leftarrow \theta + \mu \cdot \mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta)}[R(a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(a, \theta)].
 $$
 
-此处我们使用 $\pi_{\text{sampler}}$ 表示搭载推理引擎（如 vLLM、SGLang）的模型，$\pi_{\text{learner}}$ 表示使用训练后端（如 FSDP、Megatron）实例化的同模型。若无特别说明，我们的实验均采用 vLLM 作为采样器后端、FSDP 作为训练器后端。
+此处我们使用 $\textcolor{red}{\pi_{\text{sampler}}}$ 表示搭载推理引擎（如 vLLM、SGLang）的模型，$\textcolor{blue}{\pi_{\text{learner}}}$ 表示使用训练后端（如 FSDP、Megatron）实例化的同模型。若无特别说明，我们的实验均采用 vLLM 作为采样器后端、FSDP 作为训练器后端。
 
-实验中观察到意外的 **rollout 训练失配现象**, 尽管 $\pi_{\text{fsdp}}$ 与 $\pi_{\text{vlm}}$ 共享相同模型参数 $\theta$，它们却可能生成显著不同的Token概率。对于某些特定Token $a$，甚至会产生相互矛盾的预测结果，即 $\pi_{\text{vlm}}(a, \theta) = 1$ 与 $\pi_{\text{fsdp}}(a, \theta) = 0$。这种异常行为隐式破坏了同策略假设，实质上使 On-Policy 强化学习训练悄然转变为异策略模式。
+实验中观察到意外的 **rollout 训练失配现象**, 尽管 $\textcolor{blue}{\pi_{\text{fsdp}}}$ 与 $\textcolor{red}{\pi_{\text{vlm}}}$ 共享相同模型参数 $\theta$，它们却可能生成显著不同的Token概率。对于某些特定Token $a$，甚至会产生相互矛盾的预测结果，即 $\textcolor{red}{\pi_{\text{vlm}}}(a, \theta) = 1$ 与 $\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta) = 0$。这种异常行为隐式破坏了同策略假设，实质上使 On-Policy 强化学习训练悄然转变为异策略模式。
+
 
 ### 优化驱动的恶性循环
 
@@ -71,25 +71,26 @@ $$
 
 ### 截断重要性采样 TIS
 
-不同于在系统层面缓解分布失配，我们提出通过调整模型更新机制使其感知这种失配。简单的方法是采用重要性采样校正。具体而言，我们通过在当前梯度计算中添加重要性比率来处理 $\pi_{\text{learner}}$ 与 $\pi_{\text{sampler}}$ 之间的失配，即将当前梯度计算从
+不同于在系统层面缓解分布失配，我们提出通过调整模型更新机制使其感知这种失配。简单的方法是采用重要性采样校正。具体而言，我们通过在当前梯度计算中添加重要性比率来处理 $\textcolor{blue}{\pi_{\text{learner}}}$ 与 $\textcolor{red}{\pi_{\text{sampler}}}$ 之间的失配，即将当前梯度计算从
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta)}[R(a) \cdot \nabla_\theta \log \pi_{\text{learner}}(a, \theta)],
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta)}[R(a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(a, \theta)],
 $$
 
 变为
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta)}\left[\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta)} \cdot R(a) \cdot \nabla_\theta \log \pi_{\text{learner}}(a, \theta)\right].
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta)}\left[\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta)} \cdot R(a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(a, \theta)\right].
 $$
 
 尽管关于如何设计稳定有效的重采样方法已有广泛研究，但在实践中我们发现通常采用经典技术——**截断重要性采样**便已足够：
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta)}\left[\min\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta)}, C\right) \cdot R(a) \cdot \nabla_\theta \log \pi_{\text{learner}}(a, \theta)\right],
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta)}\left[\min\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta)}, C\right) \cdot R(a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(a, \theta)\right],
 $$
 
 其中 $C$ 是一个超参数。
+
 
 #### 扩展至其他算法
 
@@ -101,19 +102,20 @@ $$
 \mathbb{E}_{a \sim \pi_{\text{old}}}\left[\nabla_\theta \min\left(\frac{\pi_\theta(a)}{\pi_{\theta_{\text{old}}}(a)} \hat{A},\ \text{clip}\left(\frac{\pi_\theta(a)}{\pi_{\theta_{\text{old}}}(a)},\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right].
 $$
 
-为提升吞吐量，混合强化学习系统采用 vLLM 引擎进行推演生成——从 $\pi_{\theta_{\text{old}}}$ 中采样Token $a$，同时使用 FSDP 后端从 $\pi_\theta$ 进行采样，并 **重新计算** $\pi_{\theta_{\text{old}}}$ 的Token概率以完成梯度计算：
+为提升吞吐量，混合强化学习系统采用 vLLM 引擎进行推演生成——从 $\textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})$ 中采样Token $a$，同时使用 FSDP 后端从 $\textcolor{blue}{\pi_{\text{learner}}}(\theta)$ 进行采样，并 **重新计算** $\textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})$ 的Token概率以完成梯度计算：
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\nabla_\theta \min\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})} \hat{A},\ \text{clip}\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})},\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right],
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})}\left[\nabla_\theta \min\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})} \hat{A},\ \text{clip}\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})},\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right],
 $$
 
-与上述分析类似，$\pi_{\text{learner}}$ 与 $\pi_{\text{sampler}}$ 之间的差距再次显现，我们通过截断重要性采样方法予以修正：
+与上述分析类似，$\textcolor{blue}{\pi_{\text{learner}}}$ 与 $\textcolor{red}{\pi_{\text{sampler}}}$ 之间的差距再次显现，我们通过截断重要性采样方法予以修正：
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\min\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta)}, C\right) \cdot \nabla_\theta \min\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})} \hat{A},\ \text{clip}\left(\frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})},\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right],
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})}\left[\min\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta)}, C\right) \cdot \nabla_\theta \min\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})} \hat{A},\ \text{clip}\left(\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})},\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right],
 $$
 
 其中 $C$ 是一个超参数。
+
 
 ### 与两种 TIS 变体的比较
 
@@ -122,7 +124,7 @@ $$
 - **PPO 重要性采样 (PPO-IS)**
 
 $$
-\mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})} \left[ \nabla_\theta \min\left( \frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} \hat{A}, \text{clip}\left( \frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta_{\text{old}})}, 1 - \epsilon, 1 + \epsilon \right) \hat{A} \right) \right]
+\mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})} \left[ \nabla_\theta \min\left( \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} \hat{A}, \text{clip}\left( \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})}, 1 - \epsilon, 1 + \epsilon \right) \hat{A} \right) \right]
 $$
 
   *注意：Colossal 框架使用此实现。*
@@ -130,7 +132,7 @@ $$
 - **基础重要性采样 (vanilla-IS)**
 
   $$
-  \mathbb{E}_{\pi_{\text{vlm}}(\theta_{\text{old}})} \left[ \underbrace{\frac{\pi_{\text{fsdp}}(a, \theta_{\text{old}})}{\pi_{\text{vlm}}(a, \theta_{\text{old}})}} \cdot \nabla_\theta \min\left( \frac{\pi_{\text{fsdp}}(a, \theta)}{\pi_{\text{fsdp}}(a, \theta_{\text{old}})} \hat{A}, \text{clip}\left( \frac{\pi_{\text{fsdp}}(a, \theta)}{\pi_{\text{fsdp}}(a, \theta_{\text{old}})}, 1 - \epsilon, 1 + \epsilon \right) \hat{A} \right) \right]
+  \mathbb{E}_{\textcolor{red}{\pi_{\text{vlm}}}(\theta_{\text{old}})} \left[ \underbrace{\frac{\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{vlm}}}(a, \theta_{\text{old}})}} \cdot \nabla_\theta \min\left( \frac{\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta_{\text{old}})} \hat{A}, \text{clip}\left( \frac{\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{fsdp}}}(a, \theta_{\text{old}})}, 1 - \epsilon, 1 + \epsilon \right) \hat{A} \right) \right]
   $$
 
   *注意：Nemo-RL 使用此实现。*
@@ -139,25 +141,26 @@ $$
 
 #### vanilla-IS 对比 TIS
 
-关于**基础重要性采样**（vanilla-IS），其不稳定性主要源于当 $ a \sim \pi_{\text{sampler}}(a, \theta_{\text{old}}) $ 轨迹采样概率较低时，重要性比率会大幅增加，通过 $ \left( \frac{\pi_{\text{learner}}(a, \theta_{\text{old}})}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} \right)^2 $ 放大梯度方差。为此，我们在截断重要性采样（TIS）中采用钳位操作以稳定训练。例如当单个Token的比率 $ \frac{\pi_{\text{learner}}(a, \theta_{\text{old}})}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} $ 达到 16 时，该Token的梯度噪声将通过**原始重要性采样**放大 256 倍，通过 **TIS-2** 放大 4 倍，或通过 **TIS-8** 放大 64 倍。
+关于**基础重要性采样**（vanilla-IS），其不稳定性主要源于当 $ a \sim \textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}}) $ 轨迹采样概率较低时，重要性比率会大幅增加，通过 $ \left( \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} \right)^2 $ 放大梯度方差。为此，我们在截断重要性采样（TIS）中采用钳位操作以稳定训练。例如当单个Token的比率 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} $ 达到 16 时，该Token的梯度噪声将通过**原始重要性采样**放大 256 倍，通过 **TIS-2** 放大 4 倍，或通过 **TIS-8** 放大 64 倍。
 
 #### PPO-IS 对比 TIS
 
 采用 **PPO-IS** 方法后，梯度实际上仍会偏离 PPO 的同策略版本。换言之，尽管该方法可能仍在朝着无偏目标进行优化，但相比标准 PPO 算法其效率可能有所不足。
 
-此外需要说明的是，PPO 信任域技术的提出旨在将轨迹采样 $ \theta_{\text{old}} $ 与当前模型 $ \theta $ 之间的概率比约束在接近 1 的范围内，以近似同策略 REINFORCE 梯度。但在 **PPO-IS** 中，即便当 $ \theta = \theta_{\text{old}} $ 时，由于策略不匹配，概率比 $ \frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} $ 仍不等于 1——这导致裁剪操作极易被触发，从而大幅降低训练的信息有效性。而在我们的 TIS 方法中，我们分别对 $ \frac{\pi_{\text{learner}}(a, \theta_{\text{old}})}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} $ 和 $ \frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})} $ 进行裁剪，因此更为温和；值得注意的是当 $ \theta = \theta_{\text{old}} $ 时，$ \frac{\pi_{\text{learner}}(a, \theta)}{\pi_{\text{learner}}(a, \theta_{\text{old}})} $ 恒等于 1，这恰好符合信任域约束的要求。
+此外需要说明的是，PPO 信任域技术的提出旨在将轨迹采样 $ \theta_{\text{old}} $ 与当前模型 $ \theta $ 之间的概率比约束在接近 1 的范围内，以近似同策略 REINFORCE 梯度。但在 **PPO-IS** 中，即便当 $ \theta = \theta_{\text{old}} $ 时，由于策略不匹配，概率比 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} $ 仍不等于 1——这导致裁剪操作极易被触发，从而大幅降低训练的信息有效性。而在我们的 TIS 方法中，我们分别对 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} $ 和 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})} $ 进行裁剪，因此更为温和；值得注意的是当 $ \theta = \theta_{\text{old}} $ 时，$ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta)}{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})} $ 恒等于 1，这恰好符合信任域约束的要求。
+
 
 ### TIS 工作机制的直观解释
 
 虽然 TIS 的确切机制仍是待解之谜，我们对其缓解分布差异的原理提供高层级阐释。
 
-特别需要注意的是，忽略具有 $\frac{\pi_{\text{learner}}(a, \theta_{\text{old}})}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} < 1$ 的 rollout 偏差可能通过以下机制导致熵崩溃：对于具有负优势值的 rollout，策略梯度往往会降低 $\pi_{\text{learner}}$。当参数更新后存在较大分布差异时，$\pi_{\text{learner}}$ 的减少可能无法体现在 $\pi_{\text{sampler}}$ 中。因此策略梯度持续指向进一步降低 $\pi_{\text{learner}}$ 的方向。直观来看，这种惩罚机制可能迫使模型过度集中于熵值较小的输出分布。
+特别需要注意的是，忽略具有 $\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} < 1$ 的 rollout 偏差可能通过以下机制导致熵崩溃：对于具有负优势值的 rollout，策略梯度往往会降低 $\textcolor{blue}{\pi_{\text{learner}}}$。当参数更新后存在较大分布差异时，$\textcolor{blue}{\pi_{\text{learner}}}$ 的减少可能无法体现在 $\textcolor{red}{\pi_{\text{sampler}}}$ 中。因此策略梯度持续指向进一步降低 $\textcolor{blue}{\pi_{\text{learner}}}$ 的方向。直观来看，这种惩罚机制可能迫使模型过度集中于熵值较小的输出分布。
 
-与此同时，TIS 坚持对 $\frac{\pi_{\text{learner}}(a, \theta_{\text{old}})}{\pi_{\text{sampler}}(a, \theta_{\text{old}})} < 1$ 采用未截断的重要性比率，从而消除了这部分轨迹的偏差，并打破了这一机制。
+与此同时，TIS 坚持对 $\frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} < 1$ 采用未截断的重要性比率，从而消除了这部分轨迹的偏差，并打破了这一机制。
 
 ## 重要性采样的进一步讨论
 
-训练-推理失配将原本同策略的强化学习问题转化为异策略问题，其中用于生成轨迹的策略（行为策略，$\pi_\theta^{\text{vllm}}$）与正在训练的策略（目标策略，$\pi_\theta^{\text{fsdp}}$）存在差异。理论上校正这种分布偏移的正规方法是**重要性采样**（IS）。然而，IS 的具体形式对于保持无偏梯度和实现稳定训练至关重要。
+训练-推理失配将原本同策略的强化学习问题转化为异策略问题，其中用于生成轨迹的策略（行为策略，$\textcolor{red}{\pi_\theta^{\text{vllm}}}$）与正在训练的策略（目标策略，$\textcolor{blue}{\pi_\theta^{\text{fsdp}}}$）存在差异。理论上校正这种分布偏移的正规方法是**重要性采样**（IS）。然而，IS 的具体形式对于保持无偏梯度和实现稳定训练至关重要。
 
 受 **[Yao 等, 2025]** 首次揭示这一隐式异策略问题的研究启发，我们分析了两种主要的 IS 形式：理论完备的**Sequence-Level IS** 与常见但存在缺陷的**Token-Level IS** 近似——后者也是该文献中探讨的启发式方法。
 
@@ -170,19 +173,19 @@ $$
 - 目标是在目标 FSDP 策略下最大化期望奖励：
 
 $$
-J(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta^{\text{fsdp}}(\cdot|x)}[R(x, y)]
+J(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(\cdot|x)}[R(x, y)]
 $$
 
 - 因此真实策略梯度为：
 
 $$
-g(\theta) = \nabla_\theta J(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta^{\text{fsdp}}(\cdot|x)}\left[R(x, y)\nabla_\theta \log \pi_\theta^{\text{fsdp}}(y|x)\right]
+g(\theta) = \nabla_\theta J(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(\cdot|x)}\left[R(x, y)\nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y|x)\right]
 $$
 
 - 由于我们只能从 vLLM 策略中采样，故使用重要性采样来改变期望的分布：
 
 $$
-g_{\text{seq}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta^{\text{vllm}}(\cdot|x)}\left[\frac{\pi_\theta^{\text{fsdp}}(y|x)}{\pi_\theta^{\text{vllm}}(y|x)} \cdot R(x, y) \cdot \nabla_\theta \log \pi_\theta^{\text{fsdp}}(y|x)\right]
+g_{\text{seq}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{red}{\pi_\theta^{\text{vllm}}}(\cdot|x)}\left[\frac{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y|x)}{\textcolor{red}{\pi_\theta^{\text{vllm}}}(y|x)} \cdot R(x, y) \cdot \nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y|x)\right]
 $$
 
 该估计器在数学上等价于标准优势函数形式的策略梯度。关键在于证明重要性采样比率能精确修正期望值，揭示底层真实的同策略梯度，进而可对其进行优化。
@@ -190,10 +193,10 @@ $$
 此推导最终得到策略梯度的优势函数形式：
 
 $$
-g_{\text{seq}}(\theta) = \mathbb{E}_{s \sim d_{\pi_\theta^{\text{fsdp}}}} \mathbb{E}_{a \sim \pi_\theta^{\text{fsdp}}(\cdot|s)}\left[A_\theta^{\text{fsdp}}(s, a) \cdot \nabla_\theta \log \pi_\theta^{\text{fsdp}}(a|s)\right]
+g_{\text{seq}}(\theta) = \mathbb{E}_{s \sim d_{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}}} \mathbb{E}_{a \sim \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(\cdot|s)}\left[A_\theta^{\text{fsdp}}(s, a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(a|s)\right]
 $$
 
-此处 $s = (x, y_{<t})$ 表示状态（前缀），$a = y_t$ 表示动作（Token）。项 $d_{\pi_\theta^{\text{fsdp}}}$ 为目标 FSDP 策略下的**状态占用度量**，其正式定义为遵循策略 $\pi$ 时期望访问状态 $s$ 的次数：
+此处 $s = (x, y_{<t})$ 表示状态（前缀），$a = y_t$ 表示动作（Token）。项 $d_{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}}$ 为目标 FSDP 策略下的**状态占用度量**，其正式定义为遵循策略 $\pi$ 时期望访问状态 $s$ 的次数：
 
 $$
 d_\pi(s) := \mathbb{E}_{x' \sim \mathcal{D}, y' \sim \pi(\cdot|x')} \left[ \sum_{t'=0}^{|y'|-1} \mathbb{I}{(x', y'_{<t'}) = s} \right] = P(x) \cdot \prod_{k=0}^{t-1} \pi(y_k|x, y_{<k})
@@ -210,19 +213,19 @@ $$
 - 该公式通过错误地在时间步求和和内部应用重要性采样比率开始：即 $g_{\text{tok}}(\theta)$ 被定义为
 
   $$
-  \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta^{\text{vllm}}(\cdot|x)}\left[R(x, y) \cdot \sum_{t=0}^{|y|-1} \frac{\pi_\theta^{\text{fsdp}}(y_t|x, y_{<t})}{\pi_\theta^{\text{vllm}}(y_t|x, y_{<t})} \cdot \nabla_\theta \log \pi_\theta^{\text{fsdp}}(y_t|x, y_{<t})\right]
+  \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{red}{\pi_\theta^{\text{vllm}}}(\cdot|x)}\left[R(x, y) \cdot \sum_{t=0}^{|y|-1} \frac{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y_t|x, y_{<t})}{\textcolor{red}{\pi_\theta^{\text{vllm}}}(y_t|x, y_{<t})} \cdot \nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y_t|x, y_{<t})\right]
   $$
 
 - 我们可以将此轨迹期望重写为在 vLLM 策略下访问状态的期望。
 
   $$
-  g_{\text{tok}}(\theta) = \mathbb{E}_{s \sim d_{\pi_\theta^{\text{vllm}}}} \mathbb{E}_{a \sim \pi_\theta^{\text{vllm}}(\cdot|s)}\left[\frac{\pi_\theta^{\text{fsdp}}(a|s)}{\pi_\theta^{\text{vllm}}(a|s)} \cdot A^{\text{vllm}}(s, a) \cdot \nabla_\theta \log \pi_\theta^{\text{fsdp}}(a|s)\right]
+  g_{\text{tok}}(\theta) = \mathbb{E}_{s \sim d_{\textcolor{red}{\pi_\theta^{\text{vllm}}}}} \mathbb{E}_{a \sim \textcolor{red}{\pi_\theta^{\text{vllm}}}(\cdot|s)}\left[\frac{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}(a|s)}{\textcolor{red}{\pi_\theta^{\text{vllm}}}(a|s)} \cdot A^{\textcolor{red}{\pi_\theta^{\text{vllm}}}}(s, a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(a|s)\right]
   $$
 
-> 注：此处 $R(x, y)$ 表示由 $\pi_\theta^{\text{vllm}}$ 采样的完整轨迹所得的经验回报，作为状态-动作价值函数 $Q^{\pi_\theta^{\text{vllm}}}(s, a)$ 的蒙特卡洛估计值。通过引入基线函数并改变动作期望的计算方式，最终得到如下形式：
+> 注：此处 $R(x, y)$ 表示由 $\textcolor{red}{\pi_\theta^{\text{vllm}}}$ 采样的完整轨迹所得的经验回报，作为状态-动作价值函数 $Q^{\textcolor{red}{\pi_\theta^{\text{vllm}}}}(s, a)$ 的蒙特卡洛估计值。通过引入基线函数并改变动作期望的计算方式，最终得到如下形式：
 
 $$
-g_{\text{tok}}(\theta) = \mathbb{E}_{s \sim d_{\pi_\theta^{\text{vllm}}}} \mathbb{E}_{a \sim \pi_\theta^{\text{fsdp}}(\cdot|s)}\left[A^{\text{vllm}}(s, a) \cdot \nabla_\theta \log \pi_\theta^{\text{fsdp}}(a|s)\right]
+g_{\text{tok}}(\theta) = \mathbb{E}_{s \sim d_{\textcolor{red}{\pi_\theta^{\text{vllm}}}}} \mathbb{E}_{a \sim \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(\cdot|s)}\left[A^{\textcolor{red}{\pi_\theta^{\text{vllm}}}}(s, a) \cdot \nabla_\theta \log \textcolor{blue}{\pi_\theta^{\text{fsdp}}}(a|s)\right]
 $$
 
 最终表达式清晰地揭示了Token-Level重要性采样的梯度偏差。
@@ -235,30 +238,22 @@ $$
 
 有效的离策略修正必须考虑两种分布偏移：动作概率分布与状态访问概率分布。词元级方法仅修正了前者。
 
-- **真实梯度**（$g_{\text{seq}}$）：期望计算基于正确目标 fsdp 分布下的状态访问，$\mathbb{E}_{s \sim d_{\pi_\theta^{\text{fsdp}}}}$。
-- **缺陷梯度**（$g_{\text{tok}}$）：期望计算基于错误行为 vLLM 分布下的状态访问，$\mathbb{E}_{s \sim d_{\pi_\theta^{\text{vllm}}}}$。
+- **真实梯度**（$g_{\text{seq}}$）：期望计算基于正确目标 fsdp 分布下的状态访问，$\mathbb{E}_{s \sim d_{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}}}$。
+- **缺陷梯度**（$g_{\text{tok}}$）：期望计算基于错误行为 vLLM 分布下的状态访问，$\mathbb{E}_{s \sim d_{\textcolor{red}{\pi_\theta^{\text{vllm}}}}}$。
 
-该方法隐含假设状态访问比率为 1，即 $d_{\pi^{\text{fsdp}}}(s)/d_{\pi^{\text{vllm}}}(s) = 1$。在自回归模型中该假设会被严重违背：由于确定性状态转移，单个词元选择差异就会导致状态轨迹完全发散。忽略这一事实使得 $g_{\text{tok}}(\theta)$ 引入了巨大且不可控的偏差。
+该方法隐含假设状态访问比率为 1，即 $d_{\textcolor{blue}{\pi^{\text{fsdp}}}}(s)/d_{\textcolor{red}{\pi^{\text{vllm}}}}(s) = 1$。在自回归模型中该假设会被严重违背：由于确定性状态转移，单个词元选择差异就会导致状态轨迹完全发散。忽略这一事实使得 $g_{\text{tok}}(\theta)$ 引入了巨大且不可控的偏差。
 
 #### 误差源 2：失配奖励信号 🎯
 
 第二个关键错误在于，词元级梯度使用错误策略的奖励信号来加权更新。
 
-- **真实梯度**（$g_{\text{seq}}$）：该更新通过目标全分片数据并行策略的优势函数 $A_{\pi_\theta^{\text{fsdp}}}$ 进行缩放，该函数代表在该策略下的预期未来奖励。
-- **有缺陷的梯度**（$g_{\text{tok}}$）：该更新由行为 vLLM 策略的优势函数进行缩放，$A_{\pi_\theta^{\text{vllm}}}$。
+- **真实梯度**（$g_{\text{seq}}$）：该更新通过目标全分片数据并行策略的优势函数 $A_{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}}$ 进行缩放，该函数代表在该策略下的预期未来奖励。
+- **有缺陷的梯度**（$g_{\text{tok}}$）：该更新由行为 vLLM 策略的优势函数进行缩放，$A_{\textcolor{red}{\pi_\theta^{\text{vllm}}}}$。
 
 目标策略的梯度正在被属于行为策略的奖励信号所缩放。由于状态分布和奖励信号存在根本性不匹配，Token-Level梯度实际上是一个有偏且理论不稳健的估计量。
 
 > 🔧 **这些理论表明，尽管Token-Level方法可能具有较低的方差，但梯度偏差仍然存在，可能导致训练不稳定——这一预测在我们的实验中得到了验证。我们还针对令牌级和序列级方法提出了详细的偏差与方差分析（第一部分和第二部分）。**
-
-#### 缓解系统级失配
-
-更高精度的 vLLM 是否有效？我们最初假设 vLLM 是问题根源，因此通过补丁修复了两个常被怀疑导致失配问题的因素。
-
-- **不可获取的真实采样概率**：vLLM v1 引擎 **不支持** 直接返回用于采样的调整后概率，这引入了额外差异。
-  → 我们的补丁强制 vLLM 返回实际用于采样的概率 [已上游合并]。
-- **后端数值差异**：vLLM 的 lm_head 精度与 HuggingFace transformers 不匹配，该问题在 MiniMax-M1 技术报告中亦有提及。
-  → 我们的补丁提供了将 vLLM 的 lm_head 强制转换为 fp32 的选项。
+>
 
 ## 掩码重要性采样（MIS）
 
@@ -266,16 +261,16 @@ $$
 
 ### Sequence-Level MIS
 
-在Sequence-Level MIS中，我们基于整个序列的重要性比率为整个序列应用掩码。具体而言，对于一个由采样策略 $\pi_{\text{sampler}}$ 生成的序列 $y$，其重要性比率为：
+在Sequence-Level MIS中，我们基于整个序列的重要性比率为整个序列应用掩码。具体而言，对于一个由采样策略 $\textcolor{red}{\pi_{\text{sampler}}}$ 生成的序列 $y$，其重要性比率为：
 
 $$
-\rho(y|x) = \frac{\pi_{\text{learner}}(y|x)}{\pi_{\text{sampler}}(y|x)}
+\rho(y|x) = \frac{\textcolor{blue}{\pi_{\text{learner}}}(y|x)}{\textcolor{red}{\pi_{\text{sampler}}}(y|x)}
 $$
 
 当 $\rho(y|x) > C$ 时，我们将该序列的损失完全置零，相当于从训练中移除该序列。因此，Sequence-Level MIS的策略梯度估计器为：
 
 $$
-g_{\text{seq-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_{\text{sampler}}(\cdot|x)}\left[\mathbb{I}\{\rho(y|x) \leq C\} \cdot \rho(y|x) \cdot R(x, y) \cdot \nabla_\theta \log \pi_{\text{learner}}(y|x)\right]
+g_{\text{seq-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{red}{\pi_{\text{sampler}}}(\cdot|x)}\left[\mathbb{I}\{\rho(y|x) \leq C\} \cdot \rho(y|x) \cdot R(x, y) \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(y|x)\right]
 $$
 
 这种方式相比于TIS更加严格，因为它完全排除了那些可能引入巨大方差的样本，而不是仅仅截断重要性比率。这有助于进一步稳定训练，特别是在策略差异较大的情况下。
@@ -285,13 +280,13 @@ $$
 在Token-Level MIS中，我们为每个token单独计算重要性比率，并基于该比率决定是否对该token的贡献进行掩码。对于序列中的第$t$个token $y_t$，其重要性比率为：
 
 $$
-\rho_t = \frac{\pi_{\text{learner}}(y_t|x, y_{<t})}{\pi_{\text{sampler}}(y_t|x, y_{<t})}
+\rho_t = \frac{\textcolor{blue}{\pi_{\text{learner}}}(y_t|x, y_{<t})}{\textcolor{red}{\pi_{\text{sampler}}}(y_t|x, y_{<t})}
 $$
 
 当 $\rho_t > C$ 时，我们将其对应的梯度贡献置零。因此，Token-Level MIS的策略梯度估计器为：
 
 $$
-g_{\text{tok-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_{\text{sampler}}(\cdot|x)}\left[R(x, y) \cdot \sum_{t=0}^{|y|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \rho_t \cdot \nabla_\theta \log \pi_{\text{learner}}(y_t|x, y_{<t})\right]
+g_{\text{tok-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \textcolor{red}{\pi_{\text{sampler}}}(\cdot|x)}\left[R(x, y) \cdot \sum_{t=0}^{|y|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \rho_t \cdot \nabla_\theta \log \textcolor{blue}{\pi_{\text{learner}}}(y_t|x, y_{<t})\right]
 $$
 
 与Token-Level TIS相比，Token-Level MIS更加严格，因为它完全排除了那些可能引入不稳定性的token贡献，而不是仅仅截断比率值。
@@ -316,17 +311,18 @@ $$
 
 对于Sequence-Level MIS-PPO：
 $$
-g_{\text{seq-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\mathbb{I}\{\rho(a) \leq C\} \cdot \nabla_\theta \min\left(\rho(a) \hat{A},\ \text{clip}\left(\rho(a),\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right]
+g_{\text{seq-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})}\left[\mathbb{I}\{\rho(a) \leq C\} \cdot \nabla_\theta \min\left(\rho(a) \hat{A},\ \text{clip}\left(\rho(a),\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right]
 $$
 
 对于Token-Level MIS-PPO：
 $$
-g_{\text{tok-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\sum_{t=0}^{|a|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \nabla_\theta \min\left(\rho_t \hat{A}_t,\ \text{clip}\left(\rho_t,\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}_t\right)\right]
+g_{\text{tok-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \textcolor{red}{\pi_{\text{sampler}}}(\theta_{\text{old}})}\left[\sum_{t=0}^{|a|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \nabla_\theta \min\left(\rho_t \hat{A}_t,\ \text{clip}\left(\rho_t,\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}_t\right)\right]
 $$
 
-其中 $\rho(a) = \frac{\pi_{\text{learner}}(a|\theta)}{\pi_{\text{sampler}}(a|\theta_{\text{old}})}$，$\rho_t = \frac{\pi_{\text{learner}}(a_t|\theta)}{\pi_{\text{sampler}}(a_t|\theta_{\text{old}})}$。
+其中 $\rho(a) = \frac{\textcolor{blue}{\pi_{\text{learner}}}(a|\theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a|\theta_{\text{old}})}$，$\rho_t = \frac{\textcolor{blue}{\pi_{\text{learner}}}(a_t|\theta)}{\textcolor{red}{\pi_{\text{sampler}}}(a_t|\theta_{\text{old}})}$。
 
 通过这种方式，MIS为处理训练-推理不匹配问题提供了另一种有效的算法级解决方案，能够与TIS形成互补，在不同场景下提供更好的稳定性和性能。
+
 
 ## Reference
 
