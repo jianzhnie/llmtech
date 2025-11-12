@@ -250,13 +250,74 @@ $$
 - **后端数值差异**：vLLM 的 lm_head 精度与 HuggingFace transformers 不匹配，该问题在 MiniMax-M1 技术报告中亦有提及。
   → 我们的补丁提供了将 vLLM 的 lm_head 强制转换为 fp32 的选项。
 
+
 ## 掩码重要性采样（MIS）
 
 为改进 TIS，我们提出掩码重要性采样（MIS），该方法对重要性采样比率超过阈值 $ C $（即 $ \rho(y|x) \leftarrow \rho(y|x)\mathbb{I}\{\rho(y|x) \leq C\} $）的序列进行策略损失掩码。
 
+### Sequence-Level MIS
 
+在Sequence-Level MIS中，我们基于整个序列的重要性比率为整个序列应用掩码。具体而言，对于一个由采样策略 $\pi_{\text{sampler}}$ 生成的序列 $y$，其重要性比率为：
 
+$$
+\rho(y|x) = \frac{\pi_{\text{learner}}(y|x)}{\pi_{\text{sampler}}(y|x)}
+$$
 
+当 $\rho(y|x) > C$ 时，我们将该序列的损失完全置零，相当于从训练中移除该序列。因此，Sequence-Level MIS的策略梯度估计器为：
+
+$$
+g_{\text{seq-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_{\text{sampler}}(\cdot|x)}\left[\mathbb{I}\{\rho(y|x) \leq C\} \cdot \rho(y|x) \cdot R(x, y) \cdot \nabla_\theta \log \pi_{\text{learner}}(y|x)\right]
+$$
+
+这种方式相比于TIS更加严格，因为它完全排除了那些可能引入巨大方差的样本，而不是仅仅截断重要性比率。这有助于进一步稳定训练，特别是在策略差异较大的情况下。
+
+### Token-Level MIS
+
+在Token-Level MIS中，我们为每个token单独计算重要性比率，并基于该比率决定是否对该token的贡献进行掩码。对于序列中的第$t$个token $y_t$，其重要性比率为：
+
+$$
+\rho_t = \frac{\pi_{\text{learner}}(y_t|x, y_{<t})}{\pi_{\text{sampler}}(y_t|x, y_{<t})}
+$$
+
+当 $\rho_t > C$ 时，我们将其对应的梯度贡献置零。因此，Token-Level MIS的策略梯度估计器为：
+
+$$
+g_{\text{tok-MIS}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_{\text{sampler}}(\cdot|x)}\left[R(x, y) \cdot \sum_{t=0}^{|y|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \rho_t \cdot \nabla_\theta \log \pi_{\text{learner}}(y_t|x, y_{<t})\right]
+$$
+
+与Token-Level TIS相比，Token-Level MIS更加严格，因为它完全排除了那些可能引入不稳定性的token贡献，而不是仅仅截断比率值。
+
+### MIS与TIS的比较
+
+1. **方差控制**：
+   - TIS通过截断操作限制了重要性比率的最大值，但仍然保留了所有样本的贡献
+   - MIS通过完全移除高比率样本/令牌，从根本上消除了这些可能引入巨大方差的贡献
+
+2. **偏差-方差权衡**：
+   - TIS引入了一些偏差（通过截断），但保持了较低的方差
+   - MIS可能引入更大的偏差（通过完全排除样本），但能够更有效地控制方差
+
+3. **适用场景**：
+   - 当策略差异相对较小且主要由少数极端比率主导时，MIS可能更有效
+   - 当策略差异较为均匀分布时，TIS可能提供更好的偏差-方差平衡
+
+### 在PPO中的应用
+
+将MIS扩展到PPO算法中，我们可以得到相应的表达式：
+
+对于Sequence-Level MIS-PPO：
+$$
+g_{\text{seq-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\mathbb{I}\{\rho(a) \leq C\} \cdot \nabla_\theta \min\left(\rho(a) \hat{A},\ \text{clip}\left(\rho(a),\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}\right)\right]
+$$
+
+对于Token-Level MIS-PPO：
+$$
+g_{\text{tok-MIS-PPO}}(\theta) = \mathbb{E}_{a \sim \pi_{\text{sampler}}(\theta_{\text{old}})}\left[\sum_{t=0}^{|a|-1} \mathbb{I}\{\rho_t \leq C\} \cdot \nabla_\theta \min\left(\rho_t \hat{A}_t,\ \text{clip}\left(\rho_t,\ 1 - \epsilon,\ 1 + \epsilon\right) \hat{A}_t\right)\right]
+$$
+
+其中 $\rho(a) = \frac{\pi_{\text{learner}}(a|\theta)}{\pi_{\text{sampler}}(a|\theta_{\text{old}})}$，$\rho_t = \frac{\pi_{\text{learner}}(a_t|\theta)}{\pi_{\text{sampler}}(a_t|\theta_{\text{old}})}$。
+
+通过这种方式，MIS为处理训练-推理不匹配问题提供了另一种有效的算法级解决方案，能够与TIS形成互补，在不同场景下提供更好的稳定性和性能。
 
 
 ## Reference
