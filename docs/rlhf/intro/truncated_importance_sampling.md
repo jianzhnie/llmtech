@@ -64,11 +64,6 @@ $$
 \right].
 $$
 
-
-### 解耦式 PPO
-
-**解耦 PPO** 是运用重要性采样弥合轨迹生成与梯度计算间隙的特殊案例，该方法已被 **AReaL** 等异步强化学习框架采用。需要特别说明的是，AReaL 并未实现我们讨论的截断重要性比率方案，而是当重要性比率超过预设阈值时直接丢弃整个训练样本。
-
 ### 截断重要性采样 TIS
 
 不同于在系统层面缓解分布失配，我们提出通过调整模型更新机制使其感知这种失配。简单的方法是采用重要性采样校正。具体而言，我们通过在当前梯度计算中添加重要性比率来处理 $\textcolor{blue}{\pi_{\text{learner}}}$ 与 $\textcolor{red}{\pi_{\text{sampler}}}$ 之间的失配，即将当前梯度计算从
@@ -141,7 +136,7 @@ $$
 
 #### vanilla-IS 对比 TIS
 
-关于**基础重要性采样**（vanilla-IS），其不稳定性主要源于当 $ a \sim \textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}}) $ 轨迹采样概率较低时，重要性比率会大幅增加，通过 $ \left( \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} \right)^2 $ 放大梯度方差。为此，我们在截断重要性采样（TIS）中采用钳位操作以稳定训练。例如当单个Token的比率 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} $ 达到 16 时，该Token的梯度噪声将通过**原始重要性采样**放大 256 倍，通过 **TIS-2** 放大 4 倍，或通过 **TIS-8** 放大 64 倍。
+关于**基础重要性采样**（vanilla-IS），其不稳定性主要源于当 $ a \sim \textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}}) $ 轨迹采样概率较低时，重要性比率会大幅增加，通过 $ \left( \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} \right)^2 $ 放大梯度方差。为此，我们在截断重要性采样（TIS）中采用截断操作以稳定训练。例如当单个Token的比率 $ \frac{\textcolor{blue}{\pi_{\text{learner}}}(a, \theta_{\text{old}})}{\textcolor{red}{\pi_{\text{sampler}}}(a, \theta_{\text{old}})} $ 达到 16 时，该Token的梯度噪声将通过**原始重要性采样**放大 256 倍，通过 **TIS-2** 放大 4 倍，或通过 **TIS-8** 放大 64 倍。
 
 #### PPO-IS 对比 TIS
 
@@ -203,6 +198,40 @@ d_\pi(s) := \mathbb{E}_{x' \sim \mathcal{D}, y' \sim \pi(\cdot|x')} \left[ \sum_
 $$
 
 该估计器是无偏的，这意味着 $g_{\text{seq}}(\theta) = g(\theta)$。为确保数值稳定性，采用**截断重要性采样**（TIS）方法，该方法将Sequence-Level比率 $\rho(y|x)$ 限制在常数 $C$ 以内。
+
+
+这种方法的关键方面包括：
+
+1. **正确的分布校正**：该方法通过计算整个序列的单一比率而不是每个token的比率来正确地应用重要性采样。这一点至关重要，因为它保持了行为策略（`π_vllm`）和目标策略（`π_fsdp`）之间正确的概率关系。
+
+2. **无偏梯度估计**：通过使用完整的序列概率比：
+   $$
+   \frac{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y|x)}{\textcolor{red}{\pi_\theta^{\text{vllm}}}(y|x)}
+   $$
+   估计器保持无偏，这意味着 $g_{\text{seq}}(\theta) = g(\theta)$ 是精确成立的。
+
+3. **状态访问度量的考虑**：推导过程通过项 $d_{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}}$ 正确考虑了状态访问分布的差异，该项表示在目标策略下访问各个状态的频率。
+
+#### 序列级别IS的方差挑战
+
+虽然在理论上是合理的，但序列级别重要性采样在实践中可能会遇到高方差问题：
+
+- 当策略差异很大时，序列级别的比率可能变得极大或极小
+- 这会导致不稳定的梯度估计，可能损害训练收敛性
+- 在长序列中这个问题更加严重，因为每一步的小差异会以乘法方式累积
+
+#### 截断重要性采样（TIS）解决方案
+
+为了在保持理论正确性的同时解决方差问题，截断重要性采样限制了极端比率的影响：
+
+$$
+\rho_{\text{trunc}}(y|x) = \min\left(\frac{\textcolor{blue}{\pi_\theta^{\text{fsdp}}}(y|x)}{\textcolor{red}{\pi_\theta^{\text{vllm}}}(y|x)}, C\right)
+$$
+
+其中 $C$ 是控制最大允许重要性权重的超参数。
+
+这种截断引入了一些偏差，但显著降低了方差，通常在实践中带来更稳定的训练效果。
+
 
 ### Token-Level 重要性采样
 
