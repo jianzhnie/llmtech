@@ -17,4 +17,7 @@
 ## SGLang
 
 - [SGLang 介绍](inference/sglang/SGLang.md)
-- [SGLang 性能调优](inference/sglang/Sglang-Tuning.md)
+- [SGLang 性能调优](inference/sglang/sglang_tuning.md)
+- [SGLang Router 机制详解](inference/sglang/sglang_router.md)
+- [SGLang Bench Serving](inference/sglang/sglang_bench_serving.md)
+- [SGLang Prefill-decode-disaggregation 机制详解](inference/sglang/sglang_pd_disaggregation.md )
