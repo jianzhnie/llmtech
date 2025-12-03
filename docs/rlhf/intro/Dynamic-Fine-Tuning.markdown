@@ -137,6 +137,139 @@ token_log_prob = log_softmax(logits)[target_token_id]
 dft_loss = -stop_gradient(token_prob) * token_log_prob
 ```
 
+DFTLoss 的 Pytorch 实现如下：
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class DFTLoss(nn.Module):
+    """
+    Dynamic Fine-Tuning (DFT) Loss implementation
+
+    This loss function implements the DFT approach where the standard cross-entropy
+    loss is reweighted by the model's own probability for the target token.
+    This helps stabilize training by reducing the impact of hard examples that
+    the model is not confident about.
+
+    The formula is:
+    L_DFT = -stop_gradient(P_theta(y|x)) * log(P_theta(y|x))
+
+    Where P_theta(y|x) is the model's probability for the target token y given input x.
+    """
+
+    def __init__(self, ignore_index=-100, reduction='mean'):
+        """
+        Initialize the DFT Loss
+
+        Args:
+            ignore_index (int): Specifies a target value that is ignored and
+                               does not contribute to the input gradient
+            reduction (str): Specifies the reduction to apply to the output:
+                            'none' | 'mean' | 'sum'
+        """
+        super(DFTLoss, self).__init__()
+        self.ignore_index = ignore_index
+        self.reduction = reduction
+
+    def forward(self, logits, targets):
+        """
+        Compute the DFT loss
+
+        Args:
+            logits (torch.Tensor): The logits output from the model of shape (N, C, ...)
+                                where N is the batch size and C is the number of classes
+            targets (torch.Tensor): Ground truth class indices of shape (N, ...) or (N, ..., C)
+
+        Returns:
+            torch.Tensor: Computed DFT loss
+        """
+        # Calculate probabilities using softmax
+        probs = F.softmax(logits, dim=-1)
+
+        # Calculate log probabilities
+        log_probs = F.log_softmax(logits, dim=-1)
+
+        # Get the probabilities for the target classes
+        if targets.dim() == logits.dim() - 1:
+            # Target is class indices
+            target_probs = torch.gather(probs, -1, targets.unsqueeze(-1)).squeeze(-1)
+            target_log_probs = torch.gather(log_probs, -1, targets.unsqueeze(-1)).squeeze(-1)
+        else:
+            # Target is one-hot encoded or soft labels
+            target_probs = (probs * targets).sum(dim=-1)
+            target_log_probs = (log_probs * targets).sum(dim=-1)
+
+        # Apply stop gradient to the probabilities (detach from computation graph)
+        with torch.no_grad():
+            weight = target_probs.detach()
+
+        # Calculate the DFT loss
+        dft_loss = -weight * target_log_probs
+
+        # Handle ignore_index
+        if self.ignore_index is not None:
+            mask = targets != self.ignore_index
+            dft_loss = dft_loss * mask
+
+            if self.reduction == 'mean':
+                return dft_loss.sum() / mask.sum().clamp(min=1)
+            elif self.reduction == 'sum':
+                return dft_loss.sum()
+            else:  # 'none'
+                return dft_loss
+
+        # Apply reduction
+        if self.reduction == 'mean':
+            return dft_loss.mean()
+        elif self.reduction == 'sum':
+            return dft_loss.sum()
+        else:  # 'none'
+            return dft_loss
+
+
+def dft_cross_entropy(logits, targets, ignore_index=-100, reduction='mean'):
+    """
+    Functional version of DFT loss
+
+    Args:
+        logits (torch.Tensor): The logits output from the model
+        targets (torch.Tensor): Ground truth class indices
+        ignore_index (int): Specifies a target value that is ignored
+        reduction (str): Specifies the reduction to apply to the output
+
+    Returns:
+        torch.Tensor: Computed DFT loss
+    """
+    loss_fn = DFTLoss(ignore_index=ignore_index, reduction=reduction)
+    return loss_fn(logits, targets)
+
+
+# Example usage
+if __name__ == "__main__":
+    # Create sample data
+    batch_size, seq_len, vocab_size = 2, 5, 1000
+    logits = torch.randn(batch_size, seq_len, vocab_size)
+    targets = torch.randint(0, vocab_size, (batch_size, seq_len))
+
+    # Test DFT loss
+    dft_loss_fn = DFTLoss()
+    loss = dft_loss_fn(logits, targets)
+    print(f"DFT Loss: {loss}")
+
+    # Test functional version
+    loss_func = dft_cross_entropy(logits, targets)
+    print(f"DFT Loss (functional): {loss_func}")
+
+    # Compare with standard cross-entropy
+    ce_loss = F.cross_entropy(logits.view(-1, vocab_size), targets.view(-1))
+    print(f"Standard Cross-Entropy Loss: {ce_loss}")
+
+```
+
+
 ### 3. DFT 的“学习哲学”：稳扎稳打
 
 这个简单的改动，彻底改变了 SFT 的学习动态：
