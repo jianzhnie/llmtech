@@ -66,7 +66,7 @@
 - [浅谈 GRPO 的系列改进（From GRPO to DAPO and GSPO）](rlhf/intro/grpo-to-dapo-and-gspo.md)
 - [重新思考 PPO-Clip — GRPO 时代下的各种变体](rlhf/intro/ppo_clip.md)
 - [截断重要性采样（TIS）](rlhf/intro/truncated_importance_sampling.md)
-- [动态微调（Dynamic Fine-Tuning）](rlhf/intro/Dynamic-Fine-Tuning.markdown)
+- [动态微调（Dynamic Fine-Tuning）](rlhf/intro/Dynamic-Fine-Tuning.md)
 
 
 ## LLM RLHF Algorithm and Paper
