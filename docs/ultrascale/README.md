@@ -2,7 +2,6 @@
 
 ## 大规模分布式并行训练
 
-- [大模型训练技术挑战](ultrascale/llm_training.md)
 - [大模型训练技术概论](ultrascale/Ultra-scale-llm-training-tech.md)
 - [DeepSpeed教程](ultrascale/deepspeed/DeepSpeed教程.md)
 - [ZeRO 技术原理 (上)](ultrascale/deepspeed/zero-optimizer-1.md)
