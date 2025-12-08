@@ -269,6 +269,50 @@ if __name__ == "__main__":
 
 ```
 
+swift 的 DFT Loss 函数
+
+```python
+def per_token_loss_func(outputs, labels, enable_dft_loss: bool = False, **kwargs):
+    logits = outputs.logits
+    # Upcast to float if we need to compute the loss to avoid potential precision issues
+    logits = logits.float()
+    labels = torch.roll(labels, shifts=-1, dims=-1).view(-1)
+
+    # Flatten the tokens
+    logits = logits.view(-1, logits.shape[-1])
+    # Enable model parallelism
+    labels = labels.to(logits.device)
+    loss = F.cross_entropy(logits, labels, ignore_index=-100, reduction='none')
+    if enable_dft_loss:
+        with torch.no_grad():
+            target_probs = torch.exp(-loss)
+        loss *= target_probs
+    return loss
+
+```
+
+Trl 的 DFT Loss 函数
+
+
+```python
+def dft_loss(outputs, labels, num_items_in_batch=None):
+    """
+    DFT loss function, as presented in [On the Generalization of SFT: A Reinforcement Learning Perspective with Reward
+    Rectification](https://huggingface.co/papers/2508.05629)
+    """
+    labels = nn.functional.pad(labels, (0, 1), value=-100)
+    shift_labels = labels[..., 1:].contiguous()
+    loss_mask = shift_labels != -100
+    shift_labels[~loss_mask] = 0
+    logprobs = selective_log_softmax(outputs.logits, shift_labels)
+    per_token_loss = -logprobs.exp().detach() * logprobs
+    if num_items_in_batch is None:
+        num_items_in_batch = loss_mask.sum()
+    loss = (per_token_loss * loss_mask).sum() / num_items_in_batch
+    return loss
+```
+
+
 
 ### 3. DFT 的“学习哲学”：稳扎稳打
 
