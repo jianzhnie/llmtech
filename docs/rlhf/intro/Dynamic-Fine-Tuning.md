@@ -67,14 +67,14 @@ $$
 
 现在，让我们把变身后 的 SFT 梯度和 RL 的策略梯度公式并排放在一起：
 
-- RL 策略梯度：$\nabla_\theta \log \pi_\theta(y x) \cdot r(x, y)$
+- RL 策略梯度：$\nabla_\theta \log \pi_\theta(y | x) \cdot r(x, y)$
 
 - 变身后的 SFT 梯度：$\nabla_\theta \log \pi_\theta(y |x) \cdot \frac{\mathbf{1}[y = y^*]}{\pi_\theta(y| x)}$。忽略了负号，因为最小化损失和最大化奖励是一样的。
 
 这样一来：传统的 SFT，在数学上等价于一个特殊的强化学习过程：
 
 1. 隐式奖励 (Implicit Reward) 是 $\mathbf{1}[y = y^*]$。这是一个指示函数，意思是：只有当模型生成的答案 $y$ 和专家答案 $y^*$ 一模一样时，奖励才是 1，否则奖励就是 0。
-2. 这个梯度更新还被一个权重 $w(y x) = \frac{1}{\pi_\theta(y x)}$ 所加权。
+2. 这个梯度更新还被一个权重 $w= \frac{1}{\pi_\theta(y |x)}$ 所加权。
 
 
 
