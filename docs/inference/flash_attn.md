@@ -169,13 +169,14 @@ $$
 
 > 推导：我们可以创建另一个序列 $d_{i}^{\prime} := \sum_{j=1}^{i}e^{x_{j}-m_{i}}$ 作为原始序列 $d_{i} := \sum_{j=1}^{i}e^{x_{j}-m_{N}}$ 的替代（Surrogate），以消除对 $N$ 的依赖。由于这两个序列的第 $N$ 项是相同的：$d_{N} = d_{N}^{\prime}$，因此我们可以安全地用 $d_{N}^{\prime}$ 替换方程 5 中的 $d_{N}$。我们还可以找到 $d_{i}^{\prime}$ 和 $d_{i-1}^{\prime}$ 之间的递推关系：
 >
-> $$d_{i}^{\prime} = \sum_{j=1}^{i}e^{x_{j}-m_{i}}$$
->
-> $$= \left(\sum_{j=1}^{i-1}e^{x_{j}-m_{i}}\right) + e^{x_{i}-m_{i}}$$
->
-> $$= \left(\sum_{j=1}^{i-1}e^{x_{j}-m_{i-1}}\right)e^{m_{i-1}-m_{i}} + e^{x_{i}-m_{i}}$$
->
-> $$= d_{i-1}^{\prime}e^{m_{i-1}-m_{i}} + e^{x_{i}-m_{i}}$$
+> $$
+> \begin{align}
+> d_{i}^{\prime} &= \sum_{j=1}^{i}e^{x_{j}-m_{i}} \\
+> &= \left(\sum_{j=1}^{i-1}e^{x_{j}-m_{i}}\right) + e^{x_{i}-m_{i}} \\
+> &= \left(\sum_{j=1}^{i-1}e^{x_{j}-m_{i-1}}\right)e^{m_{i-1}-m_{i}} + e^{x_{i}-m_{i}} \\
+> &= d_{i-1}^{\prime}e^{m_{i-1}-m_{i}} + e^{x_{i}-m_{i}}
+> \end{align}
+> $$
 >
 > 这种递推形式仅依赖于 $m_{i}$ 和 $m_{i-1}$，因此我们可以在同一个循环中同时计算 $m_{j}$ 和 $d_{j}^{\prime}$：
 
@@ -280,19 +281,12 @@ $$
 $o$ 和 $o^{\prime}$ 的第 $N$ 个元素是相同的：$o_{N}^{\prime} = o_{N}$，并且我们可以找到 $o_{i}^{\prime}$ 和 $o_{i-1}^{\prime}$ 之间的递推关系：
 
 $$
-o_{i}^{\prime} = \sum_{j=1}^{i} \frac{e^{x_{j}-m_{i}}}{d_{i}^{\prime}} V[j,:]
-$$
-
-$$
-= \left( \sum_{j=1}^{i-1} \frac{e^{x_{j}-m_{i}}}{d_{i}^{\prime}} V[j,:] \right) + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:]
-$$
-
-$$
-= \left( \sum_{j=1}^{i-1} \frac{e^{x_{j}-m_{i-1}}}{d_{i-1}^{\prime}} V[j,:] \right) \frac{d_{i-1}^{\prime}e^{m_{i-1}-m_{i}}}{d_{i}^{\prime}} + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:]
-$$
-
-$$
-= o_{i-1}^{\prime} \frac{d_{i-1}^{\prime}e^{m_{i-1}-m_{i}}}{d_{i}^{\prime}} + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:]
+\begin{align}
+o_{i}^{\prime} &= \sum_{j=1}^{i} \frac{e^{x_{j}-m_{i}}}{d_{i}^{\prime}} V[j,:] \\
+&= \left( \sum_{j=1}^{i-1} \frac{e^{x_{j}-m_{i}}}{d_{i}^{\prime}} V[j,:] \right) + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:] \\
+&= \left( \sum_{j=1}^{i-1} \frac{e^{x_{j}-m_{i-1}}}{d_{i-1}^{\prime}} V[j,:] \right) \frac{d_{i-1}^{\prime}e^{m_{i-1}-m_{i}}}{d_{i}^{\prime}} + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:] \\
+&= o_{i-1}^{\prime} \frac{d_{i-1}^{\prime}e^{m_{i-1}-m_{i}}}{d_{i}^{\prime}} + \frac{e^{x_{i}-m_{i}}}{d_{i}^{\prime}} V[i,:]
+\end{align}
 $$
 
 这仅取决于 $d_{i}^{\prime}, d_{i-1}^{\prime}, m_{i}, m_{i-1}$ 和 $x_{i}$，因此我们可以将自注意力的所有计算融合在一个循环中：
