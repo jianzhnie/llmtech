@@ -35,5 +35,5 @@
 
 [💻 GitHub](https://github.com/jianzhnie)
 [👨‍关于我](https://jianzhnie.github.io/) 
-[🧋LLMReasoning](https://jianzhnie.github.io/LLMReasoning/)
-[📖 开始阅读](aigc/)
+[🧋LLMPractice](https://jianzhnie.github.io/LLMPractice/)
+[📖 开始阅读](rlhf/)
